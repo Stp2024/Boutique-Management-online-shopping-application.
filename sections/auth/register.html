@@ -1,0 +1,157 @@
+<!-- =====================================================
+CUSTOMER REGISTRATION SECTION
+===================================================== -->
+<section class="register-screen" id="registerScreen" style="display: none">
+ <div class="register-backdrop">
+ </div>
+ <div class="register-shell">
+  <div class="register-editorial">
+   <div class="reg-mark">
+    R&amp;C
+   </div>
+   <span class="reg-kicker">
+    BEGIN YOUR PRIVATE EXPERIENCE
+   </span>
+   <h1>
+    Your wardrobe,
+    <br/>
+    <em>
+     your signature.
+    </em>
+   </h1>
+   <p>
+    Create your client profile to access curated collections,
+          measurements, bespoke requests, AI Mirror styling and your personal
+          couture journey.
+   </p>
+   <div class="reg-points">
+    <span>
+     01 &middot; PERSONAL PROFILE
+    </span>
+    <span>
+     02 &middot; DIGITAL MEASUREMENTS
+    </span>
+    <span>
+     03 &middot; PRIVATE COUTURE ACCESS
+    </span>
+   </div>
+  </div>
+  <div class="register-card">
+   <button class="reg-close" onclick="backToPrelaunch()">
+    &times;
+   </button>
+   <div class="brand">
+    <span class="brand-eyebrow">
+     VASTRAÉ &amp; CO
+    </span>
+    <h2>
+     Create Account
+    </h2>
+    <span>
+     DIGITAL COUTURE HOUSE
+    </span>
+   </div>
+   <div class="welcome-line">
+    <span>
+     REGISTER
+    </span>
+   </div>
+   <div class="register-heading">
+    <span>
+     CLIENT MEMBERSHIP
+    </span>
+    <h3>
+     Welcome to your boutique.
+    </h3>
+    <p>
+     Tell us a little about yourself to begin.
+    </p>
+   </div>
+   <form class="register-form" onsubmit="registerCustomer(event)">
+    <div class="register-grid">
+     <div>
+      <label>
+       Full Name
+      </label>
+      <div class="input-wrap">
+       <span class="input-icon">
+        ✦
+       </span>
+       <input autocomplete="name" id="regName" placeholder="Your name" required=""/>
+      </div>
+     </div>
+     <div>
+      <label>
+       Phone
+      </label>
+      <div class="input-wrap">
+       <span class="input-icon">
+        ◌
+       </span>
+       <input autocomplete="tel" id="regPhone" placeholder="Phone number" required=""/>
+      </div>
+     </div>
+    </div>
+    <label>
+     Email Address
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ◇
+     </span>
+     <input autocomplete="email" id="regEmail" placeholder="your@email.com" required="" type="email"/>
+    </div>
+    <div class="register-grid">
+     <div>
+      <label>
+       Create Password
+      </label>
+      <div class="input-wrap">
+       <span class="input-icon">
+        ◈
+       </span>
+       <input autocomplete="new-password" id="regPass" minlength="6" placeholder="Minimum 6 characters" required="" type="password"/>
+      </div>
+     </div>
+     <div>
+      <label>
+       Confirm Password
+      </label>
+      <div class="input-wrap">
+       <span class="input-icon">
+        ◈
+       </span>
+       <input autocomplete="new-password" id="regPassConfirm" minlength="6" placeholder="Repeat password" required="" type="password"/>
+      </div>
+     </div>
+    </div>
+    <label class="reg-consent">
+     <input id="regConsent" required="" type="checkbox"/>
+     <span>
+      I agree to create a VASTRAÉ client profile and use
+              this digital couture experience.
+     </span>
+    </label>
+    <button class="btn btn-dark register-submit" type="submit">
+     <span>
+      Create My Account
+     </span>
+     <b>
+      &rarr;
+     </b>
+    </button>
+    <button class="register-login-link" onclick="openLogin('customer')" type="button">
+     Already registered?
+     <strong>
+      Login here
+     </strong>
+    </button>
+   </form>
+   <small class="demo-note">
+    Demo note: this standalone prototype stores the client profile
+          locally in your browser. Connect a secure backend before production
+          use.
+   </small>
+  </div>
+ </div>
+</section>

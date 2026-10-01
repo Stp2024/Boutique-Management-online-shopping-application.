@@ -1,0 +1,81 @@
+<!-- =====================================================
+TRY ON SECTION
+===================================================== -->
+<section class="tryon" id="tryon">
+ <div class="heading">
+  <small>
+   SMART FASHION LAB
+  </small>
+  <h2>
+   AI Self Try-On
+  </h2>
+  <p>
+   Upload a photograph, choose an outfit and create a digital try-on
+         request.
+  </p>
+ </div>
+ <div class="tryon-layout">
+  <div>
+   <div class="preview" id="tryPreview">
+    <div>
+     <div style="font-size: 35px">
+      ◇
+     </div>
+     Upload your photo
+     <br/>
+     to begin
+    </div>
+   </div>
+   <br/>
+   <input accept="image/*" onchange="previewTry(event)" type="file"/>
+  </div>
+  <div class="try-controls">
+   <h3>
+    Visualize Your Look
+   </h3>
+   <p>
+    Choose an outfit from the boutique and request a personalized
+           visualization.
+   </p>
+   <select id="tryOutfit">
+    <option>
+     Ivory Evening Dress
+    </option>
+    <option>
+     Midnight Tailored Suit
+    </option>
+    <option>
+     Royal Silk Saree
+    </option>
+    <option>
+     Emerald Designer Lehenga
+    </option>
+    <option>
+     Premium Sherwani
+    </option>
+   </select>
+   <select id="tryStyle">
+    <option>
+     Modern
+    </option>
+    <option>
+     Traditional
+    </option>
+    <option>
+     Formal
+    </option>
+    <option>
+     Festive
+    </option>
+    <option>
+     Wedding
+    </option>
+   </select>
+   <button class="btn btn-dark" onclick="generateTryOn()">
+    ✦ Generate Try-On
+   </button>
+   <p id="tryMessage">
+   </p>
+  </div>
+ </div>
+</section>

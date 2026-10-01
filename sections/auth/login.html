@@ -1,0 +1,300 @@
+<!-- =====================================================
+LOGIN SCREEN SECTION
+===================================================== -->
+<div class="login" id="loginScreen" style="display: none">
+ <div aria-hidden="true" class="login-atmosphere">
+  <span class="login-orb orb-one">
+  </span>
+  <span class="login-orb orb-two">
+  </span>
+  <span class="login-orb orb-three">
+  </span>
+  <span class="login-line line-one">
+  </span>
+  <span class="login-line line-two">
+  </span>
+ </div>
+ <div class="login-shell">
+  <aside class="login-editorial">
+   <div class="editorial-top">
+    <span class="editorial-mark">
+     R&amp;C
+    </span>
+    <span class="editorial-est">
+     EST. 2026 &middot; BENGALURU
+    </span>
+   </div>
+   <div class="editorial-copy">
+    <span class="editorial-kicker">
+     THE DIGITAL COUTURE HOUSE
+    </span>
+    <h1>
+     Where your
+     <br/>
+     <em>
+      style begins.
+     </em>
+    </h1>
+    <p>
+     Step into a private world of considered tailoring, personal
+            styling and digital craftsmanship &mdash; where every detail is designed
+            around you.
+    </p>
+    <div class="editorial-badge">
+     <span>
+     </span>
+     PERSONAL STYLE &middot; PRECISION &middot; PRIVILEGE
+    </div>
+   </div>
+   <div class="editorial-footer">
+    <span>
+     01 / PERSONAL
+    </span>
+    <span>
+     02 / PRECISION
+    </span>
+    <span>
+     03 / TIMELESS
+    </span>
+   </div>
+  </aside>
+  <main class="login-card">
+   <div class="brand">
+    <span class="brand-eyebrow">
+     WELCOME TO
+    </span>
+    <h2>
+     VASTRAÉ
+    </h2>
+    <span>
+     DIGITAL COUTURE HOUSE
+    </span>
+   </div>
+   <div class="welcome-line">
+    <span>
+     WELCOME
+    </span>
+   </div>
+   <div class="login-heading">
+    <span class="login-mini-label">
+     YOUR PRIVATE COUTURE ACCESS
+    </span>
+    <h3 id="loginTitle">
+     Enter the boutique
+    </h3>
+    <p id="loginSubtitle">
+     Your wardrobe, your measurements, your signature.
+    </p>
+   </div>
+   <div aria-label="Login role" class="login-switch" role="tablist">
+    <button aria-selected="true" class="active" id="customerTab" onclick="switchLogin('customer')" role="tab">
+     <span class="tab-number">
+      01
+     </span>
+     <span>
+      <strong>
+       Client
+      </strong>
+      <small>
+       Personal access
+      </small>
+     </span>
+    </button>
+    <button aria-selected="false" id="adminTab" onclick="switchLogin('admin')" role="tab">
+     <span class="tab-number">
+      02
+     </span>
+     <span>
+      <strong>
+       Boutique
+      </strong>
+      <small>
+       Management studio
+      </small>
+     </span>
+    </button>
+    <button aria-selected="false" id="tailorTab" onclick="switchLogin('tailor')" role="tab">
+     <span class="tab-number">
+      03
+     </span>
+     <span>
+      <strong>
+       Tailor
+      </strong>
+      <small>
+       Craft workspace
+      </small>
+     </span>
+    </button>
+    <span class="tab-indicator" id="tabIndicator">
+    </span>
+   </div>
+   <form class="form login-form" id="customerForm" onsubmit="customerLogin(event)">
+    <div class="form-intro">
+     <span class="role-dot">
+     </span>
+     Client access is ready
+    </div>
+    <label>
+     Email Address
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ✦
+     </span>
+     <input autocomplete="email" id="customerEmail" placeholder="your@email.com" required="" type="email"/>
+    </div>
+    <label>
+     Password
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ◈
+     </span>
+     <input autocomplete="current-password" id="customerPass" placeholder="Enter password" required="" type="password"/>
+     <button aria-label="Show password" class="password-toggle" onclick="toggleLoginPassword('customerPass', this)" type="button">
+      Show
+     </button>
+    </div>
+    <div class="login-options">
+     <label class="remember">
+      <input type="checkbox"/>
+      <span>
+       Keep me signed in
+      </span>
+     </label>
+     <button class="text-action" onclick="
+                showToast(
+                  'Password recovery is available in the connected boutique account.',
+                )
+              " type="button">
+      Forgot password?
+     </button>
+    </div>
+    <button class="btn btn-dark login-submit login-cta">
+     <span>
+      Enter Boutique
+     </span>
+     <b>
+      &rarr;
+     </b>
+    </button>
+    <div class="login-note">
+     <strong>VIP Client Preview Access:</strong>
+     <span style="display:block;margin-top:4px;">Email: <b>client@vastrae.com</b> &nbsp;&middot;&nbsp; Password: <b>client123</b></span>
+     <button type="button" style="margin-top:8px;background:linear-gradient(135deg,#b88628,#e5b85c);color:#171008;border:0;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;" onclick="document.getElementById('customerEmail').value='client@vastrae.com';document.getElementById('customerPass').value='client123';document.getElementById('customerForm').requestSubmit();">⚡ Instant Client Sign In</button>
+    </div>
+   </form>
+   <form class="form login-form" id="adminForm" onsubmit="adminLogin(event)" style="display: none">
+    <div class="form-intro">
+     <span class="role-dot">
+     </span>
+     Boutique management access
+    </div>
+    <label>
+     Administrator ID
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ◇
+     </span>
+     <input autocomplete="username" id="adminId" placeholder="Admin ID" required=""/>
+    </div>
+    <label>
+     Password
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ◈
+     </span>
+     <input autocomplete="current-password" id="adminPass" placeholder="Password" required="" type="password"/>
+     <button class="password-toggle" onclick="toggleLoginPassword('adminPass', this)" type="button">
+      Show
+     </button>
+    </div>
+    <button class="btn btn-dark login-submit login-cta">
+     <span>
+      Enter Management Studio
+     </span>
+     <b>
+      &rarr;
+     </b>
+    </button>
+    <div class="login-note">
+     <strong>
+      Demo environment
+     </strong>
+     <br/>
+     Administrator:
+     <b>
+      admin
+     </b>
+     &nbsp;&middot;&nbsp; Password:
+     <b>
+      admin123
+     </b>
+    </div>
+   </form>
+   <form class="form login-form" id="tailorForm" onsubmit="tailorLogin(event)" style="display: none">
+    <div class="form-intro">
+     <span class="role-dot">
+     </span>
+     Craft workspace access
+    </div>
+    <label>
+     Tailor ID / Email
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ◇
+     </span>
+     <input autocomplete="username" id="tailorId" placeholder="tailor@VASTRAÉco.com" required=""/>
+    </div>
+    <label>
+     Password
+    </label>
+    <div class="input-wrap">
+     <span class="input-icon">
+      ◈
+     </span>
+     <input autocomplete="current-password" id="tailorPass" placeholder="Enter password" required="" type="password"/>
+     <button class="password-toggle" onclick="toggleLoginPassword('tailorPass', this)" type="button">
+      Show
+     </button>
+    </div>
+    <button class="btn btn-dark login-submit login-cta">
+     <span>
+      Enter Tailor Workspace
+     </span>
+     <b>
+      &rarr;
+     </b>
+    </button>
+    <div class="login-note">
+     <strong>
+      Demo craft access
+     </strong>
+     <br/>
+     Tailor ID:
+     <b>
+      tailor
+     </b>
+     &nbsp;&middot;&nbsp; Password:
+     <b>
+      tailor123
+     </b>
+    </div>
+   </form>
+   <div class="login-bottom">
+    <span>
+     SECURE PRIVATE ACCESS
+    </span>
+    <i>
+    </i>
+    <span>
+     VASTRAÉ &amp; CO
+    </span>
+   </div>
+  </main>
+ </div>
+</div>

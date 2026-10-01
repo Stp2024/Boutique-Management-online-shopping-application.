@@ -1,0 +1,23 @@
+<!-- =====================================================
+TESTIMONIALS & REVIEWS SECTION
+===================================================== -->
+<section id="reviews" style="background:#f3eee5;">
+ <div class="heading">
+   <small>CLIENT NOTES</small>
+   <h2>What the boutique experience feels like</h2>
+   <p>Sample client reviews are shown below. New reviews submitted in this demo are added instantly to the page.</p>
+ </div>
+ <div class="review-wrap">
+   <div class="review-grid" id="reviewGrid">
+     <article class="review-card"><div class="review-stars">★★★★★</div><p>The multi-view product presentation made it much easier to understand the outfit before adding it to my bag.</p><strong>Meera S.</strong><small>Bengaluru · Occasion Wear</small></article>
+     <article class="review-card"><div class="review-stars">★★★★★</div><p>I liked that the custom measurements and ready-to-wear collections are part of the same experience.</p><strong>Arjun R.</strong><small>Bengaluru · Custom Suit</small></article>
+     <article class="review-card"><div class="review-stars">★★★★☆</div><p>The catalogue feels like a boutique lookbook rather than a crowded shopping page. Very easy to explore.</p><strong>Priya K.</strong><small>Bengaluru · Festive Edit</small></article>
+   </div>
+   <form class="review-form" onsubmit="submitReview(event)">
+     <input id="reviewName" required placeholder="Your name">
+     <select id="reviewRating" required><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Good</option></select>
+     <textarea class="full" id="reviewText" required placeholder="Write your experience..."></textarea>
+     <button class="btn btn-dark full" type="submit">Publish Review</button>
+   </form>
+ </div>
+</section>

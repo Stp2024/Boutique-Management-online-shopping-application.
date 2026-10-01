@@ -1,0 +1,115 @@
+<!-- =====================================================
+CLIENT PROFILE CARD SECTION
+===================================================== -->
+<section class="profile-section" id="profile">
+ <div class="heading">
+   <small>YOUR BOUTIQUE IDENTITY</small>
+   <h2>Create Your Profile Card</h2>
+   <p>Build a polished digital identity for your VASTRAÉ journey. Clients can save their personal style details, while tailors can create a professional craft profile in the Tailor Workspace.</p>
+ </div>
+
+ <div class="profile-layout">
+   <div class="profile-builder">
+     <h3>Client Profile</h3>
+     <p>Your saved card can be updated anytime. Upload a photo, add your style details and keep your boutique identity in one place.</p>
+
+     <div class="profile-role-switch">
+       <button type="button" class="active" id="clientProfileRoleBtn" onclick="setProfileBuilderRole('client')">CLIENT</button>
+       <button type="button" id="tailorProfileRoleBtn" onclick="showTailorProfileInfo()">TAILOR</button>
+     </div>
+
+     <div class="profile-photo-row">
+       <img class="profile-photo-mini" id="profilePhotoMini" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=180&amp;q=80" alt="Profile preview">
+       <div>
+         <input id="profilePhoto" type="file" accept="image/*" onchange="previewProfilePhoto(event)">
+         <small>Use a clear portrait or professional profile photo.</small>
+       </div>
+     </div>
+
+     <form id="clientProfileForm" onsubmit="saveClientProfile(event)">
+       <div class="profile-fields">
+         <div class="profile-field">
+           <label>Full Name</label>
+           <input id="profileName" required placeholder="Your name">
+         </div>
+         <div class="profile-field">
+           <label>Profile Title</label>
+           <input id="profileTitle" placeholder="Style Enthusiast">
+         </div>
+         <div class="profile-field">
+           <label>City</label>
+           <input id="profileCity" placeholder="Bengaluru">
+         </div>
+         <div class="profile-field">
+           <label>Phone</label>
+           <input id="profilePhone" placeholder="+91">
+         </div>
+         <div class="profile-field">
+           <label>Style</label>
+           <select id="profileStyle">
+             <option>Modern</option>
+             <option>Traditional</option>
+             <option>Formal</option>
+             <option>Semi-Formal</option>
+             <option>Semi-Modern</option>
+             <option>Designer</option>
+             <option>Classic</option>
+           </select>
+         </div>
+         <div class="profile-field">
+           <label>Favourite Occasion</label>
+           <select id="profileOccasion">
+             <option>Wedding</option>
+             <option>Work</option>
+             <option>Festive</option>
+             <option>Party</option>
+             <option>Everyday</option>
+           </select>
+         </div>
+         <div class="profile-field full">
+           <label>About Me</label>
+           <textarea id="profileBio" placeholder="Tell the boutique a little about your style..."></textarea>
+         </div>
+       </div>
+       <div class="profile-actions">
+         <button type="submit" class="btn btn-dark">Save Profile Card</button>
+         <button type="button" class="btn" style="border:1px solid var(--line);background:white;" onclick="resetClientProfile()">Reset</button>
+       </div>
+       <div class="profile-status" id="profileStatus"></div>
+     </form>
+
+     <div id="tailorProfileHint" class="profile-hidden">
+       <p style="background:#f5eee3;padding:14px;margin-top:15px;color:var(--brown);">
+         Tailor profiles are created inside the <strong>Tailor Workspace → Profile Card</strong> area after Tailor login.
+       </p>
+     </div>
+   </div>
+
+   <div class="profile-preview-wrap">
+     <div class="profile-preview-head">
+       <small>VASTRAÉ &amp; CO · DIGITAL PROFILE</small>
+       <span>PRIVATE CARD</span>
+     </div>
+     <article class="profile-card">
+       <div class="profile-card-photo">
+         <img id="profileCardPhoto" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Client profile card photo">
+       </div>
+       <div class="profile-card-info">
+         <span class="profile-card-kicker">VASTRAÉ &amp; CO</span>
+         <h2 id="profileCardName">Your Name</h2>
+         <div class="profile-card-role" id="profileCardTitle">STYLE ENTHUSIAST · CLIENT</div>
+         <div class="profile-card-line"></div>
+         <div class="profile-meta">
+           <div><b>City</b><span id="profileCardCity">Bengaluru</span></div>
+           <div><b>Style</b><span id="profileCardStyle">Modern</span></div>
+           <div><b>Occasion</b><span id="profileCardOccasion">Wedding</span></div>
+           <div><b>Contact</b><span id="profileCardPhone">—</span></div>
+         </div>
+         <p class="profile-bio" id="profileCardBio">Your personal style story will appear here. Create your profile to make this card yours.</p>
+         <div class="profile-sign" id="profileCardSign">VASTRAÉ Client</div>
+       </div>
+     </article>
+     <div class="profile-note">Demo profile cards are stored locally in this browser. A production website can connect these profiles to a secure customer/tailor database.</div>
+   </div>
+ </div>
+</section>
