@@ -1,0 +1,382 @@
+<!-- =====================================================
+CATALOGUE & COLLECTIONS SECTION
+===================================================== -->
+<section class="catalogue" id="catalogue">
+ <div class="heading">
+  <small id="catalogueKicker">
+   THE DIGITAL WARDROBE
+  </small>
+  <h2>
+   Explore By Style
+  </h2>
+  <p id="catalogueSubheading">
+   Choose a catalogue and discover fashion curated around your
+         personality, occasion and lifestyle.
+  </p>
+  <div class="cat-sound-pill-wrap" id="catSoundPillWrap" style="display:none;">
+    <button class="cat-sound-pill" id="catSoundPill" onclick="replayActiveThemeSound()" title="Replay section theme sound" aria-label="Replay theme sound">
+      <span class="cat-sound-icon">🔊</span>
+      <span class="cat-sound-label" id="catSoundLabel">Theme Sound</span>
+      <span class="cat-sound-sub">Click to replay</span>
+    </button>
+  </div>
+ </div>
+ <div class="catalogue-tabs">
+  <button class="cat-btn active" onclick="catalogueFilter('all', this)">
+   All
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('modern', this)">
+   Modern
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('traditional', this)">
+   Traditional
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('formal', this)">
+   Formal
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('semi-formal', this)">
+   Semi-Formal
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('semi-modern', this)">
+   Semi-Modern
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('casual', this)">
+   Casual
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('ethnic', this)">
+   Ethnic
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('festive', this)">
+   Festive
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('party', this)">
+   Party
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('wedding', this)">
+   Wedding
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('luxury', this)">
+   Luxury
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('office', this)">
+   Office
+  </button>
+  <button class="cat-btn" onclick="catalogueFilter('designer', this)">
+   Designer
+  </button>
+ </div>
+ <div class="catalogue-showcase">
+  <div class="cat-feature">
+   <img alt="Luxury fashion" src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&amp;fit=crop&amp;w=1000&amp;q=85"/>
+   <div class="cat-feature-content">
+    <h3 id="catalogueTitle">
+     Modern
+    </h3>
+    <p id="catalogueDescription">
+     Contemporary silhouettes with timeless elegance.
+    </p>
+    <button onclick="applyCatalogue()">
+     Explore Style
+    </button>
+   </div>
+  </div>
+  <div class="cat-grid" id="catalogueOutfitsGrid">
+   <!-- Populated dynamically by renderCatalogueOutfits(style) with multi-view 360° outfit cards -->
+  </div>
+ </div>
+
+ <!-- Dedicated Gen-Z Modern Capsule Section (Appears when Modern is clicked) -->
+ <div class="genz-modern-capsule" id="genzModernCapsule" style="display:none;">
+  <!-- Ambient Cyber Glows -->
+  <div class="genz-ambient-glows">
+   <div class="genz-glow glow-cyan"></div>
+   <div class="genz-glow glow-magenta"></div>
+   <div class="genz-glow glow-purple"></div>
+  </div>
+
+  <div class="genz-capsule-header">
+   <div class="genz-kicker-badge">
+    <span class="genz-pulse-dot"></span>
+    <span>CYBER ATELIER ✦ GEN-Z MODERN DROP 2026</span>
+    <span class="genz-fire">⚡</span>
+   </div>
+   <h2 class="genz-capsule-title">
+    The Gen-Z Cyber Modern Capsule
+   </h2>
+   <p class="genz-capsule-lead">
+    Hyper-modern silhouettes, modular techwear cargo sets, liquid metallic puffers, deconstructed tailoring, and holographic mesh dresses engineered for the digital generation.
+   </p>
+
+   <!-- Gen-Z Interactive Aesthetic Filter Pills -->
+   <div class="genz-vibe-tabs">
+    <button class="genz-vibe-btn active" onclick="filterGenzVibe('all', this)">
+     <span>✦ All Gen-Z Edits</span> <b>(6)</b>
+    </button>
+    <button class="genz-vibe-btn" onclick="filterGenzVibe('cyber', this)">
+     <span>⚡ Cyber Streetwear</span> <b>(2)</b>
+    </button>
+    <button class="genz-vibe-btn" onclick="filterGenzVibe('y2k', this)">
+     <span>✨ Neo-Y2K Revival</span> <b>(2)</b>
+    </button>
+    <button class="genz-vibe-btn" onclick="filterGenzVibe('avant', this)">
+     <span>🛸 Avant-Garde Drip</span> <b>(2)</b>
+    </button>
+   </div>
+  </div>
+
+  <!-- Gen-Z Outfits Grid -->
+  <div class="genz-outfits-grid" id="genzOutfitsGrid">
+   <!-- Dynamically rendered by JS -->
+  </div>
+
+  <!-- Gen-Z Cyber Innovation & Digital Twin Assurance Banner -->
+  <div class="genz-heritage-banner">
+   <div class="genz-feat-card">
+    <div class="genz-feat-icon">🪞</div>
+    <h4>3D Digital Fashion Twin Ready</h4>
+    <p>Instant virtual fitting and avatar drape preview in the AI Mirror Studio.</p>
+   </div>
+   <div class="genz-feat-card">
+    <div class="genz-feat-icon">⚡</div>
+    <h4>Futuristic Tech Materials</h4>
+    <p>Ultra-breathable bio-synthetics, metallic heat-reflective foil and recycled liquid nylon.</p>
+   </div>
+   <div class="genz-feat-card">
+    <div class="genz-feat-icon">✂️</div>
+    <h4>Modular Couture Tailoring</h4>
+    <p>Detachable harness straps, magnetic closures, and custom tailored crop/oversized fit.</p>
+   </div>
+   <div class="genz-feat-card">
+    <div class="genz-feat-icon">🛸</div>
+    <h4>Gender-Fluid Silhouettes</h4>
+    <p>Unisex cutting, architectural drop shoulders and sculptural streetwear aesthetics.</p>
+   </div>
+  </div>
+ </div>
+
+ <!-- Dedicated Traditional Pavilion Spotlight inside Collections -->
+ <div class="collection-trad-banner" onclick="window.scrollToId('traditionalSection')">
+  <div class="trad-banner-glow"></div>
+  <div class="trad-banner-left">
+   <div class="trad-banner-kicker">
+    <span>🪔</span>
+    <span>FEATURED IN COLLECTIONS &middot; SACRED MANDAPAM EDITION</span>
+    <span>🪔</span>
+   </div>
+   <h3>The Sacred Traditional Pavilion</h3>
+   <p>
+    Step into our consecrated sanctuary of timeless Indian handlooms. 24 curated masterpieces: Pure Kanjeevaram mulberry silks, authentic 24K gold zari Banarasi brocades, royal bridal lehengas, Bharatanatyam &amp; Kathak classical dance costumes, and sanctified temple ritual dhotis.
+   </p>
+   <div class="trad-banner-pills">
+    <span class="trad-pill">⚜️ Pure Silk Mark Certified</span>
+    <span class="trad-pill">🎭 Classical Dance &amp; Folk Costumes</span>
+    <span class="trad-pill">🔔 Sacred Mandapam Bells</span>
+    <span class="trad-pill">🪔 Consecrated Diyas</span>
+    <span class="trad-pill">🪡 Bespoke Couture Tailoring</span>
+   </div>
+  </div>
+  <div class="trad-banner-right">
+   <button class="btn btn-gold trad-banner-btn" onclick="event.stopPropagation(); window.scrollToId('traditionalSection');">
+    <span>Explore Traditional Pavilion</span>
+    <b>&rarr;</b>
+   </button>
+  </div>
+ </div>
+</section>
+
+<!-- =====================================================
+OCCASION CAPSULE WARDROBE BUILDER
+===================================================== -->
+<section class="capsule-builder-section" id="capsuleBuilder">
+  <div class="heading">
+    <small>THE CURATED ENSEMBLE</small>
+    <h2>Occasion Capsule Wardrobe Builder</h2>
+    <p>Select an occasion to reveal a masterfully harmonized 3-piece capsule. Enjoy an exclusive 15% Capsule Privilege discount when reserving the complete ensemble.</p>
+  </div>
+
+  <div class="capsule-occasions-bar">
+    <button class="capsule-pill active" onclick="selectCapsuleOccasion('gala', this)">
+      <span>🎩 Black-Tie Gala</span>
+    </button>
+    <button class="capsule-pill" onclick="selectCapsuleOccasion('wedding', this)">
+      <span>🪔 Royal Wedding</span>
+    </button>
+    <button class="capsule-pill" onclick="selectCapsuleOccasion('boardroom', this)">
+      <span>💼 Executive C-Suite</span>
+    </button>
+    <button class="capsule-pill" onclick="selectCapsuleOccasion('soiree', this)">
+      <span>✨ Twilight Soirée</span>
+    </button>
+  </div>
+
+  <div class="capsule-builder-card">
+    <div class="capsule-builder-header">
+      <div>
+        <h3 id="capsuleTitle">The Black-Tie Gala Capsule</h3>
+        <p id="capsuleLead">Ultra-formal sartorial elegance cut from Savile Row wool and heavy Italian silk.</p>
+      </div>
+      <div class="capsule-privilege-badge">
+        <span>15% CAPSULE PRIVILEGE APPLIED</span>
+      </div>
+    </div>
+
+    <!-- Dynamic 3 Items Grid -->
+    <div class="capsule-items-grid" id="capsuleItemsGrid">
+      <!-- Populated dynamically by sections.js -->
+    </div>
+
+    <div class="capsule-checkout-strip">
+      <div class="capsule-pricing">
+        <span class="capsule-label">Complete 3-Piece Capsule Value:</span>
+        <div class="capsule-price-group">
+          <span class="capsule-orig-price" id="capsuleOriginalPrice">₹25,297</span>
+          <span class="capsule-bundle-price" id="capsuleBundlePrice">₹21,502</span>
+          <span class="capsule-savings" id="capsuleSavings">Save ₹3,795 (15% Off)</span>
+        </div>
+      </div>
+      <div class="capsule-cta-group">
+        <button class="btn btn-ghost" onclick="drapeCapsuleInMirror()">🪞 Try in AI Mirror</button>
+        <button class="btn btn-gold" onclick="addCapsuleToBag()">✦ Add Complete Capsule to Bag</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+HAUTE TEXTURE & FABRIC SWATCH LIBRARY
+===================================================== -->
+<section class="collection-fabrics-section" id="collectionFabrics">
+  <div class="heading">
+    <small>THE ATELIER SWATCHES</small>
+    <h2>Haute Texture &amp; Fabric Library</h2>
+    <p>True luxury begins in the loom. Touch the weave, analyze the drape characteristics, and filter our collections by authentic certified fabrics.</p>
+  </div>
+
+  <div class="fabrics-layout">
+    <!-- Left: Interactive Swatches -->
+    <div class="fabric-swatches-grid">
+      <div class="fabric-swatch-card active" onclick="selectFabricDetail('zari', this)">
+        <div class="swatch-sample swatch-zari"></div>
+        <div class="swatch-info">
+          <h4>Varanasi Gold Zari</h4>
+          <small>850 GSM · 24K Gold Wire</small>
+        </div>
+      </div>
+      <div class="fabric-swatch-card" onclick="selectFabricDetail('merino', this)">
+        <div class="swatch-sample swatch-merino"></div>
+        <div class="swatch-info">
+          <h4>Super 160s Merino Wool</h4>
+          <small>280 GSM · Biella, Italy</small>
+        </div>
+      </div>
+      <div class="fabric-swatch-card" onclick="selectFabricDetail('mulberry', this)">
+        <div class="swatch-sample swatch-mulberry"></div>
+        <div class="swatch-info">
+          <h4>22-Momme Raw Silk</h4>
+          <small>110 GSM · Karnataka Looms</small>
+        </div>
+      </div>
+      <div class="fabric-swatch-card" onclick="selectFabricDetail('crepe', this)">
+        <div class="swatch-sample swatch-crepe"></div>
+        <div class="swatch-info">
+          <h4>Architectural Silk Crepe</h4>
+          <small>320 GSM · High-Twist Silk</small>
+        </div>
+      </div>
+      <div class="fabric-swatch-card" onclick="selectFabricDetail('flax', this)">
+        <div class="swatch-sample swatch-flax"></div>
+        <div class="swatch-info">
+          <h4>Belgian Crinkle Linen</h4>
+          <small>220 GSM · Heirloom Flax</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Active Swatch Specifications -->
+    <div class="fabric-detail-card" id="fabricDetailCard">
+      <span class="fabric-kicker" id="fabricDetailKicker">HERITAGE SANCTUM WEAVE · 850 GSM</span>
+      <h3 id="fabricDetailTitle">Varanasi Pure Gold Zari Brocade</h3>
+      <p class="fabric-desc" id="fabricDetailDesc">Sacred hand-loomed Banarasi brocade utilizing certified pure silver wire electroplated in 24k gold. Rigid, regal structure with opulent sheen.</p>
+      
+      <div class="fabric-specs-table">
+        <div class="f-spec-row"><span class="f-label">Drape Contour</span><span class="f-val" id="fabricSpecDrape">Structured &amp; Sculptural</span></div>
+        <div class="f-spec-row"><span class="f-label">Breathability</span><span class="f-val" id="fabricSpecBreath">Medium-Warm</span></div>
+        <div class="f-spec-row"><span class="f-label">Ideal Silhouettes</span><span class="f-val" id="fabricSpecIdeal">Bridal Lehengas, Royal Sherwanis &amp; Sanctum Drapes</span></div>
+      </div>
+
+      <div class="fabric-actions">
+        <button class="btn btn-gold" id="fabricFilterCta" onclick="filterCatalogueByFabric('traditional', 'Varanasi Pure Gold Zari Brocade')">✦ Explore Brocade Garments</button>
+        <button class="btn btn-ghost" onclick="scrollToId('custom')">Custom Order in this Cloth</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+EDITORIAL COLOR STORIES & PALETTE HARMONIES
+===================================================== -->
+<section class="collection-moods-section" id="collectionMoods">
+  <div class="heading">
+    <small>SEASONAL COLOR STORIES</small>
+    <h2>Color Harmonies &amp; Undertones</h2>
+    <p>Harmonized tonal palettes curated by our Bengaluru styling atelier. Select a harmony to filter matching wardrobe creations.</p>
+  </div>
+
+  <div class="color-stories-grid">
+    <div class="color-story-card active" onclick="applyColorStory('saffron', this)">
+      <div class="story-chips">
+        <span style="background:#8b2e1e"></span>
+        <span style="background:#b89558"></span>
+        <span style="background:#d7bd86"></span>
+        <span style="background:#201b17"></span>
+      </div>
+      <div class="story-info">
+        <h4>Saffron Dusk &amp; Gold</h4>
+        <p>Sacred earthen reds, pure zari gold and golden ochre.</p>
+        <span class="story-pill">Traditional &amp; Festive</span>
+      </div>
+    </div>
+
+    <div class="color-story-card" onclick="applyColorStory('midnight', this)">
+      <div class="story-chips">
+        <span style="background:#141923"></span>
+        <span style="background:#223147"></span>
+        <span style="background:#6b7a8d"></span>
+        <span style="background:#d1d5db"></span>
+      </div>
+      <div class="story-info">
+        <h4>Midnight Obsidian &amp; Slate</h4>
+        <p>Deep navy noir, obsidian black, and titanium grey.</p>
+        <span class="story-pill">Black-Tie &amp; Formal</span>
+      </div>
+    </div>
+
+    <div class="color-story-card" onclick="applyColorStory('malachite', this)">
+      <div class="story-chips">
+        <span style="background:#154d3d"></span>
+        <span style="background:#2d705c"></span>
+        <span style="background:#b27c83"></span>
+        <span style="background:#f2dede"></span>
+      </div>
+      <div class="story-info">
+        <h4>Malachite &amp; Rose Pearl</h4>
+        <p>Imperial emerald green contrasted with soft rosewater silk.</p>
+        <span class="story-pill">Salon Luxury</span>
+      </div>
+    </div>
+
+    <div class="color-story-card" onclick="applyColorStory('cyber', this)">
+      <div class="story-chips">
+        <span style="background:#0891b2"></span>
+        <span style="background:#3b82f6"></span>
+        <span style="background:#8b5cf6"></span>
+        <span style="background:#f1f5f9"></span>
+      </div>
+      <div class="story-info">
+        <h4>Cyber Cobalt &amp; Platinum</h4>
+        <p>Electrified azure, digital violet and platinum reflections.</p>
+        <span class="story-pill">Gen-Z Modern</span>
+      </div>
+    </div>
+  </div>
+</section>

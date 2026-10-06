@@ -169,9 +169,24 @@
         const review = document.getElementById("reviewText").value.trim();
         if (!name || !review) return;
 
-        const safe = (value) => value.replace(/[&<>"']/g, char => ({
+        const safe = (value) => String(value).replace(/[&<>"']/g, char => ({
           "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
         }[char]));
+
+        const newReview = {
+          name,
+          rating,
+          review,
+          date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        };
+
+        try {
+          const list = JSON.parse(localStorage.getItem("vastraeReviews") || "[]");
+          list.unshift(newReview);
+          localStorage.setItem("vastraeReviews", JSON.stringify(list));
+        } catch (e) {
+          console.warn("Could not save review", e);
+        }
 
         const card = document.createElement("article");
         card.className = "review-card";
@@ -179,12 +194,40 @@
           <div class="review-stars">${"★".repeat(rating)}${"☆".repeat(5-rating)}</div>
           <p>${safe(review)}</p>
           <strong>${safe(name)}</strong>
-          <small>Verified demo review · VASTRAÉ</small>
+          <small>Verified Client Review · VASTRAÉ Atelier</small>
         `;
-        document.getElementById("reviewGrid").prepend(card);
+        const grid = document.getElementById("reviewGrid");
+        if (grid) grid.prepend(card);
         event.target.reset();
-        showToast("Thank you — your review has been added.");
+        showToast("Thank you — your review has been published.");
+        if (window.RCSound && RCSound.login) RCSound.login();
       }
+
+      function loadSavedReviews() {
+        try {
+          const grid = document.getElementById("reviewGrid");
+          if (!grid) return;
+          const list = JSON.parse(localStorage.getItem("vastraeReviews") || "[]");
+          const safe = (value) => String(value).replace(/[&<>"']/g, char => ({
+            "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+          }[char]));
+
+          [...list].reverse().forEach(item => {
+            const card = document.createElement("article");
+            card.className = "review-card";
+            card.innerHTML = `
+              <div class="review-stars">${"★".repeat(item.rating || 5)}${"☆".repeat(5 - (item.rating || 5))}</div>
+              <p>${safe(item.review)}</p>
+              <strong>${safe(item.name)}</strong>
+              <small>Verified Client Review · ${item.date || 'VASTRAÉ'}</small>
+            `;
+            grid.prepend(card);
+          });
+        } catch (e) {
+          console.warn("Could not load saved reviews", e);
+        }
+      }
+      window.loadSavedReviews = loadSavedReviews;
 
       function subscribeFooter(event) {
         event.preventDefault();
@@ -214,10 +257,94 @@
       }
 
       function bookDesignerConsultation(){
-        const status=document.getElementById('consultStatus');
-        if(status) status.textContent='Booking request created · '+selectedDesigner.fee+' separate fee';
-        addDesignerMessage('client','I would like to book a paid design consultation with '+selectedDesigner.name+'.');
-        showToast('Consultation request created. Designer fee: '+selectedDesigner.fee+' (separate from shopping/tailoring).');
+        const aptId = "#APT-" + Math.floor(1000 + Math.random() * 9000);
+        const nextDate = new Date();
+        nextDate.setDate(nextDate.getDate() + 2);
+        const dateStr = nextDate.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+        const timeSlot = "3:30 PM – 4:15 PM IST";
+
+        const apt = {
+          id: aptId,
+          designer: selectedDesigner.name,
+          fee: selectedDesigner.fee,
+          date: dateStr,
+          time: timeSlot,
+          status: "Confirmed & Scheduled",
+          client: localStorage.getItem("customerName") || "Ananya Sharma"
+        };
+
+        try {
+          const list = JSON.parse(localStorage.getItem("rcConsultations") || "[]");
+          list.unshift(apt);
+          localStorage.setItem("rcConsultations", JSON.stringify(list));
+        } catch (e) {}
+
+        const status = document.getElementById('consultStatus');
+        if (status) status.innerHTML = `<b>Confirmed:</b> Ticket <span style="color:var(--gold);font-weight:700;">${aptId}</span> with ${selectedDesigner.name} · ${selectedDesigner.fee}`;
+        
+        addDesignerMessage('client', `I have reserved consultation ticket ${aptId} with ${selectedDesigner.name}.`);
+        setTimeout(() => {
+          addDesignerMessage('designer', `✦ Salutations! Appointment ${aptId} is logged for ${dateStr} at ${timeSlot}. I will prepare bespoke fabric swatches and silhouette sketches matching your ${selectedSkinTone} skin-tone profile.`);
+        }, 500);
+
+        if (window.RCSound && RCSound.login) RCSound.login();
+        showToast(`Consultation Ticket ${aptId} Booked!`);
+
+        if (typeof openModal === "function") {
+          openModal();
+          const modalContent = document.getElementById("modalContent");
+          if (modalContent) {
+            modalContent.innerHTML = `
+              <div style="text-align:center; padding:12px 6px;">
+                <div style="font-size:46px; color:var(--gold); line-height:1; margin-bottom:8px;">✦</div>
+                <small style="letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); font-size:11px;">VASTRAÉ COUTURE ATELIER</small>
+                <h2 style="font-family:'Playfair Display',serif; font-size:26px; margin:6px 0 16px;">Private Consultation Pass</h2>
+                
+                <div style="background:#faf8f3; border:1px dashed var(--line); border-radius:10px; padding:18px; margin-bottom:20px; text-align:left;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:10px; margin-bottom:12px;">
+                    <div>
+                      <small style="color:var(--muted); text-transform:uppercase; font-size:10px;">Booking Code</small>
+                      <h3 style="font-size:20px; color:var(--ink); margin:2px 0;">${aptId}</h3>
+                    </div>
+                    <span style="background:var(--gold); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600;">CONFIRMED</span>
+                  </div>
+                  
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+                    <div>
+                      <span style="color:var(--muted); display:block; font-size:11px;">Lead Designer</span>
+                      <b>${selectedDesigner.name}</b>
+                    </div>
+                    <div>
+                      <span style="color:var(--muted); display:block; font-size:11px;">Consultation Fee</span>
+                      <b style="color:var(--gold);">${selectedDesigner.fee}</b>
+                    </div>
+                    <div>
+                      <span style="color:var(--muted); display:block; font-size:11px;">Session Date</span>
+                      <b>${dateStr}</b>
+                    </div>
+                    <div>
+                      <span style="color:var(--muted); display:block; font-size:11px;">Time Window</span>
+                      <b>${timeSlot}</b>
+                    </div>
+                  </div>
+                  
+                  <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(0,0,0,0.06); font-size:12px; color:var(--muted);">
+                    📍 Format: <b>Virtual Mirror Link & In-Atelier Suite</b> · Skin Tone Profile: <b>${selectedSkinTone}</b>
+                  </div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                  <button class="btn btn-dark" onclick="closeModal(); scrollToId('designerConsultation');" style="padding:12px 24px;">
+                    Open Designer Chat
+                  </button>
+                  <button class="btn" style="border:1px solid var(--line); background:white; padding:12px 20px;" onclick="closeModal()">
+                    Close Pass
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+        }
       }
 
       function addDesignerMessage(type,text){
@@ -605,6 +732,7 @@ document.addEventListener("keydown",function(e){
 
 // Initialize on page readiness & setup scroll observation
 function initTraditionalPavilion() {
+  if (typeof loadSavedReviews === 'function') loadSavedReviews();
   renderCatalogueOutfits('all');
   renderTraditionalOutfits();
   const tradSec = document.getElementById("traditionalSection");

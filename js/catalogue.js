@@ -653,7 +653,8 @@
       }
 
       function applyCatalogue() {
-        document.getElementById("styleFilter").value = selectedCatalogue;
+        const styleFilterEl = document.getElementById("styleFilter");
+        if (styleFilterEl) styleFilterEl.value = selectedCatalogue;
 
         scrollToId("shop");
 
@@ -665,13 +666,18 @@
 ===================================================== */
 
       function renderProducts() {
-        let search = document.getElementById("search").value.toLowerCase();
+        const grid = document.getElementById("productGrid");
+        if (!grid) return;
 
-        let gender = document.getElementById("gender").value;
+        const searchInput = document.getElementById("search");
+        const genderInput = document.getElementById("gender");
+        const styleInput = document.getElementById("styleFilter");
+        const sortInput = document.getElementById("sort");
 
-        let style = document.getElementById("styleFilter").value;
-
-        let sort = document.getElementById("sort").value;
+        let search = searchInput ? searchInput.value.toLowerCase() : "";
+        let gender = genderInput ? genderInput.value : "all";
+        let style = styleInput ? styleInput.value : "all";
+        let sort = sortInput ? sortInput.value : "all";
 
         let list = products.filter((p) => {
           return (
@@ -969,6 +975,170 @@ ${p.rating}
         }
       }
 
+      /* =====================================================
+         MODULE 2: DEDICATED PRODUCT DETAILS & SELECTION CONTROLLER
+      ===================================================== */
+
+      let currentProductState = {
+        product: null,
+        fabric: "Pure Mulberry Silk",
+        color: "Royal Noir",
+        colorHex: "#1a1715",
+        size: "M",
+        fitType: "Standard Fit",
+        qty: 1
+      };
+
+      const boutiqueFabrics = [
+        { name: "Pure Mulberry Silk", desc: "100% Grade 6A natural silk with lustrous sheen & fluid drape" },
+        { name: "Banarasi Brocade", desc: "Hand-loomed zari weave with artisanal heritage motifs" },
+        { name: "Italian Merino Wool", desc: "Super 150s Australian wool tailored for structured elegance" },
+        { name: "Chiffon Silk Crepe", desc: "Airy, semi-sheer drape with graceful movement & texture" },
+        { name: "Organic Raw Linen", desc: "Breathable hand-spun weave with natural earthy feel" }
+      ];
+
+      const boutiqueColors = [
+        { name: "Royal Noir", hex: "#1a1715", border: "#4a3d31" },
+        { name: "Imperial Gold", hex: "#b89558", border: "#8c6e3b" },
+        { name: "Midnight Navy", hex: "#16253b", border: "#284166" },
+        { name: "Crimson Maroon", hex: "#5c1421", border: "#801d30" },
+        { name: "Emerald Jade", hex: "#1b4d3e", border: "#28755e" },
+        { name: "Ivory Pearl", hex: "#f4ede2", border: "#d4c8b6" }
+      ];
+
+      function selectProductFabric(name) {
+        currentProductState.fabric = name;
+        document.querySelectorAll(".fabric-chip").forEach(chip => {
+          chip.classList.toggle("active", chip.dataset.fabric === name);
+        });
+        const descEl = document.getElementById("fabricDescText");
+        const found = boutiqueFabrics.find(f => f.name === name);
+        if (descEl && found) {
+          descEl.textContent = found.desc;
+        }
+      }
+      window.selectProductFabric = selectProductFabric;
+
+      function selectProductColor(name, hex) {
+        currentProductState.color = name;
+        currentProductState.colorHex = hex;
+        document.querySelectorAll(".pdetail-color-swatch").forEach(swatch => {
+          swatch.classList.toggle("active", swatch.dataset.color === name);
+        });
+        const label = document.getElementById("pdetailSelectedColorLabel");
+        if (label) label.textContent = name;
+      }
+      window.selectProductColor = selectProductColor;
+
+      function selectProductSize(size) {
+        currentProductState.size = size;
+        document.querySelectorAll(".pdetail-size-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.size === size);
+        });
+      }
+      window.selectProductSize = selectProductSize;
+
+      function selectProductFitType(type) {
+        currentProductState.fitType = type;
+        const note = document.getElementById("bespokeFitNote");
+        if (note) {
+          note.style.display = type.includes("Bespoke") ? "block" : "none";
+        }
+      }
+      window.selectProductFitType = selectProductFitType;
+
+      function changeProductQty(delta) {
+        let newQty = (currentProductState.qty || 1) + delta;
+        if (newQty < 1) newQty = 1;
+        if (newQty > 10) newQty = 10;
+        currentProductState.qty = newQty;
+
+        const qtyEl = document.getElementById("pdetailQtyDisplay");
+        if (qtyEl) qtyEl.textContent = newQty;
+
+        if (currentProductState.product) {
+          const totalVal = currentProductState.product.price * newQty;
+          const btnPriceEl = document.getElementById("pdetailAddBagPrice");
+          if (btnPriceEl) btnPriceEl.textContent = `₹${totalVal.toLocaleString()}`;
+        }
+      }
+      window.changeProductQty = changeProductQty;
+
+      function checkDeliveryPincode() {
+        const input = document.getElementById("pdetailPincodeInput");
+        const resBox = document.getElementById("pdetailDeliveryResult");
+        if (!input || !resBox) return;
+
+        const pin = input.value.trim();
+        if (!/^\d{6}$/.test(pin)) {
+          resBox.innerHTML = `<span style="color:#d32f2f;">⚠ Please enter a valid 6-digit Indian PIN code.</span>`;
+          return;
+        }
+
+        // Calculate arrival date (today + 4 to 6 business days)
+        const d1 = new Date();
+        d1.setDate(d1.getDate() + 4);
+        const d2 = new Date();
+        d2.setDate(d2.getDate() + 6);
+
+        const d1Str = d1.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+        const d2Str = d2.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+        const isBlr = pin.startsWith("560");
+        const zoneText = isBlr ? "Bengaluru Atelier Express Delivery" : "Insured Pan-India White-Glove Dispatch";
+
+        resBox.innerHTML = `
+          <div style="background:#f4fbf5; border:1px solid #c8e6c9; border-radius:6px; padding:10px 12px; margin-top:8px;">
+            <div style="display:flex; align-items:center; gap:8px; color:#2e7d32; font-weight:600; font-size:12px;">
+              <span>✓ Estimated Delivery to <b>${pin}</b> by <b>${d1Str} – ${d2Str}</b></span>
+            </div>
+            <div style="font-size:11px; color:#556b2f; margin-top:4px;">
+              ${zoneText} · <b>FREE White-Glove Shipping</b> &amp; Doorstep Fitting Guarantee.
+            </div>
+          </div>
+        `;
+      }
+      window.checkDeliveryPincode = checkDeliveryPincode;
+
+      function addCurrentProductToBag() {
+        if (!currentProductState.product) return;
+        const p = currentProductState.product;
+
+        if (typeof addCart === "function") {
+          addCart(p.id, {
+            size: currentProductState.size,
+            color: currentProductState.color,
+            colorHex: currentProductState.colorHex,
+            fabric: currentProductState.fabric,
+            fitType: currentProductState.fitType,
+            qty: currentProductState.qty
+          });
+        }
+        closeModal();
+      }
+      window.addCurrentProductToBag = addCurrentProductToBag;
+
+      function toggleProductWishlist(id) {
+        if (typeof toggleWishlist === "function") {
+          toggleWishlist(id);
+        }
+        const btn = document.getElementById("pdetailWishlistBtn");
+        if (btn) {
+          const isWished = wishlist.includes(id);
+          btn.classList.toggle("active", isWished);
+          btn.innerHTML = isWished ? `♥ Saved in Wishlist` : `♡ Add to Wishlist`;
+        }
+      }
+      window.toggleProductWishlist = toggleProductWishlist;
+
+      function showSizeGuide() {
+        const area = document.getElementById("sizeGuideModalContent");
+        if (area) {
+          area.style.display = area.style.display === "none" ? "block" : "none";
+        }
+      }
+      window.showSizeGuide = showSizeGuide;
+
       function viewProduct(id) {
         const p = products.find((x) => x.id === id);
         if (!p) return;
@@ -978,145 +1148,376 @@ ${p.rating}
         activeGalleryImages = productGallery(p);
         activeGalleryIndex = 0;
 
+        // Reset current selection state
+        currentProductState = {
+          product: p,
+          fabric: "Pure Mulberry Silk",
+          color: "Royal Noir",
+          colorHex: "#1a1715",
+          size: "M",
+          fitType: "Standard Fit",
+          qty: 1
+        };
+
+        const cust = typeof getActiveCustomer === "function" ? getActiveCustomer() : null;
+        const defaultPin = cust && cust.addresses && cust.addresses[0] ? cust.addresses[0].pincode : "560001";
+        const isWished = wishlist.includes(p.id);
+
+        // Find 3 complementary pieces for the related section
+        const related = products.filter(x => x.id !== p.id && (x.gender === p.gender || x.style === p.style)).slice(0, 3);
+        const relatedList = related.length >= 3 ? related : products.filter(x => x.id !== p.id).slice(0, 3);
+
+        // Stock count derived deterministically from ID
+        const remainingStock = ((p.id * 3) % 4) + 2;
+
         document.getElementById("modalContent").innerHTML = `
-<div class="modal-product">
+<div class="product-detail-modal-wrap">
 
-  <div class="product-gallery">
+  <!-- Breadcrumbs -->
+  <div class="pdetail-breadcrumbs">
+    <span onclick="closeModal(); scrollToId('shop');">Storefront</span>
+    <span class="sep">/</span>
+    <span onclick="closeModal(); scrollToId('catalogue');">${p.gender.toUpperCase()}</span>
+    <span class="sep">/</span>
+    <span>${p.style.toUpperCase()}</span>
+    <span class="sep">/</span>
+    <strong style="color:var(--ink);">${p.name}</strong>
+  </div>
 
-    <div class="gallery-thumbs">
-      ${activeGalleryImages.map((item, index) => `
-        <button
-          class="gallery-thumb ${index === 0 ? "active" : ""}"
-          onclick="setGalleryImage(${index})"
-          aria-label="View ${item.label}">
-          <img src="${item.src}" alt="${p.name} ${item.label}" loading="lazy">
-          <span>${item.badge || item.label.replace(" View","")}</span>
-        </button>
-      `).join("")}
+  <div class="modal-product" style="margin-top:14px;">
+
+    <!-- Left Column: Multi-Angle Turntable Gallery -->
+    <div class="product-gallery">
+
+      <div class="gallery-thumbs">
+        ${activeGalleryImages.map((item, index) => `
+          <button
+            class="gallery-thumb ${index === 0 ? "active" : ""}"
+            onclick="setGalleryImage(${index})"
+            aria-label="View ${item.label}">
+            <img src="${item.src}" alt="${p.name} ${item.label}" loading="lazy">
+            <span>${item.badge || item.label.replace(" View","")}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <div>
+        <div class="gallery-main turntable-mode" id="galleryMainWrap">
+          <div class="turntable-platform" id="turntableRing"></div>
+          <div class="turntable-live-badge">
+            <span class="live-dot"></span>
+            <span>360° ATELIER STUDIO</span>
+          </div>
+
+          <img
+            id="galleryMainImage"
+            class="angle-spin-anim"
+            src="${activeGalleryImages[0].src}"
+            alt="${p.name} — ${activeGalleryImages[0].label}"
+          >
+
+          <div class="gallery-count" id="galleryCount">
+            1 / ${activeGalleryImages.length}
+          </div>
+
+          <div class="gallery-view-label" id="galleryViewLabel">
+            ${activeGalleryImages[0].label}
+          </div>
+
+          <div class="gallery-nav">
+            <button
+              class="gallery-arrow"
+              onclick="changeGallery(-1)"
+              aria-label="Previous product view">‹</button>
+
+            <button
+              class="gallery-arrow"
+              onclick="changeGallery(1)"
+              aria-label="Next product view">›</button>
+          </div>
+
+          <!-- Turntable HUD: Auto-Spin & Scrub Slider -->
+          <div class="turntable-hud" id="turntableHud">
+            <button class="turntable-spin-btn" id="turntableSpinBtn" onclick="toggleAutoSpin360(${p.id})">
+              <span class="spin-icon">🔄</span> <span id="spinBtnLabel">Auto-Spin 360°</span>
+            </button>
+            <div class="scrub-slider-box">
+              <span>Orbit:</span>
+              <input type="range" id="orbitSlider" min="0" max="360" step="1" value="0" oninput="scrubOrbitAngle(this.value, ${p.id})">
+              <span class="angle-val" id="angleDegVal">0° (Front)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-hint" style="margin-top:8px;">
+          ✦ Multi-Angle 360° Studio: Scrub the orbit slider or click Auto-Spin to inspect 5 angles with turntable animation.
+        </div>
+      </div>
+
     </div>
 
-    <div>
-      <div class="gallery-main turntable-mode" id="galleryMainWrap">
-        <!-- 3D Turntable Platform & Status HUD -->
-        <div class="turntable-platform" id="turntableRing"></div>
-        <div class="turntable-live-badge">
-          <span class="live-dot"></span>
-          <span>360° ATELIER STUDIO</span>
+    <!-- Right Column: Product Details & Purchase Workflow -->
+    <div class="modal-info">
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="pdetail-tag">
+          ${p.gender.toUpperCase()} · ${p.style.toUpperCase()} · ${p.type.toUpperCase()}
+        </span>
+        <span class="pdetail-stock-badge">
+          <span class="stock-dot"></span> Only ${remainingStock} pieces left in Atelier
+        </span>
+      </div>
+
+      <h2 style="font-family:'Playfair Display',serif; margin:8px 0 6px; font-size:26px; color:var(--ink);">${p.name}</h2>
+
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="rating" style="color:var(--gold); font-size:15px;">${p.rating || "★★★★★"}</span>
+        <span style="font-size:12px; color:var(--muted);">(4.9 · 118 Bespoke Reviews)</span>
+        <span style="font-size:11px; padding:2px 8px; border-radius:10px; background:#f4ede2; color:var(--brown); font-weight:600;">VASTRAÉ SIGNATURE</span>
+      </div>
+
+      <div class="modal-price" style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px;">
+        <span style="font-size:26px; font-weight:700; color:var(--ink);" id="pdetailUnitPrice">₹${p.price.toLocaleString()}</span>
+        <span style="font-size:15px; color:#aaa; text-decoration:line-through;">
+          ₹${p.old.toLocaleString()}
+        </span>
+        <span style="font-size:12px; color:#2e7d32; font-weight:600; background:#e8f5e9; padding:2px 8px; border-radius:4px;">
+          Save ${Math.round((1 - p.price / p.old) * 100)}% · Taxes &amp; GST Included
+        </span>
+      </div>
+
+      <p style="font-size:13px; color:#665c51; line-height:1.6; margin-bottom:16px;">
+        ${p.desc || 'Masterfully tailored bespoke creation with artisanal finishing, sculpted silhouettes, and premium drape.'}
+      </p>
+
+      <!-- 1. FABRIC SELECTION -->
+      <div class="pdetail-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:13px; color:var(--ink);">Select Fabric Weave</strong>
+          <small style="color:var(--muted); font-size:11px;">Artisanal Loom Tested</small>
+        </div>
+        <div class="fabric-chips-grid">
+          ${boutiqueFabrics.map((f, i) => `
+            <button
+              type="button"
+              class="fabric-chip ${i === 0 ? 'active' : ''}"
+              data-fabric="${f.name}"
+              onclick="selectProductFabric('${f.name}')">
+              ${f.name}
+            </button>
+          `).join('')}
+        </div>
+        <div id="fabricDescText" class="fabric-desc-note">
+          ${boutiqueFabrics[0].desc}
+        </div>
+      </div>
+
+      <!-- 2. COLOUR SWATCHES -->
+      <div class="pdetail-section" style="margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:13px; color:var(--ink);">
+            Colour Shade: <span id="pdetailSelectedColorLabel" style="color:var(--gold); font-weight:600;">Royal Noir</span>
+          </strong>
+          <small style="color:var(--muted); font-size:11px;">6 Hand-Dyed Tones</small>
+        </div>
+        <div class="pdetail-swatches-grid">
+          ${boutiqueColors.map((c, i) => `
+            <button
+              type="button"
+              class="pdetail-color-swatch ${i === 0 ? 'active' : ''}"
+              data-color="${c.name}"
+              title="${c.name}"
+              style="background:${c.hex}; border-color:${c.border};"
+              onclick="selectProductColor('${c.name}', '${c.hex}')">
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- 3. SIZE & FIT TYPE -->
+      <div class="pdetail-section" style="margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:13px; color:var(--ink);">Select Size</strong>
+          <button type="button" class="size-guide-btn" onclick="showSizeGuide()">📏 Size Guide &amp; Chart</button>
+        </div>
+        <div class="pdetail-sizes-grid">
+          ${["XS", "S", "M", "L", "XL", "XXL"].map((s) => `
+            <button
+              type="button"
+              class="pdetail-size-btn ${s === 'M' ? 'active' : ''}"
+              data-size="${s}"
+              onclick="selectProductSize('${s}')">
+              ${s}
+            </button>
+          `).join('')}
         </div>
 
-        <img
-          id="galleryMainImage"
-          class="angle-spin-anim"
-          src="${activeGalleryImages[0].src}"
-          alt="${p.name} — ${activeGalleryImages[0].label}"
-        >
-
-        <div class="gallery-count" id="galleryCount">
-          1 / ${activeGalleryImages.length}
+        <!-- Inline Size Guide Chart (Collapsible) -->
+        <div id="sizeGuideModalContent" style="display:none; background:#faf8f3; border:1px solid var(--line); border-radius:8px; padding:12px; margin-top:10px; font-size:11px;">
+          <div style="font-weight:600; color:var(--ink); margin-bottom:6px;">VASTRAÉ Standard Fit Guide (Inches)</div>
+          <table style="width:100%; border-collapse:collapse; text-align:center;">
+            <tr style="background:#eee5d8; font-weight:600;">
+              <th style="padding:4px;">Size</th>
+              <th style="padding:4px;">Chest/Bust</th>
+              <th style="padding:4px;">Waist</th>
+              <th style="padding:4px;">Hip</th>
+            </tr>
+            <tr><td style="padding:3px;">XS</td><td>32 - 34"</td><td>26 - 28"</td><td>34 - 36"</td></tr>
+            <tr><td style="padding:3px;">S</td><td>34 - 36"</td><td>28 - 30"</td><td>36 - 38"</td></tr>
+            <tr style="background:#fff7e6; font-weight:600;"><td style="padding:3px;">M</td><td>38 - 40"</td><td>32 - 34"</td><td>40 - 42"</td></tr>
+            <tr><td style="padding:3px;">L</td><td>42 - 44"</td><td>36 - 38"</td><td>44 - 46"</td></tr>
+            <tr><td style="padding:3px;">XL</td><td>46 - 48"</td><td>40 - 42"</td><td>48 - 50"</td></tr>
+            <tr><td style="padding:3px;">XXL</td><td>50 - 52"</td><td>44 - 46"</td><td>52 - 54"</td></tr>
+          </table>
         </div>
 
-        <div class="gallery-view-label" id="galleryViewLabel">
-          ${activeGalleryImages[0].label}
-        </div>
-
-        <div class="gallery-nav">
-          <button
-            class="gallery-arrow"
-            onclick="changeGallery(-1)"
-            aria-label="Previous product view">‹</button>
-
-          <button
-            class="gallery-arrow"
-            onclick="changeGallery(1)"
-            aria-label="Next product view">›</button>
-        </div>
-
-        <!-- Turntable HUD: Auto-Spin & Scrub Slider -->
-        <div class="turntable-hud" id="turntableHud">
-          <button class="turntable-spin-btn" id="turntableSpinBtn" onclick="toggleAutoSpin360(${p.id})">
-            <span class="spin-icon">🔄</span> <span id="spinBtnLabel">Auto-Spin 360°</span>
-          </button>
-          <div class="scrub-slider-box">
-            <span>Orbit:</span>
-            <input type="range" id="orbitSlider" min="0" max="360" step="1" value="0" oninput="scrubOrbitAngle(this.value, ${p.id})">
-            <span class="angle-val" id="angleDegVal">0° (Front)</span>
+        <!-- Fit Option Selector -->
+        <div style="margin-top:10px;">
+          <select
+            id="pdetailFitSelect"
+            onchange="selectProductFitType(this.value)"
+            style="width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:6px; background:#fff; font-size:13px; color:var(--ink);">
+            <option value="Standard Fit">Standard Atelier Fit (True to standard measurements)</option>
+            <option value="Bespoke Custom Measurements">Bespoke Fit (Cut exactly to my saved Client Sanctuary measurements)</option>
+          </select>
+          <div id="bespokeFitNote" style="display:none; font-size:11px; color:#856404; background:#fff3cd; padding:8px 10px; border-radius:4px; margin-top:6px;">
+            ✨ Master Artisan Vignesh will hand-draft this garment against your saved family measurement profiles.
           </div>
         </div>
       </div>
 
-      <div class="gallery-hint">
-        ✦ Multi-Angle 360° Studio: Scrub the orbit slider or click Auto-Spin to inspect front, back, side & top views with turntable animation.
+      <!-- 4. QUANTITY SELECTOR & LINE TOTAL -->
+      <div class="pdetail-section" style="margin-top:14px; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:#faf8f5; border-radius:8px; border:1px solid var(--line);">
+        <div>
+          <strong style="font-size:13px; color:var(--ink);">Quantity</strong>
+          <div style="font-size:11px; color:var(--muted);">Adjust for group or bridal ensembles</div>
+        </div>
+        <div class="pdetail-qty-stepper">
+          <button type="button" class="pdetail-qty-btn" onclick="changeProductQty(-1)">−</button>
+          <span class="pdetail-qty-val" id="pdetailQtyDisplay">1</span>
+          <button type="button" class="pdetail-qty-btn" onclick="changeProductQty(1)">+</button>
+        </div>
       </div>
+
+      <!-- 5. DELIVERY ESTIMATE INTERFACE -->
+      <div class="pdetail-section" style="margin-top:14px;">
+        <strong style="font-size:13px; color:var(--ink); display:block; margin-bottom:6px;">
+          Check Atelier Delivery &amp; White-Glove Shipping
+        </strong>
+        <div style="display:flex; gap:8px;">
+          <input
+            type="text"
+            id="pdetailPincodeInput"
+            value="${defaultPin}"
+            maxlength="6"
+            placeholder="Enter 6-digit Pincode"
+            style="flex:1; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:13px;"
+            onkeypress="if(event.key==='Enter') checkDeliveryPincode()">
+          <button
+            type="button"
+            class="btn btn-dark"
+            style="padding:9px 16px; font-size:12px;"
+            onclick="checkDeliveryPincode()">
+            Check
+          </button>
+        </div>
+        <div id="pdetailDeliveryResult">
+          <div style="font-size:11px; color:var(--muted); margin-top:5px;">
+            Enter your 6-digit delivery pincode to see estimated atelier dispatch dates and doorstep fitting availability.
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. ACTION BUTTONS: ADD TO BAG & WISHLIST & MIRROR -->
+      <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; gap:10px;">
+          <button
+            class="btn btn-dark"
+            style="flex:2; padding:14px; font-size:14px; display:flex; justify-content:center; align-items:center; gap:8px;"
+            onclick="addCurrentProductToBag()">
+            <span>Add To Boutique Bag</span>
+            <span>·</span>
+            <span id="pdetailAddBagPrice">₹${p.price.toLocaleString()}</span>
+          </button>
+          <button
+            type="button"
+            id="pdetailWishlistBtn"
+            class="btn btn-wishlist-toggle ${isWished ? 'active' : ''}"
+            style="flex:1; padding:14px; font-size:13px;"
+            onclick="toggleProductWishlist(${p.id})">
+            ${isWished ? '♥ In Wishlist' : '♡ Add to Wishlist'}
+          </button>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button
+            class="btn"
+            style="flex:1; background:rgba(32,27,23,0.06); border:1px solid var(--line); color:var(--ink); font-size:12px; padding:10px;"
+            onclick="openVirtualFittingRoom(${p.id}); closeModal();">
+            🪞 Try in 3D Virtual Mirror
+          </button>
+          <button
+            class="btn"
+            style="flex:1; background:rgba(32,27,23,0.06); border:1px solid var(--line); color:var(--ink); font-size:12px; padding:10px;"
+            onclick="closeModal(); scrollToId('designerConsultation');">
+            ✂ Book Atelier Consultation
+          </button>
+        </div>
+      </div>
+
+      <!-- 7. ATELIER TRUST GUARANTEE -->
+      <div class="pdetail-guarantees">
+        <div class="guarantee-item">
+          <span>✦</span>
+          <span><b>100% Bespoke Fit Guarantee</b> with complimentary 7-day atelier adjustments.</span>
+        </div>
+        <div class="guarantee-item">
+          <span>✦</span>
+          <span><b>White-Glove Temperature-Controlled Courier</b> with presentation gift boxing.</span>
+        </div>
+      </div>
+
     </div>
 
   </div>
 
-  <div class="modal-info">
-
-    <small style="color:#b89558">
-      ${p.gender.toUpperCase()} · ${p.style.toUpperCase()} · ${p.type.toUpperCase()}
-    </small>
-
-    <h2>${p.name}</h2>
-
-    <div class="rating">
-      ${p.rating}
-    </div>
-
-    <div class="modal-price">
-      ₹${p.price.toLocaleString()}
-      <span style="font-size:12px;color:#aaa;text-decoration:line-through;margin-left:6px">
-        ₹${p.old.toLocaleString()}
-      </span>
-    </div>
-
-    <p>
-      ${p.desc || 'Masterfully tailored bespoke creation with artisanal finishing, sculpted silhouettes, and premium drape.'}
-    </p>
-
-    <div class="product-view-note">
-      <strong>✦ Multi-Angle 360° Studio</strong><br>
-      Explore the garment from every perspective: 360° turntable overview, front drape, back silhouette, side profile, and top artisan detail.
-    </div>
-
-    <br>
-
-    <strong>Select Size</strong>
-
-    <div class="size-buttons">
-      <button>S</button>
-      <button>M</button>
-      <button>L</button>
-      <button>XL</button>
-      <button>XXL</button>
-    </div>
-
-    <select
-      style="width:100%;padding:12px;border:1px solid #ddd;margin-bottom:12px;border-radius:8px">
-      <option>Standard Fit</option>
-      <option>Custom Measurements (Bespoke Tailoring)</option>
-    </select>
-
-    <div style="display:flex;gap:10px;">
-      <button
-        class="btn btn-dark"
-        style="flex:1;"
-        onclick="addCart(${p.id});closeModal()">
-        Add To Boutique Bag
-      </button>
-      <button
-        class="btn"
-        style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;"
-        onclick="openVirtualFittingRoom(${p.id});closeModal()">
-        🪞 Virtual Mirror
+  <!-- 8. COMPLEMENTARY ATELIER ENSEMBLES (RELATED PRODUCTS) -->
+  <div class="pdetail-related-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <div>
+        <h3 style="font-family:'Playfair Display',serif; margin:0 0 2px; font-size:18px; color:var(--ink);">
+          Complementary Atelier Creations
+        </h3>
+        <p style="margin:0; font-size:12px; color:var(--muted);">Curated pieces designed to pair seamlessly with the ${p.name}.</p>
+      </div>
+      <button class="btn btn-sm btn-ghost" onclick="closeModal(); scrollToId('catalogue');">
+        Explore All ${p.gender.toUpperCase()} Looks →
       </button>
     </div>
 
+    <div class="pdetail-related-grid">
+      ${relatedList.map(rel => `
+        <div class="pdetail-related-card" onclick="viewProduct(${rel.id})">
+          <div class="rel-img-wrap">
+            <img src="${(rel.views && rel.views.overview) || rel.img}" alt="${rel.name}" loading="lazy">
+            <span class="rel-badge">${rel.style.toUpperCase()}</span>
+          </div>
+          <div class="rel-info">
+            <div class="rel-title">${rel.name}</div>
+            <div class="rel-price">₹${rel.price.toLocaleString()}</div>
+            <button class="btn btn-sm" style="width:100%; margin-top:6px; font-size:11px; padding:5px 8px; border:1px solid var(--line); background:#fff;">
+              🔍 Inspect Piece
+            </button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
   </div>
+
 </div>
 `;
 
-        openModal();
+        openModal("modal-xl");
       }
 
       /* =====================================================

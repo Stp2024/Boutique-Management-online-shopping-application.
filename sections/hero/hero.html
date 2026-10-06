@@ -1,0 +1,267 @@
+<!-- =====================================================
+HERO & HOME FEATURE SECTION
+===================================================== -->
+<section class="hero" id="home">
+ <div class="hero-content">
+  <span class="label">
+   EST. 2026 &middot; BENGALURU
+  </span>
+  <h1>
+   Style is
+   <br/>
+   <em>
+    personal.
+   </em>
+  </h1>
+  <p>
+   Welcome to VASTRAÉ &mdash; a digital couture experience where classic
+         craftsmanship meets modern technology. Discover collections,
+         customize garments, visualize your style and create complete looks
+         for every occasion.
+  </p>
+  <div class="hero-actions">
+   <button class="btn btn-gold" onclick="scrollToId('catalogue')">
+    Explore Catalogue
+   </button>
+   <button class="btn" onclick="scrollToId('experience')" style="
+             border: 1px solid white;
+             background: transparent;
+             color: white;
+           ">
+    Discover Digital Experience
+   </button>
+  </div>
+  <div class="hero-stat">
+   <div class="stat">
+    <strong>
+     14+
+    </strong>
+    <small>
+     Style Catalogues
+    </small>
+   </div>
+   <div class="stat">
+    <strong>
+     50+
+    </strong>
+    <small>
+     Curated Designs
+    </small>
+   </div>
+   <div class="stat">
+    <strong>
+     &infin;
+    </strong>
+    <small>
+     Custom Possibilities
+    </small>
+   </div>
+  </div>
+ </div>
+</section>
+<div class="marquee">
+ <div class="marquee-track">
+  MODERN ✦ TRADITIONAL ✦ FORMAL ✦ SEMI-FORMAL ✦ SEMI-MODERN ✦ ETHNIC ✦
+       FESTIVE ✦ WEDDING ✦ DESIGNER ✦ LUXURY ✦ FAMILY ✦ BESPOKE ✦
+ </div>
+</div>
+
+<!-- =====================================================
+UNIQUE HOME FEATURE — STYLE COMPASS
+===================================================== -->
+<section class="home-feature">
+ <div class="home-feature-wrap">
+   <div class="home-feature-copy">
+     <small>THE VASTRAÉ &amp; CO STYLE COMPASS</small>
+     <h2>Find the mood before you find the dress.</h2>
+     <p>
+       Choose the occasion that feels closest to you. Our digital boutique
+       instantly creates a simple style direction so shopping feels more
+       personal instead of overwhelming.
+     </p>
+     <div class="style-choice">
+       <button onclick="chooseStyle(this,'Wedding')">Wedding</button>
+       <button onclick="chooseStyle(this,'Work')">Work</button>
+       <button onclick="chooseStyle(this,'Weekend')">Weekend</button>
+     </div>
+     <div class="style-result" id="styleResult">
+       Select a mood above to reveal your style direction.
+     </div>
+   </div>
+   <div class="home-feature-photo">
+     <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=1200&q=88" alt="VASTRAÉ and Co fashion editorial">
+     <div class="home-photo-tag">CURATED IN BENGALURU · MADE TO FEEL PERSONAL</div>
+   </div>
+ </div>
+</section>
+
+<!-- =====================================================
+2026 RUNWAY & EDITORIAL DROPS
+===================================================== -->
+<section class="home-runway-section" id="homeRunway">
+  <div class="heading">
+    <small>LIMITED RUNWAY ATELIER · 2026 EDIT</small>
+    <h2>The Runway Edit &amp; Spotlight Drops</h2>
+    <p>Hand-finished garments straight from our Bengaluru atelier floor. Each piece is numbered, bespoke-fitted, and ready for instant 360° atelier exploration or AI mirror draping.</p>
+  </div>
+  <div class="runway-grid">
+    <!-- Drop 1 -->
+    <article class="runway-card">
+      <div class="runway-media">
+        <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=900&q=85" alt="Savile Row Midnight Tuxedo" loading="lazy">
+        <span class="runway-edition-badge">RUNWAY DROP 01 · 20 EDITIONS</span>
+        <div class="runway-overlay-actions">
+          <button class="runway-action-btn" onclick="openRunwayLook(3)"><span>360° Studio</span></button>
+          <button class="runway-action-btn gold" onclick="drapeRunwayLook(3)"><span>🪞 Drape in Mirror</span></button>
+        </div>
+      </div>
+      <div class="runway-body">
+        <div class="runway-meta">
+          <span class="runway-cat">MEN'S BESPOKE SARTORIAL</span>
+          <span class="runway-price">₹8,999</span>
+        </div>
+        <h3>Savile Row Midnight Tuxedo</h3>
+        <p>Hand-stitched wool-mohair blend, pure mulberry silk grosgrain peak lapel &amp; hand-sewn buttonholes.</p>
+        <div class="runway-footer">
+          <button class="btn btn-gold btn-sm" onclick="addCart(3)">+ Add to Bag</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleWishlist(3)">♡ Wishlist</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Drop 2 -->
+    <article class="runway-card featured">
+      <div class="runway-media">
+        <img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=900&q=85" alt="Sculptural Crepe Gala Evening Gown" loading="lazy">
+        <span class="runway-edition-badge highlight">COUTURE ATELIER · DROP 02</span>
+        <div class="runway-overlay-actions">
+          <button class="runway-action-btn" onclick="openRunwayLook(301)"><span>360° Studio</span></button>
+          <button class="runway-action-btn gold" onclick="drapeRunwayLook(301)"><span>🪞 Drape in Mirror</span></button>
+        </div>
+      </div>
+      <div class="runway-body">
+        <div class="runway-meta">
+          <span class="runway-cat">HAUTE EVENING COUTURE</span>
+          <span class="runway-price">₹9,499</span>
+        </div>
+        <h3>Sculptural Crepe Gala Evening Gown</h3>
+        <p>Floor-length heavy Italian silk crepe, architectural asymmetric cowl neckline and structured internal corset.</p>
+        <div class="runway-footer">
+          <button class="btn btn-gold btn-sm" onclick="addCart(301)">+ Add to Bag</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleWishlist(301)">♡ Wishlist</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Drop 3 -->
+    <article class="runway-card">
+      <div class="runway-media">
+        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=85" alt="Molten Champagne Gold Column" loading="lazy">
+        <span class="runway-edition-badge">24K BULLION · DROP 03</span>
+        <div class="runway-overlay-actions">
+          <button class="runway-action-btn" onclick="openRunwayLook(1102)"><span>360° Studio</span></button>
+          <button class="runway-action-btn gold" onclick="drapeRunwayLook(1102)"><span>🪞 Drape in Mirror</span></button>
+        </div>
+      </div>
+      <div class="runway-body">
+        <div class="runway-meta">
+          <span class="runway-cat">GOLD BULLION SALON</span>
+          <span class="runway-price">₹13,999</span>
+        </div>
+        <h3>Molten Champagne Gold Pavé Column Dress</h3>
+        <p>Hand-set Swarovski crystals on molten champagne gold silk mesh with floor-grazing cape sleeves.</p>
+        <div class="runway-footer">
+          <button class="btn btn-gold btn-sm" onclick="addCart(1102)">+ Add to Bag</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleWishlist(1102)">♡ Wishlist</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- =====================================================
+THE BESPOKE ATELIER JOURNEY (HOW IT WORKS TIMELINE)
+===================================================== -->
+<section class="atelier-process-section" id="atelierProcess">
+  <div class="heading">
+    <small>THE CRAFTSMANSHIP TIMELINE</small>
+    <h2>The 4-Stage Atelier Journey</h2>
+    <p>From your first digital silhouette exploration to the opening of your cedarwood garment casket, experience true made-to-measure couture.</p>
+  </div>
+
+  <div class="process-interactive-wrap">
+    <div class="process-nav-steps">
+      <button class="process-nav-btn active" onclick="selectAtelierStep(0, this)">
+        <span class="p-num">01</span>
+        <span class="p-text"><b>Biometrics</b><small>Day 01 Consultation</small></span>
+      </button>
+      <div class="process-connector"></div>
+      <button class="process-nav-btn" onclick="selectAtelierStep(1, this)">
+        <span class="p-num">02</span>
+        <span class="p-text"><b>Calico Toile</b><small>Day 03 Drape</small></span>
+      </button>
+      <div class="process-connector"></div>
+      <button class="process-nav-btn" onclick="selectAtelierStep(2, this)">
+        <span class="p-num">03</span>
+        <span class="p-text"><b>Hand-Stitched</b><small>Day 06-10 Artisans</small></span>
+      </button>
+      <div class="process-connector"></div>
+      <button class="process-nav-btn" onclick="selectAtelierStep(3, this)">
+        <span class="p-num">04</span>
+        <span class="p-text"><b>White-Glove</b><small>Day 12 Casket Box</small></span>
+      </button>
+    </div>
+
+    <div class="process-detail-card" id="processDetailCard">
+      <div class="process-card-header">
+        <div class="process-header-badge">
+          <span class="process-stage-num" id="stepDetailNum">01</span>
+          <span class="process-stage-badge" id="stepDetailBadge">DIGITAL OR IN-SALON</span>
+        </div>
+        <span class="process-stage-timing" id="stepDetailTiming">Day 01 · Initial Atelier Session</span>
+      </div>
+      <h3 class="process-detail-title" id="stepDetailTitle">Biometric &amp; Silhouette Consultation</h3>
+      <p class="process-detail-summary" id="stepDetailSummary">We map 22 precise anatomical reference points using either our AI Digital Twin scanner or in-person tailors tape at the Bengaluru salon.</p>
+      
+      <div class="process-specs-grid" id="stepDetailSpecs">
+        <div class="step-spec-item"><span class="step-spec-icon">✦</span><span>22-Point anatomical laser or tape measurement</span></div>
+        <div class="step-spec-item"><span class="step-spec-icon">✦</span><span>Personal posture, shoulder slope &amp; ease preference capture</span></div>
+        <div class="step-spec-item"><span class="step-spec-icon">✦</span><span>Choice of primary silhouette, lapel geometry &amp; drape style</span></div>
+        <div class="step-spec-item"><span class="step-spec-icon">✦</span><span>Digital client profile synched to your private account</span></div>
+      </div>
+
+      <div class="process-card-footer">
+        <button class="btn btn-gold" onclick="scrollToId('measurements')">Record Measurements Now</button>
+        <button class="btn btn-ghost" onclick="scrollToId('custom')">Create Custom Brief</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+CRAFTSMANSHIP HALLMARKS & MAISON METRICS
+===================================================== -->
+<section class="craftsmanship-hallmarks-section" id="craftsmanshipHallmarks">
+  <div class="hallmarks-container">
+    <div class="hallmark-card">
+      <span class="hallmark-metric">120+</span>
+      <span class="hallmark-unit">HOURS OF HANDWORK</span>
+      <p>Average artisanal needlework invested into every single bespoke bridal and gala ensemble.</p>
+    </div>
+    <div class="hallmark-card">
+      <span class="hallmark-metric">100%</span>
+      <span class="hallmark-unit">MULBERRY &amp; ZARI</span>
+      <p>Authentic certified raw silk from Karnataka loomed with real silver wire electroplated in 24k gold.</p>
+    </div>
+    <div class="hallmark-card">
+      <span class="hallmark-metric">0.5mm</span>
+      <span class="hallmark-unit">PRECISION GRADING</span>
+      <p>Sub-millimeter algorithmic digital twin pattern calibration guaranteeing a flawless drape.</p>
+    </div>
+    <div class="hallmark-card">
+      <span class="hallmark-metric">&infin;</span>
+      <span class="hallmark-unit">LIFETIME FIT CARE</span>
+      <p>Complimentary seasonal alteration privileges and garment care with every bespoke commission.</p>
+    </div>
+  </div>
+</section>

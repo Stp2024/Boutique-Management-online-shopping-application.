@@ -1,0 +1,40 @@
+<!-- =====================================================
+ADMIN PANEL WORKSPACE SECTION
+===================================================== -->
+<div class="admin" id="adminPanel">
+ <div class="admin-head">
+  <h2>
+   VASTRAÉ &middot; Management Studio
+  </h2>
+  <button class="tool" onclick="closeAdmin()">
+   Exit
+  </button>
+ </div>
+ <div class="admin-layout">
+  <aside class="admin-side">
+   <button onclick="adminPage('dashboard')">
+    ▣ Dashboard
+   </button>
+   <button onclick="adminPage('products')">
+    ◇ Products &amp; Catalogue
+   </button>
+   <button onclick="adminPage('orders')">
+    ▤ Orders
+   </button>
+   <button onclick="adminPage('customers')">
+    ♙ Customers
+   </button>
+   <button onclick="adminPage('requests')">
+    ✦ Custom Requests
+   </button>
+   <button onclick="adminPage('inventory')">
+    ▥ Inventory
+   </button>
+   <button onclick="adminPage('events')">
+    ◆ Event Packages
+   </button>
+  </aside>
+  <main class="admin-main" id="adminContent">
+  </main>
+ </div>
+</div>

@@ -1,0 +1,76 @@
+<!-- =====================================================
+OWN FABRIC STUDIO SECTION
+===================================================== -->
+<section class="fabric">
+ <div class="fabric-layout">
+  <div class="fabric-text">
+   <span class="label">
+    OWN FABRIC STUDIO
+   </span>
+   <h2>
+    Bring Your Fabric.
+    <br/>
+    We'll Create The Look.
+   </h2>
+   <p>
+    Have a fabric that is special to you? Upload its photograph,
+           choose your garment, add your measurements and tell us how you
+           want it stitched.
+   </p>
+   <br/>
+   <button class="btn btn-gold" onclick="document.getElementById('fabricInput').click()">
+    Upload Fabric
+   </button>
+  </div>
+  <div class="fabric-form">
+   <h3>
+    Own Fabric Request
+   </h3>
+   <p style="font-size: 12px; color: #887b6c; margin: 8px 0 18px">
+    Submit your fabric and stitching preferences.
+   </p>
+   <div class="upload" id="fabricPreview">
+    ◇
+    <br/>
+    Drag / choose fabric image
+    <input accept="image/*" id="fabricInput" onchange="previewFabric(event)" type="file"/>
+   </div>
+   <select id="fabricGarment" style="
+             width: 100%;
+             padding: 12px;
+             border: 1px solid #ddd;
+             margin-bottom: 12px;
+           ">
+    <option>
+     Blouse
+    </option>
+    <option>
+     Dress
+    </option>
+    <option>
+     Kurta
+    </option>
+    <option>
+     Lehenga
+    </option>
+    <option>
+     Sherwani
+    </option>
+    <option>
+     Suit
+    </option>
+   </select>
+   <textarea id="fabricNote" placeholder="Tell us about the stitching..." style="
+             width: 100%;
+             height: 90px;
+             padding: 12px;
+             border: 1px solid #ddd;
+           "></textarea>
+   <br/>
+   <br/>
+   <button class="btn btn-dark" onclick="submitFabric()">
+    Send Fabric Request
+   </button>
+  </div>
+ </div>
+</section>
