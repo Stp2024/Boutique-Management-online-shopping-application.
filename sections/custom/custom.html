@@ -1,162 +1,372 @@
 <!-- =====================================================
-CUSTOM STUDIO SECTION
+CUSTOM STUDIO — COMPLETE BESPOKE ATELIER
 ===================================================== -->
 <section class="custom" id="custom">
- <div class="heading">
-  <small>
-   BESPOKE STUDIO
-  </small>
-  <h2>
-   Create Your Garment
-  </h2>
-  <p>
-   Your design. Your measurements. Your details.
-  </p>
- </div>
- <div class="custom-layout">
-  <div class="custom-image">
+  <div class="heading">
+    <small id="bespokeKicker">BESPOKE COUTURE ATELIER &middot; EST. 2026</small>
+    <h2>Design Your Custom Creation</h2>
+    <p>Configure your silhouette, choose heirloom fabrics, select biometric measurements, and commission custom master tailoring with real-time price estimation.</p>
+    <div class="bespoke-action-ribbon" style="display:flex; justify-content:center; gap:10px; margin-top:18px; flex-wrap:wrap;">
+      <button type="button" class="btn btn-sm btn-dark" onclick="openCustomerWorkspace('tailoring')" style="padding:7px 16px; font-size:12px; border-radius:20px;">
+        📋 Tailoring Order History
+      </button>
+      <button type="button" class="btn btn-sm" onclick="promptOrderRevision()" style="padding:7px 16px; font-size:12px; border-radius:20px; border:1px solid #ebd39f; background:#fffdf8; color:var(--brown);">
+        📝 Request Order Revision
+      </button>
+      <button type="button" class="btn btn-sm" onclick="promptOrderCancellation()" style="padding:7px 16px; font-size:12px; border-radius:20px; border:1px solid #ffcdd2; background:#fff; color:#c62828;">
+        ❌ Cancellation Request Interface
+      </button>
+      <button type="button" class="btn btn-sm" onclick="scrollToId('tracking')" style="padding:7px 16px; font-size:12px; border-radius:20px; border:1px solid var(--line); background:#fff;">
+        📦 Live Timeline Tracker
+      </button>
+    </div>
   </div>
-  <form class="custom-form" onsubmit="submitCustom(event)">
-   <h3>
-    Design Your Own
-   </h3>
-   <p>
-    Select your garment and tell our boutique team exactly how you
-           want it created.
-   </p>
-   <div class="fields">
-    <div class="field">
-     <label>
-      NAME
-     </label>
-     <input id="customName" placeholder="Your name" required=""/>
-    </div>
-    <div class="field">
-     <label>
-      GARMENT
-     </label>
-     <select>
-      <option>
-       Designer Dress
-      </option>
-      <option>
-       Blouse
-      </option>
-      <option>
-       Saree
-      </option>
-      <option>
-       Kurta
-      </option>
-      <option>
-       Suit
-      </option>
-      <option>
-       Lehenga
-      </option>
-      <option>
-       Sherwani
-      </option>
-     </select>
-    </div>
-    <div class="field">
-     <label>
-      STYLE
-     </label>
-     <select>
-      <option>
-       Modern
-      </option>
-      <option>
-       Traditional
-      </option>
-      <option>
-       Formal
-      </option>
-      <option>
-       Semi-Formal
-      </option>
-      <option>
-       Semi-Modern
-      </option>
-      <option>
-       Designer
-      </option>
-     </select>
-    </div>
-    <div class="field">
-     <label>
-      SIZE
-     </label>
-     <select>
-      <option>
-       S
-      </option>
-      <option>
-       M
-      </option>
-      <option>
-       L
-      </option>
-      <option>
-       XL
-      </option>
-      <option>
-       XXL
-      </option>
-      <option>
-       Custom Measurements
-      </option>
-     </select>
-    </div>
-    <div class="field">
-     <label>
-      COLOUR
-     </label>
-     <input placeholder="Champagne / Navy / Emerald"/>
-    </div>
-    <div class="field">
-     <label>
-      OCCASION
-     </label>
-     <select>
-      <option>
-       Daily Wear
-      </option>
-      <option>
-       Office
-      </option>
-      <option>
-       Party
-      </option>
-      <option>
-       Wedding
-      </option>
-      <option>
-       Festival
-      </option>
-      <option>
-       Event
-      </option>
-     </select>
-    </div>
-    <div class="field full">
-     <label>
-      DESIGN REQUIREMENTS
-     </label>
-     <textarea placeholder="Neckline, sleeves, embroidery, fabric, fit, finishing..."></textarea>
-    </div>
-    <div class="field full">
-     <label>
-      REFERENCE IMAGE
-     </label>
-     <input accept="image/*" type="file"/>
-    </div>
-   </div>
-   <br/>
-   <button class="btn btn-dark">
-    Submit Design Request
-   </button>
-  </form>
- </div>
+
+  <div class="bespoke-studio-layout">
+    <!-- LEFT: Dynamic Live Design Preview & Real-Time Price Card -->
+    <aside class="bespoke-preview-col">
+      <div class="bespoke-live-card">
+        <div class="bespoke-preview-media">
+          <img id="bespokePreviewImg" src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85" alt="Bespoke Design Preview" />
+          <span class="bespoke-preview-badge">✦ ATELIER COMMISSION 2026</span>
+          <div class="bespoke-preview-color-indicator">
+            <span class="bespoke-color-sample-dot" id="bespokePreviewColorDot" style="background: #4a0d17;"></span>
+            <span id="bespokePreviewColorText">Crimson Maroon</span>
+          </div>
+        </div>
+
+        <div class="bespoke-live-body">
+          <h3 id="bespokePreviewGarmentTitle">Royal Silk Lehenga Set</h3>
+          <div class="bespoke-live-style" id="bespokePreviewStyleCut">Royal Heritage Traditional &middot; Flared Kalidaar</div>
+
+          <div class="bespoke-spec-chips">
+            <span class="bespoke-spec-chip" id="bespokePreviewFabricBadge">Varanasi 24K Gold Zari Brocade</span>
+            <span class="bespoke-spec-chip" id="bespokePreviewLiningBadge">Mulberry Silk Satin Lining</span>
+            <span class="bespoke-spec-chip" id="bespokePreviewEmbroideryBadge">Pure Hand Zardozi (Heavy Bridal)</span>
+            <span class="bespoke-spec-chip" id="bespokePreviewProfileBadge">Profile: Ananya Sharma (Self)</span>
+          </div>
+
+          <div class="bespoke-biometrics-chip-bar" id="bespokePreviewBiometrics">
+            <b>Biometrics:</b> Bust: 88cm &middot; Waist: 72cm &middot; Hip: 96cm &middot; Height: 168cm
+          </div>
+
+          <!-- Real-Time Itemized Price Breakdown -->
+          <div class="bespoke-price-summary-box">
+            <small style="color:var(--muted); font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; display:block; margin-bottom:6px;">Estimated Atelier Price Breakdown</small>
+            <table>
+              <tbody>
+                <tr>
+                  <td>Base Silhouette Tailoring</td>
+                  <td id="bespokeBreakdownBase">₹8,500</td>
+                </tr>
+                <tr>
+                  <td>Heirloom Fabric &amp; Yardage</td>
+                  <td id="bespokeBreakdownFabric">+₹5,500</td>
+                </tr>
+                <tr>
+                  <td>Artisanal Handwork &amp; Embroidery</td>
+                  <td id="bespokeBreakdownEmbroidery">+₹7,500</td>
+                </tr>
+                <tr>
+                  <td>Inner Structural Lining &amp; Finish</td>
+                  <td id="bespokeBreakdownLining">+₹900</td>
+                </tr>
+                <tr>
+                  <td>Atelier Casket &amp; Luxury Tax (5% GST)</td>
+                  <td id="bespokeBreakdownTax">+₹1,120</td>
+                </tr>
+                <tr class="total-row">
+                  <td>Estimated Total</td>
+                  <td id="bespokeLiveTotal">₹23,520</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size:11px; color:var(--muted); margin:10px 0 0; text-align:center;">
+              ⏳ Handcrafted Turnaround: <b>10–14 Days</b> &middot; White-Glove Delivery Included
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Interactive Bespoke Studio Builder Form -->
+    <main class="bespoke-builder-col">
+      <form id="bespokeStudioForm" onsubmit="event.preventDefault(); openBespokeReviewModal();">
+        <!-- Step 1: Garment & Silhouette Architecture -->
+        <div class="bespoke-step-card">
+          <div class="bespoke-step-header">
+            <span class="bespoke-step-num">01</span>
+            <h4>Garment &amp; Silhouette Architecture</h4>
+            <small>Select Foundation</small>
+          </div>
+
+          <div class="bespoke-grid-2">
+            <div class="bespoke-form-group">
+              <label for="bespokeClientName">Client / Account Name</label>
+              <input id="bespokeClientName" placeholder="Your name" required value="Ananya Sharma" oninput="updateBespokeLivePricing()" />
+            </div>
+            <div class="bespoke-form-group">
+              <label for="bespokeGarmentSelect">Garment Type</label>
+              <select id="bespokeGarmentSelect" onchange="updateBespokeGarmentChoice(); updateBespokeLivePricing();">
+                <option value="Royal Silk Lehenga Set" data-base="8500" data-img="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85">Royal Silk Lehenga Set (₹8,500 base)</option>
+                <option value="Savile Row Sartorial Tuxedo" data-base="7500" data-img="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85">Savile Row Sartorial Tuxedo (₹7,500 base)</option>
+                <option value="Sculptural Crepe Gala Evening Gown" data-base="7000" data-img="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85">Sculptural Crepe Gala Gown (₹7,000 base)</option>
+                <option value="Handloom Kanchipuram Saree & Blouse" data-base="5500" data-img="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85">Handloom Kanchipuram Saree &amp; Blouse (₹5,500 base)</option>
+                <option value="Regal Zardozi Velvet Sherwani" data-base="8000" data-img="https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=1000&q=85">Regal Zardozi Velvet Sherwani (₹8,000 base)</option>
+                <option value="Classic Bandhgala Jodhpuri Suit" data-base="6500" data-img="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85">Classic Bandhgala Jodhpuri Suit (₹6,500 base)</option>
+                <option value="Pure Chanderi Anarkali Ensemble" data-base="6000" data-img="https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85">Pure Chanderi Anarkali Ensemble (₹6,000 base)</option>
+                <option value="Contemporary Cape Jumpsuit" data-base="5000" data-img="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85">Contemporary Cape Jumpsuit (₹5,000 base)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bespoke-grid-2">
+            <div class="bespoke-form-group">
+              <label for="bespokeStyleSelect">Aesthetic Direction</label>
+              <select id="bespokeStyleSelect" onchange="updateBespokeLivePricing()">
+                <option value="Royal Heritage Traditional">Royal Heritage Traditional</option>
+                <option value="Haute Couture Modern">Haute Couture Modern</option>
+                <option value="Sartorial Black-Tie Formal">Sartorial Black-Tie Formal</option>
+                <option value="Festive Royal Celebration">Festive Royal Celebration</option>
+                <option value="Avant-Garde Architectural Designer">Avant-Garde Architectural Designer</option>
+              </select>
+            </div>
+            <div class="bespoke-form-group">
+              <label for="bespokeFitSelect">Silhouette Drape &amp; Fit</label>
+              <select id="bespokeFitSelect" onchange="updateBespokeLivePricing()">
+                <option value="Flared Royal Kalidaar">Flared Royal Kalidaar</option>
+                <option value="Tailored Slim Bespoke">Tailored Slim Bespoke</option>
+                <option value="Architectural Structured Cut">Architectural Structured Cut</option>
+                <option value="Relaxed Classic Drape">Relaxed Classic Drape</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Fabric & Colorway Specifications -->
+        <div class="bespoke-step-card">
+          <div class="bespoke-step-header">
+            <span class="bespoke-step-num">02</span>
+            <h4>Fabric, Lining &amp; Colorway Specifications</h4>
+            <small>Heirloom Materials</small>
+          </div>
+
+          <div class="bespoke-grid-2">
+            <div class="bespoke-form-group">
+              <label for="bespokeFabricSelect">Fabric Selection</label>
+              <select id="bespokeFabricSelect" onchange="updateBespokeLivePricing()">
+                <option value="Varanasi 24K Gold Zari Brocade" data-price="5500">Varanasi 24K Gold Zari Brocade (+₹5,500)</option>
+                <option value="Pure Karnataka Mulberry Silk" data-price="3800">Pure Karnataka Mulberry Silk (+₹3,800)</option>
+                <option value="Super 150s Australian Merino Wool" data-price="4200">Super 150s Australian Merino Wool (+₹4,200)</option>
+                <option value="Handloom Cotton-Silk Chanderi" data-price="2800">Handloom Cotton-Silk Chanderi (+₹2,800)</option>
+                <option value="Italian Silk Georgette & Crepe" data-price="3500">Italian Silk Georgette &amp; Crepe (+₹3,500)</option>
+                <option value="Royal Plush Cotton Velvet" data-price="3200">Royal Plush Cotton Velvet (+₹3,200)</option>
+                <option value="Double-Faced Mongolian Cashmere" data-price="6800">Double-Faced Mongolian Cashmere (+₹6,800)</option>
+              </select>
+            </div>
+            <div class="bespoke-form-group">
+              <label for="bespokeWeightSelect">Fabric Weight &amp; Drape</label>
+              <select id="bespokeWeightSelect" onchange="updateBespokeLivePricing()">
+                <option value="Heavy Couture (220 GSM)">Heavy Couture (220 GSM · Sculpted)</option>
+                <option value="Fluid Medium Drape (150 GSM)">Fluid Medium Drape (150 GSM · Graceful)</option>
+                <option value="Lightweight Sheer (90 GSM)">Lightweight Sheer (90 GSM · Ethereal)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bespoke-grid-2">
+            <div class="bespoke-form-group">
+              <label for="bespokeLiningSelect">Inner Structural Lining</label>
+              <select id="bespokeLiningSelect" onchange="updateBespokeLivePricing()">
+                <option value="Mulberry Silk Satin" data-price="900">Mulberry Silk Satin (+₹900)</option>
+                <option value="Breathable Cotton Voile" data-price="450">Breathable Cotton Voile (+₹450)</option>
+                <option value="Structured Horsehair Canvas" data-price="1200">Structured Horsehair Canvas (+₹1,200)</option>
+                <option value="Pure Viscose Crepe (Included)" data-price="0">Pure Viscose Crepe (Included · +₹0)</option>
+              </select>
+            </div>
+            <div class="bespoke-form-group">
+              <label>Curated Colorway Palette</label>
+              <div class="bespoke-color-palette-wrap">
+                <button type="button" class="bespoke-color-btn active" style="background:#4a0d17;" title="Crimson Maroon" onclick="selectBespokeColor('#4a0d17', 'Crimson Maroon', this)"></button>
+                <button type="button" class="bespoke-color-btn" style="background:#c5a059;" title="Imperial Gold" onclick="selectBespokeColor('#c5a059', 'Imperial Gold', this)"></button>
+                <button type="button" class="bespoke-color-btn" style="background:#16161a;" title="Midnight Noir" onclick="selectBespokeColor('#16161a', 'Midnight Noir', this)"></button>
+                <button type="button" class="bespoke-color-btn" style="background:#1b3b2b;" title="Emerald Peacock" onclick="selectBespokeColor('#1b3b2b', 'Emerald Peacock', this)"></button>
+                <button type="button" class="bespoke-color-btn" style="background:#d8c29d;" title="Molten Champagne" onclick="selectBespokeColor('#d8c29d', 'Molten Champagne', this)"></button>
+                <button type="button" class="bespoke-color-btn" style="background:#1b2838;" title="Deep Sapphire" onclick="selectBespokeColor('#1b2838', 'Deep Sapphire', this)"></button>
+                <button type="button" class="bespoke-color-btn" style="background:#b56b78;" title="Rose Quartz" onclick="selectBespokeColor('#b56b78', 'Rose Quartz', this)"></button>
+              </div>
+              <input id="bespokeColorInput" type="text" value="Crimson Maroon" placeholder="Or enter bespoke shade" style="margin-top:8px;" oninput="updateBespokeLivePricing()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Biometric Measurement Profile Selection -->
+        <div class="bespoke-step-card">
+          <div class="bespoke-step-header">
+            <span class="bespoke-step-num">03</span>
+            <h4>Biometric Measurement Profile</h4>
+            <small>22-Point Fit</small>
+          </div>
+
+          <div class="bespoke-form-group">
+            <label for="bespokeProfileSelect">Select Measurement Profile</label>
+            <select id="bespokeProfileSelect" onchange="onBespokeProfileChanged()">
+              <option value="self">Ananya Sharma (Self · Privé Master) [Bust: 88, Waist: 72, Hip: 96, Height: 168]</option>
+              <option value="family-devendra">Devendra Sharma (Spouse · Festive Sherwani) [Chest: 102, Waist: 86, Hip: 104, Height: 182]</option>
+              <option value="family-sunita">Sunita Sharma (Mother · Silk Blouse/Lehenga) [Bust: 94, Waist: 82, Hip: 102, Height: 158]</option>
+              <option value="custom">Custom 22-Point Direct Measurement Input</option>
+            </select>
+          </div>
+
+          <!-- Direct input grid -->
+          <div id="bespokeDirectMeasurementsWrap" class="bespoke-grid-3" style="background:#faf8f3; padding:14px; border-radius:8px; border:1px dashed var(--line); margin-top:10px;">
+            <div class="bespoke-form-group" style="margin-bottom:0;">
+              <label for="bespokeMBust">Bust / Chest (cm)</label>
+              <input id="bespokeMBust" type="number" value="88" oninput="updateBespokeLivePricing()" />
+            </div>
+            <div class="bespoke-form-group" style="margin-bottom:0;">
+              <label for="bespokeMWaist">Natural Waist (cm)</label>
+              <input id="bespokeMWaist" type="number" value="72" oninput="updateBespokeLivePricing()" />
+            </div>
+            <div class="bespoke-form-group" style="margin-bottom:0;">
+              <label for="bespokeMHip">Full Hip (cm)</label>
+              <input id="bespokeMHip" type="number" value="96" oninput="updateBespokeLivePricing()" />
+            </div>
+            <div class="bespoke-form-group" style="margin-bottom:0;">
+              <label for="bespokeMShoulder">Across Shoulder (cm)</label>
+              <input id="bespokeMShoulder" type="number" value="39" oninput="updateBespokeLivePricing()" />
+            </div>
+            <div class="bespoke-form-group" style="margin-bottom:0;">
+              <label for="bespokeMLength">Garment Length (cm)</label>
+              <input id="bespokeMLength" type="number" value="112" oninput="updateBespokeLivePricing()" />
+            </div>
+            <div class="bespoke-form-group" style="margin-bottom:0;">
+              <label for="bespokeMHeight">Client Height (cm)</label>
+              <input id="bespokeMHeight" type="number" value="168" oninput="updateBespokeLivePricing()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Artisanal Hand-Embroidery & Embellishments -->
+        <div class="bespoke-step-card">
+          <div class="bespoke-step-header">
+            <span class="bespoke-step-num">04</span>
+            <h4>Artisanal Embroidery &amp; Embellishments</h4>
+            <small>Master Handwork</small>
+          </div>
+
+          <div class="bespoke-grid-2">
+            <div class="bespoke-form-group">
+              <label for="bespokeEmbroiderySelect">Craft Technique</label>
+              <select id="bespokeEmbroiderySelect" onchange="updateBespokeLivePricing()">
+                <option value="Pure Hand Zardozi (Gold Bullion & French Wire)">Pure Hand Zardozi (24K Gold Bullion &amp; French Wire)</option>
+                <option value="Micro-Aari Fine Needlework & Resham Thread">Micro-Aari Needlework &amp; Resham Thread</option>
+                <option value="Imperial Lucknowi Chikankari Hand-Shadow Work">Imperial Lucknowi Chikankari Shadow Work</option>
+                <option value="Swarovski Crystal Pavé & Hand-Set Sequins">Swarovski Crystal Pavé &amp; Sequins</option>
+                <option value="Antique Gota Patti & Gold Foil Appliqué">Antique Gota Patti &amp; Gold Foil Appliqué</option>
+                <option value="Minimalist Clean Sartorial (Zero Embroidery)">Minimalist Clean Sartorial (Zero Embroidery)</option>
+              </select>
+            </div>
+            <div class="bespoke-form-group">
+              <label for="bespokeDensitySelect">Artisanal Density Tier</label>
+              <select id="bespokeDensitySelect" onchange="updateBespokeLivePricing()">
+                <option value="Intricate Heavy Bridal All-Over" data-price="7500">Intricate Heavy Bridal All-Over (+₹7,500)</option>
+                <option value="Ornate Neckline, Yoke & Sleeves" data-price="3500">Ornate Neckline, Yoke &amp; Sleeves (+₹3,500)</option>
+                <option value="Delicate Hand-Edge Accents & Cuffs" data-price="1500">Delicate Hand-Edge Accents &amp; Cuffs (+₹1,500)</option>
+                <option value="Ultra-Haute Museum Grade 24K Bullion" data-price="12000">Ultra-Haute Museum Grade Bullion (+₹12,000)</option>
+                <option value="Clean Edge / Unembellished" data-price="0">Clean Edge / Unembellished (+₹0)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Stitching & Tailoring Precision Instructions -->
+        <div class="bespoke-step-card">
+          <div class="bespoke-step-header">
+            <span class="bespoke-step-num">05</span>
+            <h4>Stitching Instructions &amp; Tailoring Finish</h4>
+            <small>Artisan Cut</small>
+          </div>
+
+          <div class="bespoke-grid-3">
+            <div class="bespoke-form-group">
+              <label for="bespokeNecklineSelect">Neckline Cut</label>
+              <select id="bespokeNecklineSelect" onchange="updateBespokeLivePricing()">
+                <option value="Sweetheart Cut">Sweetheart Cut</option>
+                <option value="Royal Mandarin Collar">Royal Mandarin Collar</option>
+                <option value="Architectural Asymmetric Cowl">Architectural Asymmetric Cowl</option>
+                <option value="Deep V-Plunge">Deep V-Plunge</option>
+                <option value="Queen Anne Neckline">Queen Anne Neckline</option>
+                <option value="Closed Bandhgala">Closed Bandhgala</option>
+                <option value="High Boat Neck">High Boat Neck</option>
+              </select>
+            </div>
+            <div class="bespoke-form-group">
+              <label for="bespokeSleeveSelect">Sleeve Style</label>
+              <select id="bespokeSleeveSelect" onchange="updateBespokeLivePricing()">
+                <option value="Elbow Flute Sleeves">Elbow Flute Sleeves</option>
+                <option value="Full French Cuffs">Full French Cuffs</option>
+                <option value="Floor Cape Sleeves">Floor Cape Sleeves</option>
+                <option value="Sleeveless Sartorial Cut">Sleeveless Sartorial Cut</option>
+                <option value="3/4 Artisanal Sleeves">3/4 Artisanal Sleeves</option>
+              </select>
+            </div>
+            <div class="bespoke-form-group">
+              <label for="bespokeHemlineSelect">Hemline &amp; Drape</label>
+              <select id="bespokeHemlineSelect" onchange="updateBespokeLivePricing()">
+                <option value="Floor-Grazing Trail">Floor-Grazing Trail</option>
+                <option value="Flared Umbrella Kalis">Flared Umbrella Kalis</option>
+                <option value="Asymmetric High-Low">Asymmetric High-Low</option>
+                <option value="Straight Vent">Straight Vent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bespoke-form-group">
+            <label for="bespokeNotesInput">Precision Stitching Instructions &amp; Margin Ease Notes</label>
+            <textarea id="bespokeNotesInput" rows="3" placeholder="e.g. Provide 2-inch let-out seam allowance, internal boned corset, bra strap retainers, and concealed YKK gold zip..."></textarea>
+          </div>
+
+          <div class="bespoke-form-group">
+            <label for="bespokeSketchInput">Reference Sketch / Inspiration Photo (Optional)</label>
+            <input id="bespokeSketchInput" type="file" accept="image/*" onchange="handleBespokeSketchUpload(event)" />
+            <small style="color:var(--muted); font-size:11px; margin-top:4px; display:block;">Upload a photo of your silhouette inspiration or moodboard reference.</small>
+          </div>
+        </div>
+
+        <!-- Step 6: Customer Approval of Final Design & Lock -->
+        <div class="bespoke-step-card" style="background: #fffcf7; border: 1px solid #ebd39f;">
+          <div class="bespoke-step-header">
+            <span class="bespoke-step-num">06</span>
+            <h4>Customer Approval of Final Design &amp; Order Lock</h4>
+            <small>Client Sign-Off</small>
+          </div>
+
+          <div style="background: #faf6ee; border-radius: 8px; padding: 16px; margin-bottom: 14px; border: 1px dashed #d7bd86;">
+            <label style="display:flex; align-items:flex-start; gap:12px; cursor:pointer;">
+              <input type="checkbox" id="bespokeDirectApprovalCheckbox" style="margin-top:3px; accent-color:var(--gold); width:18px; height:18px;" checked />
+              <span style="font-size:13px; color:var(--ink); line-height:1.6;">
+                <b>Customer Approval Declaration:</b> I confirm that I have reviewed the design preview, selected fabric &amp; lining specifications, 22-point biometric measurements, embroidery embellishments, and precision stitching instructions. I authorize VASTRAÉ Atelier to lock this custom order, allocate yardage, and assign a Master Tailor.
+              </span>
+            </label>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--brown);">
+            <div>
+              ✦ Includes <b>Free Design Revision Window</b> prior to fabric cutting &middot; <b>100% Deposit Refund Guarantee</b> in Stages 1–2
+            </div>
+            <div style="font-weight:700; color:var(--ink);">
+              Custom Reference: <span class="cust-badge gold" style="font-size:11px;">#BESPOKE-2026-XXXX (Generated on Lock)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review & Order Approval Trigger -->
+        <button type="submit" class="bespoke-review-btn">
+          <span>✦ Review Custom Design Order Summary &amp; Lock Commission</span>
+          <b>&rarr;</b>
+        </button>
+      </form>
+    </main>
+  </div>
 </section>

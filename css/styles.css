@@ -4578,50 +4578,93 @@ header .nav a.nav-trad-highlight:hover {
 }
 
 /* =====================================================
-   OWN FABRIC
+   OWN FABRIC ATELIER STUDIO & WORKFLOW
 ===================================================== */
 
 .fabric {
   background:
-    linear-gradient(rgba(28, 7, 12, 0.9), rgba(44, 10, 18, 0.85)),
-    url("../royal_maroon_zari.jpg") center/cover;
+    linear-gradient(rgba(24, 8, 12, 0.94), rgba(38, 12, 18, 0.92)),
+    url("https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1600&q=85") center/cover;
   color: white;
+  padding: 80px 20px;
 }
 
-.fabric-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-  align-items: center;
-}
-
-.fabric-text h2 {
-  font-size: 48px;
-  margin: 12px 0;
-}
-
-.fabric-text p {
-  color: #c5bdb5;
-  line-height: 1.8;
-  font-size: 14px;
-}
-
-.fabric-form {
-  background: white;
-  color: var(--ink);
-  padding: 32px;
-}
-
-.upload {
-  border: 2px dashed var(--gold);
-  padding: 30px;
+.fabric-atelier-header {
   text-align: center;
-  margin-bottom: 15px;
-  color: var(--muted);
+  max-width: 900px;
+  margin: 0 auto 50px;
 }
 
-.upload input {
-  margin-top: 15px;
+.fabric-studio-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 36px;
+  max-width: 1240px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.fabric-preview-col {
+  position: sticky;
+  top: 90px;
+}
+
+.fabric-live-card {
+  background: #ffffff;
+  color: var(--ink);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.fabric-preview-media {
+  position: relative;
+  background: #1a1412;
+}
+
+.fabric-preview-overlay-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(26, 20, 18, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  font-weight: 700;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.fabric-live-body {
+  padding: 22px;
+}
+
+.fabric-spec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.fabric-form-col {
+  min-width: 0;
+}
+
+.own-fabric-upload-dropzone:hover {
+  border-color: var(--gold2);
+  background: #fdfaf4;
+}
+
+@media (max-width: 960px) {
+  .fabric-studio-layout {
+    grid-template-columns: 1fr;
+  }
+  .fabric-preview-col {
+    position: static;
+  }
 }
 
 /* =====================================================
@@ -10746,4 +10789,654 @@ header .nav a.nav-current:after {
   .invoice-meta-card {
     width: 100%;
   }
-}
+}
+
+/* =====================================================
+   BESPOKE COUTURE ATELIER & ORDER LIFECYCLE STYLING
+===================================================== */
+
+.bespoke-studio-layout {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 36px;
+  align-items: start;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 10px 24px 60px;
+}
+
+@media (max-width: 1060px) {
+  .bespoke-studio-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+.bespoke-preview-col {
+  position: sticky;
+  top: 90px;
+  z-index: 10;
+}
+
+.bespoke-live-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 16px 45px rgba(32, 27, 23, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.bespoke-preview-media {
+  position: relative;
+  height: 390px;
+  background: #1a1410;
+  overflow: hidden;
+}
+
+.bespoke-preview-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.bespoke-preview-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(18, 14, 11, 0.88);
+  color: var(--gold);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(184, 149, 88, 0.45);
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bespoke-preview-color-indicator {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.bespoke-color-sample-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.25);
+  display: inline-block;
+  box-shadow: 0 0 0 1px #fff;
+}
+
+.bespoke-live-body {
+  padding: 22px;
+}
+
+.bespoke-live-body h3 {
+  font-size: 20px;
+  margin: 0 0 4px;
+  color: var(--ink);
+  font-family: "Playfair Display", serif;
+}
+
+.bespoke-live-style {
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.bespoke-spec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.bespoke-spec-chip {
+  background: #faf8f3;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--brown);
+  font-weight: 500;
+}
+
+.bespoke-biometrics-chip-bar {
+  background: #fdfaf6;
+  border-left: 3px solid var(--gold);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.bespoke-price-summary-box {
+  background: #faf7f2;
+  border: 1px solid #ebd39f;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.bespoke-price-summary-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.bespoke-price-summary-box td {
+  padding: 5px 0;
+  color: var(--brown);
+}
+
+.bespoke-price-summary-box td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+.bespoke-price-summary-box tr.total-row td {
+  padding-top: 10px;
+  border-top: 1px dashed #d7bd86;
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.bespoke-price-summary-box tr.total-row td:last-child {
+  color: var(--gold);
+  font-size: 18px;
+}
+
+.bespoke-step-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(32, 27, 23, 0.04);
+}
+
+.bespoke-step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f3eee5;
+  padding-bottom: 12px;
+}
+
+.bespoke-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bespoke-step-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--ink);
+  font-family: "Playfair Display", serif;
+}
+
+.bespoke-step-header small {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bespoke-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.bespoke-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 650px) {
+  .bespoke-grid-2,
+  .bespoke-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bespoke-form-group {
+  margin-bottom: 14px;
+}
+
+.bespoke-form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brown);
+  margin-bottom: 6px;
+}
+
+.bespoke-form-group select,
+.bespoke-form-group input,
+.bespoke-form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  background: #faf8f3;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.bespoke-form-group select:focus,
+.bespoke-form-group input:focus,
+.bespoke-form-group textarea:focus {
+  border-color: var(--gold);
+  background: #fff;
+}
+
+.bespoke-color-palette-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.bespoke-color-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  outline: none;
+  position: relative;
+}
+
+.bespoke-color-btn:hover {
+  transform: scale(1.15);
+}
+
+.bespoke-color-btn.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184, 149, 88, 0.4);
+  transform: scale(1.15);
+}
+
+.bespoke-review-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #b89558, #d7bd86);
+  color: #1a1410;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(184, 149, 88, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bespoke-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(184, 149, 88, 0.45);
+}
+
+/* Modal and Workspace Additions */
+.cust-badge.amber {
+  background: #fff8e1;
+  color: #b78103;
+  border: 1px solid #ffe082;
+}
+
+.cust-badge.red {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.cust-revision-box {
+  background: #fff9e6;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 12px;
+  color: #8d6e15;
+}
+
+.cust-cancellation-box {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 12px;
+  color: #b71c1c;
+}
+
+.cust-tab-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.cust-tab-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--brown);
+  transition: all 0.2s;
+}
+
+.cust-tab-pill:hover,
+.cust-tab-pill.active {
+  background: var(--ink);
+  color: var(--gold);
+  border-color: var(--ink);
+}
+
+.bespoke-spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+
+.bespoke-spec-table th,
+.bespoke-spec-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ebd39f;
+  text-align: left;
+}
+
+.bespoke-spec-table th {
+  background: #faf7f2;
+  color: var(--brown);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Tracking Cancellation Elements --- */
+.tracking-cancelled-card {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-left: 5px solid #e53e3e;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(229, 62, 62, 0.08);
+}
+
+.timeline.cancelled .timeline-progress {
+  background: #e2e8f0;
+}
+
+.timeline.cancelled .step.active .circle,
+.timeline.cancelled .step.pending .circle {
+  background: #cbd5e0;
+  border-color: #a0aec0;
+  color: #718096;
+}
+
+/* =====================================================
+   OWN-FABRIC ATELIER & FRONTEND SIMULATION SUITE
+===================================================== */
+.fabric-sample-swatches {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 2px 10px;
+  margin-top: 8px;
+}
+
+.fabric-sample-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.fabric-sample-chip:hover,
+.fabric-sample-chip.active {
+  border-color: var(--gold);
+  background: #faf6ee;
+  color: #171008;
+  box-shadow: 0 2px 8px rgba(184, 149, 88, 0.2);
+}
+
+.fabric-sample-chip img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #d4af37;
+}
+
+.fabric-instruction-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.fabric-instruct-chip {
+  background: #faf8f5;
+  border: 1px solid #e0d7cb;
+  color: var(--brown);
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fabric-instruct-chip:hover {
+  background: #181210;
+  color: #fff;
+  border-color: #181210;
+}
+
+/* --- Simulation Console on Tracker --- */
+.fabric-sim-console {
+  background: linear-gradient(135deg, #1f1814 0%, #2e221b 100%);
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  color: #f7f3ec;
+}
+
+.sim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  padding-bottom: 10px;
+}
+
+.sim-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.sim-header-desc {
+  font-size: 11px;
+  color: #c7baa7;
+}
+
+.sim-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sim-step-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #f4ecdf;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sim-step-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.sim-step-btn.current {
+  background: linear-gradient(135deg, #b88628, #e5b85c);
+  color: #171008;
+  font-weight: 700;
+  border-color: #ffd700;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
+.sim-step-btn span {
+  font-size: 10px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sim-step-btn strong {
+  font-size: 12px;
+}
+
+.sim-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.sim-tool-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f4ecdf;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sim-tool-btn:hover {
+  background: #fff;
+  color: #181210;
+}
+
+.sim-tool-btn.gold {
+  background: linear-gradient(135deg, #b88628, #e5b85c);
+  color: #171008;
+  border: none;
+}
+
+.sim-tool-btn.gold:hover {
+  filter: brightness(1.1);
+}
+
+/* --- Fabric Intake QC Box in Tracker --- */
+.fabric-qc-verified-box {
+  background: #edf7ed;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fabric-qc-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.fabric-completed-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid #16a34a;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+

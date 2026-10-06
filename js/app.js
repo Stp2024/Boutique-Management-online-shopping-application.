@@ -49,6 +49,34 @@ function openVirtualFittingRoom(id) {
 
       const defaultBoutiqueOrders = [
         {
+          id: "#FABRIC-2026-3841",
+          pickupRef: "#PICKUP-2026-9214",
+          customer: "Ananya Sharma",
+          city: "Bengaluru",
+          phone: "+91 98765 43210",
+          design: "Royal Saree Blouse (Padded / Boned)",
+          type: "Own-Fabric Commission",
+          isOwnFabric: true,
+          total: 2571,
+          date: "04 Oct 2026",
+          status: "Fabric Received & QC Verified",
+          pickupStatus: "Fabric Received at Atelier (Verified)",
+          stage: 2,
+          fabricReceived: true,
+          tailor: "Master Artisan Vignesh",
+          fabric: "Pure Kanchipuram Brocade (2.5 Meters) · Peacock Blue with Antique Gold Border",
+          fabricPhoto: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
+          lining: "Breathable Cotton Voile (+₹350)",
+          measurements: "Bust: 88cm · Waist: 72cm · Hip: 96cm · Height: 168cm",
+          measurementProfile: "Ananya Sharma (Self · Privé Master)",
+          pickupDate: "05 Oct 2026",
+          pickupTime: "Morning (10:00 AM – 1:00 PM)",
+          address: "Villa 42, Palm Meadows, Whitefield, Bengaluru - 560066, Karnataka",
+          landmark: "Near Club House, Gate 2",
+          estDelivery: "14 Oct 2026",
+          note: "Princess cut with sweetheart front neckline, deep V back with handmade dori and antique bell latkans. 2-inch let-out allowance inside."
+        },
+        {
           id: "#RC1042",
           customer: "Priya Sharma",
           city: "Bengaluru",
@@ -106,7 +134,13 @@ function openVirtualFittingRoom(id) {
           const stored = localStorage.getItem("rcBoutiqueOrders");
           if (stored) {
             const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              if (!parsed.some(o => o.isOwnFabric || (o.id && o.id.startsWith('#FABRIC')))) {
+                parsed.unshift(defaultBoutiqueOrders[0]);
+                localStorage.setItem("rcBoutiqueOrders", JSON.stringify(parsed));
+              }
+              return parsed;
+            }
           }
         } catch (e) {}
         localStorage.setItem("rcBoutiqueOrders", JSON.stringify(defaultBoutiqueOrders));
@@ -158,14 +192,17 @@ function openVirtualFittingRoom(id) {
       function updateOrderPills() {
         const container = document.getElementById("trackingQuickPills");
         if (!container) return;
-        const list = getOrders().slice(0, 5);
+        const list = getOrders().slice(0, 6);
         container.innerHTML = `<span style="align-self:center;color:var(--muted);font-weight:600;margin-right:4px;">Recent Orders:</span>` +
-          list.map(o => `
-            <button type="button" class="tracking-pill ${o.id === currentTrackedOrderId ? 'active' : ''}" onclick="trackOrderById('${o.id}')">
+          list.map(o => {
+            const isCanc = o.cancellation || (o.status && o.status.includes('Cancelled')) || o.stage === 0;
+            return `
+            <button type="button" class="tracking-pill ${o.id === currentTrackedOrderId ? 'active' : ''}" onclick="trackOrderById('${o.id}')" style="${isCanc ? 'border-color:#f5c6cb; background:#fff8f8;' : ''}">
               <span>✦ ${o.id}</span>
-              <small style="opacity:0.8;">(${o.customer.split(' ')[0]})</small>
+              <small style="opacity:0.8;">(${o.customer.split(' ')[0]}${isCanc ? ' · ❌' : ''})</small>
             </button>
-          `).join('');
+          `;
+          }).join('');
       }
 
       function trackOrderById(orderId, smoothScroll = false) {
@@ -173,7 +210,8 @@ function openVirtualFittingRoom(id) {
         const cleanId = (orderId || "").trim();
         const order = list.find(o => 
           o.id.toLowerCase() === cleanId.toLowerCase() || 
-          o.id.replace('#','').toLowerCase() === cleanId.replace('#','').toLowerCase()
+          o.id.replace('#','').toLowerCase() === cleanId.replace('#','').toLowerCase() ||
+          (o.pickupRef && (o.pickupRef.toLowerCase() === cleanId.toLowerCase() || o.pickupRef.replace('#','').toLowerCase() === cleanId.replace('#','').toLowerCase()))
         ) || list[0];
 
         if (!order) return;
@@ -187,73 +225,263 @@ function openVirtualFittingRoom(id) {
         const container = document.getElementById("trackingTimelineContainer");
         if (!container) return;
 
-        const stageIndex = order.stage || 1;
-        const progressPercent = Math.min(100, Math.max(0, ((stageIndex - 1) / 4) * 100));
+        const isCancelled = Boolean(order.cancellation || (order.status && order.status.includes('Cancelled')) || order.stage === 0);
+        const stageIndex = isCancelled ? 0 : (order.stage !== undefined ? order.stage : 1);
+        const progressPercent = isCancelled ? 0 : Math.min(100, Math.max(0, ((stageIndex - 1) / 4) * 100));
+        const isBespoke = Boolean((order.type || '').includes('Bespoke') || (order.id || '').startsWith('#BESPOKE'));
+        const isOwnFabric = Boolean(order.isOwnFabric || (order.id || '').startsWith('#FABRIC') || (order.type || '').includes('Fabric') || (order.type || '').includes('Own-Fabric'));
+
+        const currentStages = isOwnFabric ? [
+          { num: 1, title: "Pickup Scheduled", desc: order.pickupDate ? `Doorstep courier: ${order.pickupDate} (${order.pickupTime || 'Morning'})` : "Doorstep collection booked" },
+          { num: 2, title: "Fabric Received & Verified", desc: "Yardage inspected & registered at atelier" },
+          { num: 3, title: "Pattern Drafting & Cut", desc: "Tailored to client biometric profile" },
+          { num: 4, title: "Stitching & Draping", desc: order.tailor ? `In hand with ${order.tailor}` : "Master artisan hand tailoring" },
+          { num: 5, title: "Completed & Dispatched", desc: "Finished garment & unused yardage returned" }
+        ] : trackingStages;
 
         container.innerHTML = `
-          <div class="timeline">
-            <div class="timeline-progress" style="width: calc(${progressPercent}% * 0.84);"></div>
-            ${trackingStages.map(s => {
-              let statusClass = "pending";
-              let circleContent = s.num;
-              if (s.num < stageIndex) {
-                statusClass = "completed";
-                circleContent = "✓";
-              } else if (s.num === stageIndex) {
-                statusClass = "active";
-                circleContent = "✦";
-              }
-              return `
-                <div class="step ${statusClass}">
-                  <div class="circle">${circleContent}</div>
-                  <h4>${s.title}</h4>
-                  <p>${s.desc}</p>
+          ${isCancelled ? `
+            <div class="tracking-cancelled-card">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px;">
+                <div>
+                  <span class="cust-badge red" style="margin-bottom:8px; font-weight:700;">✦ ATELIER ORDER CANCELLED</span>
+                  <h3 style="font-family:'Playfair Display',serif; margin:4px 0 6px; color:#9b2c2c; font-size:22px;">Commission Cancellation Recorded</h3>
+                  <p style="margin:0 0 6px; font-size:13px; color:#742a2a;">
+                    <b>Order Code:</b> ${order.id} &middot; <b>Garment:</b> ${order.design || order.type} &middot; <b>Cancelled On:</b> ${order.cancellation ? order.cancellation.date : (order.date || 'Recent')}
+                  </p>
+                  <div style="font-size:13px; color:#4a1217; margin:6px 0;">
+                    Cancellation Reason: <b>${order.cancellation ? order.cancellation.reason : 'Client Requested Cancellation'}</b>
+                  </div>
+                  <div style="margin-top:8px; display:inline-flex; align-items:center; gap:6px; background:#edf7ed; border:1px solid #c8e6c9; padding:6px 12px; border-radius:6px; font-size:12px; color:#2e7d32; font-weight:600;">
+                    ✓ ${order.cancellation ? order.cancellation.refundStatus : '100% Atelier Deposit Refund Queued'}
+                  </div>
+                  ${order.cancellation && order.cancellation.notes ? `
+                    <div style="margin-top:10px; font-size:12px; color:#742a2a; font-style:italic;">
+                      Client Notes: "${order.cancellation.notes}"
+                    </div>
+                  ` : ''}
                 </div>
-              `;
-            }).join('')}
-          </div>
-
-          <article class="tracking-order-card">
-            <div class="tracking-card-header">
-              <div>
-                <span style="font-size:11px;letter-spacing:0.1em;color:var(--gold);font-weight:700;">VASTRAÉ ATELIER PRODUCTION</span>
-                <h3 style="font-family:'Playfair Display',serif;margin:4px 0 2px;font-size:20px;">${order.design || "Bespoke Garment"}</h3>
-                <span style="font-size:12px;color:var(--muted);">Order Code: <b style="color:var(--ink);">${order.id}</b> · Placed on ${order.date || "Recent"}</span>
-              </div>
-              <div style="text-align:right;">
-                <span class="tracking-status-badge">
-                  <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b6d36;animation:pulseGold 1.5s infinite;"></span>
-                  ${order.status}
-                </span>
-                <div style="font-size:11px;color:var(--muted);margin-top:6px;">Stage ${stageIndex} of 5 Completed</div>
+                <div style="text-align:right;">
+                  <button class="btn btn-dark" style="padding:10px 18px; font-size:12px;" onclick="scrollToId('shop')">
+                    🛍 Browse Collections
+                  </button>
+                  <div style="margin-top:8px;">
+                    <button class="btn" style="border:1px solid var(--line); background:#fff; padding:6px 14px; font-size:11px;" onclick="openCustomerWorkspace(isBespoke || isOwnFabric ? 'tailoring' : 'orders')">
+                      ✂ View in Workspace
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
+          ` : `
+            ${isOwnFabric ? `
+              <!-- FRONTEND SIMULATION WORKFLOW CONSOLE -->
+              <div class="fabric-sim-console">
+                <div class="sim-header">
+                  <div>
+                    <div class="sim-header-title">🧪 FRONTEND SIMULATION CONSOLE &middot; OWN-FABRIC WORKFLOW</div>
+                    <div class="sim-header-desc">Simulated courier pickup, atelier intake, tailor assignment &amp; stitching lifecycle</div>
+                  </div>
+                  <span class="cust-badge gold" style="font-size:10px;">PROTOTYPE DEMO MODE</span>
+                </div>
+
+                <div class="sim-steps-grid">
+                  <button type="button" class="sim-step-btn ${order.stage === 1 && (!order.pickupStatus || order.pickupStatus === 'Pickup Scheduled') ? 'current' : ''}" onclick="simAdvanceCourier('${order.id}')">
+                    <span>Step 1 &middot; Logistics</span>
+                    <strong>🛵 Courier Dispatched</strong>
+                  </button>
+                  <button type="button" class="sim-step-btn ${order.pickupStatus === 'Fabric Picked Up & In Transit' ? 'current' : ''}" onclick="simFabricInTransit('${order.id}')">
+                    <span>Step 2 &middot; In Transit</span>
+                    <strong>📦 In Transit to Atelier</strong>
+                  </button>
+                  <button type="button" class="sim-step-btn ${order.fabricReceived && order.stage === 2 ? 'current' : ''}" onclick="simFabricReceived('${order.id}')">
+                    <span>Step 3 &middot; Atelier Intake</span>
+                    <strong>📥 Fabric Received &amp; QC</strong>
+                  </button>
+                  <button type="button" class="sim-step-btn ${order.stage === 3 ? 'current' : ''}" onclick="simAssignTailorAndCut('${order.id}')">
+                    <span>Step 4 &middot; Master Tailor</span>
+                    <strong>✂ Assign Tailor &amp; Cut</strong>
+                  </button>
+                  <button type="button" class="sim-step-btn ${order.stage === 4 ? 'current' : ''}" onclick="simProgressStitching('${order.id}')">
+                    <span>Step 5 &middot; Stitching</span>
+                    <strong>🧵 Stitching in Progress</strong>
+                  </button>
+                  <button type="button" class="sim-step-btn ${order.stage >= 5 ? 'current' : ''}" onclick="simCompleteGarment('${order.id}')">
+                    <span>Step 6 &middot; Completion</span>
+                    <strong>🎉 Complete &amp; Dispatched</strong>
+                  </button>
+                </div>
+
+                <div class="sim-toolbar">
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="sim-tool-btn gold" onclick="simAutoPlayWorkflow('${order.id}')">
+                      ▶ Auto-Play Simulation
+                    </button>
+                    <button type="button" class="sim-tool-btn" onclick="simResetWorkflow('${order.id}')">
+                      ↺ Reset to Stage 1
+                    </button>
+                  </div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="sim-tool-btn" onclick="openAdminStudio(); setTimeout(() => adminPage('requests'), 150);">
+                      👑 Admin Studio Review
+                    </button>
+                    <button type="button" class="sim-tool-btn" onclick="openTailorWorkspace();">
+                      ✂ Tailor Craft Workspace
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="timeline">
+              <div class="timeline-progress" style="width: calc(${progressPercent}% * 0.84);"></div>
+              ${currentStages.map(s => {
+                let statusClass = "pending";
+                let circleContent = s.num;
+                if (s.num < stageIndex) {
+                  statusClass = "completed";
+                  circleContent = "✓";
+                } else if (s.num === stageIndex) {
+                  statusClass = "active";
+                  circleContent = "✦";
+                }
+                return `
+                  <div class="step ${statusClass}">
+                    <div class="circle">${circleContent}</div>
+                    <h4>${s.title}</h4>
+                    <p>${s.desc}</p>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+
+          <article class="tracking-order-card" style="${isCancelled ? 'border-top: 3px solid #e53e3e;' : isOwnFabric ? 'border-top: 3px solid var(--gold);' : ''}">
+            <div class="tracking-card-header">
+              <div>
+                <span style="font-size:11px;letter-spacing:0.1em;color:var(--gold);font-weight:700;">
+                  ${isOwnFabric ? 'VASTRAÉ OWN-FABRIC ATELIER SERVICE · DOORSTEP COLLECTION' : 'VASTRAÉ ATELIER PRODUCTION'}
+                </span>
+                <h3 style="font-family:'Playfair Display',serif;margin:4px 0 2px;font-size:20px;">${order.design || "Bespoke Garment"}</h3>
+                <span style="font-size:12px;color:var(--muted);">
+                  Order Code: <b style="color:var(--ink);">${order.id}</b>
+                  ${order.pickupRef ? ` &middot; Pickup Ref: <b style="color:var(--gold);">${order.pickupRef}</b>` : ''}
+                  &middot; Placed on ${order.date || "Recent"}
+                </span>
+              </div>
+              <div style="text-align:right;">
+                ${isCancelled ? `
+                  <span class="cust-badge red" style="font-size:12px; padding:4px 12px;">❌ Cancelled</span>
+                  <div style="font-size:11px;color:#c53030;margin-top:6px; font-weight:600;">Atelier Void</div>
+                ` : `
+                  <span class="tracking-status-badge">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b6d36;animation:pulseGold 1.5s infinite;"></span>
+                    ${order.status}
+                  </span>
+                  <div style="font-size:11px;color:var(--muted);margin-top:6px;">Stage ${stageIndex} of 5 Completed</div>
+                  ${isOwnFabric ? `
+                    <div style="margin-top:4px;">
+                      <span class="cust-badge ${order.fabricReceived ? 'green' : 'gold'}" style="font-size:10px; padding:2px 8px;">
+                        ${order.fabricReceived ? '✓ Fabric Verified at Atelier' : `🛵 ${order.pickupStatus || 'Pickup Scheduled'}`}
+                      </span>
+                    </div>
+                  ` : ''}
+                `}
+              </div>
+            </div>
+
+            <!-- Fabric Received Intake QC Verified Banner -->
+            ${isOwnFabric && order.fabricReceived && !isCancelled ? `
+              <div class="fabric-qc-verified-box">
+                <div class="fabric-qc-icon">📥</div>
+                <div>
+                  <div style="font-weight:700; color:#1b5e20; font-size:13px;">✓ Fabric Intake &amp; Quality Control Verified at Atelier</div>
+                  <div style="font-size:12px; color:#2e7d32; margin-top:2px; line-height:1.5;">
+                    Weave integrity certified. Length measured: <b>${order.fabric ? order.fabric.split('(')[1]?.split(')')[0] || 'Full Length' : 'Verified'}</b>. Assigned to <b>${order.tailor || 'Master Artisan Vignesh'}</b>. All unused leftover yardage will be packaged and returned with the finished garment.
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Completed Garment Delivery Banner -->
+            ${isOwnFabric && stageIndex >= 5 && !isCancelled ? `
+              <div class="fabric-completed-banner">
+                <div style="font-weight:700; color:#15803d; font-size:14px; margin-bottom:4px;">🎉 Garment Handcrafted &amp; Ready for White-Glove Dispatch</div>
+                <div style="font-size:12px; color:#166534; line-height:1.5;">
+                  Master tailoring, inner lining attachment, and final QC inspection successfully passed. Your garment is carefully sealed in our signature cedarwood casket along with your intact leftover fabric yardage. Complimentary 14-day alteration guarantee included.
+                </div>
+              </div>
+            ` : ''}
+
+            ${order.revisions && order.revisions.length ? `
+              <div style="background:#fffcf0; border:1px solid #ebd39f; border-left:4px solid var(--gold); border-radius:6px; padding:10px 14px; margin:10px 0 14px; font-size:12px; color:var(--brown);">
+                <b>⚠️ Active Design Revision:</b> ${order.revisions[order.revisions.length - 1].category} &mdash; <i>"${order.revisions[order.revisions.length - 1].notes}"</i> (${order.revisions[order.revisions.length - 1].status})
+              </div>
+            ` : ''}
 
             <div class="tracking-card-grid">
               <div class="tracking-info-item">
-                <small>Client &amp; City</small>
-                <strong>${order.customer} · ${order.city || "Bengaluru"}</strong>
+                <small>${isOwnFabric ? 'Client & Pickup Address' : 'Client & City'}</small>
+                <strong>${order.customer} &middot; ${order.address || order.city || "Bengaluru"}</strong>
               </div>
               <div class="tracking-info-item">
-                <small>Assigned Master Craftsman</small>
-                <strong>${order.tailor || "Master Artisan Guild"}</strong>
+                <small>${isOwnFabric ? 'Doorstep Pickup Window' : 'Assigned Master Craftsman'}</small>
+                <strong>${isOwnFabric ? `${order.pickupDate || 'Tomorrow'} (${order.pickupTime || 'Morning Slot'})` : (order.tailor || "Master Artisan Guild")}</strong>
               </div>
               <div class="tracking-info-item">
-                <small>Estimated White-Glove Delivery</small>
-                <strong style="color:#526657;">${order.estDelivery || "Within 7-10 Days"}</strong>
+                <small>${isOwnFabric ? 'Assigned Master Tailor' : 'Estimated White-Glove Delivery'}</small>
+                <strong style="color:${isCancelled ? '#a0aec0' : '#526657'}; text-decoration:${isCancelled ? 'line-through' : 'none'};">
+                  ${isOwnFabric ? (order.tailor || 'Pending Assignment') : (order.estDelivery || "Within 7-10 Days")}
+                </strong>
               </div>
               <div class="tracking-info-item">
-                <small>Order Value</small>
-                <strong>₹${(order.total || 0).toLocaleString()}</strong>
+                <small>${isOwnFabric ? 'Estimated Stitching Cost' : 'Order Value'}</small>
+                <strong style="color:var(--gold);">₹${(order.total || 0).toLocaleString()}</strong>
+                ${isOwnFabric ? `<small style="display:block; font-size:10px; color:var(--muted); font-weight:normal;">(Doorstep Pickup &amp; Return Included)</small>` : ''}
               </div>
             </div>
 
-            ${order.fabric ? `
-              <div style="background:#faf8f3;border:1px dashed var(--line);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--brown);line-height:1.6;">
-                <b>Fabric &amp; Artisan Specs:</b> ${order.fabric} ${order.measurements ? `<br><b>Measurements on File:</b> ${order.measurements}` : ''}
-                ${order.note ? `<br><b>Atelier Note:</b> <i>${order.note}</i>` : ''}
+            ${order.fabric || order.fabricPhoto ? `
+              <div style="background:#faf8f3;border:1px dashed var(--line);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--brown);line-height:1.6; margin-top:12px; display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap;">
+                ${order.fabricPhoto ? `
+                  <img src="${order.fabricPhoto}" alt="Fabric Swatch Preview" style="width:72px; height:72px; object-fit:cover; border-radius:6px; border:1px solid #d4af37; flex-shrink:0;" />
+                ` : ''}
+                <div style="flex:1; min-width:240px;">
+                  <b>Fabric &amp; Artisan Specs:</b> ${order.fabric || 'Client supplied fabric'}
+                  ${order.lining ? `<br><b>Structural Lining:</b> ${order.lining}` : ''}
+                  ${order.measurements ? `<br><b>Biometric Profile:</b> ${order.measurementProfile || 'Custom'} (${order.measurements})` : ''}
+                  ${order.note ? `<br><b>Stitching Instructions:</b> <i>"${order.note}"</i>` : ''}
+                  ${order.landmark ? `<br><b>Pickup Landmark:</b> 📍 ${order.landmark}` : ''}
+                </div>
               </div>
             ` : ''}
+
+            <!-- Order Action Controls -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:18px; padding-top:16px; border-top:1px solid #ebd39f;">
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                ${isOwnFabric ? `
+                  <button type="button" class="btn btn-gold" style="padding:8px 14px; font-size:12px; font-weight:600;" onclick="printFabricParcelSlip('${order.id}')">
+                    🖨 Courier Parcel Slip
+                  </button>
+                ` : ''}
+                ${!isCancelled && stageIndex < 5 ? `
+                  <button type="button" class="btn" style="border:1px solid #f5c6cb; background:#fff; color:#c62828; padding:8px 16px; font-size:12px; font-weight:600;" onclick="openOrderCancellationModal('${order.id}')">
+                    ❌ ${isOwnFabric ? 'Cancel Pickup' : 'Cancel Order'}
+                  </button>
+                ` : ''}
+                ${!isCancelled && (isBespoke || isOwnFabric) && stageIndex < 4 ? `
+                  <button type="button" class="btn" style="border:1px solid #ebd39f; background:#fffdf8; color:var(--brown); padding:8px 16px; font-size:12px; font-weight:600;" onclick="openOrderRevisionModal('${order.id}')">
+                    📝 Request Revision
+                  </button>
+                ` : ''}
+                <button type="button" class="btn" style="border:1px solid var(--line); background:#fff; padding:8px 14px; font-size:12px;" onclick="printOrderInvoice('${order.id}')">
+                  🖨 Tax Invoice
+                </button>
+              </div>
+              <button type="button" class="btn btn-dark" style="padding:8px 18px; font-size:12px; font-weight:600;" onclick="openCustomerWorkspace(isBespoke || isOwnFabric ? 'tailoring' : 'orders')">
+                View in Workspace &rarr;
+              </button>
+            </div>
           </article>
         `;
 
@@ -261,6 +489,7 @@ function openVirtualFittingRoom(id) {
           scrollToId("tracking");
         }
       }
+      window.trackOrderById = trackOrderById;
 
       function trackCustomOrderSearch() {
         const input = document.getElementById("trackOrderInput");
@@ -274,6 +503,7 @@ function openVirtualFittingRoom(id) {
         const found = list.find(o => 
           o.id.toLowerCase() === val.toLowerCase() || 
           o.id.replace('#','').toLowerCase() === val.replace('#','').toLowerCase() ||
+          (o.pickupRef && (o.pickupRef.toLowerCase() === val.toLowerCase() || o.pickupRef.replace('#','').toLowerCase() === val.replace('#','').toLowerCase())) ||
           o.customer.toLowerCase().includes(val.toLowerCase())
         );
         if (found) {
@@ -514,10 +744,12 @@ function openVirtualFittingRoom(id) {
 
         if (page === "requests") {
           const list = getOrders();
+          const activeList = list.filter(o => !o.cancellation && (!o.status || !o.status.includes('Cancelled')) && o.stage !== 0);
           const assignedCount = list.length;
-          const stitchingCount = list.filter(o => o.stage === 3).length;
-          const qcCount = list.filter(o => o.stage === 4).length;
-          const readyCount = list.filter(o => o.stage === 5).length;
+          const stitchingCount = activeList.filter(o => o.stage === 3).length;
+          const qcCount = activeList.filter(o => o.stage === 4).length;
+          const readyCount = activeList.filter(o => o.stage === 5).length;
+          const cancelledCount = list.filter(o => o.cancellation || (o.status || '').includes('Cancelled') || o.stage === 0).length;
 
           const stageOptions = [
             { text: "1. Request Received", stage: 1, label: "Request Received" },
@@ -531,25 +763,54 @@ function openVirtualFittingRoom(id) {
             <h2>✂ Tailoring Requests Queue</h2>
             <p class="muted">Review assigned client couture orders, update stitching milestones, and sync live tracking.</p>
             <div class="tailor-stats">
-              <div class="tailor-stat"><b>${assignedCount}</b><span>TOTAL ASSIGNED</span></div>
+              <div class="tailor-stat"><b>${assignedCount}</b><span>TOTAL COMMISSIONS</span></div>
               <div class="tailor-stat"><b>${stitchingCount}</b><span>STITCHING</span></div>
               <div class="tailor-stat"><b>${qcCount}</b><span>QUALITY CHECK</span></div>
               <div class="tailor-stat"><b>${readyCount}</b><span>DISPATCHED</span></div>
+              <div class="tailor-stat" style="border-left:2px solid #ef5350;"><b style="color:#c62828;">${cancelledCount}</b><span>CANCELLED</span></div>
             </div>
             <div style="overflow-x:auto;">
               <table class="tailor-table">
                 <tr><th>Order ID</th><th>Customer</th><th>Garment / Type</th><th>Status &amp; Stage</th><th>Action</th></tr>
-                ${list.map(o => `
-                  <tr>
-                    <td><b>${o.id}</b></td>
-                    <td>${o.customer} <small style="display:block;color:var(--muted);">${o.city || 'Bengaluru'}</small></td>
-                    <td>${o.design} <small style="display:block;color:var(--gold);">${o.type || 'Boutique'}</small></td>
+                ${list.map(o => {
+                  const isCancelled = Boolean(o.cancellation || (o.status || '').includes('Cancelled') || o.stage === 0);
+                  const hasRevision = Boolean(o.revisions && o.revisions.length && o.status === 'Revision Requested');
+                  const isOwnFabric = Boolean(o.isOwnFabric || (o.id && o.id.startsWith('#FABRIC')) || (o.type && o.type.includes('Fabric')));
+                  return `
+                  <tr style="${isCancelled ? 'background:#fff8f8;' : ''}">
                     <td>
-                      <select onchange="updateTailorOrderStatus('${o.id}', this.value)" style="padding:6px 10px; border-radius:6px; border:1px solid var(--line); font-size:12px; font-weight:600;">
-                        ${stageOptions.map(opt => `
-                          <option value="${opt.stage}" ${o.stage === opt.stage || o.status === opt.label ? 'selected' : ''}>${opt.text}</option>
-                        `).join('')}
-                      </select>
+                      <b>${o.id}</b>
+                      ${isOwnFabric && o.pickupRef ? `<br><small style="color:var(--gold); font-weight:700;">📦 ${o.pickupRef}</small>` : ''}
+                    </td>
+                    <td>${o.customer} <small style="display:block;color:var(--muted);">${o.city || 'Bengaluru'}</small></td>
+                    <td>
+                      ${isOwnFabric && o.fabricPhoto ? `<img src="${o.fabricPhoto}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid #ebd39f; float:right; margin-left:6px;">` : ''}
+                      ${o.design} 
+                      <small style="display:block;color:var(--gold); font-weight:600;">${o.type || 'Boutique'}</small>
+                      ${hasRevision ? `
+                        <div style="margin-top:3px; font-size:11px; color:#856404; background:#fff3cd; padding:2px 6px; border-radius:3px; display:inline-block;">
+                          ⚠️ Revision: ${o.revisions[o.revisions.length-1].category}
+                        </div>
+                      ` : ''}
+                    </td>
+                    <td>
+                      ${isCancelled ? `
+                        <span class="cust-badge red" style="font-size:11px; padding:4px 8px; font-weight:700;">❌ Order Cancelled (Atelier Void)</span>
+                        <div style="font-size:11px; color:#c62828; margin-top:2px;">
+                          ${o.cancellation ? o.cancellation.reason : 'Client requested cancellation'} &middot; Do not stitch
+                        </div>
+                      ` : `
+                        <select onchange="updateTailorOrderStatus('${o.id}', this.value)" style="padding:6px 10px; border-radius:6px; border:1px solid var(--line); font-size:12px; font-weight:600; background:#fff;">
+                          ${stageOptions.map(opt => `
+                            <option value="${opt.stage}" ${o.stage === opt.stage || o.status === opt.label ? 'selected' : ''}>${opt.text}</option>
+                          `).join('')}
+                        </select>
+                        ${isOwnFabric ? `
+                          <div style="font-size:10px; color:${o.fabricReceived ? '#2e7d32' : '#856404'}; margin-top:2px; font-weight:600;">
+                            ${o.fabricReceived ? '✓ Fabric Verified' : `🛵 ${o.pickupStatus || 'Pickup Scheduled'}`}
+                          </div>
+                        ` : ''}
+                      `}
                     </td>
                     <td>
                       <button class="btn btn-dark" style="padding:4px 10px; font-size:11px;" onclick="trackOrderById('${o.id}'); tailorLogout(); scrollToId('tracking');">
@@ -557,7 +818,8 @@ function openVirtualFittingRoom(id) {
                       </button>
                     </td>
                   </tr>
-                `).join('')}
+                `;
+                }).join('')}
               </table>
             </div>
           `;
@@ -600,18 +862,26 @@ function openVirtualFittingRoom(id) {
           content.innerHTML = `
             <h2>🧵 Fabric &amp; Design Specifications</h2>
             <p class="muted">Detailed materials, customer reference fabrics, and tailored finishings.</p>
-            ${list.map(o => `
+            ${list.map(o => {
+              const isOwnFabric = Boolean(o.isOwnFabric || (o.id && o.id.startsWith('#FABRIC')) || (o.type && o.type.includes('Fabric')));
+              return `
               <div class="result" style="margin-bottom:12px; background:white; border:1px solid var(--line); padding:16px; border-radius:8px;">
+                ${isOwnFabric && o.fabricPhoto ? `
+                  <img src="${o.fabricPhoto}" style="width:68px; height:68px; object-fit:cover; border-radius:6px; border:1px solid #d4af37; float:right; margin-left:12px;" alt="Fabric Swatch">
+                ` : ''}
                 <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
                   <b>${o.id} · ${o.customer}</b>
                   <span style="color:var(--gold); font-size:12px; font-weight:700;">${o.type}</span>
                 </div>
                 <strong>Garment:</strong> ${o.design}<br>
                 <strong>Fabric Specs:</strong> ${o.fabric || 'Boutique standard'}<br>
+                ${o.lining ? `<strong>Structural Lining:</strong> ${o.lining}<br>` : ''}
                 ${o.measurements ? `<strong>Measurements:</strong> ${o.measurements}<br>` : ''}
-                ${o.note ? `<strong>Artisan Note:</strong> <i>${o.note}</i>` : ''}
+                ${o.note ? `<strong>Artisan Note:</strong> <i>${o.note}</i><br>` : ''}
+                ${isOwnFabric ? `<div style="margin-top:6px; font-size:11px; color:#2e7d32; font-weight:600;">📦 Doorstep Pickup: ${o.pickupStatus || 'Received'} · Ref: ${o.pickupRef || '#PICKUP-2026'}</div>` : ''}
               </div>
-            `).join('')}
+            `;
+            }).join('')}
             <button class="btn btn-dark" onclick="showToast('Fabric logs refreshed')">Sync Atelier Swatches</button>
           `;
           return;
@@ -623,16 +893,24 @@ function openVirtualFittingRoom(id) {
             <h2>📦 Production Pipeline</h2>
             <p class="muted">Request Received → Fabric Sourced → Stitching → Quality Check → White-Glove Dispatch</p>
             ${list.map(o => {
-              const pct = (o.stage || 1) * 20;
+              const isCancelled = Boolean(o.cancellation || (o.status || '').includes('Cancelled') || o.stage === 0);
+              const pct = isCancelled ? 0 : (o.stage || 1) * 20;
               return `
-                <div class="result" style="margin-bottom:14px; background:white; border:1px solid var(--line); padding:16px; border-radius:8px;">
-                  <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div class="result" style="margin-bottom:14px; background:${isCancelled ? '#fff8f8' : 'white'}; border:1px solid ${isCancelled ? '#ffcdd2' : 'var(--line)'}; padding:16px; border-radius:8px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
                     <b>${o.id} · ${o.design} (${o.customer})</b>
-                    <span style="font-weight:700; color:var(--gold);">${o.status} (${pct}%)</span>
+                    <span style="font-weight:700; color:${isCancelled ? '#c62828' : 'var(--gold)'};">
+                      ${isCancelled ? '❌ Cancelled (Atelier Void)' : `${o.status} (${pct}%)`}
+                    </span>
                   </div>
                   <div style="height:8px; background:#e8e3d9; border-radius:4px; overflow:hidden;">
-                    <div style="width:${pct}%; height:100%; background:linear-gradient(90deg, var(--gold), var(--gold2)); transition:width 0.4s ease;"></div>
+                    <div style="width:${pct}%; height:100%; background:${isCancelled ? '#e53935' : 'linear-gradient(90deg, var(--gold), var(--gold2))'}; transition:width 0.4s ease;"></div>
                   </div>
+                  ${isCancelled ? `
+                    <div style="font-size:11px; color:#c62828; margin-top:6px;">
+                      Void Reason: ${o.cancellation ? o.cancellation.reason : 'Customer cancellation'} &middot; Production halted.
+                    </div>
+                  ` : ''}
                 </div>
               `;
             }).join('')}
@@ -640,6 +918,7 @@ function openVirtualFittingRoom(id) {
           return;
         }
       }
+      window.tailorPage = tailorPage;
 
       function updateTailorOrderStatus(orderId, stageValue) {
         const stageNum = parseInt(stageValue, 10);
@@ -1978,147 +2257,1992 @@ Request Consultation
    CUSTOM
 ===================================================== */
 
-      function submitCustom(e) {
-        e.preventDefault();
-        const form = e.target;
-        const name = (document.getElementById("customName") ? document.getElementById("customName").value.trim() : "") || localStorage.getItem("customerName") || "Valued Client";
-        const selects = form.querySelectorAll("select");
-        const inputs = form.querySelectorAll("input");
-        const textarea = form.querySelector("textarea");
+      /* =====================================================
+   BESPOKE COUTURE ATELIER & COMPLETE ORDER LIFECYCLE
+===================================================== */
 
-        const garment = selects[0] ? selects[0].value : "Designer Ensemble";
-        const style = selects[1] ? selects[1].value : "Bespoke";
-        const size = selects[2] ? selects[2].value : "Custom Measurements";
-        const color = inputs[1] ? inputs[1].value.trim() : "Atelier Curated Palette";
-        const occasion = selects[3] ? selects[3].value : "Special Event";
-        const notes = textarea ? textarea.value.trim() : "Custom bespoke tailoring instructions provided.";
+      let bespokeState = {
+        activeColor: { hex: "#4a0d17", name: "Crimson Maroon" },
+        uploadedSketch: null,
+        pendingOrder: null
+      };
 
-        let savedM = null;
-        try { savedM = JSON.parse(localStorage.getItem("measurements") || "null"); } catch(err){}
-        const mStr = savedM ? `Bust: ${savedM.chest || '90'}cm, Waist: ${savedM.waist || '70'}cm, Hip: ${savedM.hip || '96'}cm, Height: ${savedM.height || '168'}cm` : "Size: " + size;
+      function selectBespokeColor(hex, name, buttonEl) {
+        bespokeState.activeColor = { hex, name };
+        document.querySelectorAll(".bespoke-color-btn").forEach(btn => btn.classList.remove("active"));
+        if (buttonEl) buttonEl.classList.add("active");
+        const colorInput = document.getElementById("bespokeColorInput");
+        if (colorInput) colorInput.value = name;
+        updateBespokeLivePricing();
+      }
+      window.selectBespokeColor = selectBespokeColor;
 
-        const orderId = "#RC-B" + Math.floor(1000 + Math.random() * 9000);
-        const bespokeOrder = {
-          id: orderId,
-          customer: name,
-          city: "Bengaluru",
+      function updateBespokeGarmentChoice() {
+        const select = document.getElementById("bespokeGarmentSelect");
+        if (!select) return;
+        const opt = select.selectedOptions[0];
+        if (!opt) return;
+        const imgUrl = opt.getAttribute("data-img");
+        const previewImg = document.getElementById("bespokePreviewImg");
+        if (previewImg && imgUrl) {
+          previewImg.src = imgUrl;
+        }
+      }
+      window.updateBespokeGarmentChoice = updateBespokeGarmentChoice;
+
+      function onBespokeProfileChanged() {
+        const profileSel = document.getElementById("bespokeProfileSelect");
+        if (!profileSel) return;
+        const val = profileSel.value;
+        const cust = typeof getActiveCustomer === "function" ? getActiveCustomer() : null;
+
+        if ((val === "self" || val.includes("self") || val === "fam-0") && cust) {
+          const p = (cust.familyProfiles || []).find(x => x.relation === "Self" || x.name === cust.name) || (cust.familyProfiles && cust.familyProfiles[0]);
+          if (p) {
+            const b = document.getElementById("bespokeMBust") || document.getElementById("mBust");
+            const w = document.getElementById("bespokeMWaist") || document.getElementById("mWaist");
+            const h = document.getElementById("bespokeMHip") || document.getElementById("mHip");
+            const sh = document.getElementById("bespokeMShoulder") || document.getElementById("mShoulder");
+            const l = document.getElementById("bespokeMLength") || document.getElementById("mLength");
+            const ht = document.getElementById("bespokeMHeight") || document.getElementById("mHeight");
+            if (b) b.value = p.chest || 88;
+            if (w) w.value = p.waist || 72;
+            if (h) h.value = p.hip || 96;
+            if (sh) sh.value = p.shoulder || 39;
+            if (l) l.value = 112;
+            if (ht) ht.value = p.height || 168;
+          }
+        } else if ((val === "family-devendra" || val.includes("devendra") || val === "fam-1") && cust) {
+          const p = (cust.familyProfiles || []).find(x => x.relation === "Spouse" || x.name.includes("Devendra")) || (cust.familyProfiles && cust.familyProfiles[1]);
+          if (p) {
+            const b = document.getElementById("bespokeMBust") || document.getElementById("mBust");
+            const w = document.getElementById("bespokeMWaist") || document.getElementById("mWaist");
+            const h = document.getElementById("bespokeMHip") || document.getElementById("mHip");
+            const sh = document.getElementById("bespokeMShoulder") || document.getElementById("mShoulder");
+            const l = document.getElementById("bespokeMLength") || document.getElementById("mLength");
+            const ht = document.getElementById("bespokeMHeight") || document.getElementById("mHeight");
+            if (b) b.value = p.chest || 102;
+            if (w) w.value = p.waist || 86;
+            if (h) h.value = p.hip || 104;
+            if (sh) sh.value = p.shoulder || 46;
+            if (l) l.value = 118;
+            if (ht) ht.value = p.height || 182;
+          }
+        } else if ((val === "family-sunita" || val.includes("sunita") || val === "fam-2") && cust) {
+          const p = (cust.familyProfiles || []).find(x => x.relation === "Mother" || x.name.includes("Sunita")) || (cust.familyProfiles && cust.familyProfiles[2]);
+          if (p) {
+            const b = document.getElementById("bespokeMBust") || document.getElementById("mBust");
+            const w = document.getElementById("bespokeMWaist") || document.getElementById("mWaist");
+            const h = document.getElementById("bespokeMHip") || document.getElementById("mHip");
+            const sh = document.getElementById("bespokeMShoulder") || document.getElementById("mShoulder");
+            const l = document.getElementById("bespokeMLength") || document.getElementById("mLength");
+            const ht = document.getElementById("bespokeMHeight") || document.getElementById("mHeight");
+            if (b) b.value = p.chest || 94;
+            if (w) w.value = p.waist || 82;
+            if (h) h.value = p.hip || 102;
+            if (sh) sh.value = p.shoulder || 38;
+            if (l) l.value = 105;
+            if (ht) ht.value = p.height || 158;
+          }
+        } else if (val.startsWith("fam-") && cust && cust.familyProfiles) {
+          const idx = parseInt(val.replace("fam-", ""), 10);
+          const p = cust.familyProfiles[idx];
+          if (p) {
+            const b = document.getElementById("bespokeMBust") || document.getElementById("mBust");
+            const w = document.getElementById("bespokeMWaist") || document.getElementById("mWaist");
+            const h = document.getElementById("bespokeMHip") || document.getElementById("mHip");
+            const sh = document.getElementById("bespokeMShoulder") || document.getElementById("mShoulder");
+            const l = document.getElementById("bespokeMLength") || document.getElementById("mLength");
+            const ht = document.getElementById("bespokeMHeight") || document.getElementById("mHeight");
+            if (b) b.value = p.chest || 88;
+            if (w) w.value = p.waist || 72;
+            if (h) h.value = p.hip || 96;
+            if (sh) sh.value = p.shoulder || 39;
+            if (l) l.value = p.relation === "Spouse" ? 118 : 108;
+            if (ht) ht.value = p.height || 165;
+          }
+        }
+        updateBespokeLivePricing();
+      }
+      window.onBespokeProfileChanged = onBespokeProfileChanged;
+
+      function handleBespokeSketchUpload(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          bespokeState.uploadedSketch = e.target.result;
+          const previewImg = document.getElementById("bespokePreviewImg");
+          if (previewImg) {
+            previewImg.src = e.target.result;
+          }
+          showToast("✓ Custom sketch reference attached to live preview.");
+        };
+        reader.readAsDataURL(file);
+      }
+      window.handleBespokeSketchUpload = handleBespokeSketchUpload;
+
+      function updateBespokeLivePricing() {
+        const garmentSel = document.getElementById("bespokeGarmentSelect");
+        const styleSel = document.getElementById("bespokeStyleSelect");
+        const fitSel = document.getElementById("bespokeFitSelect");
+        const fabricSel = document.getElementById("bespokeFabricSelect");
+        const weightSel = document.getElementById("bespokeWeightSelect");
+        const liningSel = document.getElementById("bespokeLiningSelect");
+        const embroiderySel = document.getElementById("bespokeEmbroiderySelect");
+        const densitySel = document.getElementById("bespokeDensitySelect");
+        const profileSel = document.getElementById("bespokeProfileSelect");
+        const colorInput = document.getElementById("bespokeColorInput");
+
+        if (!garmentSel) return null;
+
+        const garment = garmentSel.value;
+        const basePrice = Number(garmentSel.selectedOptions[0]?.getAttribute("data-base") || 8500);
+        const style = styleSel ? styleSel.value : "Royal Heritage Traditional";
+        const fit = fitSel ? fitSel.value : "Flared Royal Kalidaar";
+
+        const fabricName = fabricSel ? fabricSel.value : "Varanasi 24K Gold Zari Brocade";
+        const fabricPrice = Number(fabricSel?.selectedOptions[0]?.getAttribute("data-price") || 5500);
+
+        const weight = weightSel ? weightSel.value : "Heavy Couture (220 GSM)";
+
+        const liningName = liningSel ? liningSel.value : "Mulberry Silk Satin";
+        const liningPrice = Number(liningSel?.selectedOptions[0]?.getAttribute("data-price") || 900);
+
+        const embroideryTechnique = embroiderySel ? embroiderySel.value : "Pure Hand Zardozi (Gold Bullion & French Wire)";
+        const densityName = densitySel ? densitySel.value : "Intricate Heavy Bridal All-Over";
+        const embroideryPrice = Number(densitySel?.selectedOptions[0]?.getAttribute("data-price") || 7500);
+
+        const colorName = (colorInput && colorInput.value.trim()) || bespokeState.activeColor.name;
+        const colorHex = bespokeState.activeColor.hex;
+
+        // Measurement values
+        const mBust = (document.getElementById("bespokeMBust") || document.getElementById("mBust")) ? (document.getElementById("bespokeMBust") || document.getElementById("mBust")).value : "88";
+        const mWaist = (document.getElementById("bespokeMWaist") || document.getElementById("mWaist")) ? (document.getElementById("bespokeMWaist") || document.getElementById("mWaist")).value : "72";
+        const mHip = (document.getElementById("bespokeMHip") || document.getElementById("mHip")) ? (document.getElementById("bespokeMHip") || document.getElementById("mHip")).value : "96";
+        const mHeight = (document.getElementById("bespokeMHeight") || document.getElementById("mHeight")) ? (document.getElementById("bespokeMHeight") || document.getElementById("mHeight")).value : "168";
+        const profileName = profileSel ? profileSel.selectedOptions[0]?.text.split('[')[0].trim() : "Ananya Sharma (Self)";
+
+        // Calculations
+        const subtotal = basePrice + fabricPrice + embroideryPrice + liningPrice;
+        const tax = Math.round(subtotal * 0.05);
+        const grandTotal = subtotal + tax;
+
+        // Update Live Preview DOM
+        const prevTitle = document.getElementById("bespokePreviewGarmentTitle");
+        if (prevTitle) prevTitle.textContent = garment;
+
+        const prevStyleCut = document.getElementById("bespokePreviewStyleCut");
+        if (prevStyleCut) prevStyleCut.textContent = `${style} · ${fit}`;
+
+        const prevColorDot = document.getElementById("bespokePreviewColorDot");
+        if (prevColorDot) prevColorDot.style.background = colorHex;
+
+        const prevColorText = document.getElementById("bespokePreviewColorText");
+        if (prevColorText) prevColorText.textContent = colorName;
+
+        const prevFabricBadge = document.getElementById("bespokePreviewFabricBadge");
+        if (prevFabricBadge) prevFabricBadge.textContent = `${fabricName} (${weight.split('(')[0].trim()})`;
+
+        const prevLiningBadge = document.getElementById("bespokePreviewLiningBadge");
+        if (prevLiningBadge) prevLiningBadge.textContent = liningName;
+
+        const prevEmbBadge = document.getElementById("bespokePreviewEmbroideryBadge");
+        if (prevEmbBadge) prevEmbBadge.textContent = `${embroideryTechnique.split('(')[0].trim()} · ${densityName.split('(')[0].trim()}`;
+
+        const prevProfileBadge = document.getElementById("bespokePreviewProfileBadge");
+        if (prevProfileBadge) prevProfileBadge.textContent = `Profile: ${profileName}`;
+
+        const prevBiometrics = document.getElementById("bespokePreviewBiometrics");
+        if (prevBiometrics) prevBiometrics.innerHTML = `<b>Biometrics:</b> Bust: ${mBust}cm · Waist: ${mWaist}cm · Hip: ${mHip}cm · Height: ${mHeight}cm`;
+
+        // Update Breakdown Table
+        const bBase = document.getElementById("bespokeBreakdownBase");
+        if (bBase) bBase.textContent = `₹${basePrice.toLocaleString()}`;
+
+        const bFabric = document.getElementById("bespokeBreakdownFabric");
+        if (bFabric) bFabric.textContent = `+₹${fabricPrice.toLocaleString()}`;
+
+        const bEmb = document.getElementById("bespokeBreakdownEmbroidery");
+        if (bEmb) bEmb.textContent = `+₹${embroideryPrice.toLocaleString()}`;
+
+        const bLining = document.getElementById("bespokeBreakdownLining");
+        if (bLining) bLining.textContent = `+₹${liningPrice.toLocaleString()}`;
+
+        const bTax = document.getElementById("bespokeBreakdownTax");
+        if (bTax) bTax.textContent = `+₹${tax.toLocaleString()}`;
+
+        const bTotal = document.getElementById("bespokeLiveTotal");
+        if (bTotal) bTotal.textContent = `₹${grandTotal.toLocaleString()}`;
+
+        return {
+          garment,
+          style,
+          fit,
+          fabricName,
+          fabricPrice,
+          weight,
+          liningName,
+          liningPrice,
+          embroideryTechnique,
+          densityName,
+          embroideryPrice,
+          colorName,
+          colorHex,
+          profileName,
+          mBust,
+          mWaist,
+          mHip,
+          mHeight,
+          basePrice,
+          subtotal,
+          tax,
+          grandTotal
+        };
+      }
+      window.updateBespokeLivePricing = updateBespokeLivePricing;
+
+      function openBespokeReviewModal() {
+        const directChk = document.getElementById("bespokeDirectApprovalCheckbox");
+        if (directChk && !directChk.checked) {
+          showToast("Please review and tick Customer Approval Declaration in Step 06 to proceed.");
+          return;
+        }
+
+        const p = updateBespokeLivePricing();
+        if (!p) return;
+
+        const clientNameInput = document.getElementById("bespokeClientName");
+        const clientName = (clientNameInput ? clientNameInput.value.trim() : "") || localStorage.getItem("customerName") || "Valued Client";
+        const notes = (document.getElementById("bespokeNotesInput") ? document.getElementById("bespokeNotesInput").value.trim() : "") || "Provide 2-inch let-out allowance, internal boned corset, and concealed gold zip.";
+        const mShoulder = (document.getElementById("bespokeMShoulder") || document.getElementById("mShoulder")) ? (document.getElementById("bespokeMShoulder") || document.getElementById("mShoulder")).value : "39";
+        const mLength = (document.getElementById("bespokeMLength") || document.getElementById("mLength")) ? (document.getElementById("bespokeMLength") || document.getElementById("mLength")).value : "112";
+
+        const neckline = document.getElementById("bespokeNecklineSelect") ? document.getElementById("bespokeNecklineSelect").value : "Sweetheart Cut";
+        const sleeves = document.getElementById("bespokeSleeveSelect") ? document.getElementById("bespokeSleeveSelect").value : "Elbow Flute Sleeves";
+        const hemline = document.getElementById("bespokeHemlineSelect") ? document.getElementById("bespokeHemlineSelect").value : "Floor-Grazing Trail";
+
+        const refCode = "#BESPOKE-2026-" + Math.floor(1000 + Math.random() * 9000);
+        const measurementsStr = `Bust: ${p.mBust}cm · Waist: ${p.mWaist}cm · Hip: ${p.mHip}cm · Shoulder: ${mShoulder}cm · Length: ${mLength}cm · Height: ${p.mHeight}cm`;
+
+        bespokeState.pendingOrder = {
+          id: refCode,
+          customer: clientName,
+          email: localStorage.getItem("customerEmail") || "ananya.sharma@vastrae.com",
           phone: localStorage.getItem("customerPhone") || "+91 98765 43210",
-          design: `${garment} (${style} · ${color || 'Custom'})`,
+          city: localStorage.getItem("customerCity") || "Bengaluru",
+          design: `${p.garment} (${p.style} · ${p.colorName})`,
+          garment: p.garment,
+          style: p.style,
+          fit: p.fit,
+          fabric: `${p.fabricName} (${p.weight})`,
+          lining: p.liningName,
+          color: p.colorName,
+          colorHex: p.colorHex,
+          measurementProfile: p.profileName,
+          measurements: measurementsStr,
+          embroidery: `${p.embroideryTechnique} · ${p.densityName}`,
+          neckline: neckline,
+          sleeves: sleeves,
+          hemline: hemline,
           type: "Bespoke Tailoring",
-          total: 14500,
+          total: p.grandTotal,
+          priceBreakdown: {
+            base: p.basePrice,
+            fabric: p.fabricPrice,
+            embroidery: p.embroideryPrice,
+            lining: p.liningPrice,
+            tax: p.tax,
+            total: p.grandTotal
+          },
           date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-          status: "Request Received",
+          status: "Pending Tailor Assignment",
           stage: 1,
-          tailor: "Master Tailor Atelier",
-          fabric: `Pure silk/brocade chosen for ${occasion}`,
-          measurements: mStr,
+          tailor: "Pending Assignment",
           estDelivery: "Within 10-14 Days",
-          note: notes || "Bespoke made-to-measure design request."
+          note: notes,
+          referenceImage: bespokeState.uploadedSketch || null,
+          revisions: [],
+          cancellation: null
         };
 
-        addBoutiqueOrder(bespokeOrder);
-        form.reset();
+        openModal("modal-lg");
+        const modalArea = document.getElementById("modalContent");
+        if (!modalArea) return;
 
-        if (window.RCSound && RCSound.success) RCSound.success();
-
-        openModal();
-        document.getElementById("modalContent").innerHTML = `
-          <div style="text-align:center; padding:10px 0;">
-            <div style="font-size:52px; color:var(--gold); line-height:1; margin-bottom:12px;">✦</div>
-            <h2 style="font-family:'Playfair Display',serif;">Bespoke Design Queued</h2>
-            <p style="color:var(--muted); margin:8px 0 16px;">
-              Thank you, <b>${name}</b>. Your bespoke request for <b>${garment}</b> has been received and routed to our Master Tailor Workspace.
-            </p>
-            <div style="background:#faf8f3; border:1px dashed var(--line); border-radius:8px; padding:14px; margin-bottom:20px;">
-              <small style="color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">Custom Order Tracking Code</small>
-              <h3 style="color:var(--ink); font-size:24px; margin:4px 0;">${bespokeOrder.id}</h3>
-              <p style="font-size:12px; color:var(--brown); margin-top:4px;">Occasion: <b>${occasion}</b> · Style: <b>${style}</b></p>
+        modalArea.innerHTML = `
+          <div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:18px;">
+              <div>
+                <span style="font-size:11px; letter-spacing:0.1em; color:var(--gold); font-weight:700; text-transform:uppercase;">VASTRAÉ ATELIER · BESPOKE STUDIO</span>
+                <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:4px 0 2px;">Bespoke Design Order Summary</h2>
+                <p style="font-size:13px; color:var(--muted); margin:0;">Please review your custom garment specifications and approve the atelier brief.</p>
+              </div>
+              <div style="text-align:right;">
+                <span class="cust-badge gold" style="font-size:12px; padding:6px 14px;">${refCode}</span>
+                <small style="display:block; color:var(--muted); margin-top:4px;">Date: ${new Date().toLocaleDateString('en-GB')}</small>
+              </div>
             </div>
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-              <button class="btn btn-dark" onclick="closeModal(); trackOrderById('${bespokeOrder.id}', true); scrollToId('tracking');" style="padding:12px 20px;">
-                📦 Track Custom Garment
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px; margin-bottom:20px;">
+              <!-- Card 1: Garment & Fabric -->
+              <div style="background:#faf8f3; border:1px solid var(--line); border-radius:10px; padding:16px;">
+                <h4 style="font-family:'Playfair Display',serif; margin:0 0 10px; color:var(--ink); font-size:16px;">Garment &amp; Fabric Specifications</h4>
+                <div style="font-size:12px; line-height:1.8; color:var(--brown);">
+                  <div>Garment: <b>${p.garment}</b></div>
+                  <div>Aesthetic: <b>${p.style}</b> (${p.fit})</div>
+                  <div>Colorway: <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${p.colorHex}; vertical-align:middle; margin-right:4px;"></span><b>${p.colorName}</b></div>
+                  <div>Fabric: <b>${p.fabricName}</b></div>
+                  <div>Weight: <b>${p.weight}</b></div>
+                  <div>Inner Lining: <b>${p.liningName}</b></div>
+                </div>
+              </div>
+
+              <!-- Card 2: Biometrics & Handwork -->
+              <div style="background:#faf8f3; border:1px solid var(--line); border-radius:10px; padding:16px;">
+                <h4 style="font-family:'Playfair Display',serif; margin:0 0 10px; color:var(--ink); font-size:16px;">Measurements &amp; Handwork</h4>
+                <div style="font-size:12px; line-height:1.8; color:var(--brown);">
+                  <div>Profile: <b>${p.profileName}</b></div>
+                  <div>Dimensions: <b>${measurementsStr}</b></div>
+                  <div>Handwork: <b>${p.embroideryTechnique}</b></div>
+                  <div>Density: <b>${p.densityName}</b></div>
+                  <div>Cut: <b>${neckline}</b> &middot; <b>${sleeves}</b> &middot; <b>${hemline}</b></div>
+                </div>
+              </div>
+            </div>
+
+            ${notes ? `
+              <div style="background:#fffcf7; border:1px dashed #ebd39f; border-radius:8px; padding:12px 16px; margin-bottom:18px; font-size:12px; color:var(--brown);">
+                <b>Client Stitching Notes:</b> <i>"${notes}"</i>
+              </div>
+            ` : ''}
+
+            <!-- Itemized Price Breakdown Table -->
+            <div style="background:#faf7f2; border:1px solid #ebd39f; border-radius:10px; padding:16px; margin-bottom:20px;">
+              <h4 style="font-family:'Playfair Display',serif; margin:0 0 10px; color:var(--ink); font-size:15px;">Itemized Estimated Price Breakdown</h4>
+              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <tr style="border-bottom:1px solid #efe5d4;">
+                  <td style="padding:6px 0; color:var(--brown);">Base Silhouette Master Drafting &amp; Tailoring</td>
+                  <td style="text-align:right; font-weight:600;">₹${p.basePrice.toLocaleString()}</td>
+                </tr>
+                <tr style="border-bottom:1px solid #efe5d4;">
+                  <td style="padding:6px 0; color:var(--brown);">Heirloom Fabric &amp; Yardage (${p.fabricName})</td>
+                  <td style="text-align:right; font-weight:600;">+₹${p.fabricPrice.toLocaleString()}</td>
+                </tr>
+                <tr style="border-bottom:1px solid #efe5d4;">
+                  <td style="padding:6px 0; color:var(--brown);">Artisan Hand Embroidery (${p.densityName.split('(')[0].trim()})</td>
+                  <td style="text-align:right; font-weight:600;">+₹${p.embroideryPrice.toLocaleString()}</td>
+                </tr>
+                <tr style="border-bottom:1px solid #efe5d4;">
+                  <td style="padding:6px 0; color:var(--brown);">Inner Structural Lining (${p.liningName})</td>
+                  <td style="text-align:right; font-weight:600;">+₹${p.liningPrice.toLocaleString()}</td>
+                </tr>
+                <tr style="border-bottom:1px solid #efe5d4;">
+                  <td style="padding:6px 0; color:var(--brown);">Atelier Casket Packaging &amp; Luxury GST (5%)</td>
+                  <td style="text-align:right; font-weight:600;">+₹${p.tax.toLocaleString()}</td>
+                </tr>
+                <tr style="font-weight:700; font-size:16px; color:var(--ink);">
+                  <td style="padding:10px 0 4px; border-top:1px dashed #d7bd86;">Total Atelier Commission Value</td>
+                  <td style="padding:10px 0 4px; border-top:1px dashed #d7bd86; text-align:right; color:var(--gold); font-size:19px;">₹${p.grandTotal.toLocaleString()}</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Customer Approval Checkbox -->
+            <div style="background:#f4eee2; border-radius:8px; padding:14px; margin-bottom:20px;">
+              <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:13px; color:var(--ink); line-height:1.5;">
+                <input type="checkbox" id="bespokeApprovalCheckbox" style="margin-top:3px; accent-color:var(--gold); width:18px; height:18px;" checked />
+                <span><b>Customer Approval Declaration:</b> I have reviewed the design specifications, selected fabric, and biometric measurements. I approve this bespoke creation for Master Tailor assignment and atelier production.</span>
+              </label>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <button type="button" class="btn" style="border:1px solid var(--line); background:#fff; padding:12px 20px;" onclick="closeModal()">
+                &larr; Modify Design
               </button>
-              <button class="btn" style="border:1px solid var(--line); background:white; padding:12px 20px;" onclick="closeModal()">
-                Done
+              <button type="button" class="btn btn-gold" style="padding:12px 28px; font-weight:700; font-size:14px;" onclick="confirmBespokeOrder()">
+                Confirm &amp; Lock Bespoke Commission &rarr;
               </button>
             </div>
           </div>
         `;
       }
+      window.openBespokeReviewModal = openBespokeReviewModal;
+
+      function confirmBespokeOrder() {
+        const chk = document.getElementById("bespokeApprovalCheckbox");
+        if (chk && !chk.checked) {
+          showToast("Please check the customer approval box to proceed.");
+          return;
+        }
+
+        if (!bespokeState.pendingOrder) {
+          showToast("Error processing bespoke order. Please try again.");
+          return;
+        }
+
+        const order = bespokeState.pendingOrder;
+        order.approvedByCustomer = true;
+        order.approvedAt = new Date().toISOString();
+
+        addBoutiqueOrder(order);
+
+        if (window.RCSound && RCSound.success) RCSound.success();
+
+        const modalArea = document.getElementById("modalContent");
+        if (modalArea) {
+          modalArea.innerHTML = `
+            <div style="text-align:center; padding:16px 10px;">
+              <div style="font-size:52px; color:var(--gold); line-height:1; margin-bottom:12px;">✦</div>
+              <span class="cust-badge gold" style="font-size:11px; margin-bottom:8px;">HAUTE COUTURE COMMISSION CONFIRMED</span>
+              <h2 style="font-family:'Playfair Display',serif; font-size:26px; margin:8px 0 6px;">Tailoring Order Locked</h2>
+              <p style="color:var(--muted); font-size:14px; max-width:520px; margin:0 auto 20px;">
+                Thank you, <b>${order.customer}</b>. Your bespoke commission for <b>${order.garment}</b> has been locked and routed to the VASTRAÉ Master Tailor Workspace.
+              </p>
+
+              <div style="background:#faf8f3; border:1px dashed var(--line); border-radius:12px; padding:20px; max-width:540px; margin:0 auto 24px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                  <div>
+                    <small style="color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; font-size:10px;">Custom Order Reference</small>
+                    <h3 style="color:var(--ink); font-size:22px; margin:2px 0;">${order.id}</h3>
+                  </div>
+                  <span class="cust-badge gold" style="font-size:11px;">Stage 1/5: Request Received</span>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px; color:var(--brown); border-top:1px solid #ebd39f; padding-top:12px;">
+                  <div>Fabric: <b>${order.fabric}</b></div>
+                  <div>Color: <b>${order.color}</b></div>
+                  <div>Measurements: <b>${order.measurementProfile}</b></div>
+                  <div>Total Value: <b style="color:var(--gold);">₹${order.total.toLocaleString()}</b></div>
+                  <div>Estimated Delivery: <b>${order.estDelivery}</b></div>
+                  <div>Tailor Status: <b style="color:#b78103;">Pending Assignment</b></div>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn btn-dark" onclick="closeModal(); trackOrderById('${order.id}', true); scrollToId('tracking');" style="padding:12px 22px; font-size:13px;">
+                  📦 Track in Atelier Pipeline
+                </button>
+                <button class="btn btn-gold" onclick="closeModal(); openCustomerWorkspace('tailoring');" style="padding:12px 22px; font-size:13px;">
+                  ✂ View in Custom Tailoring History
+                </button>
+                <button class="btn" style="border:1px solid var(--line); background:#fff; padding:12px 20px; font-size:13px;" onclick="printBespokeOrderSlip('${order.id}')">
+                  🖨 Commission Brief
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }
+      window.confirmBespokeOrder = confirmBespokeOrder;
+
+      function openOrderRevisionModal(orderId) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
+
+        openModal("modal-lg");
+        const modalArea = document.getElementById("modalContent");
+        if (!modalArea) return;
+
+        modalArea.innerHTML = `
+          <div style="padding:10px 0;">
+            <span class="cust-badge gold" style="font-size:11px;">ORDER REVISION INTERFACE</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:6px 0 4px;">Request Design Revision</h2>
+            <p style="font-size:13px; color:var(--muted); margin:0 0 18px;">
+              Order <b>${order.id}</b> &middot; ${order.design}. You can request adjustments prior to final cutting and assembling.
+            </p>
+
+            <form onsubmit="event.preventDefault(); submitOrderRevision('${order.id}');">
+              <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--brown); margin-bottom:6px;">Revision Category</label>
+                <select id="revCategorySelect" style="width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; font-size:13px; background:#faf8f3;">
+                  <option value="Sleeve & Hemline Adjustment">Sleeve &amp; Hemline Adjustment</option>
+                  <option value="Measurement Fine-Tuning">Measurement Fine-Tuning (Chest/Waist/Hip/Ease)</option>
+                  <option value="Embroidery & Motif Detail">Embroidery &amp; Motif Detail Modification</option>
+                  <option value="Inner Lining & Structure">Inner Lining &amp; Structure Preference</option>
+                  <option value="Delivery Timeline & Priority">Delivery Timeline &amp; Expedited Request</option>
+                </select>
+              </div>
+
+              <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--brown); margin-bottom:6px;">Revision Instructions for Master Tailor</label>
+                <textarea id="revNotesInput" rows="4" required style="width:100%; padding:12px; border:1px solid var(--line); border-radius:8px; font-size:13px; background:#faf8f3;" placeholder="e.g. Please increase sleeve length by 2cm, add a hook &amp; eye closure at the collar, and adjust the waist ease by +1 inch..."></textarea>
+              </div>
+
+              <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" class="btn" style="border:1px solid var(--line); background:#fff;" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-dark" style="padding:10px 24px;">Submit Revision Request &rarr;</button>
+              </div>
+            </form>
+          </div>
+        `;
+      }
+      window.openOrderRevisionModal = openOrderRevisionModal;
+
+      function submitOrderRevision(orderId) {
+        const category = document.getElementById("revCategorySelect")?.value || "General Adjustment";
+        const notes = document.getElementById("revNotesInput")?.value.trim() || "";
+        if (!notes) {
+          showToast("Please provide revision notes.");
+          return;
+        }
+
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
+
+        if (!order.revisions) order.revisions = [];
+        order.revisions.push({
+          id: "REV-" + Date.now(),
+          date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          category: category,
+          notes: notes,
+          status: "Pending Master Tailor Review"
+        });
+
+        order.status = "Revision Requested";
+        saveOrders(list);
+
+        closeModal();
+        showToast(`✓ Revision request logged for ${order.id}. Routed to Master Tailor.`);
+        if (window.RCSound && RCSound.success) RCSound.success();
+
+        if (typeof customerWorkspacePage === "function") {
+          customerWorkspacePage("tailoring");
+        }
+      }
+      window.submitOrderRevision = submitOrderRevision;
+
+      function openOrderCancellationModal(orderId) {
+        const list = getOrders();
+        const clean = (orderId || "").trim();
+        const order = list.find(o => 
+          o.id.toLowerCase() === clean.toLowerCase() || 
+          o.id.replace('#','').toLowerCase() === clean.replace('#','').toLowerCase()
+        );
+        if (!order) {
+          showToast("Order reference not found: " + orderId);
+          return;
+        }
+
+        const isBespoke = (order.type || '').includes('Bespoke') || (order.id || '').startsWith('#BESPOKE');
+        const stage = order.stage !== undefined ? order.stage : 1;
+        let policyNotice = "100% Immediate Atelier Deposit Refund (Stage 1-2 Pre-Production)";
+        let refundDesc = `Eligible for full 100% refund of ₹${(order.total || 0).toLocaleString()} to original payment method.`;
+        if (stage === 3) {
+          policyNotice = "50% Partial Refund (Stage 3 Pattern Cut)";
+          refundDesc = `Garment fabric has been drafted and cut. Eligible for 50% refund (₹${Math.round((order.total || 0) * 0.5).toLocaleString()}).`;
+        } else if (stage >= 4) {
+          policyNotice = "Boutique Atelier Credit (Stage 4-5 Completed)";
+          refundDesc = `Garment has finished stitching/quality inspection. Eligible for Maison credit upon request.`;
+        }
+
+        openModal("modal-lg");
+        const modalArea = document.getElementById("modalContent");
+        if (!modalArea) return;
+
+        modalArea.innerHTML = `
+          <div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px;">
+              <div>
+                <span class="cust-badge red" style="font-size:11px;">VASTRAÉ ATELIER CANCELLATION PROTOCOL</span>
+                <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:4px 0 2px; color:#b71c1c;">Request Order Cancellation</h2>
+                <p style="font-size:13px; color:var(--muted); margin:0;">
+                  Order <b>${order.id}</b> &middot; ${order.design || order.type} &middot; Total: <b>₹${(order.total || 0).toLocaleString()}</b>
+                </p>
+              </div>
+              <span class="cust-badge gold">${order.id}</span>
+            </div>
+
+            <!-- Refund Policy Callout -->
+            <div style="background:#fff8f8; border:1px solid #ffcdd2; border-left:4px solid #c62828; border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#5c1421;">
+              <b>Policy Terms: ${policyNotice}</b>
+              <div style="margin-top:4px; font-size:12px; color:#782333;">${refundDesc}</div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); submitOrderCancellation('${order.id}');">
+              <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--brown); margin-bottom:6px;">Cancellation Reason</label>
+                <select id="cancelReasonSelect" style="width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; font-size:13px; background:#faf8f3;">
+                  <option value="Event Date or Occasion Rescheduled">Event Date or Occasion Rescheduled</option>
+                  <option value="Change of Silhouette / Design Direction">Change of Silhouette / Design Direction</option>
+                  <option value="Selected Ready-to-Wear Alternative">Selected Ready-to-Wear Alternative</option>
+                  <option value="Fit or Measurement Adjustment No Longer Needed">Fit or Measurement Adjustment No Longer Needed</option>
+                  <option value="Ordered by Mistake / Duplicate Order">Ordered by Mistake / Duplicate Order</option>
+                  <option value="Personal / Other Atelier Requirement">Personal / Other Atelier Requirement</option>
+                </select>
+              </div>
+
+              <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--brown); margin-bottom:6px;">Additional Client Notes (Optional)</label>
+                <textarea id="cancelNotesInput" rows="3" style="width:100%; padding:12px; border:1px solid var(--line); border-radius:8px; font-size:13px; background:#faf8f3;" placeholder="Tell our atelier concierge if you would like to reschedule or apply credit toward a future commission..."></textarea>
+              </div>
+
+              <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn" style="border:1px solid var(--line); background:#fff;" onclick="closeModal()">Keep Commission Active</button>
+                <button type="submit" class="btn" style="background:#c62828; color:#fff; border:none; padding:10px 24px; font-weight:600;">Confirm Cancellation &amp; Process Refund</button>
+              </div>
+            </form>
+          </div>
+        `;
+      }
+      window.openOrderCancellationModal = openOrderCancellationModal;
+
+      function submitOrderCancellation(orderId) {
+        const reason = document.getElementById("cancelReasonSelect")?.value || "Client Requested Cancellation";
+        const notes = document.getElementById("cancelNotesInput")?.value.trim() || "";
+
+        const list = getOrders();
+        const clean = (orderId || "").trim();
+        const order = list.find(o => 
+          o.id.toLowerCase() === clean.toLowerCase() || 
+          o.id.replace('#','').toLowerCase() === clean.replace('#','').toLowerCase()
+        );
+        if (!order) return;
+
+        const refCode = "#REF-2026-" + Math.floor(1000 + Math.random() * 9000);
+        const originalStage = order.stage !== undefined ? order.stage : 1;
+        let refundTier = `100% Atelier Deposit · ₹${(order.total || 0).toLocaleString()}`;
+        if (originalStage === 3) {
+          refundTier = `50% Partial Refund · ₹${Math.round((order.total || 0) * 0.5).toLocaleString()}`;
+        } else if (originalStage >= 4) {
+          refundTier = `90% Maison Store Credit · ₹${Math.round((order.total || 0) * 0.9).toLocaleString()}`;
+        }
+
+        order.status = "Cancelled (Client Requested)";
+        order.stage = 0;
+        order.cancellation = {
+          date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          reason: reason,
+          notes: notes,
+          refundStatus: `Refund Queued (${refundTier})`,
+          refundCode: refCode
+        };
+
+        saveOrders(list);
+        closeModal();
+        showToast(`✓ Order ${order.id} cancelled. ${refundTier.split('·')[0].trim()} queued (${refCode}).`);
+        if (window.RCSound && RCSound.success) RCSound.success();
+
+        // Refresh live tracker if displayed
+        if (typeof trackOrderById === "function") {
+          trackOrderById(order.id, false);
+        }
+
+        // Refresh Customer Workspace if currently displayed
+        if (typeof customerWorkspacePage === "function") {
+          const isBespoke = (order.type || '').includes('Bespoke') || (order.id || '').startsWith('#BESPOKE');
+          customerWorkspacePage(isBespoke ? "tailoring" : "orders");
+        }
+
+        // Refresh Admin Dashboard if open
+        const adminPanel = document.getElementById("adminPanel");
+        if (adminPanel && adminPanel.style.display !== "none" && typeof adminPage === "function") {
+          adminPage("orders");
+        }
+
+        // Refresh Tailor Workspace if open
+        const tailorPanel = document.getElementById("tailorPanel");
+        if (tailorPanel && tailorPanel.style.display !== "none" && typeof tailorPage === "function") {
+          tailorPage("requests");
+        }
+      }
+      window.submitOrderCancellation = submitOrderCancellation;
+
+      function promptOrderRevision() {
+        const list = getOrders();
+        const activeBespoke = list.filter(o => 
+          !o.cancellation && 
+          (!o.status || !o.status.includes('Cancelled')) && 
+          (o.stage || 1) < 4 && 
+          ((o.type || '').includes('Bespoke') || (o.id || '').startsWith('#BESPOKE'))
+        );
+
+        openModal("modal-lg");
+        const modalArea = document.getElementById("modalContent");
+        if (!modalArea) return;
+
+        modalArea.innerHTML = `
+          <div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px;">
+              <div>
+                <span class="cust-badge gold" style="font-size:11px;">VASTRAÉ ATELIER &middot; BESPOKE REVISION</span>
+                <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:4px 0 2px;">Request Design Revision</h2>
+                <p style="font-size:13px; color:var(--muted); margin:0;">
+                  Request alterations to silhouette, embroidery specifications, or delivery timeline prior to pattern cutting.
+                </p>
+              </div>
+              <span class="cust-badge gold">${activeBespoke.length} Active Eligible</span>
+            </div>
+
+            ${activeBespoke.length ? `
+              <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:var(--ink); margin-bottom:10px;">Select Active Bespoke Commission to Revise:</label>
+                <div style="display:grid; gap:10px;">
+                  ${activeBespoke.map(o => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#faf8f3; border:1px solid var(--line); border-radius:8px; padding:12px 16px; flex-wrap:wrap; gap:8px;">
+                      <div>
+                        <strong style="color:var(--ink); font-size:14px;">${o.id}</strong> &middot; <span style="font-weight:600;">${o.design || o.garment}</span><br>
+                        <small style="color:var(--muted); font-size:11px;">Client: ${o.customer} &middot; Stage ${o.stage || 1}/5: ${o.status}</small>
+                      </div>
+                      <button type="button" class="btn btn-gold btn-sm" style="padding:6px 14px; font-size:12px;" onclick="openOrderRevisionModal('${o.id}')">
+                        📝 Request Revision &rarr;
+                      </button>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : `
+              <div style="background:#faf8f3; border:1px dashed var(--line); border-radius:8px; padding:16px; margin-bottom:18px; text-align:center;">
+                <p style="font-size:13px; color:var(--muted); margin:0 0 10px;">No active bespoke orders found in pre-cutting stages.</p>
+                <button type="button" class="btn btn-dark" style="padding:8px 18px; font-size:12px;" onclick="closeModal(); scrollToId('custom');">
+                  ✂ Design New Bespoke Creation
+                </button>
+              </div>
+            `}
+
+            <div style="background:#faf7f2; border:1px solid #ebd39f; border-radius:8px; padding:14px; margin-top:14px;">
+              <label style="display:block; font-size:12px; font-weight:600; color:var(--ink); margin-bottom:6px;">Or Enter Custom Order Reference Code Directly:</label>
+              <div style="display:flex; gap:8px;">
+                <input id="directRevisionRefInput" placeholder="e.g. #BESPOKE-2026-1042" style="flex:1; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:13px; background:#fff;">
+                <button type="button" class="btn btn-dark" style="padding:9px 18px; font-size:12px;" onclick="const val = document.getElementById('directRevisionRefInput')?.value.trim(); if (val) openOrderRevisionModal(val); else showToast('Enter an order reference');">
+                  Open Revision Form
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      window.promptOrderRevision = promptOrderRevision;
+
+      function promptOrderCancellation() {
+        const list = getOrders();
+        const activeOrders = list.filter(o => 
+          !o.cancellation && 
+          (!o.status || !o.status.includes('Cancelled')) && 
+          (o.stage === undefined || o.stage < 5)
+        );
+
+        openModal("modal-lg");
+        const modalArea = document.getElementById("modalContent");
+        if (!modalArea) return;
+
+        modalArea.innerHTML = `
+          <div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px;">
+              <div>
+                <span class="cust-badge red" style="font-size:11px;">VASTRAÉ ATELIER &middot; CANCELLATION PROTOCOL</span>
+                <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:4px 0 2px; color:#b71c1c;">Order Cancellation Interface</h2>
+                <p style="font-size:13px; color:var(--muted); margin:0;">
+                  Cancel active bespoke commissions or storefront purchases with immediate refund processing.
+                </p>
+              </div>
+              <span class="cust-badge red">${activeOrders.length} Cancellable</span>
+            </div>
+
+            <!-- Tiered Policy Notice -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:18px;">
+              <div style="background:#f4f9f4; border:1px solid #c8e6c9; border-radius:6px; padding:10px; font-size:11px;">
+                <b style="color:#2e7d32; display:block; margin-bottom:2px;">Stage 1 &amp; 2: 100% Refund</b>
+                Full refund to original payment method prior to fabric cutting.
+              </div>
+              <div style="background:#fffcf2; border:1px solid #ffeeba; border-radius:6px; padding:10px; font-size:11px;">
+                <b style="color:#856404; display:block; margin-bottom:2px;">Stage 3: 50% Refund</b>
+                50% refund applied once yardage has been drafted &amp; cut.
+              </div>
+              <div style="background:#faf8f3; border:1px solid #ebd39f; border-radius:6px; padding:10px; font-size:11px;">
+                <b style="color:var(--brown); display:block; margin-bottom:2px;">Stage 4: Store Credit</b>
+                Maison atelier voucher issued after stitching inspection.
+              </div>
+            </div>
+
+            ${activeOrders.length ? `
+              <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:var(--ink); margin-bottom:10px;">Select Active Order to Cancel:</label>
+                <div style="display:grid; gap:10px;">
+                  ${activeOrders.map(o => {
+                    const st = o.stage !== undefined ? o.stage : 1;
+                    const tier = st <= 2 ? '100% Refund' : st === 3 ? '50% Refund' : 'Store Credit';
+                    return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#faf8f3; border:1px solid var(--line); border-radius:8px; padding:12px 16px; flex-wrap:wrap; gap:8px;">
+                      <div>
+                        <strong style="color:var(--ink); font-size:14px;">${o.id}</strong> &middot; <span style="font-weight:600;">${o.design || o.garment || o.type}</span><br>
+                        <small style="color:var(--muted); font-size:11px;">Client: ${o.customer} &middot; Stage ${st}/5 &middot; Value: <b>₹${(o.total || 0).toLocaleString()}</b></small>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="cust-badge ${st <= 2 ? 'green' : 'gold'}" style="font-size:11px;">${tier}</span>
+                        <button type="button" class="btn btn-sm" style="background:#c62828; color:#fff; border:none; padding:6px 14px; font-size:12px;" onclick="openOrderCancellationModal('${o.id}')">
+                          ❌ Cancel &rarr;
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : `
+              <div style="background:#faf8f3; border:1px dashed var(--line); border-radius:8px; padding:16px; margin-bottom:18px; text-align:center;">
+                <p style="font-size:13px; color:var(--muted); margin:0;">No active cancellable orders in the system.</p>
+              </div>
+            `}
+
+            <div style="background:#fff8f8; border:1px solid #ffcdd2; border-radius:8px; padding:14px; margin-top:14px;">
+              <label style="display:block; font-size:12px; font-weight:600; color:#b71c1c; margin-bottom:6px;">Or Enter Any Order Reference Code to Cancel:</label>
+              <div style="display:flex; gap:8px;">
+                <input id="directCancelRefInput" placeholder="e.g. #BESPOKE-2026-1042 or #RC1042" style="flex:1; padding:9px 12px; border:1px solid #ffcdd2; border-radius:6px; font-size:13px; background:#fff;">
+                <button type="button" class="btn btn-sm" style="background:#c62828; color:#fff; border:none; padding:9px 18px; font-size:12px;" onclick="const val = document.getElementById('directCancelRefInput')?.value.trim(); if (val) openOrderCancellationModal(val); else showToast('Enter an order reference');">
+                  Proceed to Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      window.promptOrderCancellation = promptOrderCancellation;
+
+      function adminCancelOrder(orderId) {
+        const list = getOrders();
+        const clean = (orderId || "").trim();
+        const order = list.find(o => 
+          o.id.toLowerCase() === clean.toLowerCase() || 
+          o.id.replace('#','').toLowerCase() === clean.replace('#','').toLowerCase()
+        );
+        if (!order) return;
+
+        const refCode = "#REF-ADM-" + Math.floor(1000 + Math.random() * 9000);
+        order.status = "Cancelled (Atelier Admin)";
+        order.stage = 0;
+        order.cancellation = {
+          date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          reason: "Cancelled by Boutique Administration / Stock Issue",
+          notes: "Atelier administrative void.",
+          refundStatus: `Refund Queued (100% Full Refund · ₹${(order.total || 0).toLocaleString()})`,
+          refundCode: refCode
+        };
+
+        saveOrders(list);
+        showToast(`Order ${order.id} cancelled by Admin. Refund queued.`);
+        if (typeof adminPage === "function") adminPage("orders");
+        if (typeof trackOrderById === "function") trackOrderById(order.id, false);
+      }
+      window.adminCancelOrder = adminCancelOrder;
+
+      function adminProcessRefund(orderId) {
+        const list = getOrders();
+        const clean = (orderId || "").trim();
+        const order = list.find(o => 
+          o.id.toLowerCase() === clean.toLowerCase() || 
+          o.id.replace('#','').toLowerCase() === clean.replace('#','').toLowerCase()
+        );
+        if (!order) return;
+
+        if (!order.cancellation) {
+          order.cancellation = {
+            date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+            reason: "Client Cancellation",
+            notes: ""
+          };
+        }
+        const refCode = order.cancellation.refundCode || ("#REF-" + Math.floor(10000 + Math.random() * 90000));
+        order.cancellation.refundStatus = `Refund Processed (${refCode} · ₹${(order.total || 0).toLocaleString()} credited via Razorpay/UPI)`;
+        order.status = "Cancelled & Refunded";
+        saveOrders(list);
+
+        showToast(`✓ Refund processed for ${order.id}. Client notified.`);
+        if (window.RCSound && RCSound.success) RCSound.success();
+        if (typeof adminPage === "function") adminPage("orders");
+        if (typeof trackOrderById === "function") trackOrderById(order.id, false);
+      }
+      window.adminProcessRefund = adminProcessRefund;
+
+      function adminAssignTailor(orderId, tailorName) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
+
+        order.tailor = tailorName;
+        if (!order.isOwnFabric && (order.stage || 1) <= 1) {
+          order.stage = 2;
+          order.status = "Fabric Sourced & Cut";
+        }
+        saveOrders(list);
+
+        showToast(`✓ Assigned ${order.id} to ${tailorName}`);
+        if (window.RCSound && RCSound.success) RCSound.success();
+
+        if (typeof adminPage === "function") {
+          const content = document.getElementById("adminContent");
+          if (content && content.innerHTML.includes("Personalization Requests")) {
+            adminPage("requests");
+          } else {
+            adminPage("orders");
+          }
+        }
+        if (currentTrackedOrderId === order.id) {
+          trackOrderById(order.id, false);
+        }
+      }
+      window.adminAssignTailor = adminAssignTailor;
+
+      function adminApproveRevision(orderId) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
+
+        if (order.revisions && order.revisions.length) {
+          order.revisions[order.revisions.length - 1].status = "Approved by Master Tailor";
+        }
+        order.status = "Stitching & Draping";
+        order.stage = 3;
+        saveOrders(list);
+
+        showToast(`✓ Revision approved for ${order.id}. Production resumed.`);
+        if (typeof adminPage === "function") adminPage("orders");
+      }
+      window.adminApproveRevision = adminApproveRevision;
+
+      function adminViewDesignBrief(orderId) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
+
+        openModal("modal-lg");
+        const modalArea = document.getElementById("modalContent");
+        if (!modalArea) return;
+
+        modalArea.innerHTML = `
+          <div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px;">
+              <div>
+                <span style="font-size:11px; letter-spacing:0.08em; color:var(--gold); font-weight:700;">ATELIER BESPOKE COMMISSION BRIEF</span>
+                <h2 style="font-family:'Playfair Display',serif; font-size:22px; margin:4px 0 0;">${order.design}</h2>
+              </div>
+              <span class="cust-badge gold">${order.id}</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; font-size:13px;">
+              <div style="background:#faf8f3; padding:14px; border-radius:8px;">
+                <h4 style="margin:0 0 8px; color:var(--ink);">Client &amp; Logistics</h4>
+                <div>Client: <b>${order.customer}</b></div>
+                <div>Phone: <b>${order.phone || 'On file'}</b></div>
+                <div>City: <b>${order.city || 'Bengaluru'}</b></div>
+                <div>Assigned Tailor: <b>${order.tailor || 'Unassigned'}</b></div>
+                <div>Status: <span class="cust-badge ${order.stage >= 5 ? 'green' : 'gold'}">${order.status}</span></div>
+              </div>
+
+              <div style="background:#faf8f3; padding:14px; border-radius:8px;">
+                <h4 style="margin:0 0 8px; color:var(--ink);">Materials &amp; Handwork</h4>
+                <div>Fabric: <b>${order.fabric || 'Atelier Pure Silk'}</b></div>
+                <div>Colorway: <b>${order.color || 'Royal Palette'}</b></div>
+                <div>Lining: <b>${order.lining || 'Mulberry Silk Satin'}</b></div>
+                <div>Embroidery: <b>${order.embroidery || 'Standard Artisan'}</b></div>
+                <div>Order Total: <b style="color:var(--gold);">₹${(order.total || 0).toLocaleString()}</b></div>
+              </div>
+            </div>
+
+            <div style="background:#fdfaf6; border-left:3px solid var(--gold); padding:12px; border-radius:4px; font-size:12px; margin-bottom:16px;">
+              <b>Biometric Measurements on File:</b><br>
+              ${order.measurements || 'Standard Sizing'}
+            </div>
+
+            ${order.note ? `
+              <div style="background:#faf8f3; border:1px dashed var(--line); padding:12px; border-radius:6px; font-size:12px; margin-bottom:16px;">
+                <b>Stitching &amp; Finishing Instructions:</b> ${order.note}
+              </div>
+            ` : ''}
+
+            ${order.revisions && order.revisions.length ? `
+              <div class="cust-revision-box" style="margin-bottom:16px;">
+                <b>⚠️ Client Revision Log:</b>
+                ${order.revisions.map(r => `<div style="margin-top:4px;">&bull; <i>${r.date}</i> [${r.category}]: ${r.notes} &mdash; <b>${r.status}</b></div>`).join('')}
+              </div>
+            ` : ''}
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button class="btn btn-dark" onclick="closeModal()">Close Brief</button>
+              <button class="btn btn-gold" onclick="printBespokeOrderSlip('${order.id}')">🖨 Print Commission Brief</button>
+            </div>
+          </div>
+        `;
+      }
+      window.adminViewDesignBrief = adminViewDesignBrief;
+
+      function printBespokeOrderSlip(orderId) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
+
+        const printWindow = window.open("", "_blank");
+        if (!printWindow) return;
+
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>VASTRAÉ Bespoke Atelier Brief - ${order.id}</title>
+            <style>
+              body { font-family: 'Georgia', serif; padding: 40px; color: #1a1410; line-height: 1.6; }
+              .head { border-bottom: 2px solid #b89558; padding-bottom: 14px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+              .logo { font-size: 28px; font-weight: bold; letter-spacing: 2px; }
+              .sub { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #887b6c; }
+              .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; font-size: 13px; }
+              .box { background: #faf7f2; border: 1px solid #ebd39f; padding: 16px; border-radius: 6px; }
+              h3 { font-size: 16px; margin: 0 0 10px; color: #5c4b3d; }
+              .total-box { margin-top: 20px; font-size: 18px; font-weight: bold; color: #b89558; }
+            </style>
+          </head>
+          <body>
+            <div class="head">
+              <div>
+                <div class="logo">VASTRAÉ</div>
+                <div class="sub">Digital Couture House · Bengaluru Atelier</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:18px; font-weight:bold;">${order.id}</div>
+                <div style="font-size:12px; color:#888;">Date: ${order.date || 'Recent'}</div>
+              </div>
+            </div>
+            <h2>Official Bespoke Commission Sheet</h2>
+            <p><b>Garment:</b> ${order.design} &middot; <b>Assigned Tailor:</b> ${order.tailor || 'Pending Assignment'}</p>
+            
+            <div class="meta-grid">
+              <div class="box">
+                <h3>Client Details</h3>
+                <div>Name: <b>${order.customer}</b></div>
+                <div>City: <b>${order.city || 'Bengaluru'}</b></div>
+                <div>Phone: <b>${order.phone || 'On file'}</b></div>
+                <div>Profile: <b>${order.measurementProfile || 'Standard Profile'}</b></div>
+              </div>
+              <div class="box">
+                <h3>Artisan Specifications</h3>
+                <div>Fabric: <b>${order.fabric || 'Pure Karnataka Silk'}</b></div>
+                <div>Colorway: <b>${order.color || 'Custom'}</b></div>
+                <div>Embroidery: <b>${order.embroidery || 'Artisanal Needlework'}</b></div>
+                <div>Estimated Delivery: <b>${order.estDelivery || '10-14 Days'}</b></div>
+              </div>
+            </div>
+
+            <div class="box" style="margin-bottom:20px;">
+              <h3>Biometric Measurements</h3>
+              <p>${order.measurements || 'Standard atelier measurements'}</p>
+            </div>
+
+            <div class="box" style="margin-bottom:20px;">
+              <h3>Stitching &amp; Finishing Instructions</h3>
+              <p>${order.note || 'Bespoke tailoring as per pattern.'}</p>
+            </div>
+
+            <div class="total-box">
+              Total Commission Value: ₹${(order.total || 0).toLocaleString()} (GST Included)
+            </div>
+
+            <script>
+              window.onload = function() { window.print(); }
+            </script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+      window.printBespokeOrderSlip = printBespokeOrderSlip;
+
+      function submitCustom(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        openBespokeReviewModal();
+      }
+      window.submitCustom = submitCustom;
+
+      function initBespokeStudio() {
+        const cust = typeof getActiveCustomer === "function" ? getActiveCustomer() : null;
+        const nameInput = document.getElementById("bespokeClientName");
+        if (nameInput && cust && cust.name) {
+          nameInput.value = cust.name;
+        }
+
+        const profileSel = document.getElementById("bespokeProfileSelect");
+        if (profileSel && cust && cust.familyProfiles && cust.familyProfiles.length > 0) {
+          let optsHtml = "";
+          cust.familyProfiles.forEach((p, idx) => {
+            const isSelf = p.relation === "Self" || p.name === cust.name;
+            const tag = isSelf ? "self" : (p.name.toLowerCase().includes("devendra") ? "family-devendra" : (p.name.toLowerCase().includes("sunita") ? "family-sunita" : `fam-${idx}`));
+            optsHtml += `<option value="${tag}" ${isSelf ? 'selected' : ''}>${p.name} (${p.relation}) [Bust: ${p.chest || 88}, Waist: ${p.waist || 72}, Hip: ${p.hip || 96}, Height: ${p.height || 168}]</option>`;
+          });
+          optsHtml += `<option value="custom">Custom 22-Point Direct Measurement Input</option>`;
+          profileSel.innerHTML = optsHtml;
+        }
+
+        onBespokeProfileChanged();
+        updateBespokeGarmentChoice();
+        updateBespokeLivePricing();
+      }
+      window.initBespokeStudio = initBespokeStudio;
+
+      function filterTailoringHistory(category, btnEl) {
+        document.querySelectorAll('.cust-tab-pill').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        const cards = document.querySelectorAll('.bespoke-order-history-card');
+        cards.forEach(card => {
+          if (category === 'all' || card.getAttribute('data-status') === category) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+      window.filterTailoringHistory = filterTailoringHistory;
 
       /* =====================================================
-   FABRIC
-===================================================== */
+         OWN-FABRIC ATELIER SERVICE & DOORSTEP PICKUP WORKFLOW
+         - Fabric photo upload and instant preview
+         - Fabric type and meterage selection
+         - Garment silhouette & structural lining configuration
+         - Special stitching instructions
+         - Doorstep pickup address, preferred date and time slot
+         - Real-time estimated stitching cost calculator
+         - Unique Pickup reference (#PICKUP-2026-XXXX) & Order Code (#FABRIC-2026-XXXX)
+         - Simulated Courier Collection & Atelier Lifecycle:
+           Customer Submits -> Admin Reviews -> Pickup Scheduled -> 
+           Courier Out for Collection -> Fabric Received Confirmation -> 
+           Assigned to Master Tailor -> Stitching Progresses -> Garment Completed
+         - Courier Parcel Slip Generation & Printable Dispatch Label
+      ===================================================== */
+
+      let ownFabricState = {
+        uploadedImage: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
+        baseCost: 1899,
+        handlingCost: 200,
+        liningCost: 350,
+        taxCost: 122,
+        totalCost: 2571
+      };
 
       function previewFabric(e) {
-        let file = e.target.files[0];
+        let file = e && e.target && e.target.files && e.target.files[0];
         if (!file) return;
 
         let reader = new FileReader();
         reader.onload = function (x) {
-          document.getElementById("fabricPreview").innerHTML = `
-            <img src="${x.target.result}" style="width:100%; height:180px; object-fit:cover; margin-bottom:10px; border-radius:8px;">
-            <strong>Fabric reference uploaded successfully</strong>
-          `;
+          ownFabricState.uploadedImage = x.target.result;
+          const img = document.getElementById("fabricPreviewImage");
+          if (img) img.src = x.target.result;
+
+          const badge = document.getElementById("fabricPickupStatusBadge");
+          if (badge) {
+            badge.textContent = "✓ PHOTO ATTACHED & READY FOR PICKUP";
+            badge.style.background = "#2e7d32";
+            badge.style.color = "#fff";
+          }
+          showToast("📸 Fabric photo loaded! Ready for atelier assessment.");
         };
         reader.readAsDataURL(file);
       }
+      window.previewFabric = previewFabric;
 
-      function submitFabric() {
-        const input = document.getElementById("fabricInput");
-        if (!input || !input.files.length) {
-          showToast("Please upload your fabric reference image first.");
+      function handleFabricDrop(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const dt = e.dataTransfer;
+        if (!dt || !dt.files || dt.files.length === 0) return;
+        const file = dt.files[0];
+        if (!file.type.startsWith('image/')) {
+          showToast("⚠️ Please upload an image file (PNG, JPG, WEBP).");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          ownFabricState.uploadedImage = evt.target.result;
+          const img = document.getElementById("fabricPreviewImage");
+          if (img) img.src = evt.target.result;
+          const badge = document.getElementById("fabricPickupStatusBadge");
+          if (badge) {
+            badge.textContent = "✓ PHOTO ATTACHED & READY FOR PICKUP";
+            badge.style.background = "#2e7d32";
+            badge.style.color = "#fff";
+          }
+          showToast("📸 Fabric photo uploaded via dropzone!");
+        };
+        reader.readAsDataURL(file);
+      }
+      window.handleFabricDrop = handleFabricDrop;
+
+      function selectSampleFabric(btn, material, qty, color, imgUrl) {
+        if (btn && btn.parentElement) {
+          btn.parentElement.querySelectorAll(".fabric-sample-chip").forEach(c => c.classList.remove("active"));
+          btn.classList.add("active");
+        }
+        const matSel = document.getElementById("fabricMaterialSelect");
+        if (matSel) {
+          for (let i = 0; i < matSel.options.length; i++) {
+            const optVal = matSel.options[i].value.toLowerCase();
+            const matQuery = material.toLowerCase();
+            if (optVal.includes(matQuery) || matQuery.includes(optVal.split('(')[0].trim())) {
+              matSel.selectedIndex = i;
+              break;
+            }
+          }
+        }
+        const qtySel = document.getElementById("fabricQuantitySelect");
+        if (qtySel) {
+          for (let i = 0; i < qtySel.options.length; i++) {
+            if (qtySel.options[i].value.toLowerCase().includes(qty.toLowerCase())) {
+              qtySel.selectedIndex = i;
+              break;
+            }
+          }
+        }
+        const colInput = document.getElementById("fabricColorDescription");
+        if (colInput && color) {
+          colInput.value = color;
+        }
+        if (imgUrl) {
+          ownFabricState.uploadedImage = imgUrl;
+          const img = document.getElementById("fabricPreviewImage");
+          if (img) img.src = imgUrl;
+        }
+        updateOwnFabricPricing();
+        showToast(`✓ Selected curated weave: ${material}`);
+      }
+      window.selectSampleFabric = selectSampleFabric;
+
+      function appendStitchingInstruction(text) {
+        const notes = document.getElementById("fabricStitchingNotes");
+        if (!notes) return;
+        const current = notes.value.trim();
+        if (!current) {
+          notes.value = text;
+        } else if (current.includes(text)) {
+          showToast(`Specification already noted: "${text}"`);
+          return;
+        } else {
+          notes.value = `${current}\n• ${text}`;
+        }
+        showToast(`✓ Added stitching specification: ${text}`);
+      }
+      window.appendStitchingInstruction = appendStitchingInstruction;
+
+      function fillPickupAddress(street, city, pin, state, landmark) {
+        const streetEl = document.getElementById("pickupStreetAddress");
+        const cityEl = document.getElementById("pickupCity");
+        const pinEl = document.getElementById("pickupPincode");
+        const stateEl = document.getElementById("pickupState");
+        const landmarkEl = document.getElementById("pickupLandmarkNotes");
+
+        if (streetEl) streetEl.value = street;
+        if (cityEl) cityEl.value = city;
+        if (pinEl) pinEl.value = pin;
+        if (stateEl) stateEl.value = state;
+        if (landmarkEl && landmark) landmarkEl.value = landmark;
+
+        showToast(`📍 Pickup address autofilled for ${city}!`);
+      }
+      window.fillPickupAddress = fillPickupAddress;
+
+      function updateOwnFabricPricing() {
+        const garmentSel = document.getElementById("fabricGarmentSelect");
+        const materialSel = document.getElementById("fabricMaterialSelect");
+        const quantitySel = document.getElementById("fabricQuantitySelect");
+        const liningSel = document.getElementById("fabricLiningSelect");
+        const colorInput = document.getElementById("fabricColorDescription");
+        const slotSel = document.getElementById("pickupTimeSlotSelect");
+        const dateInput = document.getElementById("pickupDateInput");
+
+        if (!garmentSel || !materialSel || !liningSel) return;
+
+        // Base Tailoring Labor
+        const selectedGarmentOpt = garmentSel.options[garmentSel.selectedIndex];
+        const base = parseInt(selectedGarmentOpt ? (selectedGarmentOpt.dataset.base || 1899) : 1899, 10);
+
+        // Handling / Yardage Premium
+        const selectedMatOpt = materialSel.options[materialSel.selectedIndex];
+        const handling = parseInt(selectedMatOpt ? (selectedMatOpt.dataset.handling || 200) : 200, 10);
+
+        // Lining Cost
+        const selectedLiningOpt = liningSel.options[liningSel.selectedIndex];
+        const lining = parseInt(selectedLiningOpt ? (selectedLiningOpt.dataset.price || 350) : 350, 10);
+
+        const subtotal = base + handling + lining;
+        const tax = Math.round(subtotal * 0.05);
+        const total = subtotal + tax;
+
+        ownFabricState.baseCost = base;
+        ownFabricState.handlingCost = handling;
+        ownFabricState.liningCost = lining;
+        ownFabricState.taxCost = tax;
+        ownFabricState.totalCost = total;
+
+        // Update Breakdown Table
+        const baseEl = document.getElementById("fabricBreakdownBase");
+        if (baseEl) baseEl.textContent = `₹${base.toLocaleString()}`;
+
+        const handlingEl = document.getElementById("fabricBreakdownHandling");
+        if (handlingEl) handlingEl.textContent = `+₹${handling.toLocaleString()}`;
+
+        const liningEl = document.getElementById("fabricBreakdownLining");
+        if (liningEl) liningEl.textContent = `+₹${lining.toLocaleString()}`;
+
+        const taxEl = document.getElementById("fabricBreakdownTax");
+        if (taxEl) taxEl.textContent = `+₹${tax.toLocaleString()}`;
+
+        const totalEl = document.getElementById("fabricLiveTotalCost");
+        if (totalEl) totalEl.textContent = `₹${total.toLocaleString()}`;
+
+        const submitBtnTotal = document.getElementById("fabricSubmitTotalBtn");
+        if (submitBtnTotal) submitBtnTotal.innerHTML = `₹${total.toLocaleString()} &rarr;`;
+
+        // Update Live Preview Card Titles & Specs
+        const garmentTitleEl = document.getElementById("fabricPreviewGarmentTitle");
+        if (garmentTitleEl && selectedGarmentOpt) {
+          garmentTitleEl.textContent = selectedGarmentOpt.value.split('(')[0].trim();
+        }
+
+        const specsLineEl = document.getElementById("fabricPreviewSpecsLine");
+        if (specsLineEl && selectedMatOpt && quantitySel) {
+          const matName = selectedMatOpt.value.split('(')[0].trim();
+          const qty = quantitySel.value.split('(')[0].trim();
+          const col = colorInput && colorInput.value.trim() ? ` · ${colorInput.value.trim()}` : '';
+          specsLineEl.textContent = `${matName} · ${qty}${col}`;
+        }
+
+        // Update Spec Chips
+        const liningChip = document.getElementById("fabricLiningChip");
+        if (liningChip && selectedLiningOpt) {
+          liningChip.textContent = selectedLiningOpt.value.split('(')[0].trim();
+        }
+
+        const slotChip = document.getElementById("fabricPickupSlotChip");
+        if (slotChip && slotSel) {
+          const dateVal = dateInput && dateInput.value ? dateInput.value : "Tomorrow";
+          slotChip.textContent = `Pickup: ${dateVal} · ${slotSel.value.split('(')[0].trim()}`;
+        }
+      }
+      window.updateOwnFabricPricing = updateOwnFabricPricing;
+
+      function onOwnFabricProfileChanged() {
+        const profSel = document.getElementById("fabricMeasurementProfile");
+        const chip = document.getElementById("fabricProfileChip");
+        if (profSel && chip) {
+          const opt = profSel.options[profSel.selectedIndex];
+          const name = opt ? opt.text.split('[')[0].trim() : "Custom Biometric Profile";
+          chip.textContent = `Profile: ${name}`;
+        }
+      }
+      window.onOwnFabricProfileChanged = onOwnFabricProfileChanged;
+
+      function initOwnFabricStudio() {
+        const dateInput = document.getElementById("pickupDateInput");
+        if (dateInput) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const yyyy = tomorrow.getFullYear();
+          const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+          const dd = String(tomorrow.getDate()).padStart(2, '0');
+          const tomorrowStr = `${yyyy}-${mm}-${dd}`;
+          dateInput.min = tomorrowStr;
+          if (!dateInput.value) dateInput.value = tomorrowStr;
+        }
+
+        const cust = typeof getActiveCustomer === "function" ? getActiveCustomer() : null;
+        if (cust) {
+          const nameEl = document.getElementById("pickupRecipientName");
+          if (nameEl && !nameEl.value) nameEl.value = cust.name;
+
+          const phoneEl = document.getElementById("pickupPhone");
+          if (phoneEl && !phoneEl.value) phoneEl.value = cust.phone;
+
+          const cityEl = document.getElementById("pickupCity");
+          if (cityEl && !cityEl.value) cityEl.value = cust.city;
+
+          if (cust.addresses && cust.addresses.length > 0) {
+            const defAddr = cust.addresses.find(a => a.isDefault) || cust.addresses[0];
+            const streetEl = document.getElementById("pickupStreetAddress");
+            if (streetEl && (!streetEl.value || streetEl.value.includes("Palm Meadows"))) streetEl.value = defAddr.street;
+            const pinEl = document.getElementById("pickupPincode");
+            if (pinEl && (!pinEl.value || pinEl.value === "560066")) pinEl.value = defAddr.pin;
+            const stateEl = document.getElementById("pickupState");
+            if (stateEl && (!stateEl.value || stateEl.value === "Karnataka")) stateEl.value = defAddr.state;
+          }
+
+          // Populate family measurement profiles if available
+          const profSel = document.getElementById("fabricMeasurementProfile");
+          if (profSel && cust.familyProfiles && cust.familyProfiles.length > 0) {
+            let opts = "";
+            cust.familyProfiles.forEach((p, idx) => {
+              const isSelf = p.relation === "Self" || p.name === cust.name;
+              opts += `<option value="profile-${idx}" ${isSelf ? 'selected' : ''}>${p.name} (${p.relation}) [Bust: ${p.chest || 88}, Waist: ${p.waist || 72}, Hip: ${p.hip || 96}, Height: ${p.height || 168}]</option>`;
+            });
+            opts += `<option value="doorstep">Request Free Doorstep Tailor Measurement Visit</option>`;
+            profSel.innerHTML = opts;
+          }
+        }
+
+        onOwnFabricProfileChanged();
+        updateOwnFabricPricing();
+      }
+      window.initOwnFabricStudio = initOwnFabricStudio;
+
+      function submitFabricOrder(e) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        const termsCb = document.getElementById("fabricTermsCheckbox");
+        if (termsCb && !termsCb.checked) {
+          showToast("⚠️ Please accept the Own-Fabric service terms to proceed.");
           return;
         }
 
-        const name = localStorage.getItem("customerName") || "Valued Client";
-        const orderId = "#RC-F" + Math.floor(1000 + Math.random() * 9000);
-        const fabricOrder = {
+        const garmentSel = document.getElementById("fabricGarmentSelect");
+        const materialSel = document.getElementById("fabricMaterialSelect");
+        const quantitySel = document.getElementById("fabricQuantitySelect");
+        const liningSel = document.getElementById("fabricLiningSelect");
+        const colorInput = document.getElementById("fabricColorDescription");
+        const notesInput = document.getElementById("fabricStitchingNotes");
+        const profSel = document.getElementById("fabricMeasurementProfile");
+
+        const nameInput = document.getElementById("pickupRecipientName");
+        const phoneInput = document.getElementById("pickupPhone");
+        const streetInput = document.getElementById("pickupStreetAddress");
+        const cityInput = document.getElementById("pickupCity");
+        const pinInput = document.getElementById("pickupPincode");
+        const stateInput = document.getElementById("pickupState");
+        const dateInput = document.getElementById("pickupDateInput");
+        const slotSel = document.getElementById("pickupTimeSlotSelect");
+        const landmarkInput = document.getElementById("pickupLandmarkNotes");
+
+        const clientName = (nameInput && nameInput.value.trim()) || "Ananya Sharma";
+        const clientPhone = (phoneInput && phoneInput.value.trim()) || "+91 98765 43210";
+        const street = (streetInput && streetInput.value.trim()) || "Villa 42, Palm Meadows";
+        const city = (cityInput && cityInput.value.trim()) || "Bengaluru";
+        const pin = (pinInput && pinInput.value.trim()) || "560066";
+        const state = (stateInput && stateInput.value.trim()) || "Karnataka";
+        const fullAddress = `${street}, ${city} - ${pin}, ${state}`;
+
+        const pickupDate = (dateInput && dateInput.value) || new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        const pickupSlot = (slotSel && slotSel.value) || "Morning (10:00 AM – 1:00 PM)";
+        const landmark = (landmarkInput && landmarkInput.value.trim()) || "";
+
+        const garment = garmentSel ? garmentSel.value.split('(')[0].trim() : "Royal Saree Blouse";
+        const material = materialSel ? materialSel.value.split('(')[0].trim() : "Handloom Cotton & Chanderi";
+        const quantity = quantitySel ? quantitySel.value : "2.5 Meters";
+        const color = (colorInput && colorInput.value.trim()) || "Client Heirloom Weave";
+        const lining = liningSel ? liningSel.value.split('(')[0].trim() : "Breathable Cotton Voile";
+        const stitchingNotes = (notesInput && notesInput.value.trim()) || "Standard atelier fitting with precision seam allowance.";
+
+        const selectedProfileText = profSel ? profSel.options[profSel.selectedIndex].text : "Ananya Sharma (Self)";
+        const profileName = selectedProfileText.split('[')[0].trim();
+        const measurementsText = selectedProfileText.includes('[') ? selectedProfileText.split('[')[1].replace(']', '') : "Standard Biometric Dimensions";
+
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const orderId = `#FABRIC-2026-${randomNum}`;
+        const pickupRef = `#PICKUP-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        const orderDateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        const estDeliveryDate = new Date(Date.now() + 10 * 86400000).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        const newOrder = {
           id: orderId,
-          customer: name,
-          city: "Bengaluru",
-          phone: "+91 98765 43210",
-          design: "Client Supplied Fabric Tailoring",
-          type: "Own-Fabric Couture",
-          total: 6500,
-          date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-          status: "Request Received",
+          pickupRef: pickupRef,
+          customer: clientName,
+          phone: clientPhone,
+          city: city,
+          address: fullAddress,
+          landmark: landmark,
+          pickupDate: pickupDate,
+          pickupTime: pickupSlot,
+          pickupStatus: "Pickup Scheduled",
+          fabricReceived: false,
+          design: garment,
+          garment: garment,
+          type: "Own-Fabric Commission",
+          isOwnFabric: true,
+          fabric: `${material} (${quantity}) · ${color}`,
+          fabricPhoto: ownFabricState.uploadedImage,
+          lining: lining,
+          measurementProfile: profileName,
+          measurements: measurementsText,
+          note: stitchingNotes,
+          total: ownFabricState.totalCost,
+          date: orderDateStr,
+          status: "Pickup Scheduled",
           stage: 1,
-          tailor: "Master Artisan Kulkarni",
-          fabric: "Customer Supplied Fabric Package",
-          measurements: "Awaiting swatch inspection & fit profile",
-          estDelivery: "Within 8-12 Days",
-          note: "Fabric verification and swatch testing in progress."
+          tailor: "Pending Assignment",
+          estDelivery: estDeliveryDate
         };
 
-        addBoutiqueOrder(fabricOrder);
+        addBoutiqueOrder(newOrder);
 
         if (window.RCSound && RCSound.success) RCSound.success();
+        showToast(`✓ Doorstep pickup ${pickupRef} registered for ${pickupDate}!`);
+
+        // Show comprehensive confirmation modal
+        openModal();
+        const modalContent = document.getElementById("modalContent");
+        if (modalContent) {
+          modalContent.innerHTML = `
+            <div style="text-align:center; padding:10px 0;">
+              <div style="font-size:52px; color:var(--gold); line-height:1; margin-bottom:12px;">🧵</div>
+              <span class="cust-badge gold" style="font-size:11px; padding:4px 10px; margin-bottom:8px; display:inline-block;">✦ DOORSTEP COLLECTION SCHEDULED</span>
+              <h2 style="font-family:'Playfair Display',serif; margin:4px 0 6px; font-size:24px;">Own-Fabric Request Confirmed</h2>
+              <p style="color:var(--muted); font-size:13px; max-width:480px; margin:0 auto 16px; line-height:1.6;">
+                Your white-glove collection request is queued with the Bengaluru atelier logistics team. A courier will collect your fabric during your chosen slot.
+              </p>
+
+              <div style="background:#faf8f3; border:1px dashed var(--gold); border-radius:10px; padding:16px; margin-bottom:20px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; border-bottom:1px solid #ebd39f; padding-bottom:10px;">
+                  <div>
+                    <span style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700;">Courier Pickup Reference</span>
+                    <h3 style="font-family:'Playfair Display',serif; color:var(--gold); margin:2px 0 0; font-size:22px;">${pickupRef}</h3>
+                    <small style="color:var(--ink); font-weight:600;">Tailoring Order Code: ${orderId}</small>
+                  </div>
+                  <div style="text-align:right;">
+                    <span class="cust-badge gold" style="font-size:11px;">🛵 Pickup Scheduled</span>
+                    <div style="font-size:15px; font-weight:700; color:var(--ink); margin-top:4px;">₹${newOrder.total.toLocaleString()}</div>
+                    <small style="color:var(--muted); font-size:10px;">(Includes 5% Luxury Tax)</small>
+                  </div>
+                </div>
+
+                <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+                  ${newOrder.fabricPhoto ? `
+                    <img src="${newOrder.fabricPhoto}" style="width:64px; height:64px; object-fit:cover; border-radius:6px; border:1px solid #ebd39f;" alt="Fabric Swatch">
+                  ` : ''}
+                  <div style="font-size:12px; line-height:1.5;">
+                    <b>Garment:</b> ${newOrder.design}<br>
+                    <b>Fabric:</b> ${newOrder.fabric}<br>
+                    <b>Structural Lining:</b> ${newOrder.lining}
+                  </div>
+                </div>
+
+                <div style="background:#fff; border-radius:6px; padding:10px; font-size:12px; color:var(--brown); line-height:1.5;">
+                  📍 <b>Pickup Address:</b> ${newOrder.address}<br>
+                  📅 <b>Collection Window:</b> ${newOrder.pickupDate} &middot; <b>${newOrder.pickupTime}</b>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button type="button" class="btn btn-gold" onclick="printFabricParcelSlip('${orderId}')" style="padding:10px 18px; font-size:12px; font-weight:600;">
+                  🖨 Print Courier Parcel Slip
+                </button>
+                <button type="button" class="btn btn-dark" onclick="closeModal(); trackOrderById('${orderId}', true); scrollToId('tracking');" style="padding:10px 18px; font-size:12px;">
+                  📦 Track in 5-Stage Live Timeline
+                </button>
+                <button type="button" class="btn" style="border:1px solid var(--line); background:#fff; padding:10px 16px; font-size:12px;" onclick="closeModal(); openCustomerWorkspace('tailoring');">
+                  ✂ View in Tailoring History
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }
+      window.submitFabricOrder = submitFabricOrder;
+
+      function printFabricParcelSlip(orderId) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId) || list[0];
+        if (!order) return;
+
+        const printWindow = window.open("", "_blank");
+        if (!printWindow) return;
+
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>VASTRAÉ Courier Collection Parcel Slip - ${order.pickupRef || order.id}</title>
+            <style>
+              body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 30px; color: #1a1410; line-height: 1.5; }
+              .slip-border { border: 2px dashed #b89558; padding: 24px; border-radius: 8px; max-width: 680px; margin: 0 auto; }
+              .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1a1410; padding-bottom: 14px; margin-bottom: 16px; }
+              .logo { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
+              .badge { background: #1a1410; color: #fff; padding: 4px 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; }
+              .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+              .box { background: #faf8f5; border: 1px solid #e2d9cd; padding: 12px 14px; border-radius: 6px; font-size: 12px; }
+              .box h4 { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; color: #887b6c; letter-spacing: 1px; }
+              .barcode-box { text-align: center; border: 1px solid #ccc; padding: 10px; margin: 16px 0; background: #fff; font-family: monospace; letter-spacing: 5px; font-size: 18px; }
+              .instructions { font-size: 11px; color: #665c52; border-left: 3px solid #b89558; padding-left: 10px; margin-top: 14px; }
+            </style>
+          </head>
+          <body>
+            <div class="slip-border">
+              <div class="header">
+                <div>
+                  <div class="logo">VASTRAÉ &middot; ATELIER LOGISTICS</div>
+                  <div style="font-size:11px; color:#887b6c; letter-spacing:1px; text-transform:uppercase;">White-Glove Doorstep Fabric Collection Slip</div>
+                </div>
+                <div style="text-align:right;">
+                  <span class="badge">PREPAID PICKUP</span>
+                  <div style="font-size:16px; font-weight:bold; margin-top:4px; color:#b89558;">${order.pickupRef || '#PICKUP-2026'}</div>
+                  <div style="font-size:11px; color:#887b6c;">Order: ${order.id}</div>
+                </div>
+              </div>
+
+              <div class="barcode-box">
+                |||||| | |||||||| ||| ||||||| |||| | ||||||<br>
+                <span style="font-size:12px; letter-spacing:1px; color:#333;">*${order.pickupRef || order.id}*</span>
+              </div>
+
+              <div class="grid">
+                <div class="box">
+                  <h4>Sender (Client Residence)</h4>
+                  <strong>${order.customer}</strong><br>
+                  ${order.address || order.city || 'Bengaluru'}<br>
+                  Phone: <b>${order.phone || '+91 98765 43210'}</b><br>
+                  ${order.landmark ? `Landmark: <i>${order.landmark}</i><br>` : ''}
+                  Scheduled Window: <b>${order.pickupDate || 'Tomorrow'} (${order.pickupTime || 'Morning'})</b>
+                </div>
+
+                <div class="box">
+                  <h4>Destination Atelier</h4>
+                  <strong>VASTRAÉ Haute Couture Atelier</strong><br>
+                  No. 88, 100 Feet Road, Indiranagar<br>
+                  Bengaluru, Karnataka - 560038<br>
+                  Phone: +91 (80) 4567 8900<br>
+                  Intake Lead: <b>Master Artisan Vignesh</b>
+                </div>
+              </div>
+
+              <div class="box" style="margin-bottom:14px;">
+                <h4>Heirloom Fabric &amp; Silhouette Specifications</h4>
+                <div><b>Garment to Craft:</b> ${order.design || order.garment}</div>
+                <div><b>Fabric Description:</b> ${order.fabric}</div>
+                <div><b>Structural Inner Lining:</b> ${order.lining || 'Breathable Cotton Voile'}</div>
+                <div><b>Biometric Fit:</b> ${order.measurementProfile || 'Custom'} (${order.measurements || 'On File'})</div>
+                ${order.note ? `<div><b>Special Stitching Notes:</b> <i>"${order.note}"</i></div>` : ''}
+              </div>
+
+              <div class="instructions">
+                <b>Courier &amp; Packaging Notice:</b> Place your fabric in a secure waterproof package and paste or place this slip on the parcel. The visiting courier executive will verify the pickup code <b>${order.pickupRef || order.id}</b> and provide an intake receipt. Leftover fabric will be returned with finished garment.
+              </div>
+            </div>
+
+            <script>
+              window.onload = function() { window.print(); }
+            </script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+      window.printFabricParcelSlip = printFabricParcelSlip;
+
+      /* =====================================================
+         OWN-FABRIC ADMIN SIMULATION WORKFLOW CONTROLS
+         1. Customer Submits -> (Done)
+         2. Admin Reviews -> adminPage('requests')
+         3. Pickup Scheduled / Advanced -> adminAdvancePickup(orderId)
+         4. Fabric Marked Received -> adminConfirmFabricReceived(orderId)
+         5. Order Assigned to Master Tailor -> adminAssignTailor(orderId, tailor)
+         6. Stitching Progresses -> adminAdvanceFabricTailoring(orderId)
+         7. Garment Marked Completed -> adminCompleteFabricOrder(orderId)
+      ===================================================== */
+
+      function adminAdvancePickup(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+
+        if (!target.pickupStatus || target.pickupStatus === "Pickup Scheduled") {
+          target.pickupStatus = "Courier Out for Collection";
+          target.status = "Courier Out for Collection";
+          showToast(`🛵 Order ${orderId}: Courier dispatched for collection!`);
+        } else if (target.pickupStatus === "Courier Out for Collection") {
+          target.pickupStatus = "Fabric Picked Up & In Transit";
+          target.status = "Fabric In Transit to Atelier";
+          showToast(`📦 Order ${orderId}: Fabric collected by courier!`);
+        } else if (target.pickupStatus === "Fabric Picked Up & In Transit") {
+          adminConfirmFabricReceived(orderId);
+          return;
+        }
+
+        saveOrders(list);
+        if (typeof adminPage === "function") adminPage("requests");
+        if (currentTrackedOrderId === target.id) trackOrderById(target.id, false);
+      }
+      window.adminAdvancePickup = adminAdvancePickup;
+
+      function adminConfirmFabricReceived(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+
+        target.fabricReceived = true;
+        target.pickupStatus = "Fabric Received at Atelier (Verified)";
+        target.stage = 2;
+        target.status = "Fabric Received & QC Verified";
+        if (!target.tailor || target.tailor === "Pending Assignment") {
+          target.tailor = "Master Artisan Vignesh";
+        }
+
+        saveOrders(list);
+        showToast(`📥 Fabric intake verified for ${orderId}! Assigned to ${target.tailor}`);
+        if (typeof adminPage === "function") adminPage("requests");
+        if (currentTrackedOrderId === target.id) trackOrderById(target.id, false);
+      }
+      window.adminConfirmFabricReceived = adminConfirmFabricReceived;
+
+      function adminAdvanceFabricTailoring(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+
+        if (target.stage === 2) {
+          target.stage = 3;
+          target.status = "Pattern Drafting & Precision Cut";
+          showToast(`✂ Order ${orderId}: Pattern drafted to client measurements!`);
+        } else if (target.stage === 3) {
+          target.stage = 4;
+          target.status = "Stitching & Master Tailor Hand Finish";
+          showToast(`🧵 Order ${orderId}: Stitching & lining attachment in progress!`);
+        } else if (target.stage === 4) {
+          target.stage = 5;
+          target.status = "Garment Completed · Ready for White-Glove Dispatch";
+          showToast(`🎉 Order ${orderId}: Garment completed and ready for dispatch!`);
+        }
+
+        saveOrders(list);
+        if (typeof adminPage === "function") adminPage("requests");
+        if (currentTrackedOrderId === target.id) trackOrderById(target.id, false);
+      }
+      window.adminAdvanceFabricTailoring = adminAdvanceFabricTailoring;
+
+      function adminCompleteFabricOrder(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+
+        target.stage = 5;
+        target.status = "Garment Completed · Ready for White-Glove Dispatch";
+        saveOrders(list);
+        showToast(`🎉 Order ${orderId}: Marked completed! Dispatched with leftover fabric.`);
+        if (typeof adminPage === "function") adminPage("requests");
+        if (currentTrackedOrderId === target.id) trackOrderById(target.id, false);
+      }
+      window.adminCompleteFabricOrder = adminCompleteFabricOrder;
+
+      /* =====================================================
+         FRONTEND SIMULATION ENGINE (ON-PAGE TRACKER CONSOLE)
+      ===================================================== */
+
+      function simAdvanceCourier(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 1;
+        target.pickupStatus = "Courier Out for Collection";
+        target.status = "Courier Dispatched for Pickup";
+        saveOrders(list);
+        showToast(`🛵 Step 1: Courier dispatched to collect fabric for ${target.id}!`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simAdvanceCourier = simAdvanceCourier;
+
+      function simFabricInTransit(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 1;
+        target.pickupStatus = "Fabric Picked Up & In Transit";
+        target.status = "Fabric Picked Up · In Transit to Atelier";
+        saveOrders(list);
+        showToast(`📦 Step 2: Fabric collected from client and in transit to atelier!`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simFabricInTransit = simFabricInTransit;
+
+      function simFabricReceived(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 2;
+        target.fabricReceived = true;
+        target.pickupStatus = "Fabric Delivered to Atelier (Intake Certified)";
+        target.status = "Fabric Received & QC Verified at Atelier";
+        if (!target.tailor || target.tailor === "Pending Assignment") {
+          target.tailor = "Master Artisan Vignesh";
+        }
+        saveOrders(list);
+        showToast(`📥 Step 3: Fabric received, yardage measured & verified by Quality Control!`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simFabricReceived = simFabricReceived;
+
+      function simAssignTailorAndCut(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 3;
+        target.fabricReceived = true;
+        if (!target.tailor || target.tailor === "Pending Assignment") {
+          target.tailor = "Master Artisan Vignesh";
+        }
+        target.pickupStatus = "Pattern Cut & Drafting Complete";
+        target.status = "Pattern Drafting & Precision Cut";
+        saveOrders(list);
+        showToast(`✂ Step 4: Assigned to ${target.tailor}. Pattern cut to biometric dimensions!`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simAssignTailorAndCut = simAssignTailorAndCut;
+
+      function simProgressStitching(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 4;
+        target.fabricReceived = true;
+        if (!target.tailor || target.tailor === "Pending Assignment") {
+          target.tailor = "Master Artisan Vignesh";
+        }
+        target.status = "Artisan Stitching in Progress";
+        target.pickupStatus = "Seams & Inner Lining Stitching";
+        saveOrders(list);
+        showToast(`🧵 Step 5: Master tailoring in progress with precision seam finishing!`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simProgressStitching = simProgressStitching;
+
+      function simCompleteGarment(orderId) {
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 5;
+        target.fabricReceived = true;
+        target.status = "Garment Completed & White-Glove Dispatched";
+        target.pickupStatus = "Garment Handcrafted & Dispatched";
+        saveOrders(list);
+        showToast(`🎉 Step 6: Garment completed! Packaged in cedar box with leftover fabric yardage.`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simCompleteGarment = simCompleteGarment;
+
+      let simWorkflowTimer = null;
+      function simAutoPlayWorkflow(orderId) {
+        if (simWorkflowTimer) {
+          clearTimeout(simWorkflowTimer);
+          simWorkflowTimer = null;
+        }
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+
+        showToast("▶ Auto-playing end-to-end Own-Fabric simulation...");
+
+        // If completed or high stage, reset to 1 first so full lifecycle plays
+        if (target.stage >= 5) {
+          target.stage = 1;
+          target.fabricReceived = false;
+          target.pickupStatus = "Pickup Scheduled";
+          target.status = "Pickup Scheduled";
+          saveOrders(list);
+          trackOrderById(target.id, false);
+        }
+
+        const runStep = (stepFn, delay) => {
+          return new Promise(resolve => {
+            simWorkflowTimer = setTimeout(() => {
+              stepFn(orderId);
+              resolve();
+            }, delay);
+          });
+        };
+
+        runStep(simAdvanceCourier, 900)
+          .then(() => runStep(simFabricInTransit, 1500))
+          .then(() => runStep(simFabricReceived, 1500))
+          .then(() => runStep(simAssignTailorAndCut, 1500))
+          .then(() => runStep(simProgressStitching, 1500))
+          .then(() => runStep(simCompleteGarment, 1500))
+          .then(() => {
+            showToast("✨ Complete simulated Own-Fabric workflow executed successfully!");
+          });
+      }
+      window.simAutoPlayWorkflow = simAutoPlayWorkflow;
+
+      function simResetWorkflow(orderId) {
+        if (simWorkflowTimer) {
+          clearTimeout(simWorkflowTimer);
+          simWorkflowTimer = null;
+        }
+        const list = getOrders();
+        const target = list.find(o => o.id === orderId);
+        if (!target) return;
+        target.stage = 1;
+        target.fabricReceived = false;
+        target.pickupStatus = "Pickup Scheduled";
+        target.status = "Pickup Scheduled";
+        target.tailor = "Pending Assignment";
+        saveOrders(list);
+        showToast(`↺ Simulation reset to Stage 1: Doorstep Pickup Scheduled.`);
+        trackOrderById(target.id, false);
+        if (typeof adminPage === "function" && document.getElementById("adminPanel") && document.getElementById("adminPanel").style.display !== "none") {
+          adminPage("requests");
+        }
+      }
+      window.simResetWorkflow = simResetWorkflow;
+
+      function adminViewFabricBrief(orderId) {
+        const list = getOrders();
+        const order = list.find(o => o.id === orderId);
+        if (!order) return;
 
         openModal();
-        document.getElementById("modalContent").innerHTML = `
-          <div style="text-align:center; padding:10px 0;">
-            <div style="font-size:52px; color:var(--gold); line-height:1; margin-bottom:12px;">🧵</div>
-            <h2 style="font-family:'Playfair Display',serif;">Own-Fabric Request Accepted</h2>
-            <p style="color:var(--muted); margin:8px 0 16px;">
-              Your fabric submission is registered. Our courier will arrange swatch pickup and stitching consultation.
-            </p>
-            <div style="background:#faf8f3; border:1px dashed var(--line); border-radius:8px; padding:14px; margin-bottom:20px;">
-              <small style="color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;">Own-Fabric Tracking Code</small>
-              <h3 style="color:var(--ink); font-size:24px; margin:4px 0;">${fabricOrder.id}</h3>
-              <p style="font-size:12px; color:var(--brown); margin-top:4px;">Stitching Fee: <b>₹${fabricOrder.total.toLocaleString()}</b></p>
+        const modalContent = document.getElementById("modalContent");
+        if (!modalContent) return;
+
+        modalContent.innerHTML = `
+          <div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; border-bottom:1px solid #ebd39f; padding-bottom:10px;">
+              <div>
+                <span class="cust-badge gold" style="font-size:11px;">✦ OWN-FABRIC ATELIER INTAKE BRIEF</span>
+                <h2 style="font-family:'Playfair Display',serif; margin:4px 0 2px; font-size:22px;">${order.id} &mdash; ${order.design}</h2>
+                <div style="font-size:12px; color:var(--muted);">Pickup Reference: <b style="color:var(--gold);">${order.pickupRef || '#PICKUP-2026'}</b> &middot; Date: ${order.date || 'Recent'}</div>
+              </div>
+              <div style="text-align:right;">
+                <span class="cust-badge ${order.stage >= 5 ? 'green' : 'gold'}" style="font-size:11px;">Stage ${order.stage || 1}/5: ${order.status}</span>
+                <div style="font-size:16px; font-weight:700; color:var(--gold); margin-top:4px;">₹${(order.total || 0).toLocaleString()}</div>
+              </div>
             </div>
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-              <button class="btn btn-dark" onclick="closeModal(); trackOrderById('${fabricOrder.id}', true); scrollToId('tracking');" style="padding:12px 20px;">
-                📦 Track Own-Fabric Order
-              </button>
-              <button class="btn" style="border:1px solid var(--line); background:white; padding:12px 20px;" onclick="closeModal()">
-                Done
-              </button>
+
+            <div style="display:flex; gap:14px; margin-bottom:14px; align-items:flex-start;">
+              ${order.fabricPhoto ? `
+                <img src="${order.fabricPhoto}" style="width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid #ebd39f;" alt="Fabric Swatch">
+              ` : ''}
+              <div style="font-size:13px; line-height:1.6; flex:1;">
+                <div><b>Customer:</b> ${order.customer} (${order.phone || 'N/A'})</div>
+                <div><b>Pickup Address:</b> ${order.address || order.city || 'Bengaluru'}</div>
+                <div><b>Pickup Slot:</b> ${order.pickupDate || 'Tomorrow'} (${order.pickupTime || 'Morning'})</div>
+                <div><b>Fabric Specifications:</b> ${order.fabric}</div>
+                <div><b>Structural Lining:</b> ${order.lining || 'Standard'}</div>
+              </div>
+            </div>
+
+            <div style="background:#faf8f3; border:1px solid #ebd39f; border-radius:8px; padding:12px; font-size:12px; color:var(--brown); margin-bottom:14px;">
+              <b>Biometric Measurements:</b> ${order.measurements || 'Standard Fitted Dimensions'} (${order.measurementProfile || 'Profile'})<br>
+              <b>Client Stitching Instructions:</b> <i>"${order.note || 'None specified.'}"</i>
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+              <button class="btn btn-gold" onclick="printFabricParcelSlip('${order.id}')" style="padding:8px 16px; font-size:12px;">🖨 Print Parcel Label</button>
+              <button class="btn btn-dark" onclick="closeModal()" style="padding:8px 16px; font-size:12px;">Close</button>
             </div>
           </div>
         `;
       }
+      window.adminViewFabricBrief = adminViewFabricBrief;
 
       /* =====================================================
    TRY ON
@@ -2479,41 +4603,129 @@ ${products
 <th>Customer</th>
 <th>Design / Garment</th>
 <th>Total</th>
-<th>Stage & Status</th>
+<th>Stage & Master Tailor</th>
 <th>Update Pipeline</th>
 </tr>
 ${
   liveOrders.length
     ? liveOrders
         .map(
-          (o) => `
-<tr>
-<td><strong style="color:var(--ink);">${o.id}</strong><br><small style="color:var(--muted);">${o.date || ''}</small></td>
-<td><b>${o.customer}</b><br><small style="color:var(--muted);">${o.phone || ''}</small></td>
-<td>${o.design || o.type}<br><small style="color:var(--gold); font-weight:600;">${o.type || 'Boutique Order'}</small></td>
-<td><strong>₹${(o.total || 0).toLocaleString()}</strong></td>
+          (o) => {
+            const isBespoke = (o.type || '').includes('Bespoke') || (o.id || '').startsWith('#BESPOKE');
+            const isOwnFabric = Boolean(o.isOwnFabric || (o.id || '').startsWith('#FABRIC') || (o.type || '').includes('Fabric') || (o.type || '').includes('Own-Fabric'));
+            const hasRevision = o.revisions && o.revisions.length && o.status === 'Revision Requested';
+            const isCancelled = o.cancellation || (o.status || '').includes('Cancelled');
+            return `
+<tr style="${hasRevision ? 'background:#fffdf7;' : isCancelled ? 'opacity:0.85;' : ''}">
 <td>
-  <span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:${(o.stage || 1) >= 5 ? '#e8f5e9' : '#fff8e1'};color:${(o.stage || 1) >= 5 ? '#2e7d32' : '#b78103'};font-weight:600;">
-    Stage ${o.stage || 1}/5: ${o.status || 'Received'}
-  </span>
+  <strong style="color:var(--ink);">${o.id}</strong>
+  ${isBespoke ? `<br><span class="cust-badge gold" style="font-size:10px; padding:2px 6px; margin-top:3px; display:inline-block;">✦ BESPOKE COUTURE</span>` : ''}
+  ${isOwnFabric ? `<br><span class="cust-badge gold" style="font-size:10px; padding:2px 6px; margin-top:3px; display:inline-block; background:#181210; color:#d4af37;">✦ OWN-FABRIC ATELIER</span><br><small style="color:var(--gold); font-weight:600;">📦 ${o.pickupRef || '#PICKUP-2026'}</small>` : ''}
+  <br><small style="color:var(--muted);">${o.date || ''}</small>
 </td>
 <td>
-<div style="display:flex; align-items:center; gap:6px;">
-  <select style="padding:6px;border:1px solid #ddd;border-radius:4px;font-size:12px;background:white;" onchange="changeOrder('${o.id}', this.value)">
-    <option value="" disabled selected>Update stage...</option>
-    <option value="Stage 1: Request Received" ${o.stage === 1 ? 'selected' : ''}>Stage 1: Request Received</option>
-    <option value="Stage 2: Fabric Sourced & Cut" ${o.stage === 2 ? 'selected' : ''}>Stage 2: Fabric Sourced & Cut</option>
-    <option value="Stage 3: Stitching & Draping" ${o.stage === 3 ? 'selected' : ''}>Stage 3: Stitching & Draping</option>
-    <option value="Stage 4: Quality Inspection" ${o.stage === 4 ? 'selected' : ''}>Stage 4: Quality Inspection</option>
-    <option value="Stage 5: White-Glove Dispatch" ${o.stage === 5 ? 'selected' : ''}>Stage 5: White-Glove Dispatch</option>
-  </select>
-  <button type="button" class="btn btn-sm btn-ghost" style="padding:5px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="printOrderInvoice('${o.id}')" title="Print Tax Invoice">
-    🖨 Invoice
-  </button>
+  <b>${o.customer}</b><br><small style="color:var(--muted);">${o.phone || ''}</small>
+  ${o.address ? `<br><small style="color:var(--muted); font-size:11px;">📍 ${o.address}</small>` : o.city ? `<br><small style="color:var(--muted);">📍 ${o.city}</small>` : ''}
+  ${isOwnFabric && o.pickupDate ? `<br><small style="color:var(--brown); font-size:11px;">📅 Pickup: ${o.pickupDate} (${o.pickupTime || 'Morning'})</small>` : ''}
+</td>
+<td>
+  <div style="display:flex; align-items:flex-start; gap:8px;">
+    ${isOwnFabric && o.fabricPhoto ? `<img src="${o.fabricPhoto}" style="width:40px; height:40px; object-fit:cover; border-radius:4px; border:1px solid #ebd39f; flex-shrink:0;">` : ''}
+    <div>
+      <b>${o.design || o.type}</b>
+      <br><small style="color:var(--gold); font-weight:600;">${o.type || 'Boutique Order'}</small>
+      ${o.fabric ? `<br><small style="color:var(--brown);">🧵 ${o.fabric}</small>` : ''}
+    </div>
+  </div>
+</td>
+<td><strong>₹${(o.total || 0).toLocaleString()}</strong></td>
+<td>
+  <div style="margin-bottom:6px;">
+    <span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:${isCancelled ? '#ffebee' : (o.stage || 1) >= 5 ? '#e8f5e9' : '#fff8e1'};color:${isCancelled ? '#c62828' : (o.stage || 1) >= 5 ? '#2e7d32' : '#b78103'};font-weight:600;">
+      ${isCancelled ? '❌ Cancelled' : `Stage ${o.stage || 1}/5: ${o.status || 'Received'}`}
+    </span>
+    ${isOwnFabric && o.fabricReceived ? `<span style="display:inline-block; margin-left:4px; padding:2px 6px; border-radius:10px; font-size:10px; background:#e8f5e9; color:#2e7d32; font-weight:600;">✓ Fabric Received</span>` : ''}
+  </div>
+  ${(isBespoke || isOwnFabric) ? `
+    <div style="font-size:11px; color:var(--brown);">
+      <b>Tailor:</b> <span style="color:var(--gold); font-weight:600;">${o.tailor || 'Pending Assignment'}</span>
+    </div>
+  ` : ''}
+  ${hasRevision ? `
+    <div style="margin-top:5px; padding:4px 8px; background:#fff3cd; border:1px solid #ffeeba; border-radius:4px; font-size:11px; color:#856404; display:flex; align-items:center; justify-content:space-between; gap:4px;">
+      <span>⚠️ <b>Revision:</b> ${o.revisions[o.revisions.length - 1].category}</span>
+      <button type="button" class="btn btn-sm" style="padding:2px 7px; font-size:10px; background:var(--ink); color:#fff; border-radius:3px;" onclick="adminApproveRevision('${o.id}')">Approve</button>
+    </div>
+  ` : ''}
+  ${isCancelled ? `
+    <div style="margin-top:5px; padding:4px 8px; background:#ffebee; border:1px solid #ffcdd2; border-radius:4px; font-size:11px; color:#b71c1c;">
+      ${o.cancellation ? o.cancellation.reason : 'Customer Requested'} (${o.cancellation ? o.cancellation.refundStatus : 'Refund Queued'})
+    </div>
+  ` : ''}
+</td>
+<td>
+<div style="display:flex; flex-direction:column; gap:6px;">
+  <div style="display:flex; align-items:center; gap:6px;">
+    <select style="padding:5px 6px;border:1px solid #ddd;border-radius:4px;font-size:11px;background:white;" onchange="changeOrder('${o.id}', this.value)">
+      <option value="" disabled ${!o.stage ? 'selected' : ''}>Update stage...</option>
+      <option value="Stage 1: Request Received" ${o.stage === 1 ? 'selected' : ''}>Stage 1: ${isOwnFabric ? 'Pickup Scheduled' : 'Request Received'}</option>
+      <option value="Stage 2: Fabric Sourced & Cut" ${o.stage === 2 ? 'selected' : ''}>Stage 2: ${isOwnFabric ? 'Fabric Received & QC Verified' : 'Fabric Sourced & Cut'}</option>
+      <option value="Stage 3: Stitching & Draping" ${o.stage === 3 ? 'selected' : ''}>Stage 3: ${isOwnFabric ? 'Pattern Cut & Stitching' : 'Stitching & Draping'}</option>
+      <option value="Stage 4: Quality Inspection" ${o.stage === 4 ? 'selected' : ''}>Stage 4: Quality Inspection</option>
+      <option value="Stage 5: White-Glove Dispatch" ${o.stage === 5 ? 'selected' : ''}>Stage 5: White-Glove Dispatch</option>
+      <option value="Cancelled" ${isCancelled ? 'selected' : ''}>❌ Cancel Order (Void)</option>
+    </select>
+  </div>
+  ${(isBespoke || isOwnFabric) ? `
+    <div style="display:flex; align-items:center; gap:6px;">
+      <select style="padding:5px 6px;border:1px solid #d4af37;border-radius:4px;font-size:11px;background:#fffdf8;" onchange="adminAssignTailor('${o.id}', this.value)">
+        <option value="" disabled ${!o.tailor || o.tailor === 'Pending Assignment' ? 'selected' : ''}>Assign Master Tailor...</option>
+        <option value="Master Artisan Vignesh" ${o.tailor === 'Master Artisan Vignesh' ? 'selected' : ''}>Master Artisan Vignesh</option>
+        <option value="Master Tailor Kulkarni" ${o.tailor === 'Master Tailor Kulkarni' ? 'selected' : ''}>Master Tailor Kulkarni</option>
+        <option value="Senior Couturière Farah" ${o.tailor === 'Senior Couturière Farah' ? 'selected' : ''}>Senior Couturière Farah</option>
+        <option value="Artisan Zardozi Guild" ${o.tailor === 'Artisan Zardozi Guild' ? 'selected' : ''}>Artisan Zardozi Guild</option>
+      </select>
+    </div>
+  ` : ''}
+  <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+    ${isOwnFabric && !o.fabricReceived ? `
+      <button type="button" class="btn btn-sm" style="padding:3px 7px; font-size:10px; background:#2e7d32; color:#fff; border:none; border-radius:3px;" onclick="adminConfirmFabricReceived('${o.id}')" title="Confirm Fabric Received at Atelier">
+        📥 Receive Fabric
+      </button>
+    ` : ''}
+    ${isOwnFabric && o.fabricReceived && (o.stage || 1) < 5 ? `
+      <button type="button" class="btn btn-sm" style="padding:3px 7px; font-size:10px; background:#b89558; color:#181210; font-weight:600; border:none; border-radius:3px;" onclick="adminAdvanceFabricTailoring('${o.id}')" title="Advance Tailoring Progress">
+        🧵 Advance Stage
+      </button>
+    ` : ''}
+    ${isCancelled && o.cancellation && o.cancellation.refundStatus && o.cancellation.refundStatus.includes('Queued') ? `
+      <button type="button" class="btn btn-sm" style="padding:4px 8px; font-size:11px; background:#2e7d32; color:#fff; border-radius:4px; border:none; cursor:pointer;" onclick="adminProcessRefund('${o.id}')" title="Disburse client refund">
+        💳 Issue Refund
+      </button>
+    ` : ''}
+    ${!isCancelled && o.stage !== 5 ? `
+      <button type="button" class="btn btn-sm btn-ghost" style="padding:4px 8px; font-size:11px; border:1px solid #ffcdd2; background:#fff; color:#c62828;" onclick="adminCancelOrder('${o.id}')" title="Void Order / Issue Full Refund">
+        ❌ Cancel
+      </button>
+    ` : ''}
+    ${isOwnFabric ? `
+      <button type="button" class="btn btn-sm btn-ghost" style="padding:4px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="printFabricParcelSlip('${o.id}')" title="Print Courier Parcel Slip">
+        🖨 Slip
+      </button>
+    ` : isBespoke ? `
+      <button type="button" class="btn btn-sm btn-ghost" style="padding:4px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="adminViewDesignBrief('${o.id}')" title="Inspect Bespoke Brief">
+        🔍 Brief
+      </button>
+    ` : ''}
+    <button type="button" class="btn btn-sm btn-ghost" style="padding:4px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="printOrderInvoice('${o.id}')" title="Print Tax Invoice">
+      🖨 Invoice
+    </button>
+  </div>
 </div>
 </td>
 </tr>
-`
+`;
+          }
         )
         .join("")
     : `
@@ -2554,13 +4766,13 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
 
         if (page === "requests") {
           const liveOrders = getOrders();
-          const bespokeOrders = liveOrders.filter(o => (o.type || '').includes('Bespoke'));
-          const fabricOrders = liveOrders.filter(o => (o.type || '').includes('Fabric'));
-          const storeOrders = liveOrders.filter(o => (o.type || '').includes('Storefront') || (o.type || '').includes('Couture') || (o.type || '').includes('Ready'));
+          const bespokeOrders = liveOrders.filter(o => (o.type || '').includes('Bespoke') || (o.id || '').startsWith('#BESPOKE'));
+          const fabricOrders = liveOrders.filter(o => o.isOwnFabric || (o.type || '').includes('Fabric') || (o.id || '').startsWith('#FABRIC'));
+          const storeOrders = liveOrders.filter(o => !bespokeOrders.includes(o) && !fabricOrders.includes(o));
 
           area.innerHTML = `
 <h1>Personalization Requests</h1>
-<p style="color:#887b6c;margin-bottom:15px;">Real-time breakdown of custom commissions and tailoring queues.</p>
+<p style="color:#887b6c;margin-bottom:15px;">Real-time breakdown of custom commissions, doorstep fabric collections, and Master Tailor queues.</p>
 <div class="admin-cards">
 <div class="admin-card">
 <span>Custom Bespoke</span>
@@ -2571,7 +4783,7 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
 <div class="admin-card">
 <span>Own-Fabric Requests</span>
 <strong style="color:var(--gold);">${fabricOrders.length}</strong>
-<p style="font-size:11px;color:#887b6c;margin-top:4px;">Customer fabrics sent for tailoring</p>
+<p style="font-size:11px;color:#887b6c;margin-top:4px;">Doorstep collections &amp; custom tailoring</p>
 </div>
 
 <div class="admin-card">
@@ -2579,6 +4791,189 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
 <strong style="color:var(--gold);">${storeOrders.length}</strong>
 <p style="font-size:11px;color:#887b6c;margin-top:4px;">Direct catalogue checkouts</p>
 </div>
+</div>
+
+<div style="margin-top:28px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:20px; margin:0;">Bespoke Tailoring Assignment Queue</h2>
+    <span class="cust-badge gold">${bespokeOrders.length} Commissions</span>
+  </div>
+  <table class="admin-table">
+    <tr>
+      <th>Order Reference</th>
+      <th>Client</th>
+      <th>Silhouette & Handwork</th>
+      <th>Measurements Profile</th>
+      <th>Assigned Master Tailor</th>
+      <th>Actions</th>
+    </tr>
+    ${bespokeOrders.length ? bespokeOrders.map(b => `
+      <tr>
+        <td>
+          <strong style="color:var(--ink);">${b.id}</strong><br>
+          <small style="color:var(--muted);">${b.date || ''}</small>
+        </td>
+        <td>
+          <b>${b.customer}</b><br>
+          <small style="color:var(--muted);">${b.phone || ''}</small>
+        </td>
+        <td>
+          <b>${b.garment || b.design}</b><br>
+          <small style="color:var(--brown);">🧵 ${b.fabric || 'Silk'} &middot; ✨ ${b.embroidery || 'Zardozi'}</small>
+        </td>
+        <td>
+          <span style="font-weight:600; font-size:12px; color:var(--ink);">${b.measurementProfile || 'Standard Profile'}</span>
+          <br><small style="color:var(--muted); font-size:11px;">${(b.measurements || '').split('·')[0] || ''}</small>
+        </td>
+        <td>
+          <select style="padding:6px;border:1px solid #d4af37;border-radius:4px;font-size:12px;background:#fffdf8;" onchange="adminAssignTailor('${b.id}', this.value)">
+            <option value="" disabled ${!b.tailor || b.tailor === 'Pending Assignment' ? 'selected' : ''}>Select Master Tailor...</option>
+            <option value="Master Artisan Vignesh" ${b.tailor === 'Master Artisan Vignesh' ? 'selected' : ''}>Master Artisan Vignesh</option>
+            <option value="Master Tailor Kulkarni" ${b.tailor === 'Master Tailor Kulkarni' ? 'selected' : ''}>Master Tailor Kulkarni</option>
+            <option value="Senior Couturière Farah" ${b.tailor === 'Senior Couturière Farah' ? 'selected' : ''}>Senior Couturière Farah</option>
+            <option value="Artisan Zardozi Guild" ${b.tailor === 'Artisan Zardozi Guild' ? 'selected' : ''}>Artisan Zardozi Guild</option>
+          </select>
+          ${b.revisions && b.revisions.length && b.status === 'Revision Requested' ? `
+            <div style="margin-top:4px; font-size:11px; color:#856404; background:#fff3cd; padding:2px 6px; border-radius:3px;">
+              ⚠️ Revision: ${b.revisions[b.revisions.length-1].category}
+            </div>
+          ` : ''}
+        </td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-sm btn-ghost" style="padding:5px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="adminViewDesignBrief('${b.id}')">
+              🔍 Brief
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost" style="padding:5px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="printBespokeOrderSlip('${b.id}')">
+              🖨 Slip
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('') : `
+      <tr>
+        <td colspan="6" style="text-align:center; padding:24px; color:var(--muted);">
+          No bespoke tailoring commissions in the queue.
+        </td>
+      </tr>
+    `}
+  </table>
+</div>
+
+<!-- Dedicated Own-Fabric Doorstep Collection & Tailoring Pipeline -->
+<div style="margin-top:34px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <div>
+      <h2 style="font-family:'Playfair Display',serif; font-size:20px; margin:0 0 2px;">Own-Fabric Doorstep Collection &amp; Tailoring Pipeline</h2>
+      <p style="font-size:12px; color:#887b6c; margin:0;">Simulated collection lifecycle: Schedule pickup &rarr; Receive fabric &rarr; Assign artisan &rarr; Progress stitching &rarr; Mark completed.</p>
+    </div>
+    <span class="cust-badge gold">${fabricOrders.length} Fabric Commissions</span>
+  </div>
+  <table class="admin-table">
+    <tr>
+      <th>Order &amp; Pickup Ref</th>
+      <th>Client &amp; Pickup Logistics</th>
+      <th>Supplied Fabric &amp; Swatch</th>
+      <th>Silhouette &amp; Lining</th>
+      <th>Intake &amp; Tailoring Progress</th>
+      <th>Master Tailor</th>
+      <th>Lifecycle Actions</th>
+    </tr>
+    ${fabricOrders.length ? fabricOrders.map(f => {
+      const isCancelled = f.cancellation || (f.status || '').includes('Cancelled');
+      return `
+      <tr style="${isCancelled ? 'opacity:0.8; background:#fff8f8;' : ''}">
+        <td>
+          <strong style="color:var(--ink);">${f.id}</strong><br>
+          <span style="display:inline-block; margin-top:2px; font-size:11px; font-weight:700; color:var(--gold);">
+            📦 ${f.pickupRef || '#PICKUP-2026'}
+          </span><br>
+          <small style="color:var(--muted);">${f.date || ''}</small>
+        </td>
+        <td>
+          <b>${f.customer}</b><br>
+          <small style="color:var(--muted);">${f.phone || ''}</small><br>
+          <small style="color:var(--ink); font-size:11px;">📍 ${f.address || f.city || 'Bengaluru'}</small><br>
+          <small style="color:var(--brown); font-size:11px;">📅 ${f.pickupDate || 'Tomorrow'} (${f.pickupTime || 'Morning'})</small>
+        </td>
+        <td>
+          <div style="display:flex; align-items:flex-start; gap:8px;">
+            ${f.fabricPhoto ? `
+              <img src="${f.fabricPhoto}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; border:1px solid #ebd39f; flex-shrink:0;">
+            ` : ''}
+            <div>
+              <b style="font-size:12px;">${f.fabric || 'Customer Fabric'}</b>
+              ${f.measurements ? `<br><small style="color:var(--muted); font-size:11px;">Profile: ${f.measurementProfile || 'Custom'}</small>` : ''}
+            </div>
+          </div>
+        </td>
+        <td>
+          <b>${f.design || f.garment}</b><br>
+          <small style="color:var(--brown);">Lining: ${f.lining || 'Standard'}</small>
+          ${f.note ? `<br><small style="color:var(--muted); font-style:italic;">"${f.note.substring(0, 40)}..."</small>` : ''}
+        </td>
+        <td>
+          <div style="margin-bottom:4px;">
+            <span style="display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700; background:${f.fabricReceived ? '#e8f5e9' : '#fff8e1'}; color:${f.fabricReceived ? '#2e7d32' : '#b78103'};">
+              ${f.fabricReceived ? '✓ Fabric Verified' : `🛵 ${f.pickupStatus || 'Pickup Scheduled'}`}
+            </span>
+          </div>
+          <div style="font-size:11px; color:var(--ink); font-weight:600;">
+            Stage ${f.stage || 1}/5: ${f.status || 'Scheduled'}
+          </div>
+        </td>
+        <td>
+          <select style="padding:6px;border:1px solid #d4af37;border-radius:4px;font-size:11px;background:#fffdf8;" onchange="adminAssignTailor('${f.id}', this.value)">
+            <option value="" disabled ${!f.tailor || f.tailor === 'Pending Assignment' ? 'selected' : ''}>Assign Master Tailor...</option>
+            <option value="Master Artisan Vignesh" ${f.tailor === 'Master Artisan Vignesh' ? 'selected' : ''}>Master Artisan Vignesh</option>
+            <option value="Master Tailor Kulkarni" ${f.tailor === 'Master Tailor Kulkarni' ? 'selected' : ''}>Master Tailor Kulkarni</option>
+            <option value="Senior Couturière Farah" ${f.tailor === 'Senior Couturière Farah' ? 'selected' : ''}>Senior Couturière Farah</option>
+            <option value="Artisan Zardozi Guild" ${f.tailor === 'Artisan Zardozi Guild' ? 'selected' : ''}>Artisan Zardozi Guild</option>
+          </select>
+        </td>
+        <td>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            ${!f.fabricReceived ? `
+              <div style="display:flex; gap:4px;">
+                <button type="button" class="btn btn-sm" style="padding:4px 8px; font-size:11px; background:#181210; color:#fff;" onclick="adminAdvancePickup('${f.id}')" title="Advance Courier Pickup Status">
+                  🛵 Advance Pickup
+                </button>
+                <button type="button" class="btn btn-sm" style="padding:4px 8px; font-size:11px; background:#2e7d32; color:#fff;" onclick="adminConfirmFabricReceived('${f.id}')" title="Confirm Fabric Received & Verified at Atelier">
+                  📥 Confirm Received
+                </button>
+              </div>
+            ` : (f.stage || 1) < 5 ? `
+              <div style="display:flex; gap:4px;">
+                <button type="button" class="btn btn-sm" style="padding:4px 8px; font-size:11px; background:#b89558; color:#181210; font-weight:600;" onclick="adminAdvanceFabricTailoring('${f.id}')" title="Advance Tailoring Progress">
+                  🧵 Advance Tailoring (Stage ${(f.stage||1)+1})
+                </button>
+                <button type="button" class="btn btn-sm" style="padding:4px 8px; font-size:11px; background:#2e7d32; color:#fff;" onclick="adminCompleteFabricOrder('${f.id}')" title="Mark Garment Completed & Dispatched">
+                  🎉 Complete
+                </button>
+              </div>
+            ` : `
+              <span style="font-size:11px; color:#2e7d32; font-weight:700;">✓ Completed &amp; Dispatched</span>
+            `}
+            <div style="display:flex; gap:4px; margin-top:2px;">
+              <button type="button" class="btn btn-sm btn-ghost" style="padding:3px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="printFabricParcelSlip('${f.id}')" title="Print Courier Parcel Slip">
+                🖨 Parcel Slip
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost" style="padding:3px 8px; font-size:11px; border:1px solid var(--line); background:#fff;" onclick="adminViewFabricBrief('${f.id}')" title="View Atelier Fabric Intake Brief">
+                🔍 Brief
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      `;
+    }).join('') : `
+      <tr>
+        <td colspan="7" style="text-align:center; padding:24px; color:var(--muted);">
+          No own-fabric customer commissions in the pipeline.
+        </td>
+      </tr>
+    `}
+  </table>
 </div>
 `;
         }
@@ -2653,6 +5048,12 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
       }
 
       function changeOrder(orderId, val) {
+        if (val === "Cancelled" || (typeof val === "string" && val.includes("Cancel"))) {
+          if (typeof adminCancelOrder === "function") {
+            adminCancelOrder(orderId);
+            return;
+          }
+        }
         let stage = 1;
         let status = "Request Received";
         if (typeof val === "string") {
@@ -3318,8 +5719,14 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
           (o.phone && cust.phone && o.phone.replace(/\D/g,'') === cust.phone.replace(/\D/g,'')) ||
           (o.email && cust.email && o.email.toLowerCase() === cust.email.toLowerCase())
         );
-        const storeOrders = clientOrders.filter(o => o.type !== "Bespoke Tailoring" && o.type !== "Own-Fabric Commission");
-        const tailorOrders = clientOrders.filter(o => o.type === "Bespoke Tailoring" || o.type === "Own-Fabric Commission");
+        const tailorOrders = allOrders.filter(o =>
+          (o.type === "Bespoke Tailoring" || o.type === "Own-Fabric Commission" || o.isOwnFabric || (o.type && o.type.includes("Bespoke")) || (o.type && o.type.includes("Fabric")) || (o.id && (o.id.startsWith("#BESPOKE") || o.id.startsWith("#FABRIC")))) &&
+          ((o.customer && (o.customer.toLowerCase().includes(cust.name.toLowerCase().split(" ")[0]) || o.customer.toLowerCase() === cust.name.toLowerCase())) ||
+           (o.phone && cust.phone && o.phone.replace(/\D/g,'') === cust.phone.replace(/\D/g,'')) ||
+           (o.email && cust.email && o.email.toLowerCase() === cust.email.toLowerCase()) ||
+           !o.customer)
+        );
+        const storeOrders = clientOrders.filter(o => !tailorOrders.some(t => t.id === o.id));
 
         /* --- 1. OVERVIEW --- */
         if (page === "overview") {
@@ -3821,25 +6228,42 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
                   </tr>
                 </thead>
                 <tbody>
-                  ${storeOrders.map((o) => `
-                    <tr>
+                  ${storeOrders.map((o) => {
+                    const isCancelled = Boolean(o.cancellation || (o.status || '').includes('Cancelled') || o.stage === 0);
+                    return `
+                    <tr style="${isCancelled ? 'background:#fff8f8;' : ''}">
                       <td><b>${o.id}</b></td>
                       <td>${o.date || 'Recent'}</td>
                       <td>${o.design || o.type}</td>
                       <td><strong>₹${(o.total || 0).toLocaleString()}</strong></td>
-                      <td><span class="cust-badge ${o.stage >= 5 ? 'green' : 'gold'}">${o.status}</span></td>
                       <td>
-                        <div style="display:flex; align-items:center; gap:6px;">
+                        <span class="cust-badge ${isCancelled ? 'red' : o.stage >= 5 ? 'green' : 'gold'}">
+                          ${isCancelled ? '❌ Cancelled' : o.status}
+                        </span>
+                        ${isCancelled && o.cancellation ? `
+                          <div style="font-size:11px; color:#c62828; margin-top:2px;">
+                            ${o.cancellation.refundStatus ? o.cancellation.refundStatus.split('(')[0] : 'Refund Queued'}
+                          </div>
+                        ` : ''}
+                      </td>
+                      <td>
+                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                           <button class="btn btn-dark" style="padding:6px 12px; font-size:11px;" onclick="closeCustomerWorkspace(); trackOrderById('${o.id}', true); scrollToId('tracking');">
                             📦 Track Live
                           </button>
                           <button class="btn btn-gold" style="padding:6px 10px; font-size:11px;" onclick="printOrderInvoice('${o.id}')" title="View &amp; Print Official Tax Invoice">
                             🖨 Invoice
                           </button>
+                          ${!isCancelled && (o.stage || 1) < 5 ? `
+                            <button class="btn btn-ghost" style="padding:6px 10px; font-size:11px; border:1px solid #f5c6cb; color:#c62828; background:#fff;" onclick="openOrderCancellationModal('${o.id}')" title="Cancel this storefront order">
+                              ❌ Cancel
+                            </button>
+                          ` : ''}
                         </div>
                       </td>
                     </tr>
-                  `).join('')}
+                  `;
+                  }).join('')}
                 </tbody>
               </table>
             ` : `
@@ -3857,39 +6281,203 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
 
         /* --- 8. CUSTOM TAILORING ORDERS --- */
         else if (page === "tailoring") {
+          const activeCount = tailorOrders.filter(o => !o.cancellation && (!o.status || !o.status.includes('Cancelled')) && (!o.revisions || !o.revisions.length || o.status !== 'Revision Requested') && (o.stage || 1) < 5).length;
+          const revCount = tailorOrders.filter(o => !o.cancellation && (!o.status || !o.status.includes('Cancelled')) && (o.revisions && o.revisions.length && o.status === 'Revision Requested')).length;
+          const completedCount = tailorOrders.filter(o => !o.cancellation && (!o.status || !o.status.includes('Cancelled')) && (o.stage || 1) >= 5).length;
+          const cancelledCount = tailorOrders.filter(o => o.cancellation || (o.status && o.status.includes('Cancelled'))).length;
+
           area.innerHTML = `
-            <div style="margin-bottom:20px;">
-              <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:0 0 4px;">Custom Tailoring Commissions</h2>
-              <p style="color:var(--muted); font-size:13px; margin:0;">Active and completed Bespoke Studio &amp; Own-Fabric tailoring requests.</p>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+              <div>
+                <h2 style="font-family:'Playfair Display',serif; font-size:24px; margin:0 0 4px;">Custom Tailoring &amp; Bespoke Commissions</h2>
+                <p style="color:var(--muted); font-size:13px; margin:0;">End-to-end bespoke lifecycle: fabric specifications, biometric measurements, Master Tailor status, design revisions, and order history.</p>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-gold" onclick="closeCustomerWorkspace(); scrollToId('custom');" style="padding:8px 18px; font-size:12px; font-weight:600;">
+                  + Commission Bespoke Outfit
+                </button>
+                <button class="btn btn-dark" onclick="closeCustomerWorkspace(); scrollToId('fabric');" style="padding:8px 18px; font-size:12px; font-weight:600; border:1px solid #d4af37;">
+                  + Request Own-Fabric Pickup
+                </button>
+              </div>
             </div>
 
             ${tailorOrders.length ? `
-              <div style="display:grid; gap:16px;">
-                ${tailorOrders.map((o) => `
-                  <div class="cust-item-card" style="border-left:4px solid var(--gold);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+              <div class="cust-tab-pills" style="margin-bottom:20px;">
+                <button type="button" class="cust-tab-pill active" onclick="filterTailoringHistory('all', this)">All Commissions (${tailorOrders.length})</button>
+                <button type="button" class="cust-tab-pill" onclick="filterTailoringHistory('active', this)">In Atelier Progress (${activeCount})</button>
+                <button type="button" class="cust-tab-pill" onclick="filterTailoringHistory('revision', this)">Revision Requested (${revCount})</button>
+                <button type="button" class="cust-tab-pill" onclick="filterTailoringHistory('completed', this)">Dispatched &amp; Completed (${completedCount})</button>
+                <button type="button" class="cust-tab-pill" onclick="filterTailoringHistory('cancelled', this)">Cancelled (${cancelledCount})</button>
+              </div>
+
+              <div style="display:grid; gap:18px;" id="tailoringOrdersList">
+                ${tailorOrders.map((o) => {
+                  const isCancelled = o.cancellation || (o.status || '').includes('Cancelled');
+                  const hasRevision = o.revisions && o.revisions.length && o.status === 'Revision Requested';
+                  const isCompleted = !isCancelled && (o.stage || 1) >= 5;
+                  const isOwnFabric = Boolean(o.isOwnFabric || (o.id && o.id.startsWith('#FABRIC')) || (o.type && o.type.includes('Fabric')) || (o.type && o.type.includes('Own-Fabric')));
+                  const filterCat = isCancelled ? 'cancelled' : hasRevision ? 'revision' : isCompleted ? 'completed' : 'active';
+                  return `
+                  <div class="cust-item-card bespoke-order-history-card" data-status="${filterCat}" style="border-left:4px solid ${isCancelled ? '#c62828' : hasRevision ? '#f59e0b' : isCompleted ? '#2e7d32' : 'var(--gold)'}; padding:20px; background:#fff; border-radius:10px;">
+                    <!-- Header row -->
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px; border-bottom:1px solid #f4eee2; padding-bottom:12px;">
                       <div>
-                        <strong style="font-size:16px;">${o.id} &mdash; ${o.design}</strong>
-                        <span class="cust-badge gold" style="margin-left:6px;">${o.type}</span>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                          <strong style="font-size:17px; color:var(--ink);">${o.id}</strong>
+                          <span class="cust-badge gold">✦ ${(o.type || (isOwnFabric ? 'Own-Fabric Commission' : 'Bespoke Tailoring')).toUpperCase()}</span>
+                          ${isOwnFabric && o.pickupRef ? `<span style="font-size:12px; font-weight:700; color:var(--gold);">📦 ${o.pickupRef}</span>` : ''}
+                          <span style="font-size:12px; color:var(--muted);">${o.date || 'Atelier Commission'}</span>
+                        </div>
+                        <h3 style="font-family:'Playfair Display',serif; font-size:19px; margin:6px 0 2px; color:var(--ink);">${o.design || o.garment}</h3>
+                        <div style="font-size:12px; color:var(--brown);">
+                          Client: <b>${o.customer}</b> &middot; Destination: <b>${o.city || 'Bengaluru'}</b>
+                        </div>
                       </div>
-                      <span class="cust-badge ${o.stage >= 5 ? 'green' : 'gold'}">Stage ${o.stage || 1}/5: ${o.status}</span>
+                      <div style="text-align:right;">
+                        <span class="cust-badge ${isCancelled ? 'red' : isCompleted ? 'green' : hasRevision ? 'gold' : 'gold'}" style="font-size:12px; padding:4px 12px;">
+                          ${isCancelled ? '❌ Cancelled' : hasRevision ? '⚠️ Revision Requested' : `Stage ${o.stage || 1}/5: ${o.status || 'Received'}`}
+                        </span>
+                        <div style="margin-top:6px; font-size:16px; font-weight:700; color:var(--gold);">
+                          ₹${(o.total || 0).toLocaleString()}
+                        </div>
+                        <small style="color:var(--muted); font-size:11px;">(Incl. 5% Luxury GST &amp; Handwork)</small>
+                      </div>
                     </div>
 
-                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:12px; color:var(--muted); background:#faf7f2; padding:12px; border-radius:6px; margin:10px 0 14px;">
-                      <div>Fabric: <b style="color:var(--ink);">${o.fabric || 'Atelier Fabric'}</b></div>
-                      <div>Tailor: <b style="color:var(--ink);">${o.tailor || 'Master Tailor Atelier'}</b></div>
-                      <div>Estimated Delivery: <b style="color:var(--ink);">${o.estDelivery || 'Within 10-14 Days'}</b></div>
-                      <div>Measurements: <b style="color:var(--ink);">${o.measurements || 'Standard'}</b></div>
+                    <!-- Master Tailor Assignment Status Banner -->
+                    ${o.tailor && o.tailor !== 'Pending Assignment' ? `
+                      <div style="display:flex; align-items:center; gap:8px; background:#f4f9f4; border:1px solid #c8e6c9; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-size:12px; color:#2e7d32;">
+                        <span>✂ <b>Master Tailor Assigned:</b> ${o.tailor}</span>
+                        <span style="color:#81c784;">&middot;</span>
+                        <span>Dedicated artisan oversight at Bengaluru atelier</span>
+                      </div>
+                    ` : isCancelled ? '' : `
+                      <div style="display:flex; align-items:center; gap:8px; background:#fffcf2; border:1px solid #ffeeba; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-size:12px; color:#856404;">
+                        <span>⏳ <b>Master Tailor Assignment:</b> Pending atelier lead artisan assignment &amp; yardage preparation.</span>
+                      </div>
+                    `}
+
+                    <!-- Own-Fabric Doorstep Collection Status Banner -->
+                    ${isOwnFabric && !isCancelled ? `
+                      <div style="display:flex; align-items:center; gap:8px; background:${o.fabricReceived ? '#f4f9f4' : '#fffcf2'}; border:1px solid ${o.fabricReceived ? '#c8e6c9' : '#ffeeba'}; border-radius:6px; padding:8px 12px; margin-bottom:14px; font-size:12px; color:${o.fabricReceived ? '#2e7d32' : '#856404'}; flex-wrap:wrap;">
+                        <span>${o.fabricReceived ? '✓' : '🛵'} <b>Doorstep Collection:</b> ${o.fabricReceived ? 'Fabric received and verified at Bengaluru atelier' : `${o.pickupStatus || 'Pickup Scheduled'} · Scheduled for ${o.pickupDate || 'Tomorrow'} (${o.pickupTime || 'Morning Slot'})`}</span>
+                        <span style="opacity:0.6;">&middot;</span>
+                        <span>${o.address || o.city || 'Bengaluru'}</span>
+                      </div>
+                    ` : ''}
+
+                    <!-- Specifications Grid -->
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; background:#faf8f3; border:1px solid #efe8db; border-radius:8px; padding:14px; margin-bottom:14px; font-size:12px;">
+                      <div>
+                        <span style="color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:2px;">${isOwnFabric ? 'Supplied Fabric & Weave' : 'Heirloom Fabric & Palette'}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                          ${isOwnFabric && o.fabricPhoto ? `<img src="${o.fabricPhoto}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid #ebd39f;">` : ''}
+                          <div>
+                            <b style="color:var(--ink);">${o.fabric || 'Pure Atelier Silk'}</b>
+                            ${o.lining ? `<br><small style="color:var(--brown);">Lining: ${o.lining}</small>` : ''}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span style="color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:2px;">Biometric Profile</span>
+                        <b style="color:var(--ink);">${o.measurementProfile || 'Custom Profile'}</b>
+                        <div style="color:var(--brown); font-size:11px; margin-top:2px; line-height:1.4;">${o.measurements || 'Standard Fitted Dimensions'}</div>
+                      </div>
+
+                      <div>
+                        <span style="color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:2px;">Artisan Handwork &amp; Finish</span>
+                        <b style="color:var(--ink);">${o.embroidery || 'Precision Seam & Hem Finishing'}</b>
+                        ${o.neckline || o.sleeves || o.hemline ? `
+                          <div style="color:var(--brown); font-size:11px; margin-top:2px;">
+                            ${[o.neckline, o.sleeves, o.hemline].filter(Boolean).join(' · ')}
+                          </div>
+                        ` : ''}
+                      </div>
+
+                      <div>
+                        <span style="color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:2px;">Timeline &amp; Dispatch</span>
+                        <b style="color:var(--ink);">${o.estDelivery || 'Within 8-10 Days'}</b>
+                        <div style="margin-top:4px;">
+                          <span style="color:#2e7d32; font-weight:600; font-size:11px;">✓ Customer Approved Design</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                      <span style="font-size:14px; font-weight:700; color:var(--gold);">₹${(o.total || 0).toLocaleString()}</span>
-                      <button class="btn btn-dark" style="padding:7px 16px; font-size:12px;" onclick="closeCustomerWorkspace(); trackOrderById('${o.id}', true); scrollToId('tracking');">
-                        📦 View 5-Stage Live Timeline ➔
+                    <!-- Stitching Instructions Callout -->
+                    ${o.note ? `
+                      <div style="background:#fffdf9; border-left:3px solid var(--gold); padding:8px 12px; margin-bottom:14px; font-size:12px; color:var(--brown); font-style:italic;">
+                        <b>Special Stitching Notes:</b> "${o.note}"
+                      </div>
+                    ` : ''}
+
+                    <!-- Revision Log Box (if revisions exist) -->
+                    ${o.revisions && o.revisions.length ? `
+                      <div class="cust-revision-box" style="margin-bottom:14px;">
+                        <div style="font-weight:700; margin-bottom:6px; color:#856404; display:flex; align-items:center; justify-content:space-between;">
+                          <span>📝 Client Revision History (${o.revisions.length})</span>
+                          <span style="font-size:11px; font-weight:normal; background:#fff; padding:2px 8px; border-radius:10px; border:1px solid #ffeeba;">${o.revisions[o.revisions.length-1].status}</span>
+                        </div>
+                        ${o.revisions.map((r, rIdx) => `
+                          <div style="font-size:12px; padding:6px 0; border-top:${rIdx > 0 ? '1px dashed #ffeeba' : 'none'};">
+                            <div style="display:flex; justify-content:space-between;">
+                              <b>[${r.category}] &middot; ${r.date}</b>
+                              <span style="color:${r.status.includes('Approved') ? '#2e7d32' : '#856404'}; font-weight:600;">${r.status}</span>
+                            </div>
+                            <p style="margin:3px 0 0; color:#5c4b3d; font-style:italic;">"${r.notes}"</p>
+                          </div>
+                        `).join('')}
+                      </div>
+                    ` : ''}
+
+                    <!-- Cancellation Box (if cancelled) -->
+                    ${o.cancellation ? `
+                      <div class="cust-cancellation-box" style="margin-bottom:14px;">
+                        <div style="font-weight:700; margin-bottom:4px; color:#721c24;">
+                          ❌ Commission Cancelled on ${o.cancellation.date}
+                        </div>
+                        <div style="font-size:12px; color:#491217;">
+                          Reason: <b>${o.cancellation.reason}</b> &middot; Status: <b>${o.cancellation.refundStatus}</b>
+                        </div>
+                        ${o.cancellation.notes ? `<div style="font-size:11px; color:#721c24; margin-top:2px; font-style:italic;">"${o.cancellation.notes}"</div>` : ''}
+                      </div>
+                    ` : ''}
+
+                    <!-- Action Controls Footer -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-top:1px solid #f4eee2; padding-top:12px;">
+                      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        ${isOwnFabric ? `
+                          <button class="btn btn-sm btn-ghost" style="padding:6px 14px; font-size:12px; border:1px solid #d4af37; background:#fffdf8; color:var(--brown); font-weight:600;" onclick="printFabricParcelSlip('${o.id}')">
+                            🖨 Courier Parcel Slip
+                          </button>
+                          <button class="btn btn-sm btn-ghost" style="padding:6px 12px; font-size:12px; border:1px solid var(--line); background:#fff;" onclick="adminViewFabricBrief('${o.id}')">
+                            🔍 Fabric Brief
+                          </button>
+                        ` : `
+                          <button class="btn btn-sm btn-ghost" style="padding:6px 12px; font-size:12px; border:1px solid var(--line); background:#fff;" onclick="printBespokeOrderSlip('${o.id}')">
+                            🖨 Commission Brief
+                          </button>
+                        `}
+                        ${!isCancelled && (o.stage || 1) < 4 ? `
+                          <button class="btn btn-sm btn-ghost" style="padding:6px 14px; font-size:12px; border:1px solid #ebd39f; background:#fffdf8; color:var(--brown);" onclick="openOrderRevisionModal('${o.id}')">
+                            📝 Request Revision
+                          </button>
+                        ` : ''}
+                        ${!isCancelled && (o.stage || 1) < 5 ? `
+                          <button class="btn btn-sm btn-ghost" style="padding:6px 12px; font-size:12px; border:1px solid #f5c6cb; background:#fff; color:#c62828;" onclick="openOrderCancellationModal('${o.id}')">
+                            ❌ ${isOwnFabric ? 'Cancel Pickup' : 'Request Cancellation'}
+                          </button>
+                        ` : ''}
+                      </div>
+
+                      <button class="btn btn-dark" style="padding:7px 18px; font-size:12px;" onclick="closeCustomerWorkspace(); trackOrderById('${o.id}', true); scrollToId('tracking');">
+                        📦 5-Stage Live Timeline &rarr;
                       </button>
                     </div>
                   </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
             ` : `
               <div style="text-align:center; padding:40px 20px; background:#faf7f2; border-radius:10px;">
@@ -4438,4 +7026,10 @@ Commissions Placed: <strong>${clientOrders.length || liveOrders.length}</strong>
       const initialOrders = typeof getOrders === "function" ? getOrders() : [];
       if (initialOrders.length > 0 && typeof trackOrderById === "function") {
         trackOrderById(initialOrders[0].id, false);
+      }
+      if (typeof initBespokeStudio === "function") {
+        initBespokeStudio();
+      }
+      if (typeof initOwnFabricStudio === "function") {
+        initOwnFabricStudio();
       }
