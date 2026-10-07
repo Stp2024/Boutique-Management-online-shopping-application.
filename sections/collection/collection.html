@@ -1,0 +1,55 @@
+<!-- =====================================================
+     COLLECTIONS SECTION · VASTRAÉ ATELIER
+     ===================================================== -->
+<section class="nak-section" id="collection" style="background:#faf8f3;">
+  <div class="nak-section-header">
+    <div class="nak-section-eyebrow">OUR CURATED ATELIER · WHAT WE ARE GIVING</div>
+    <h2 class="nak-section-title">The Couture Collection &middot; <em>Bengaluru Edit</em></h2>
+    <p class="nak-section-lead">
+      Discover ready-to-wear and bespoke-crafted designer blouses, pure Kanjeevaram silk sarees, bridal lehengas, festive kurtis, and little princess frocks curated from runway and Pinterest trends.
+    </p>
+  </div>
+
+  <!-- Filter & Search Bar -->
+  <div class="nak-collection-filter-bar">
+    <div class="nak-collection-tabs">
+      <button class="nak-tab-btn active" onclick="window.filterVastraeCategory('all', this)">All Creations (16+)</button>
+      <button class="nak-tab-btn" onclick="window.filterVastraeCategory('blouse', this)">Designer Blouses</button>
+      <button class="nak-tab-btn" onclick="window.filterVastraeCategory('saree', this)">Silk Sarees</button>
+      <button class="nak-tab-btn" onclick="window.filterVastraeCategory('lehenga', this)">Bridal Lehengas</button>
+      <button class="nak-tab-btn" onclick="window.filterVastraeCategory('kurti', this)">Kurtis &amp; Suits</button>
+      <button class="nak-tab-btn" onclick="window.filterVastraeCategory('frock', this)">Princess Frocks</button>
+      <button class="nak-tab-btn" onclick="window.filterVastraeCategory('twinning', this)">Twinning Pairs</button>
+    </div>
+    <div class="nak-collection-search-wrap">
+      <span>🔍</span>
+      <input type="text" id="nakSearchInput" placeholder="Search craft, fabric, motif..." oninput="window.searchVastraeProducts(this.value)">
+    </div>
+  </div>
+
+  <!-- Product Grid Container -->
+  <div class="nak-products-grid" id="vastraeProductsGrid">
+    <!-- Populated dynamically by window.renderVastraeCollection() -->
+  </div>
+
+  <!-- Customer VIP Membership & Login / Register Card in Collections -->
+  <div style="max-width: 1240px; margin: 40px auto 0;">
+    <div class="nak-auth-promo-card">
+      <div class="nak-auth-promo-content">
+        <span style="font-size:11px; font-weight:700; color:#d4af37; letter-spacing:0.18em; text-transform:uppercase;">PATRON ACCESS &middot; ATELIER PRIVILEGE</span>
+        <h3>Unlock Private Haute Couture Pricing &amp; Measurement Vault</h3>
+        <p>
+          Save your 22-point biometric measurements, maintain family sizing profiles (mother, daughter, sister), pin Pinterest inspirations to private moodboards, and track live hand-embroidery progress.
+        </p>
+      </div>
+      <div class="nak-auth-promo-actions">
+        <button class="nak-btn nak-btn-primary" onclick="window.openCustomerLoginModal()">
+          🔑 Sign In to My Account
+        </button>
+        <button class="nak-btn nak-btn-outline" onclick="window.openCustomerRegisterModal()">
+          ✨ Register Free Account
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

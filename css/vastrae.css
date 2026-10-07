@@ -1,0 +1,1336 @@
+/* ==========================================================================
+   VASTRAÉ ATELIER - COUTURE DESIGN SYSTEM & MODULE STYLES
+   Bespoke Single Boutique Atelier (Bengaluru) & Luxury Digital Haute Couture
+   ========================================================================== */
+
+:root {
+  --nak-maroon: #4a0d17;
+  --nak-maroon-dark: #2a080c;
+  --nak-maroon-light: #6a1a28;
+  --nak-gold: #d4af37;
+  --nak-gold-light: #f3df9b;
+  --nak-gold-dark: #b88628;
+  --nak-cream: #fbf8f4;
+  --nak-warm-white: #ffffff;
+  --nak-parchment: #f6f0e6;
+  --nak-sand: #eee4d4;
+  --nak-onyx: #181210;
+  --nak-charcoal: #251d19;
+  --nak-muted: #7c6f62;
+  --nak-border: rgba(212, 175, 55, 0.25);
+  --nak-border-light: rgba(74, 13, 23, 0.12);
+  --nak-shadow-sm: 0 4px 14px rgba(24, 18, 16, 0.06);
+  --nak-shadow-md: 0 10px 30px rgba(24, 18, 16, 0.12);
+  --nak-shadow-lg: 0 20px 48px rgba(74, 13, 23, 0.18);
+  --nak-font-serif: 'Playfair Display', Georgia, serif;
+  --nak-font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --nak-radius: 10px;
+  --nak-radius-lg: 16px;
+  --nak-transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ==========================================================================
+   PUBLIC HEADER & NAVIGATION
+   ========================================================================== */
+.nak-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(251, 248, 244, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--nak-border);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: var(--nak-transition);
+}
+
+.nak-brand {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--nak-maroon);
+}
+
+.nak-brand-title {
+  font-family: var(--nak-font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  color: var(--nak-maroon);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nak-brand-sub {
+  font-family: var(--nak-font-sans);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--nak-gold-dark);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.nak-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nak-nav-link {
+  font-family: var(--nak-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--nak-charcoal);
+  text-decoration: none;
+  padding: 6px 2px;
+  position: relative;
+  transition: var(--nak-transition);
+}
+
+.nak-nav-link:hover,
+.nak-nav-link.active {
+  color: var(--nak-maroon);
+}
+
+.nak-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--nak-gold);
+  transition: var(--nak-transition);
+}
+
+.nak-nav-link:hover::after,
+.nak-nav-link.active::after {
+  width: 100%;
+}
+
+.nak-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nak-action-btn {
+  background: transparent;
+  border: 1px solid var(--nak-border);
+  color: var(--nak-charcoal);
+  font-family: var(--nak-font-sans);
+  font-size: 13px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--nak-transition);
+}
+
+.nak-action-btn:hover {
+  background: var(--nak-sand);
+  border-color: var(--nak-gold);
+  color: var(--nak-maroon);
+}
+
+.nak-badge-pill {
+  background: var(--nak-maroon);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 12px;
+}
+
+.nak-btn-gold {
+  background: linear-gradient(135deg, var(--nak-gold-dark), var(--nak-gold));
+  color: #1a1208;
+  font-weight: 600;
+  border: none;
+}
+
+.nak-btn-gold:hover {
+  background: linear-gradient(135deg, #a37520, #e0b74e);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+}
+
+/* ==========================================================================
+   PUBLIC HERO SECTION
+   ========================================================================== */
+.nak-hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(42, 8, 12, 0.88), rgba(74, 13, 23, 0.72)),
+    url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1600&q=85') center/cover no-repeat;
+  color: #fff;
+  padding: 80px 24px;
+  overflow: hidden;
+}
+
+.nak-hero-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.nak-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--nak-gold);
+  margin-bottom: 16px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 6px 16px;
+  border-radius: 30px;
+}
+
+.nak-hero-title {
+  font-family: var(--nak-font-serif);
+  font-size: clamp(38px, 5.5vw, 64px);
+  line-height: 1.1;
+  font-weight: 600;
+  margin: 0 0 20px;
+  color: #fff;
+}
+
+.nak-hero-title em {
+  font-style: italic;
+  color: var(--nak-gold-light);
+  font-weight: 400;
+}
+
+.nak-hero-lead {
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.65;
+  color: #f0e6da;
+  max-width: 580px;
+  margin-bottom: 32px;
+}
+
+.nak-hero-ctas {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nak-btn {
+  font-family: var(--nak-font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 13px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--nak-transition);
+}
+
+.nak-btn-primary {
+  background: linear-gradient(135deg, var(--nak-gold), #e8c56c);
+  color: #1f1406;
+  border: 1px solid var(--nak-gold);
+}
+
+.nak-btn-primary:hover {
+  background: linear-gradient(135deg, #dfb944, #f4d47d);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+}
+
+.nak-btn-outline {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+.nak-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #fff;
+  color: #fff;
+}
+
+.nak-hero-badge-card {
+  background: rgba(37, 29, 25, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--nak-radius-lg);
+  padding: 24px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--nak-shadow-lg);
+}
+
+.nak-hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.nak-metric-box {
+  text-align: center;
+}
+
+.nak-metric-num {
+  font-family: var(--nak-font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nak-gold);
+}
+
+.nak-metric-lbl {
+  font-size: 11px;
+  color: #cfc2b2;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   THREE PILLARS (VASTRAÉ MANIFESTO)
+   ========================================================================== */
+.nak-manifesto {
+  background: var(--nak-sand);
+  padding: 32px 24px;
+  border-bottom: 1px solid var(--nak-border);
+}
+
+.nak-manifesto-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.nak-manifesto-card {
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: var(--nak-radius);
+  padding: 22px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  box-shadow: var(--nak-shadow-sm);
+  transition: var(--nak-transition);
+}
+
+.nak-manifesto-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--nak-shadow-md);
+  border-color: var(--nak-gold);
+}
+
+.nak-manifesto-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(74, 13, 23, 0.08);
+  color: var(--nak-maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.nak-manifesto-card h3 {
+  font-family: var(--nak-font-serif);
+  font-size: 18px;
+  color: var(--nak-maroon);
+  margin: 0 0 6px;
+}
+
+.nak-manifesto-card p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--nak-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   PUBLIC ABOUT SECTION
+   ========================================================================== */
+.nak-section {
+  padding: 80px 24px;
+  position: relative;
+}
+
+.nak-section-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 50px;
+}
+
+.nak-section-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--nak-gold-dark);
+  margin-bottom: 8px;
+}
+
+.nak-section-title {
+  font-family: var(--nak-font-serif);
+  font-size: clamp(30px, 4vw, 44px);
+  color: var(--nak-maroon);
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.nak-section-title em {
+  font-style: italic;
+  color: var(--nak-gold-dark);
+}
+
+.nak-section-lead {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--nak-muted);
+  margin: 0;
+}
+
+.nak-about-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 54px;
+  align-items: center;
+}
+
+.nak-about-frame {
+  position: relative;
+  border-radius: var(--nak-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--nak-shadow-lg);
+  border: 4px solid #fff;
+}
+
+.nak-about-frame img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  display: block;
+}
+
+.nak-about-quote {
+  border-left: 3px solid var(--nak-gold);
+  padding: 12px 20px;
+  margin: 24px 0;
+  background: rgba(212, 175, 55, 0.08);
+  border-radius: 0 8px 8px 0;
+}
+
+.nak-about-quote p {
+  font-family: var(--nak-font-serif);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--nak-maroon);
+  margin: 0 0 6px;
+}
+
+.nak-about-quote footer {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--nak-gold-dark);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   PUBLIC SERVICES SECTION ("WHAT WE ARE GIVING" + LOGIN/REGISTER CARD)
+   ========================================================================== */
+.nak-services-grid {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 28px;
+}
+
+.nak-service-card {
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: var(--nak-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--nak-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: var(--nak-transition);
+}
+
+.nak-service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--nak-shadow-md);
+  border-color: var(--nak-gold);
+}
+
+.nak-service-media {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.nak-service-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.nak-service-card:hover .nak-service-media img {
+  transform: scale(1.06);
+}
+
+.nak-service-step-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(74, 13, 23, 0.9);
+  color: var(--nak-gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.nak-service-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.nak-service-body h3 {
+  font-family: var(--nak-font-serif);
+  font-size: 22px;
+  color: var(--nak-maroon);
+  margin: 0 0 10px;
+}
+
+.nak-service-body p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--nak-muted);
+  margin: 0 0 18px;
+}
+
+.nak-service-inclusions {
+  background: var(--nak-parchment);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border-left: 3px solid var(--nak-gold);
+}
+
+.nak-service-inclusions-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nak-maroon);
+  margin-bottom: 6px;
+}
+
+.nak-service-inclusions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nak-service-inclusions li {
+  font-size: 12px;
+  color: var(--nak-charcoal);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nak-service-inclusions li::before {
+  content: '✦';
+  color: var(--nak-gold-dark);
+  font-size: 10px;
+}
+
+.nak-service-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--nak-border-light);
+}
+
+.nak-service-price {
+  font-size: 12px;
+  color: var(--nak-muted);
+}
+
+.nak-service-price strong {
+  font-size: 16px;
+  color: var(--nak-maroon);
+  font-family: var(--nak-font-serif);
+  display: block;
+}
+
+/* Services Login/Register Promo Banner */
+.nak-auth-promo-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--nak-maroon-dark), var(--nak-maroon));
+  border: 1px solid var(--nak-gold);
+  border-radius: var(--nak-radius-lg);
+  padding: 32px 36px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  box-shadow: var(--nak-shadow-lg);
+  margin-top: 20px;
+}
+
+.nak-auth-promo-content h3 {
+  font-family: var(--nak-font-serif);
+  font-size: 26px;
+  color: var(--nak-gold-light);
+  margin: 0 0 6px;
+}
+
+.nak-auth-promo-content p {
+  font-size: 14px;
+  color: #f2e7db;
+  max-width: 600px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.nak-auth-promo-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   PUBLIC COLLECTION SECTION ("WHAT WE ARE GIVING" + CARDS + AUTH CTA)
+   ========================================================================== */
+.nak-collection-filter-bar {
+  max-width: 1240px;
+  margin: 0 auto 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: 30px;
+  box-shadow: var(--nak-shadow-sm);
+}
+
+.nak-collection-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nak-tab-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--nak-font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: var(--nak-charcoal);
+  cursor: pointer;
+  transition: var(--nak-transition);
+}
+
+.nak-tab-btn:hover {
+  color: var(--nak-maroon);
+  background: var(--nak-sand);
+}
+
+.nak-tab-btn.active {
+  background: var(--nak-maroon);
+  color: #fff;
+}
+
+.nak-collection-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--nak-cream);
+  border: 1px solid var(--nak-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+}
+
+.nak-collection-search-wrap input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  font-family: var(--nak-font-sans);
+  width: 180px;
+}
+
+.nak-products-grid {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.nak-product-card {
+  background: #fff;
+  border: 1px solid var(--nak-border-light);
+  border-radius: var(--nak-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--nak-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: var(--nak-transition);
+  position: relative;
+}
+
+.nak-product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--nak-shadow-md);
+  border-color: var(--nak-gold);
+}
+
+.nak-product-media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--nak-parchment);
+}
+
+.nak-product-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.nak-product-card:hover .nak-product-media img {
+  transform: scale(1.08);
+}
+
+.nak-product-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+
+.nak-badge-tag {
+  background: rgba(74, 13, 23, 0.92);
+  color: var(--nak-gold-light);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+.nak-badge-stock {
+  background: rgba(24, 18, 16, 0.85);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.nak-quick-wishlist {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--nak-border);
+  color: var(--nak-maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: var(--nak-transition);
+  z-index: 2;
+}
+
+.nak-quick-wishlist:hover {
+  background: var(--nak-maroon);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.nak-product-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.nak-product-cat {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--nak-gold-dark);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.nak-product-name {
+  font-family: var(--nak-font-serif);
+  font-size: 18px;
+  color: var(--nak-charcoal);
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.nak-product-desc {
+  font-size: 12.5px;
+  color: var(--nak-muted);
+  line-height: 1.5;
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nak-product-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  margin-bottom: 14px;
+}
+
+.nak-price-now {
+  font-family: var(--nak-font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--nak-maroon);
+}
+
+.nak-price-old {
+  font-size: 13px;
+  text-decoration: line-through;
+  color: #9e8e7f;
+}
+
+.nak-product-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.nak-btn-sm {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--nak-transition);
+  border: 1px solid var(--nak-border);
+}
+
+.nak-btn-view {
+  background: var(--nak-parchment);
+  color: var(--nak-maroon);
+}
+
+.nak-btn-view:hover {
+  background: var(--nak-sand);
+}
+
+.nak-btn-bag {
+  background: var(--nak-maroon);
+  color: #fff;
+  border-color: var(--nak-maroon);
+}
+
+.nak-btn-bag:hover {
+  background: var(--nak-maroon-dark);
+}
+
+/* ==========================================================================
+   PUBLIC CONTACT SECTION (BENGALURU BOUTIQUE)
+   ========================================================================== */
+.nak-contact-grid {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 48px;
+}
+
+.nak-contact-card {
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: var(--nak-radius-lg);
+  padding: 32px;
+  box-shadow: var(--nak-shadow-md);
+}
+
+.nak-contact-facts {
+  list-style: none;
+  padding: 0;
+  margin: 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nak-contact-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.nak-contact-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(74, 13, 23, 0.08);
+  color: var(--nak-maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.nak-contact-item strong {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--nak-gold-dark);
+  margin-bottom: 3px;
+}
+
+.nak-contact-item p,
+.nak-contact-item address {
+  margin: 0;
+  font-style: normal;
+  font-size: 14px;
+  color: var(--nak-charcoal);
+  line-height: 1.5;
+}
+
+.nak-contact-item a {
+  color: var(--nak-maroon);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nak-contact-item a:hover {
+  text-decoration: underline;
+  color: var(--nak-gold-dark);
+}
+
+.nak-contact-form-card {
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: var(--nak-radius-lg);
+  padding: 36px;
+  box-shadow: var(--nak-shadow-md);
+}
+
+.nak-form-group {
+  margin-bottom: 18px;
+}
+
+.nak-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--nak-maroon);
+  margin-bottom: 6px;
+}
+
+.nak-form-control {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--nak-border-light);
+  border-radius: 8px;
+  font-family: var(--nak-font-sans);
+  font-size: 13.5px;
+  background: var(--nak-cream);
+  color: var(--nak-charcoal);
+  outline: none;
+  transition: var(--nak-transition);
+}
+
+.nak-form-control:focus {
+  border-color: var(--nak-gold);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+/* ==========================================================================
+   MODULE 1: CUSTOMER WORKSPACE EXTENSIONS
+   ========================================================================== */
+.nak-workspace-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--nak-border);
+  padding-bottom: 12px;
+}
+
+.nak-family-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.nak-family-card {
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+}
+
+.nak-family-card.active-profile {
+  border-color: var(--nak-gold);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* ==========================================================================
+   MODULE 2: DEDICATED PRODUCT DETAIL MODAL & PURCHASE WORKFLOW
+   ========================================================================== */
+.nak-pdp-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.nak-pdp-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nak-pdp-main-img-wrap {
+  width: 100%;
+  height: 480px;
+  border-radius: var(--nak-radius);
+  overflow: hidden;
+  background: var(--nak-parchment);
+  border: 1px solid var(--nak-border);
+}
+
+.nak-pdp-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.nak-pdp-thumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.nak-pdp-thumb {
+  width: 72px;
+  height: 90px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: var(--nak-transition);
+}
+
+.nak-pdp-thumb.active,
+.nak-pdp-thumb:hover {
+  border-color: var(--nak-gold);
+  opacity: 1;
+}
+
+.nak-pdp-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nak-swatch-list {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 16px;
+  flex-wrap: wrap;
+}
+
+.nak-swatch-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--nak-border);
+  cursor: pointer;
+  transition: var(--nak-transition);
+}
+
+.nak-swatch-btn.active {
+  box-shadow: 0 0 0 2px var(--nak-gold);
+  transform: scale(1.15);
+}
+
+.nak-size-list {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 16px;
+  flex-wrap: wrap;
+}
+
+.nak-size-btn {
+  padding: 7px 14px;
+  border: 1px solid var(--nak-border-light);
+  background: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--nak-transition);
+}
+
+.nak-size-btn.active,
+.nak-size-btn:hover {
+  background: var(--nak-maroon);
+  color: #fff;
+  border-color: var(--nak-maroon);
+}
+
+/* ==========================================================================
+   MODULE 5 & 6: PRODUCTION TIMELINE & STAGE TRACKER
+   ========================================================================== */
+.nak-stage-tracker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin: 28px 0;
+}
+
+.nak-stage-tracker::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--nak-border-light);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.nak-stage-step {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nak-stage-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--nak-border-light);
+  color: var(--nak-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  transition: var(--nak-transition);
+}
+
+.nak-stage-step.active .nak-stage-circle {
+  background: var(--nak-gold);
+  color: #171008;
+  border-color: var(--nak-gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25);
+}
+
+.nak-stage-step.completed .nak-stage-circle {
+  background: #2e7d32;
+  color: #fff;
+  border-color: #2e7d32;
+}
+
+.nak-stage-label {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 6px;
+  color: var(--nak-charcoal);
+  max-width: 90px;
+}
+
+/* ==========================================================================
+   MODULE 8: FORMAL INVOICE STYLING & PRINT MEDIA
+   ========================================================================== */
+.nak-invoice-wrap {
+  background: #fff;
+  border: 1px solid var(--nak-border);
+  border-radius: var(--nak-radius-lg);
+  padding: 40px;
+  max-width: 820px;
+  margin: 0 auto;
+  box-shadow: var(--nak-shadow-md);
+  color: #1a1208;
+}
+
+.nak-invoice-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--nak-border);
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+.nak-invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+}
+
+.nak-invoice-table th {
+  background: var(--nak-parchment);
+  color: var(--nak-maroon);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--nak-border);
+}
+
+.nak-invoice-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--nak-border-light);
+  font-size: 13px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .nak-invoice-wrap,
+  .nak-invoice-wrap * {
+    visibility: visible;
+  }
+
+  .nak-invoice-wrap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .nak-no-print {
+    display: none !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+
+  .nak-hero-container,
+  .nak-about-grid,
+  .nak-contact-grid,
+  .nak-pdp-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nak-nav {
+    display: none;
+  }
+
+  .nak-nav.mobile-active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 20px;
+    border-bottom: 1px solid var(--nak-border);
+    box-shadow: var(--nak-shadow-md);
+  }
+}

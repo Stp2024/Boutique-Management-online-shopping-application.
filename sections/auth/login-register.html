@@ -1,0 +1,90 @@
+<!-- =====================================================
+     CUSTOMER LOGIN & REGISTRATION MODAL
+     ===================================================== -->
+<div class="nak-auth-modal" id="customerAuthModal">
+  <div style="padding:10px 0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eedecb; padding-bottom:12px; margin-bottom:18px;">
+      <div>
+        <span style="font-size:11px; font-weight:700; color:#b88628; letter-spacing:0.12em; text-transform:uppercase;">CLIENT SANCTUARY &middot; PRIVATE ACCESS</span>
+        <h2 style="font-family:'Playfair Display',serif; color:#4a0d17; margin:4px 0 0;" id="authModalTitle">Customer Sign In</h2>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="nak-tab-btn active" id="authTabLogin" onclick="window.switchAuthTab('login')">Sign In</button>
+        <button type="button" class="nak-tab-btn" id="authTabRegister" onclick="window.switchAuthTab('register')">Register</button>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <form id="customerAuthLoginForm" onsubmit="window.handleCustomerLoginSubmit(event)" style="display:flex; flex-direction:column; gap:14px;">
+      <div class="nak-form-group">
+        <label>Email Address</label>
+        <input type="email" id="authLoginEmail" value="ananya.sharma@vastrae.com" required placeholder="your@email.com" class="nak-form-control">
+      </div>
+      <div class="nak-form-group">
+        <label>Password</label>
+        <input type="password" id="authLoginPass" value="couture123" required placeholder="Enter password" class="nak-form-control">
+      </div>
+      <div style="background:#faf8f3; border:1px solid #eedecb; border-radius:8px; padding:12px; font-size:12px; color:#665c51;">
+        <strong>Quick Demo VIP Account:</strong><br>
+        Email: <b>ananya.sharma@vastrae.com</b> &middot; Pass: <b>couture123</b><br>
+        <span style="color:#b88628;">(Or choose Vikramaditya Singhania / Meera Kulkarni from the dropdown below)</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="font-size:12px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+          <input type="checkbox" checked> Keep me signed in
+        </label>
+        <button type="submit" class="nak-btn nak-btn-primary">
+          Enter Boutique Sanctuary &rarr;
+        </button>
+      </div>
+    </form>
+
+    <!-- Register Form -->
+    <form id="customerAuthRegisterForm" onsubmit="window.handleCustomerRegisterSubmit(event)" style="display:none; flex-direction:column; gap:14px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="nak-form-group">
+          <label>Full Name *</label>
+          <input type="text" id="authRegName" required placeholder="e.g. Diya Mehta" class="nak-form-control">
+        </div>
+        <div class="nak-form-group">
+          <label>Mobile Number *</label>
+          <input type="tel" id="authRegPhone" required placeholder="+91 98860 55443" class="nak-form-control">
+        </div>
+      </div>
+      <div class="nak-form-group">
+        <label>Email Address *</label>
+        <input type="email" id="authRegEmail" required placeholder="diya.mehta@example.com" class="nak-form-control">
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="nak-form-group">
+          <label>City / Area</label>
+          <input type="text" id="authRegCity" value="Bengaluru" class="nak-form-control">
+        </div>
+        <div class="nak-form-group">
+          <label>Style Preference</label>
+          <select id="authRegStyle" class="nak-form-control">
+            <option>Bridal &amp; Traditional</option>
+            <option>Modern Indo-Western</option>
+            <option>Festive Anarkalis &amp; Sarees</option>
+            <option>Twinning Frocks</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="nak-form-group">
+          <label>Create Password *</label>
+          <input type="password" id="authRegPass" minlength="6" required placeholder="Min 6 chars" class="nak-form-control">
+        </div>
+        <div class="nak-form-group">
+          <label>Confirm Password *</label>
+          <input type="password" id="authRegPass2" minlength="6" required placeholder="Repeat password" class="nak-form-control">
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+        <button type="submit" class="nak-btn nak-btn-primary">
+          Create My VIP Account &rarr;
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

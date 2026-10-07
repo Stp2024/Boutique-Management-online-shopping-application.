@@ -1,127 +1,213 @@
 <!-- =====================================================
-SERVICES SECTION
-===================================================== -->
-<section class="services" id="services">
- <div class="heading">
-  <small>
-   THE CLOTHING ATELIER
-  </small>
-  <h2>
-   Clothing Services
-  </h2>
-  <p>
-   Professional boutique services designed around your garment,
-         occasion and personal style.
-  </p>
- </div>
- <div class="service-grid">
-  <div class="service">
-   <img alt="Custom tailoring" src="https://images.unsplash.com/photo-1594938291221-94f18cbb5660?auto=format&amp;fit=crop&amp;w=700&amp;q=85"/>
-   <div class="service-body">
-    <small>
-     BESPOKE
-    </small>
-    <h3>
-     Custom Tailoring
-    </h3>
-    <p>
-     Choose the garment, colour, measurements, neckline, sleeves and
-             finishing.
+     SERVICES SECTION · VASTRAÉ ATELIER
+     ===================================================== -->
+<section class="nak-section" id="services" style="background:#fff;">
+  <div class="nak-section-header">
+    <div class="nak-section-eyebrow">OUR SERVICES · WHAT WE ARE GIVING</div>
+    <h2 class="nak-section-title">Master Crafts &amp; Atelier Services</h2>
+    <p class="nak-section-lead">
+      Designer blouses, hand and machine embroidery, little princess cotton frocks, own-fabric couture and bespoke tailoring &mdash; each crafted for a single body and a single occasion.
     </p>
-    <button onclick="scrollToId('custom')">
-     Create Garment
-    </button>
-   </div>
   </div>
-  <div class="service">
-   <img alt="Alteration service" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&amp;fit=crop&amp;w=700&amp;q=85"/>
-   <div class="service-body">
-    <small>
-     PERFECT FIT
-    </small>
-    <h3>
-     Alterations
-    </h3>
-    <p>
-     Refine length, fitting, sleeves and proportions for a more
-             comfortable finish.
-    </p>
-    <button onclick="openService('Alteration Service')">
-     Request Alteration
-    </button>
-   </div>
+
+  <div class="nak-services-grid">
+    <!-- Service 1: Designer Blouse -->
+    <article class="nak-service-card">
+      <div class="nak-service-media">
+        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=85" alt="Designer Blouses">
+        <span class="nak-service-step-badge">STEP 01 &middot; SIGNATURE</span>
+      </div>
+      <div class="nak-service-body">
+        <h3>Designer Blouse</h3>
+        <p>
+          Bespoke patterns crafted to leave a style statement at any wedding, reception or festival. Choose from deep sweetheart cuts, boat necks, princess seams, and back tie-ups with handmade latkans.
+        </p>
+        <div class="nak-service-inclusions">
+          <div class="nak-service-inclusions-title">What We Give with this Service:</div>
+          <ul>
+            <li>Princess cut or katori darting tailored to your bust shape</li>
+            <li>Premium breathable mulmul lining &amp; padded cups included</li>
+            <li>Extra 2-inch side seam allowance preserved for future fit adjustments</li>
+            <li>Bra strap holders and reinforced neckline piping</li>
+          </ul>
+        </div>
+        <div class="nak-service-footer">
+          <div class="nak-service-price">
+            Starting from
+            <strong>₹1,800</strong>
+          </div>
+          <button class="nak-btn-sm nak-btn-bag" onclick="window.scrollToId('custom')">Create Custom Blouse &rarr;</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Service 2: Machine / Hand Embroidery & Aari Work -->
+    <article class="nak-service-card">
+      <div class="nak-service-media">
+        <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=700&q=85" alt="Machine / Hand Embroidery">
+        <span class="nak-service-step-badge">STEP 02 &middot; HANDWORK</span>
+      </div>
+      <div class="nak-service-body">
+        <h3>Machine / Hand Embroidery</h3>
+        <p>
+          Intricate maggam stone work, real gold zari zardozi, chikankari shadow work, mirror embroidery and delicate resham threadwork crafted by generational Bengaluru and Varanasi artisans.
+        </p>
+        <div class="nak-service-inclusions">
+          <div class="nak-service-inclusions-title">What We Give with this Service:</div>
+          <ul>
+            <li>Hand-drawn design stencil tailored to your blouse neck circumference</li>
+            <li>Certified copper-core gold &amp; silver metallic zari threads</li>
+            <li>Swarovski crystals &amp; Basra freshwater pearl border edging</li>
+            <li>Detailed photo previews of loom embroidery before stitching assembly</li>
+          </ul>
+        </div>
+        <div class="nak-service-footer">
+          <div class="nak-service-price">
+            Starting from
+            <strong>₹3,500</strong>
+          </div>
+          <button class="nak-btn-sm nak-btn-bag" onclick="window.openBookConsultationModal('Bespoke Blouse & Aari Embroidery Design')">Consult Embroidery &rarr;</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Service 3: Cotton Frocks & Twinning -->
+    <article class="nak-service-card">
+      <div class="nak-service-media">
+        <img src="https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=700&q=85" alt="Cotton Frocks & Little Princess Dresses">
+        <span class="nak-service-step-badge">STEP 03 &middot; LITTLE ONES</span>
+      </div>
+      <div class="nak-service-body">
+        <h3>Cotton Frocks &amp; Twinning</h3>
+        <p>
+          Your little princess deserves garments that feel magical yet gentle on sensitive skin. We handcraft breathable cotton frocks, festive birthday gowns, and matching mother-daughter twinning outfits.
+        </p>
+        <div class="nak-service-inclusions">
+          <div class="nak-service-inclusions-title">What We Give with this Service:</div>
+          <ul>
+            <li>Pure 100s count handloom cotton &amp; softest Kerala kasavu trims</li>
+            <li>100% itch-free concealed seams and featherlight mulmul lining</li>
+            <li>Customized twinning palette matching mother's saree or lehenga choli</li>
+            <li>Complimentary hair accessory &amp; matching fabric pouch</li>
+          </ul>
+        </div>
+        <div class="nak-service-footer">
+          <div class="nak-service-price">
+            Starting from
+            <strong>₹1,499</strong>
+          </div>
+          <button class="nak-btn-sm nak-btn-bag" onclick="window.scrollToId('collection')">View Frocks &amp; Twinning &rarr;</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Service 4: Custom Made-to-Measure Tailoring -->
+    <article class="nak-service-card">
+      <div class="nak-service-media">
+        <img src="https://images.unsplash.com/photo-1594938291221-94f18cbb5660?auto=format&fit=crop&w=700&q=85" alt="Custom Tailoring">
+        <span class="nak-service-step-badge">STEP 04 &middot; PRECISION</span>
+      </div>
+      <div class="nak-service-body">
+        <h3>Custom Made-to-Measure</h3>
+        <p>
+          Experience true couture precision. From 22-point biometric grading to calico toile drape fittings, every garment is drafted from scratch to honor your unique posture, shoulders, and ease preferences.
+        </p>
+        <div class="nak-service-inclusions">
+          <div class="nak-service-inclusions-title">What We Give with this Service:</div>
+          <ul>
+            <li>Calico trial fitting before cutting precious silk fabrics</li>
+            <li>Individualized paper pattern drafted and kept on file for 5 years</li>
+            <li>Complimentary seasonal alteration privileges and lifetime fit care</li>
+            <li>Delivery in cedarwood garment casket with breathable garment bag</li>
+          </ul>
+        </div>
+        <div class="nak-service-footer">
+          <div class="nak-service-price">
+            Starting from
+            <strong>₹2,200</strong>
+          </div>
+          <button class="nak-btn-sm nak-btn-bag" onclick="window.scrollToId('custom')">Enter Bespoke Studio &rarr;</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Service 5: Own-Fabric Service -->
+    <article class="nak-service-card">
+      <div class="nak-service-media">
+        <img src="https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=700&q=85" alt="Own-Fabric Service">
+        <span class="nak-service-step-badge">STEP 05 &middot; CONCIERGE</span>
+      </div>
+      <div class="nak-service-body">
+        <h3>Own-Fabric Couture Service</h3>
+        <p>
+          Have your own heirloom silk, wedding fabric, or handpicked material? We pick it up directly from your doorstep in Bengaluru, inspect the weave, stitch it to your custom specs, and deliver it back ready-to-wear.
+        </p>
+        <div class="nak-service-inclusions">
+          <div class="nak-service-inclusions-title">What We Give with this Service:</div>
+          <ul>
+            <li>Doorstep fabric collection slot in Bengaluru (or courier slip for pan-India)</li>
+            <li>Fabric inspection report &amp; meterage verification</li>
+            <li>Matching fusing, lining, threads, and designer buttons provided by atelier</li>
+            <li>Real-time stage tracking from pickup to dispatch</li>
+          </ul>
+        </div>
+        <div class="nak-service-footer">
+          <div class="nak-service-price">
+            Starting from
+            <strong>₹1,600</strong>
+          </div>
+          <button class="nak-btn-sm nak-btn-bag" onclick="window.scrollToId('fabric')">Book Fabric Pickup &rarr;</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Service 6: Virtual Atelier Consultation -->
+    <article class="nak-service-card">
+      <div class="nak-service-media">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=85" alt="Virtual Atelier Consultation">
+        <span class="nak-service-step-badge">STEP 06 &middot; 1-ON-1 STYLING</span>
+      </div>
+      <div class="nak-service-body">
+        <h3>Virtual Atelier Consultation</h3>
+        <p>
+          Connect directly via HD video call with Chief Bridal Stylist Meenakshi Sundaram or Master Savitha Devi to design your wedding trousseau, choose colors, and select embroidery patterns.
+        </p>
+        <div class="nak-service-inclusions">
+          <div class="nak-service-inclusions-title">What We Give with this Service:</div>
+          <ul>
+            <li>Personalized 45-minute video styling consultation</li>
+            <li>Curated digital moodboard with fabric swatches &amp; color palettes</li>
+            <li>Biometric measurement guidance during live call</li>
+            <li>Dedicated priority slot in our master tailor production queue</li>
+          </ul>
+        </div>
+        <div class="nak-service-footer">
+          <div class="nak-service-price">
+            Complimentary
+            <strong>WITH ORDERS</strong>
+          </div>
+          <button class="nak-btn-sm nak-btn-bag" onclick="window.openBookConsultationModal()">Book Stylist Session &rarr;</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Customer Login / Register Banner inside Services -->
+    <div class="nak-auth-promo-card">
+      <div class="nak-auth-promo-content">
+        <span style="font-size:11px; font-weight:700; color:#d4af37; letter-spacing:0.18em; text-transform:uppercase;">CLIENT SANCTUARY &middot; SIGN IN TO PROCEED</span>
+        <h3>Ready to Commission Your Bespoke Garment?</h3>
+        <p>
+          Sign in to your private client account or create a new profile to access your measurement cards, customize blouses, schedule own-fabric pickups, and track atelier needlework live.
+        </p>
+      </div>
+      <div class="nak-auth-promo-actions">
+        <button class="nak-btn nak-btn-primary" onclick="window.openCustomerLoginModal()">
+          🔑 Sign In to My Account
+        </button>
+        <button class="nak-btn nak-btn-outline" onclick="window.openCustomerRegisterModal()">
+          ✨ Register Free Account
+        </button>
+      </div>
+    </div>
   </div>
-  <div class="service">
-   <img alt="Personal styling" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&amp;fit=crop&amp;w=700&amp;q=85"/>
-   <div class="service-body">
-    <small>
-     CONSULTATION
-    </small>
-    <h3>
-     Personal Styling
-    </h3>
-    <p>
-     Get guidance for colour combinations, occasions and complete
-             outfits.
-    </p>
-    <button onclick="openService('Personal Styling')">
-     Book Stylist
-    </button>
-   </div>
-  </div>
-  <div class="service">
-   <img alt="Wedding styling" src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&amp;fit=crop&amp;w=700&amp;q=85"/>
-   <div class="service-body">
-    <small>
-     WEDDING
-    </small>
-    <h3>
-     Wedding Styling
-    </h3>
-    <p>
-     Coordinate bridal, groom and family outfits for your complete
-             celebration.
-    </p>
-    <button onclick="scrollToId('events')">
-     View Packages
-    </button>
-   </div>
-  </div>
-  <div class="service">
-   <img alt="Wardrobe styling" src="https://images.unsplash.com/photo-1591369822096-ffd140ec948f?auto=format&amp;fit=crop&amp;w=700&amp;q=85"/>
-   <div class="service-body">
-    <small>
-     WARDROBE
-    </small>
-    <h3>
-     Wardrobe Planning
-    </h3>
-    <p>
-     Build a versatile wardrobe based on your lifestyle, work and
-             personal aesthetic.
-    </p>
-    <button onclick="openService('Wardrobe Planning')">
-     Plan Wardrobe
-    </button>
-   </div>
-  </div>
-  <div class="service">
-   <img alt="Event styling" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&amp;fit=crop&amp;w=700&amp;q=85"/>
-   <div class="service-body">
-    <small>
-     EVENTS
-    </small>
-    <h3>
-     Event Styling
-    </h3>
-    <p>
-     Complete styling support for weddings, parties, festivals and
-             celebrations.
-    </p>
-    <button onclick="scrollToId('events')">
-     Explore Events
-    </button>
-   </div>
-  </div>
- </div>
 </section>
