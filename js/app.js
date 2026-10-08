@@ -52,8 +52,10 @@
     gender: "women",
     category: "Blouse",
     neckline: "Sweetheart Cut",
+    backNeckline: "Deep U-Arch with Latkans & Silk Dori",
     sleeves: "Elbow Length (Signature)",
     length: "Crop / Waist Length (14-15 in)",
+    dupattaStyle: "Pleated Shoulder Pallu Drape",
     fabric: "Pure Kanjeevaram Raw Silk",
     color: "Royal Crimson",
     colorHex: "#7a0c1e",
@@ -62,6 +64,12 @@
     // Men specific
     style: "Royal Classic Cut",
     collar: "Mandarin Band Collar",
+    backCut: "Double Side Vents",
+    // Kids specific
+    backStyle: "Tie-Back Sash with Bow",
+    bottomStyle: "Pre-Stitched Ready Dhoti",
+    // Multi-Angle Preview State
+    previewAngle: "front",
     // Model preview
     selectedModelId: "model-1",
     customerPhoto: null,
@@ -675,11 +683,19 @@
       return `
         <article class="vas-product-card" id="card-${p.id}">
           <div class="vas-product-media">
-            <img src="${p.image}" alt="${p.name}" loading="lazy">
+            <img id="card-img-${p.id}" src="${p.image}" alt="${p.name}" loading="lazy">
             <span class="vas-badge-tag">${p.badge}</span>
+            <span class="vas-multi-angle-badge" title="Visual Zoom & Inspection: Full Outfit, Embroidery, Blouse, Sleeves, Neckline">🔍 5 Detail Zooms</span>
             <button class="vas-wish-btn ${isWish ? 'active' : ''}" onclick="window.toggleWishlist('${p.id}')" title="Save to Wishlist">
               ${isWish ? '♥' : '♡'}
             </button>
+            <div class="vas-card-angle-bar" onclick="event.stopPropagation()">
+              <button type="button" class="vas-card-angle-btn active" data-angle="front" onclick="window.switchCardAngle('${p.id}', 'front', this, event)" title="1. Full Dress">Full</button>
+              <button type="button" class="vas-card-angle-btn" data-angle="detail" onclick="window.switchCardAngle('${p.id}', 'detail', this, event)" title="2. Embroidery & Fabric">Embroidery</button>
+              <button type="button" class="vas-card-angle-btn" data-angle="upper" onclick="window.switchCardAngle('${p.id}', 'upper', this, event)" title="3. Blouse / Kurta">Blouse</button>
+              <button type="button" class="vas-card-angle-btn" data-angle="sleeves" onclick="window.switchCardAngle('${p.id}', 'sleeves', this, event)" title="4. Sleeves & Cuffs">Sleeves</button>
+              <button type="button" class="vas-card-angle-btn" data-angle="neckline" onclick="window.switchCardAngle('${p.id}', 'neckline', this, event)" title="5. Neckline & Border">Neckline</button>
+            </div>
           </div>
           <div class="vas-product-body">
             <span class="vas-product-cat">${p.fabric}</span>
@@ -709,6 +725,20 @@
     }).join("");
   }
 
+  window.switchCardAngle = function (productId, angleKey, btn, event) {
+    if (event) event.stopPropagation();
+    const p = VASTRAE_DATA.products.find(item => item.id === productId);
+    if (!p) return;
+    const img = document.getElementById("card-img-" + productId);
+    if (img && p.views && p.views[angleKey]) {
+      img.src = p.views[angleKey].url;
+    }
+    if (btn && btn.parentElement) {
+      btn.parentElement.querySelectorAll(".vas-card-angle-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+  };
+
   window.filterCollection = function (cat, btn) {
     activeCategory = cat;
     document.querySelectorAll(".vas-filter-tabs .vas-tab-btn").forEach(b => b.classList.remove("active"));
@@ -724,9 +754,104 @@
   // ------------------------------------------------------------------------
   // 6. PRODUCT DETAIL MODAL & PURCHASE WORKFLOW (MODULE 2)
   // ------------------------------------------------------------------------
+  let currentPdpProduct = null;
+  let currentPdpAngle = 'front';
+  const pdpAngleKeys = ['front', 'detail', 'upper', 'sleeves', 'neckline'];
+
+  window.switchPdpAngle = function (angleKey) {
+    if (!currentPdpProduct || !currentPdpProduct.views || !currentPdpProduct.views[angleKey]) return;
+    currentPdpAngle = angleKey;
+    const view = currentPdpProduct.views[angleKey];
+    
+    // Update main image: Derived from the EXACT SAME master photo
+    const mainImg = document.getElementById("pdpMainImg");
+    if (mainImg) {
+      mainImg.src = view.url;
+      mainImg.alt = `${currentPdpProduct.name} - ${view.label}`;
+      mainImg.style.transform = "scale(1)";
+      mainImg.style.transformOrigin = view.focus || "center center";
+    }
+
+    // Update angle header badges
+    const angleTitle = document.getElementById("pdpAngleTitle");
+    const angleSub = document.getElementById("pdpAngleSub");
+    if (angleTitle) angleTitle.textContent = view.label.toUpperCase();
+    if (angleSub) angleSub.textContent = view.badge || "Detail Inspection";
+
+    // Update inspection card
+    const inspectTitle = document.getElementById("pdpInspectTitle");
+    const inspectDesc = document.getElementById("pdpInspectDesc");
+    if (inspectTitle) inspectTitle.textContent = `Atelier Detail: ${view.label}`;
+    if (inspectDesc) inspectDesc.textContent = view.desc;
+
+    // Update active thumbnail
+    document.querySelectorAll(".vas-pdp-thumb").forEach(thumb => {
+      thumb.classList.toggle("active", thumb.dataset.angle === angleKey);
+    });
+  };
+
+  window.navigatePdpAngle = function (delta) {
+    if (!currentPdpProduct || !currentPdpProduct.views) return;
+    const availableKeys = pdpAngleKeys.filter(k => currentPdpProduct.views[k]);
+    if (!availableKeys.length) return;
+    let idx = availableKeys.indexOf(currentPdpAngle);
+    if (idx === -1) idx = 0;
+    
+    let nextIdx = idx + delta;
+    if (nextIdx >= availableKeys.length) {
+      // Completed all detail views of current product -> seamlessly rotate to Next Product at 1. Full Dress!
+      window.navigatePdpProduct(1);
+      return;
+    } else if (nextIdx < 0) {
+      // Go back to previous product's last detail view
+      window.navigatePdpProduct(-1, availableKeys.length - 1);
+      return;
+    }
+    window.switchPdpAngle(availableKeys[nextIdx]);
+  };
+
+  window.navigatePdpProduct = function (delta, targetAngleIndex = 0) {
+    if (!currentPdpProduct) return;
+    const allProducts = VASTRAE_DATA.products;
+    const currIdx = allProducts.findIndex(p => p.id === currentPdpProduct.id);
+    if (currIdx === -1) return;
+    const nextProductIdx = (currIdx + delta + allProducts.length) % allProducts.length;
+    const nextProduct = allProducts[nextProductIdx];
+    window.openProductDetailModal(nextProduct.id);
+    const availableKeys = pdpAngleKeys.filter(k => nextProduct.views && nextProduct.views[k]);
+    if (availableKeys.length && targetAngleIndex > 0 && targetAngleIndex < availableKeys.length) {
+      window.switchPdpAngle(availableKeys[targetAngleIndex]);
+    }
+  };
+
+  function setupPdpZoom() {
+    const viewport = document.getElementById("pdpViewport");
+    const img = document.getElementById("pdpMainImg");
+    if (!viewport || !img) return;
+
+    viewport.onmousemove = function (e) {
+      const rect = viewport.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      img.style.transformOrigin = `${x}% ${y}%`;
+      img.style.transform = "scale(2.2)";
+    };
+
+    viewport.onmouseleave = function () {
+      img.style.transform = "scale(1)";
+      img.style.transformOrigin = "center center";
+    };
+  }
+
   window.openProductDetailModal = function (productId) {
     const p = VASTRAE_DATA.products.find(item => item.id === productId);
     if (!p) return;
+    currentPdpProduct = p;
+    currentPdpAngle = 'front';
+
+    const allProducts = VASTRAE_DATA.products;
+    const currIdx = allProducts.findIndex(item => item.id === productId);
+    const productCounterText = `Outfit ${currIdx + 1} of ${allProducts.length}`;
 
     const specs = p.specs || {
       craftsmanship: "Authentic artisanal needlework & precision grading",
@@ -736,18 +861,85 @@
       occasion: "Festive, Wedding & Gala Occasions"
     };
 
+    // Ensure views structure exists with defaults
+    const views = p.views || {
+      front: { url: p.image, label: "Full Dress", badge: "1. Complete Outfit View", desc: "Full dress silhouette and cut proportions." }
+    };
+
+    const initialView = views.front || Object.values(views)[0];
+
     const modalContent = document.getElementById("modalBody");
     modalContent.innerHTML = `
-      <div style="display:grid; grid-template-columns: 1fr 1.15fr; gap: 32px; align-items: start;">
-        <div>
-          <div style="border-radius:12px; overflow:hidden; border:1px solid var(--vas-border); aspect-ratio:4/5;">
-            <img id="pdpMainImg" src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">
+      <!-- Product Rotation Navigation Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--vas-surface-alt); border:1px solid var(--vas-border); border-radius:8px; padding:8px 14px; margin-bottom:16px;">
+        <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.navigatePdpProduct(-1)" title="Previous Outfit">
+          &larr; Prev Outfit
+        </button>
+        <div style="text-align:center;">
+          <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--vas-gold-dark);">${productCounterText}</span>
+          <span style="display:block; font-size:0.85rem; font-weight:600; color:var(--vas-ink);">${p.name}</span>
+        </div>
+        <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.navigatePdpProduct(1)" title="Next Outfit">
+          Next Outfit &rarr;
+        </button>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start;">
+        <!-- Left: Interactive Detail Zoom Gallery from SAME Original Image -->
+        <div class="vas-pdp-gallery-wrap">
+          <!-- Top Badges Row -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div class="vas-pdp-angle-badge">
+              <span id="pdpAngleTitle">${initialView.label.toUpperCase()}</span>
+              <span style="opacity:0.6;">•</span>
+              <span id="pdpAngleSub" style="font-weight:500; opacity:0.9;">${initialView.badge}</span>
+            </div>
+            <div class="vas-pdp-zoom-badge">
+              <span>🔍 Hover to Magnify (2.2x)</span>
+            </div>
           </div>
+
+          <!-- Main Interactive Viewport with Pan Zoom & Arrows -->
+          <div class="vas-pdp-viewport" id="pdpViewport">
+            <img id="pdpMainImg" src="${initialView.url}" alt="${p.name} - ${initialView.label}">
+            <button type="button" class="vas-pdp-nav-btn vas-pdp-prev" onclick="window.navigatePdpAngle(-1)" title="Previous View or Outfit">‹</button>
+            <button type="button" class="vas-pdp-nav-btn vas-pdp-next" onclick="window.navigatePdpAngle(1)" title="Next View or Outfit">›</button>
+          </div>
+
+          <!-- 5 Detail Zoom Thumbnails Strip (From SAME Original Image) -->
+          <div class="vas-pdp-thumbs-row" id="pdpThumbsRow" style="grid-template-columns:repeat(5, 1fr);">
+            ${pdpAngleKeys.map(k => {
+              const v = views[k];
+              if (!v) return '';
+              const shortLabel = k === 'front' ? '1. Full Dress' :
+                                 k === 'detail' ? '2. Embroidery' :
+                                 k === 'upper' ? '3. Blouse/Kurta' :
+                                 k === 'sleeves' ? '4. Sleeves' : '5. Neckline';
+              return `
+                <div class="vas-pdp-thumb ${k === 'front' ? 'active' : ''}" data-angle="${k}" onclick="window.switchPdpAngle('${k}')" title="${v.label}">
+                  <img src="${v.url}" alt="${v.label}">
+                  <span class="vas-pdp-thumb-label">${shortLabel}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Detail Inspection Callout Card -->
+          <div class="vas-pdp-inspection-card" id="pdpInspectionCard">
+            <div class="vas-pdp-inspection-icon">🔍</div>
+            <div class="vas-pdp-inspection-text">
+              <strong id="pdpInspectTitle">Visual Detail Inspection: ${initialView.label}</strong>
+              <span id="pdpInspectDesc">${initialView.desc}</span>
+            </div>
+          </div>
+
           <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.82rem; color:var(--vas-muted);">
             <span>⭐ ${p.rating || '4.9'} / 5.0 (${p.reviewsCount || '32'} reviews)</span>
-            <span>📍 Indiranagar Atelier Floor</span>
+            <span>📍 Same Garment Detail Inspection · Single Master Photo</span>
           </div>
         </div>
+
+        <!-- Right: Garment Architecture, Specs, Sizing & Customization -->
         <div>
           <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--vas-gold-dark);">${p.badge}</span>
           <h2 style="font-size:1.75rem; margin:6px 0 10px; font-family:var(--vas-font-serif);">${p.name}</h2>
@@ -781,7 +973,7 @@
           </div>
 
           <div style="background:var(--vas-surface-alt); padding:10px 14px; border-radius:8px; margin-bottom:20px; font-size:0.82rem;">
-            📍 <strong>Bengaluru Delivery:</strong> ${specs.dispatch}. Complimentary luxury casket packing included.
+            📍 <strong>Bengaluru Atelier:</strong> ${specs.dispatch}. Complimentary luxury casket packing included.
           </div>
 
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -798,6 +990,7 @@
       </div>
     `;
     openModal("genericModal");
+    setupPdpZoom();
   };
 
   // ------------------------------------------------------------------------
@@ -839,7 +1032,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>2. Neckline Architecture</label>
+          <label>2. Front Neckline Architecture</label>
           <div class="vas-chip-selector">
             ${opts.necklines.map(n => `
               <button type="button" class="vas-chip ${customState.neckline === n ? 'active' : ''}" onclick="window.updateCustomField('neckline', '${n}', this)">${n}</button>
@@ -848,7 +1041,23 @@
         </div>
 
         <div class="vas-option-group">
-          <label>3. Sleeve Styling</label>
+          <label>3. Back Neckline &amp; Dori Architecture</label>
+          <div class="vas-chip-selector">
+            ${(opts.backNecklines || [
+              "Deep U-Arch with Latkans & Silk Dori",
+              "Teardrop Cutout with Gold Zari Border",
+              "High Sheer Illusion Keyhole with Pearl Buttons",
+              "Temple Window Cut with Coin Lace Edge",
+              "Criss-Cross Silk Tie-Up Dori",
+              "Modest High Back with Gold Button Spine"
+            ]).map(bn => `
+              <button type="button" class="vas-chip ${customState.backNeckline === bn ? 'active' : ''}" onclick="window.updateCustomField('backNeckline', '${bn}', this)">${bn}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="vas-option-group">
+          <label>4. Sleeve Styling</label>
           <div class="vas-chip-selector">
             ${opts.sleeves.map(s => `
               <button type="button" class="vas-chip ${customState.sleeves === s ? 'active' : ''}" onclick="window.updateCustomField('sleeves', '${s}', this)">${s}</button>
@@ -857,7 +1066,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>4. Outfit Length</label>
+          <label>5. Outfit Length</label>
           <div class="vas-chip-selector">
             ${opts.lengths.map(l => `
               <button type="button" class="vas-chip ${customState.length === l ? 'active' : ''}" onclick="window.updateCustomField('length', '${l}', this)">${l}</button>
@@ -866,7 +1075,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>5. Atelier Handloom Fabric</label>
+          <label>6. Atelier Handloom Fabric</label>
           <div class="vas-chip-selector">
             ${opts.fabrics.map(f => `
               <button type="button" class="vas-chip ${customState.fabric === f ? 'active' : ''}" onclick="window.updateCustomField('fabric', '${f}', this)">${f}</button>
@@ -875,7 +1084,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>6. Royal Colorway Palette</label>
+          <label>7. Royal Colorway Palette</label>
           <div class="vas-color-swatches">
             ${opts.colors.map(col => `
               <div class="vas-color-dot ${customState.color === col.name ? 'active' : ''}" style="background-color:${col.hex};" title="${col.name}" onclick="window.updateCustomColor('${col.name}', '${col.hex}', this)"></div>
@@ -885,7 +1094,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>7. Artisanal Embroidery</label>
+          <label>8. Artisanal Embroidery</label>
           <div class="vas-chip-selector">
             ${opts.embroidery.map(e => `
               <button type="button" class="vas-chip ${customState.embroidery === e ? 'active' : ''}" onclick="window.updateCustomField('embroidery', '${e}', this)">${e}</button>
@@ -894,7 +1103,23 @@
         </div>
 
         <div class="vas-option-group">
-          <label>8. Inner Lining & Comfort Fit</label>
+          <label>9. Dupatta &amp; Pallu Drape Style</label>
+          <div class="vas-chip-selector">
+            ${(opts.dupattaStyles || [
+              "Pleated Shoulder Pallu Drape",
+              "Open Free-Falling Seedha Pallu",
+              "Gujarati Front Drape with Waist Tuck",
+              "Scalloped Dupatta Across Both Wrists",
+              "Double Dupatta (1 Crown Veil + 1 Chest Drape)",
+              "Cascading Diagonal Cowl Drape"
+            ]).map(ds => `
+              <button type="button" class="vas-chip ${customState.dupattaStyle === ds ? 'active' : ''}" onclick="window.updateCustomField('dupattaStyle', '${ds}', this)">${ds}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="vas-option-group">
+          <label>10. Inner Lining &amp; Comfort Fit</label>
           <div class="vas-chip-selector">
             ${opts.fits.map(ft => `
               <button type="button" class="vas-chip ${customState.fit === ft ? 'active' : ''}" onclick="window.updateCustomField('fit', '${ft}', this)">${ft}</button>
@@ -915,7 +1140,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>2. Cut & Silhouette Style</label>
+          <label>2. Cut &amp; Silhouette Style</label>
           <div class="vas-chip-selector">
             ${opts.styles.map(st => `
               <button type="button" class="vas-chip ${customState.style === st ? 'active' : ''}" onclick="window.updateCustomField('style', '${st}', this)">${st}</button>
@@ -933,7 +1158,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>4. Sleeve & Cuff Treatment</label>
+          <label>4. Sleeve &amp; Cuff Treatment</label>
           <div class="vas-chip-selector">
             ${opts.sleeves.map(sl => `
               <button type="button" class="vas-chip ${customState.sleeves === sl ? 'active' : ''}" onclick="window.updateCustomField('sleeves', '${sl}', this)">${sl}</button>
@@ -942,7 +1167,21 @@
         </div>
 
         <div class="vas-option-group">
-          <label>5. Length Proportions</label>
+          <label>5. Back Vent &amp; Spine Architecture</label>
+          <div class="vas-chip-selector">
+            ${(opts.backCuts || [
+              "Double Side Vents with Contrast Silk Piping",
+              "Traditional Center English Vent",
+              "Italian Ventless Clean Tailored Spine",
+              "Pleated Action-Back for Mobility"
+            ]).map(bc => `
+              <button type="button" class="vas-chip ${customState.backCut === bc ? 'active' : ''}" onclick="window.updateCustomField('backCut', '${bc}', this)">${bc}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="vas-option-group">
+          <label>6. Length Proportions</label>
           <div class="vas-chip-selector">
             ${opts.lengths.map(len => `
               <button type="button" class="vas-chip ${customState.length === len ? 'active' : ''}" onclick="window.updateCustomField('length', '${len}', this)">${len}</button>
@@ -951,7 +1190,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>6. Fabric Mill Origin</label>
+          <label>7. Fabric Mill Origin</label>
           <div class="vas-chip-selector">
             ${opts.fabrics.map(fab => `
               <button type="button" class="vas-chip ${customState.fabric === fab ? 'active' : ''}" onclick="window.updateCustomField('fabric', '${fab}', this)">${fab}</button>
@@ -960,7 +1199,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>7. Classic Hue</label>
+          <label>8. Classic Hue</label>
           <div class="vas-color-swatches">
             ${opts.colors.map(col => `
               <div class="vas-color-dot ${customState.color === col.name ? 'active' : ''}" style="background-color:${col.hex};" title="${col.name}" onclick="window.updateCustomColor('${col.name}', '${col.hex}', this)"></div>
@@ -970,7 +1209,7 @@
         </div>
 
         <div class="vas-option-group">
-          <label>8. Tailored Ease</label>
+          <label>9. Tailored Ease</label>
           <div class="vas-chip-selector">
             ${opts.fits.map(ft => `
               <button type="button" class="vas-chip ${customState.fit === ft ? 'active' : ''}" onclick="window.updateCustomField('fit', '${ft}', this)">${ft}</button>
@@ -995,6 +1234,14 @@
             <div class="vas-chip-selector">
               ${gOpts.categories.map(c => `
                 <button type="button" class="vas-chip ${customState.category === c ? 'active' : ''}" onclick="window.updateCustomField('category', '${c}', this)">${c}</button>
+              `).join('')}
+            </div>
+          </div>
+          <div class="vas-option-group">
+            <label>Back Fastening &amp; Sash</label>
+            <div class="vas-chip-selector">
+              ${(gOpts.backStyles || ["Tie-Back Sash with Bow", "Concealed Soft Zipper", "Velcro Quick-Wear Fastening", "Traditional Dori Ties"]).map(bs => `
+                <button type="button" class="vas-chip ${customState.backStyle === bs ? 'active' : ''}" onclick="window.updateCustomField('backStyle', '${bs}', this)">${bs}</button>
               `).join('')}
             </div>
           </div>
@@ -1032,6 +1279,14 @@
         <div class="vas-chip-selector">
           ${opts.categories.map(c => `
             <button type="button" class="vas-chip ${customState.category === c ? 'active' : ''}" onclick="window.updateCustomField('category', '${c}', this)">${c}</button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="vas-option-group">
+        <label>${genderSub === 'girl' ? 'Back Fastening & Sash' : 'Bottom Dhoti / Trouser'}</label>
+        <div class="vas-chip-selector">
+          ${((genderSub === 'girl' ? opts.backStyles : opts.bottomStyles) || ["Pre-Stitched Ready Dhoti", "Pleated Silk Patiala", "Churidar Pants"]).map(s => `
+            <button type="button" class="vas-chip active" onclick="window.updateCustomField('${genderSub === 'girl' ? 'backStyle' : 'bottomStyle'}', '${s}', this)">${s}</button>
           `).join('')}
         </div>
       </div>
@@ -1084,6 +1339,43 @@
     updateLivePreviewVisual();
   };
 
+  window.setStudioAngle = function (angleKey, btn) {
+    customState.previewAngle = angleKey;
+    document.querySelectorAll(".vas-studio-angle-bar .vas-studio-angle-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.angle === angleKey);
+    });
+    updateLivePreviewVisual();
+  };
+
+  window.startCustomizeFromProduct = function (productId) {
+    const p = VASTRAE_DATA.products.find(item => item.id === productId);
+    if (!p) return;
+    customState.activeProductId = productId;
+    if (p.category === "women" || p.category === "men" || p.category === "kids") {
+      customState.gender = p.category;
+    }
+    if (p.fabric) customState.fabric = p.fabric;
+    if (p.name.includes("Blouse")) customState.category = "Blouse";
+    else if (p.name.includes("Lehenga")) customState.category = "Lehenga";
+    else if (p.name.includes("Saree")) customState.category = "Saree";
+    else if (p.name.includes("Bandhgala") || p.name.includes("Suit")) customState.category = "Bandhgala Suit";
+    else if (p.name.includes("Sherwani")) customState.category = "Sherwani";
+    
+    customState.previewAngle = "front";
+    
+    const sec = document.getElementById("customizeStudio");
+    if (sec) {
+      sec.scrollIntoView({ behavior: "smooth" });
+    }
+    
+    document.querySelectorAll(".vas-gender-selector .vas-gender-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.gender === customState.gender);
+    });
+    renderStudioGenderControls();
+    updateLivePreviewVisual();
+    showToast(`✨ Loaded ${p.name} into Atelier 360° Studio`);
+  };
+
   function updateLivePreviewVisual() {
     const previewImg = document.getElementById("studioPreviewImg");
     const previewTags = document.getElementById("studioPreviewTags");
@@ -1091,59 +1383,79 @@
 
     if (!previewImg || !previewTags) return;
 
-    // Pick image based on gender and styling
-    let targetImg = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85";
-    let basePrice = 4500;
+    const angle = customState.previewAngle || 'front';
 
-    if (customState.gender === "women") {
-      if (customState.category.includes("Blouse")) {
-        targetImg = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85";
-        basePrice = 5200;
-      } else if (customState.category.includes("Lehenga")) {
-        targetImg = "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=85";
-        basePrice = 18500;
-      } else if (customState.category.includes("Dress") || customState.category.includes("Gown")) {
-        targetImg = "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85";
-        basePrice = 8900;
-      } else {
-        targetImg = "https://images.unsplash.com/photo-1583391733975-dd285a8f4c2c?auto=format&fit=crop&w=800&q=85";
-        basePrice = 6400;
+    // Synchronize studio angle buttons
+    document.querySelectorAll(".vas-studio-angle-bar .vas-studio-angle-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.angle === angle);
+    });
+
+    // Fallback products from VASTRAE_DATA
+    const fallbackWomen = VASTRAE_DATA.products.find(item => item.id === "W-SAR-01") || VASTRAE_DATA.products[0];
+    const fallbackMen = VASTRAE_DATA.products.find(item => item.id === "M-BG-01") || VASTRAE_DATA.products.find(item => item.gender === "men");
+    const fallbackKids = VASTRAE_DATA.products.find(item => item.id === "K-LE-01") || VASTRAE_DATA.products.find(item => item.gender === "kids");
+
+    let targetImg = (fallbackWomen && fallbackWomen.views && fallbackWomen.views[angle]) ? fallbackWomen.views[angle].url : "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85";
+    let basePrice = 4899;
+
+    // Check if customized from a specific loaded product
+    if (customState.activeProductId) {
+      const activeP = VASTRAE_DATA.products.find(item => item.id === customState.activeProductId);
+      if (activeP && activeP.views && activeP.views[angle]) {
+        targetImg = activeP.views[angle].url;
+        basePrice = activeP.price;
+      }
+    } else if (customState.gender === "women") {
+      if (fallbackWomen && fallbackWomen.views && fallbackWomen.views[angle]) {
+        targetImg = fallbackWomen.views[angle].url;
+        basePrice = fallbackWomen.price;
       }
     } else if (customState.gender === "men") {
-      if (customState.category.includes("Shirt")) {
-        targetImg = "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=85";
-        basePrice = 3600;
-      } else if (customState.category.includes("Bandhgala") || customState.category.includes("Suit")) {
-        targetImg = "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=800&q=85";
-        basePrice = 16500;
-      } else {
-        targetImg = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85";
-        basePrice = 5800;
+      if (fallbackMen && fallbackMen.views && fallbackMen.views[angle]) {
+        targetImg = fallbackMen.views[angle].url;
+        basePrice = fallbackMen.price;
       }
     } else {
       // Kids
-      targetImg = "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=85";
-      basePrice = 2400;
+      if (fallbackKids && fallbackKids.views && fallbackKids.views[angle]) {
+        targetImg = fallbackKids.views[angle].url;
+        basePrice = fallbackKids.price;
+      }
     }
 
-    // If customer photo or model is selected in virtual try-on, use it
-    if (customState.customerPhoto) {
+    // If client photo is uploaded for Virtual Try-on and angle is front, show user photo
+    if (customState.customerPhoto && angle === "front") {
       previewImg.src = customState.customerPhoto;
     } else {
       previewImg.src = targetImg;
     }
 
     // Dynamic price calculation
-    let embroideryCost = customState.embroidery && customState.embroidery.includes("Zardozi") ? 2200 : 1200;
+    let embroideryCost = customState.embroidery && customState.embroidery.includes("Zardozi") ? 2400 : 1200;
     let finalEst = basePrice + embroideryCost;
 
+    const angleLabels = {
+      front: "1. FRONT VIEW • Complete Silhouette & Neckline Proportions",
+      back: "2. BACK VIEW • " + (customState.backNeckline || customState.backCut || "Back Cutout Architecture & Dori Ties"),
+      side: "3. SIDE VIEW • Posture Silhouette & Fall Length",
+      detail: "4. DETAIL VIEW • Texture & " + (customState.embroidery || "Artisanal Needlework"),
+      drape: "5. DRAPE VIEW • " + (customState.dupattaStyle || "Pallu & Pleating Grace"),
+      full: "6. FULL VIEW • Head-to-Toe Atelier Styling"
+    };
+
     previewTags.innerHTML = `
-      <div style="font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; margin-bottom:4px;">
-        ✨ ${customState.category} (${customState.gender.toUpperCase()})
+      <div style="font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; margin-bottom:4px; font-size:0.75rem; letter-spacing:0.06em;">
+        📐 ${angleLabels[angle] || 'ATELIER PERSPECTIVE'}
       </div>
-      <div><strong>Fabric:</strong> ${customState.fabric} · <strong>Color:</strong> ${customState.color}</div>
-      <div><strong>Specs:</strong> ${customState.neckline || customState.collar || 'Classic'} · ${customState.sleeves || 'Fitted'} · ${customState.fit}</div>
-      ${customState.embroidery ? `<div><strong>Needlework:</strong> ${customState.embroidery}</div>` : ''}
+      <div style="font-size:0.95rem; font-weight:700; margin-bottom:4px; font-family:var(--vas-font-serif);">
+        ${customState.category} (${customState.gender.toUpperCase()})
+      </div>
+      <div style="font-size:0.82rem; margin-bottom:2px;"><strong>Fabric:</strong> ${customState.fabric} · <strong>Color:</strong> ${customState.color}</div>
+      <div style="font-size:0.82rem; margin-bottom:2px;"><strong>Front Neckline:</strong> ${customState.neckline || customState.collar || 'Classic'} · <strong>Sleeves:</strong> ${customState.sleeves || 'Fitted'}</div>
+      ${customState.backNeckline ? `<div style="font-size:0.82rem; margin-bottom:2px;"><strong>Back Neck Architecture:</strong> ${customState.backNeckline}</div>` : ''}
+      ${customState.backCut ? `<div style="font-size:0.82rem; margin-bottom:2px;"><strong>Back Vent / Tailoring:</strong> ${customState.backCut}</div>` : ''}
+      ${customState.dupattaStyle ? `<div style="font-size:0.82rem; margin-bottom:2px;"><strong>Drape Style:</strong> ${customState.dupattaStyle}</div>` : ''}
+      ${customState.embroidery ? `<div style="font-size:0.82rem;"><strong>Artisan Needlework:</strong> ${customState.embroidery}</div>` : ''}
     `;
 
     if (priceDisplay) {

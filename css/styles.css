@@ -3086,3 +3086,366 @@ img {
     width: 100%;
   }
 }
+
+/* ==========================================================================
+   VASTRAÉ MULTI-ANGLE FASHION GALLERY & INTERACTIVE INSPECTION STYLES
+   ========================================================================== */
+
+/* Product Detail Modal Gallery Layout */
+.vas-pdp-gallery-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vas-pdp-viewport {
+  position: relative;
+  border-radius: var(--vas-radius);
+  overflow: hidden;
+  border: 1px solid var(--vas-border);
+  aspect-ratio: 3 / 4;
+  background: var(--vas-surface-alt);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  cursor: crosshair;
+}
+
+.vas-pdp-viewport img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+  transform-origin: center center;
+  user-select: none;
+}
+
+.vas-pdp-viewport:hover img {
+  transform: scale(2.0);
+}
+
+.vas-pdp-angle-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--vas-ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 12px;
+  border-radius: var(--vas-radius-pill);
+  border: 1px solid rgba(223, 199, 167, 0.6);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vas-pdp-angle-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vas-gold-dark);
+}
+
+.vas-pdp-zoom-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(27, 22, 19, 0.78);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 5px 10px;
+  border-radius: var(--vas-radius-pill);
+  pointer-events: none;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: opacity 0.3s ease;
+}
+
+.vas-pdp-viewport:hover .vas-pdp-zoom-badge {
+  opacity: 0.2;
+}
+
+.vas-pdp-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--vas-border);
+  color: var(--vas-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.vas-pdp-nav-btn:hover {
+  background: #fff;
+  border-color: var(--vas-gold);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.vas-pdp-nav-btn.prev {
+  left: 10px;
+}
+
+.vas-pdp-nav-btn.next {
+  right: 10px;
+}
+
+/* Horizontal Thumbnails Strip */
+.vas-pdp-thumbs-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.vas-pdp-thumb {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: var(--vas-surface-alt);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  text-align: center;
+}
+
+.vas-pdp-thumb-img-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #fff;
+}
+
+.vas-pdp-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.vas-pdp-thumb-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 2px;
+  color: var(--vas-muted);
+  background: #faf8f5;
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vas-pdp-thumb:hover {
+  border-color: rgba(184, 142, 76, 0.5);
+  transform: translateY(-2px);
+}
+
+.vas-pdp-thumb:hover img {
+  transform: scale(1.08);
+}
+
+.vas-pdp-thumb.active {
+  border-color: var(--vas-gold-dark);
+  box-shadow: 0 0 0 1px var(--vas-gold), 0 3px 10px rgba(184, 142, 76, 0.25);
+}
+
+.vas-pdp-thumb.active .vas-pdp-thumb-label {
+  color: var(--vas-ink);
+  background: rgba(184, 142, 76, 0.12);
+  font-weight: 800;
+}
+
+/* Artisan Angle Inspection Callout */
+.vas-pdp-inspection-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 246, 240, 0.95));
+  border: 1px solid rgba(223, 199, 167, 0.6);
+  border-left: 3px solid var(--vas-gold);
+  border-radius: var(--vas-radius-sm);
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--vas-ink);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.vas-pdp-inspection-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.vas-pdp-inspection-text strong {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vas-gold-dark);
+  margin-bottom: 2px;
+}
+
+.vas-pdp-inspection-text span {
+  color: var(--vas-muted);
+}
+
+/* Collection Card Multi-Angle Quick Bar */
+.vas-card-angle-bar {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 4px 8px;
+  border-radius: var(--vas-radius-pill);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.vas-product-card:hover .vas-card-angle-bar {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vas-card-angle-btn {
+  border: none;
+  background: transparent;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vas-muted);
+  padding: 3px 7px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-card-angle-btn:hover {
+  color: var(--vas-ink);
+  background: rgba(184, 142, 76, 0.15);
+}
+
+.vas-card-angle-btn.active {
+  color: #fff;
+  background: var(--vas-ink);
+}
+
+.vas-multi-angle-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(27, 22, 19, 0.78);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  z-index: 1;
+  transition: opacity 0.2s ease;
+}
+
+.vas-product-card:hover .vas-multi-angle-badge {
+  opacity: 0;
+}
+
+/* Customize Studio Multi-Angle Studio Controls */
+.vas-studio-angle-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: var(--vas-radius-pill);
+  border: 1px solid var(--vas-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.vas-studio-angle-btn {
+  flex: 1;
+  min-width: 90px;
+  padding: 8px 12px;
+  border-radius: var(--vas-radius-pill);
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--vas-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.25s ease;
+}
+
+.vas-studio-angle-btn:hover {
+  color: var(--vas-ink);
+  background: var(--vas-surface-alt);
+}
+
+.vas-studio-angle-btn.active {
+  background: var(--vas-ink);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(27, 22, 19, 0.2);
+}
+
+.vas-studio-angle-btn.active span:first-child {
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+
+@media (max-width: 768px) {
+  .vas-pdp-thumbs-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .vas-studio-angle-bar {
+    border-radius: 12px;
+  }
+  .vas-studio-angle-btn {
+    flex: 1 1 45%;
+    border-radius: 8px;
+  }
+}
