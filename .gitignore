@@ -1,0 +1,17 @@
+# OS Generated Files
+Thumbs.db
+Desktop.ini
+desktop.ini
+.DS_Store
+
+# Environment & Credentials
+.env
+.env.local
+.env.*.local
+*.log
+
+# Node & Build Outputs
+node_modules/
+dist/
+build/
+.cache/

@@ -1,0 +1,113 @@
+================================================================================
+VASTRAÉ | DIGITAL COUTURE BOUTIQUE
+Project Description & Architecture Overview
+================================================================================
+
+1. PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+VASTRAÉ | Digital Couture Boutique is a high-luxury Boutique Management & Online 
+Shopping Web Application. It bridges traditional bespoke Indian & ethnic 
+tailoring with modern e-commerce, AI virtual fitting rooms, and multi-role 
+operations management (Customer, Master Tailor, Admin).
+
+
+2. KEY MODULES & FEATURES BUILT
+--------------------------------------------------------------------------------
+
+[A] E-Commerce Storefront & Shopping Experience
+- Curated Storefront & Catalogue (shop, catalogue): Filterable product 
+  collections (Couture, Bridal, Fusion, Gen-Z, Ready-to-Wear) with live search, 
+  sorting, price range filters, and quick view.
+- Sacred Traditional Pavilion (traditional): Dedicated heritage pavilion for 
+  premium Indian ethnic wear (Sarees, Lehengas, Sherwanis, Anarkalis) featuring 
+  interactive drape guides and Temple Sanctum aesthetics.
+- Style Kits & Lookbooks (style-kits, lookbook): Curated signature style 
+  bundles, festive event packages, and interactive visual trend lookbooks.
+- Shopping Cart & Checkout (modals): Slide-out cart drawer, promo code 
+  application, shipping calculator, and checkout workflow.
+
+[B] Bespoke Customization & Tailoring Studio
+- Custom Bespoke Studio (custom): Interactive visual custom outfit creator 
+  allowing clients to select necklines, sleeve lengths, embroidery patterns, 
+  fabric types, and embellishments.
+- "Stitch Your Own Fabric" Service (own-fabric): Allows clients to upload photos/
+  details of their own fabric, request doorstep fabric pickup, specify stitching 
+  instructions, and get automated price estimates.
+- Digital Measurement Manager (measurements, profile): Save and store precise 
+  client body measurements, view step-by-step measurement guides, and save 
+  multiple profile presets (e.g., Self, Family).
+- Design Moodboard Builder (moodboard): Interactive canvas where clients can save 
+  color swatches, inspiration images, and design ideas for custom orders.
+
+[C] AI Virtual Fitting & Interactive Experience
+- AI Virtual Mirror & Digital Twin (ai-mirror): Interactive digital mirror 
+  simulation to preview outfit fits and color match recommendations.
+- AI Self Try-On Lab (tryon): Virtual try-on module supporting photo uploads or 
+  camera capture for virtual garment overlay.
+- Virtual Atelier Consultations (experience): Consultation booking engine to 
+  schedule video sessions with personal stylists and couture experts.
+
+[D] Order Logistics & Real-Time Tracking
+- Live Order & Stitching Tracker (tracking): Visual stage-by-stage progress 
+  tracker showing exact order status:
+  Fabric Sourcing -> Pattern Cutting -> Hand Embroidery -> Master Stitching -> 
+  Quality Inspection -> Dispatched.
+
+[E] Multi-Role Workspaces & Operations Management
+- Multi-Role Authentication (auth, prelaunch): User registration and role switcher 
+  (Customer, Master Tailor, Admin).
+- Master Tailor Dashboard (tailor-workspace): Dedicated workspace for tailors 
+  to view assigned custom orders, access client measurement sheets, update 
+  stitching stages, and upload work-in-progress photos.
+- Admin Management Studio (admin-workspace): Comprehensive management portal 
+  to control product inventory, manage order lifecycles, assign orders to master 
+  tailors, view sales analytics, and manage client accounts.
+
+[F] Customer Care & Engagement
+- Atelier Services (services): Express 24h Stitching, Doorstep Home Fitting, 
+  Garment Alterations.
+- Private Offers (offers): Exclusive loyalty discounts, festive flash sales, and 
+  VIP client coupon redemption.
+- Client Reviews & Testimonials (reviews): Verified client ratings, photo reviews, 
+  and feedback displays.
+- Interactive Help Desk (faq): Categorized accordion FAQ for orders, sizing, 
+  delivery, and returns.
+
+
+3. TECHNICAL ARCHITECTURE
+--------------------------------------------------------------------------------
+- Modular Component System: Single Page Application (SPA) architecture loading 
+  29 modular HTML components on-demand (js/section-loader.js & js/sections.js).
+- Design System & Aesthetics (css/styles.css): Premium luxury dark & gold theme, 
+  glassmorphic cards, smooth micro-interactions, responsive grid layouts, and 
+  custom typography (Playfair Display & DM Sans).
+- State Management (js/app.js, js/products.js, js/features.js): Dynamic cart & 
+  wishlist management, measurement profile persistence, custom order 
+  configuration engine, and local storage sync.
+
+
+4. DIRECTORY & FILE STRUCTURE
+--------------------------------------------------------------------------------
+project vinuthnew/
+├── Index.html                  # Main SPA Shell with container mounts & script bindings
+├── css/
+│   └── styles.css              # Consolidated Design System (Glassmorphism, Animations, Themes)
+├── js/
+│   ├── app.js                  # Main Application Logic, Cart & State Management
+│   ├── products.js             # Comprehensive Product Data Catalog
+│   ├── catalogue.js            # Storefront Filtering, Pagination & Sorting Logic
+│   ├── features.js             # Custom Bespoke Studio, Own Fabric & Fitting Logic
+│   ├── traditional.js          # Pavilion-specific Interactions
+│   ├── genz.js                 # Gen-Z & Trend Finder Assistant
+│   ├── sections.js             # Section registry & configuration
+│   └── section-loader.js       # Asynchronous HTML Section Loader Engine
+└── sections/                   # 29 Dynamic Modular HTML Components
+    ├── auth/                   # Registration & Role-based Login
+    ├── shop/ & catalogue/      # Shopping Storefront & Wardrobe Builder
+    ├── custom/ & own-fabric/   # Bespoke Studio & Fabric Upload Engine
+    ├── measurements/ & tryon/  # Sizing Profiles & AI Virtual Try-On
+    ├── tailor-workspace/       # Master Tailor Production Dashboard
+    ├── admin-workspace/        # Store Admin Management Studio
+    └── tracking/ & services/   # Order Tracker & Atelier Services
+
+================================================================================

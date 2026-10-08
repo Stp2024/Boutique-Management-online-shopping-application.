@@ -4,58 +4,66 @@ DIGITAL MEASUREMENTS SECTION
 <section class="measure" id="measurements">
  <div class="heading">
   <small>
-   PERSONAL PROFILE
+   PERSONAL PROFILE &middot; BIOMETRIC VAULT
   </small>
   <h2>
-   Digital Measurements
+   Digital Measurements &amp; In-Store AI Scanner
   </h2>
   <p>
-   Save your common measurements for easier custom orders in the
-         future.
+   Save multi-profile body metrics (Self, Family, Wedding Trousseau) or run our In-Store AI Optical Body Scanner Simulation.
   </p>
  </div>
  <div class="measure-box">
+  <div style="margin-bottom:16px;">
+   <label style="font-weight:700; font-size:12px; display:block; margin-bottom:6px;">SELECT PROFILE PRESET</label>
+   <select id="mProfilePreset" class="vas-select" onchange="window.onMeasurementPresetChange(this.value)" style="width:100%; max-width:400px;">
+    <option value="self">Ananya Sharma (Self Profile)</option>
+    <option value="family">Devendra Sharma (Family / Spouse Profile)</option>
+    <option value="wedding">Wedding Trousseau Preset</option>
+   </select>
+  </div>
   <div class="measure-grid">
    <div>
-    <label>
-     HEIGHT
-    </label>
-    <input id="mHeight" placeholder="cm"/>
+    <label>HEIGHT (CM)</label>
+    <input id="mHeight" placeholder="e.g. 168"/>
    </div>
    <div>
-    <label>
-     CHEST / BUST
-    </label>
-    <input id="mChest" placeholder="cm"/>
+    <label>CHEST / BUST (CM)</label>
+    <input id="mChest" placeholder="e.g. 88"/>
    </div>
    <div>
-    <label>
-     WAIST
-    </label>
-    <input id="mWaist" placeholder="cm"/>
+    <label>WAIST (CM)</label>
+    <input id="mWaist" placeholder="e.g. 72"/>
    </div>
    <div>
-    <label>
-     HIP
-    </label>
-    <input id="mHip" placeholder="cm"/>
+    <label>HIP (CM)</label>
+    <input id="mHip" placeholder="e.g. 96"/>
    </div>
    <div>
-    <label>
-     SHOULDER
-    </label>
-    <input id="mShoulder" placeholder="cm"/>
+    <label>SHOULDER (CM)</label>
+    <input id="mShoulder" placeholder="e.g. 39"/>
    </div>
    <div>
-    <label>
-     SLEEVE
-    </label>
-    <input id="mSleeve" placeholder="cm"/>
+    <label>SLEEVE (CM)</label>
+    <input id="mSleeve" placeholder="e.g. 54"/>
+   </div>
+   <div>
+    <label>BLOUSE LENGTH (CM)</label>
+    <input id="mBlouse" placeholder="e.g. 38"/>
+   </div>
+   <div>
+    <label>ANKLE HEIGHT (CM)</label>
+    <input id="mAnkle" placeholder="e.g. 104"/>
    </div>
   </div>
   <br/>
-  <button class="btn btn-dark" onclick="saveMeasurements()">
-   Save Measurement Profile
-  </button>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+   <button class="btn btn-dark" onclick="window.saveMeasurements()">
+    Save Measurement Profile
+   </button>
+   <button class="btn btn-gold" onclick="window.startAIScannerSimulation()" style="background:var(--vas-gold, #c5a059); color:#fff; border:none;">
+    📷 Start In-Store AI Measurement Scanner Simulation
+   </button>
+  </div>
  </div>
 </section>

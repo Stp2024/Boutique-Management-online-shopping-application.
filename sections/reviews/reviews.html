@@ -13,9 +13,22 @@ TESTIMONIALS & REVIEWS SECTION
      <article class="review-card"><div class="review-stars">★★★★★</div><p>I liked that the custom measurements and ready-to-wear collections are part of the same experience.</p><strong>Arjun R.</strong><small>Bengaluru · Custom Suit</small></article>
      <article class="review-card"><div class="review-stars">★★★★☆</div><p>The catalogue feels like a boutique lookbook rather than a crowded shopping page. Very easy to explore.</p><strong>Priya K.</strong><small>Bengaluru · Festive Edit</small></article>
    </div>
-   <form class="review-form" onsubmit="submitReview(event)">
+   <form class="review-form" onsubmit="window.submitReview(event)">
      <input id="reviewName" required placeholder="Your name">
      <select id="reviewRating" required><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Good</option></select>
+     <select id="reviewAppreciationTag" style="grid-column:1/-1; padding:8px; border-radius:4px; border:1px solid #ccc; font-size:13px;">
+       <option value="Perfect Fitting">🏷️ Tag Tailor: Perfect Fitting</option>
+       <option value="Excellent Stitching">🏷️ Tag Tailor: Excellent Stitching</option>
+       <option value="Beautiful Embroidery">🏷️ Tag Tailor: Beautiful Embroidery</option>
+       <option value="Great Craftsmanship">🏷️ Tag Tailor: Great Craftsmanship</option>
+       <option value="Excellent Finishing">🏷️ Tag Tailor: Excellent Finishing</option>
+       <option value="Professional Service">🏷️ Tag Tailor: Professional Service</option>
+       <option value="Attention to Detail">🏷️ Tag Tailor: Attention to Detail</option>
+     </select>
+     <div style="grid-column:1/-1;">
+       <label style="font-size:11px; font-weight:600; display:block; margin-bottom:4px;">Upload Outfit Photo (Optional - JPG, PNG, WEBP):</label>
+       <input type="file" id="reviewImage" accept="image/jpeg,image/png,image/webp" style="font-size:12px; width:100%;" />
+     </div>
      <textarea class="full" id="reviewText" required placeholder="Write your experience..."></textarea>
      <button class="btn btn-dark full" type="submit">Publish Review</button>
    </form>

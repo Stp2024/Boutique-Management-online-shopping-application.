@@ -3168,8 +3168,377 @@
 
   window.submitReview = function (event) {
     event.preventDefault();
+    const name = document.getElementById("reviewName") ? document.getElementById("reviewName").value : "Client";
+    const rating = document.getElementById("reviewRating") ? document.getElementById("reviewRating").value : "5";
+    const tag = document.getElementById("reviewAppreciationTag") ? document.getElementById("reviewAppreciationTag").value : "Perfect Fitting";
+    const text = document.getElementById("reviewText") ? document.getElementById("reviewText").value : "";
+    const fileInput = document.getElementById("reviewImage");
+
+    let imageRef = null;
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+      const vRes = window.vastraeValidation ? window.vastraeValidation.validateImageFile(fileInput.files[0]) : { valid: true };
+      if (!vRes.valid) {
+        showToast("⚠️ " + vRes.message);
+        return;
+      }
+      imageRef = URL.createObjectURL(fileInput.files[0]);
+    }
+
+    const reviewObj = {
+      id: "REV-" + Date.now(),
+      name: name,
+      rating: parseInt(rating),
+      tag: tag,
+      text: text,
+      image: imageRef,
+      date: new Date().toLocaleDateString()
+    };
+
+    if (window.vastraeAdminService && window.vastraeAdminService.saveReview) {
+      window.vastraeAdminService.saveReview(reviewObj);
+    }
+
+    const grid = document.getElementById("reviewGrid");
+    if (grid) {
+      const card = document.createElement("article");
+      card.className = "review-card";
+      card.innerHTML = `
+        <div class="review-stars">${"★".repeat(reviewObj.rating)}</div>
+        <p>${reviewObj.text}</p>
+        <span style="font-size:0.75rem; color:var(--vas-gold-dark, #8a6d3b); font-weight:700; display:block; margin-bottom:4px;">🏷️ ${reviewObj.tag}</span>
+        ${reviewObj.image ? `<img src="${reviewObj.image}" style="width:100%; height:120px; object-fit:cover; border-radius:6px; margin:6px 0;" />` : ""}
+        <strong>${reviewObj.name}</strong>
+        <small>Bengaluru &middot; Verified Atelier Review</small>
+      `;
+      grid.prepend(card);
+    }
+
     closeModal();
-    showToast("✓ Thank you for your review! It will be featured on the Atelier wall.");
+    showToast("✓ Thank you! Your review with tailor appreciation tag has been published.");
+  };
+
+  // ------------------------------------------------------------------------
+  // 17. SAVED ADDRESSES & ORDER HISTORY HANDLERS (GAP FIX)
+  // ------------------------------------------------------------------------
+  window.openSavedAddressesModal = function () {
+    const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    const uid = activeUser ? activeUser.id : "USR-101";
+    const addresses = window.vastraeAddressService ? window.vastraeAddressService.getAddresses(uid) : [];
+
+    const modalBody = document.getElementById("modalBody");
+    if (!modalBody) return;
+
+    modalBody.innerHTML = `
+      <div style="padding:10px;">
+        <span class="vas-eyebrow">SAVED ADDRESSES &middot; DOORSTEP DELIVERY</span>
+        <h3 style="font-size:1.4rem; margin:6px 0 16px;">Address Directory</h3>
+
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+          ${addresses.map(a => `
+            <div style="border:1px solid ${a.isDefault ? 'var(--vas-gold, #c5a059)' : 'var(--vas-border, #e2d9cd)'}; border-radius:8px; padding:14px; background:${a.isDefault ? '#fffdf8' : '#fff'}; position:relative;">
+              ${a.isDefault ? `<span style="position:absolute; top:12px; right:12px; background:var(--vas-gold, #c5a059); color:#fff; font-size:0.68rem; padding:2px 8px; border-radius:10px; font-weight:700;">DEFAULT</span>` : ''}
+              <strong style="font-size:0.95rem; display:block;">${a.fullName} (${a.type})</strong>
+              <div style="font-size:0.82rem; color:var(--vas-muted, #666); margin:4px 0;">${a.building}, ${a.street}, ${a.area}, ${a.city}, ${a.state} - <strong>${a.pinCode}</strong></div>
+              <div style="font-size:0.8rem; color:var(--vas-ink, #222);">📞 ${a.phone}</div>
+              
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                ${!a.isDefault ? `<button class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.setDefaultAddressAction('${a.id}')">Set Default</button>` : ''}
+                <button class="vas-btn vas-btn-xs vas-btn-outline" style="color:var(--vas-danger, #c62828);" onclick="window.deleteAddressAction('${a.id}')">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <h4 style="font-size:1rem; margin-bottom:10px;">Add New Shipping Address</h4>
+        <form onsubmit="window.submitNewAddressForm(event)">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input id="addrName" placeholder="Full Name" required class="vas-input" value="${activeUser ? activeUser.name : ''}" />
+            <input id="addrPhone" placeholder="Mobile Number (+91)" required class="vas-input" value="${activeUser ? activeUser.phone : ''}" />
+          </div>
+          <div style="margin-bottom:10px;">
+            <input id="addrBuilding" placeholder="House / Flat / Building Name" required class="vas-input" style="width:100%;" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input id="addrStreet" placeholder="Street / Road" required class="vas-input" />
+            <input id="addrArea" placeholder="Area / Landmark" required class="vas-input" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input id="addrCity" placeholder="City" value="Bengaluru" required class="vas-input" />
+            <input id="addrState" placeholder="State" value="Karnataka" required class="vas-input" />
+            <input id="addrPin" placeholder="PIN Code" required class="vas-input" maxLength="6" />
+          </div>
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px;">
+            <select id="addrType" class="vas-select">
+              <option value="Home">Home</option>
+              <option value="Work">Work</option>
+              <option value="Other">Other</option>
+            </select>
+            <label style="font-size:0.82rem;"><input type="checkbox" id="addrDefault" /> Set as default address</label>
+          </div>
+          <button type="submit" class="vas-btn vas-btn-primary" style="width:100%;">Save Address to Directory</button>
+        </form>
+      </div>
+    `;
+    openModal("genericModal");
+  };
+
+  window.submitNewAddressForm = function (event) {
+    event.preventDefault();
+    const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    const uid = activeUser ? activeUser.id : "USR-101";
+
+    const data = {
+      fullName: document.getElementById("addrName").value,
+      phone: document.getElementById("addrPhone").value,
+      building: document.getElementById("addrBuilding").value,
+      street: document.getElementById("addrStreet").value,
+      area: document.getElementById("addrArea").value,
+      city: document.getElementById("addrCity").value,
+      state: document.getElementById("addrState").value,
+      pinCode: document.getElementById("addrPin").value,
+      type: document.getElementById("addrType").value,
+      isDefault: document.getElementById("addrDefault").checked
+    };
+
+    if (window.vastraeAddressService) {
+      window.vastraeAddressService.saveAddress(uid, data);
+    }
+    showToast("✓ Shipping address saved to your profile directory.");
+    window.openSavedAddressesModal();
+  };
+
+  window.setDefaultAddressAction = function (id) {
+    const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    const uid = activeUser ? activeUser.id : "USR-101";
+    if (window.vastraeAddressService) {
+      window.vastraeAddressService.setDefaultAddress(uid, id);
+    }
+    showToast("✓ Default address updated.");
+    window.openSavedAddressesModal();
+  };
+
+  window.deleteAddressAction = function (id) {
+    const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    const uid = activeUser ? activeUser.id : "USR-101";
+    if (window.vastraeAddressService) {
+      window.vastraeAddressService.deleteAddress(uid, id);
+    }
+    showToast("✓ Address removed.");
+    window.openSavedAddressesModal();
+  };
+
+  window.openCustomerOrderHistoryModal = function () {
+    const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    const uid = activeUser ? activeUser.id : "USR-101";
+    const ordersList = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(uid) : [];
+
+    const modalBody = document.getElementById("modalBody");
+    if (!modalBody) return;
+
+    modalBody.innerHTML = `
+      <div style="padding:10px;">
+        <span class="vas-eyebrow">ORDER HISTORY &middot; ATELIER TAILORING</span>
+        <h3 style="font-size:1.4rem; margin:6px 0 16px;">My Orders & Production Status</h3>
+
+        ${ordersList.length === 0 ? `
+          <p style="text-align:center; padding:30px; color:var(--vas-muted);">No orders placed yet. Browse our couture catalog or configure a custom design.</p>
+        ` : `
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            ${ordersList.map(o => `
+              <div style="border:1px solid var(--vas-border, #e2d9cd); border-radius:8px; padding:16px; background:#fff; cursor:pointer;" onclick="window.openOrderTrackingDetail('${o.id}')">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                  <div>
+                    <strong style="font-size:0.95rem; color:var(--vas-ink);">${o.id}</strong>
+                    <div style="font-size:0.78rem; color:var(--vas-muted);">Placed on ${new Date(o.orderDate).toLocaleDateString()}</div>
+                  </div>
+                  <span class="vas-badge-pill gold" style="font-size:0.75rem;">Stage ${o.currentStage}/6: ${o.stageTitle}</span>
+                </div>
+
+                <div style="display:flex; gap:12px; align-items:center; margin-bottom:10px;">
+                  ${o.items && o.items[0] ? `<img src="${o.items[0].image}" style="width:60px; height:60px; object-fit:cover; border-radius:6px;" />` : ''}
+                  <div style="flex:1;">
+                    <div style="font-size:0.88rem; font-weight:600;">${o.items && o.items[0] ? o.items[0].name : 'Couture Garment'}</div>
+                    <div style="font-size:0.78rem; color:var(--vas-muted);">Tailor Assigned: ${o.assignedTailorName}</div>
+                  </div>
+                  <strong style="font-size:1.05rem; color:var(--vas-ink);">₹${(o.totalAmount || 0).toLocaleString()}</strong>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; color:var(--vas-muted); border-top:1px solid var(--vas-border-subtle); padding-top:8px;">
+                  <span>🚚 Estimated Delivery: ${o.estimatedDelivery}</span>
+                  <span style="color:var(--vas-gold-dark, #8a6d3b); font-weight:700;">Click to view 6-Stage Live Progress Tracker &rarr;</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    `;
+    openModal("genericModal");
+  };
+
+  window.openOrderTrackingDetail = function (orderId) {
+    closeModal();
+    if (typeof window.scrollToId === "function") window.scrollToId("tracking");
+    if (window.vastraeOrderService && typeof window.trackOrderById === "function") {
+      window.trackOrderById(orderId);
+    }
+  };
+
+  // ------------------------------------------------------------------------
+  // 16. IN-STORE AI MEASUREMENT SCANNER SIMULATION PROTOTYPE
+  // ------------------------------------------------------------------------
+  window.startAIScannerSimulation = function () {
+    const modalBody = document.getElementById("modalBody");
+    if (!modalBody) return;
+
+    modalBody.innerHTML = `
+      <div style="text-align:center; padding:20px;">
+        <span class="vas-eyebrow">IN-STORE AI SCANNER &middot; OPTICAL BIOMETRIC PROTOTYPE</span>
+        <h3 style="font-size:1.5rem; margin:10px 0;">3D Body Contour Optical Scan</h3>
+        <p style="font-size:0.9rem; color:var(--vas-muted); max-width:540px; margin:0 auto 20px;">
+          Stand in front of the optical sensor. Keep arms slightly away from sides for skeletal landmark detection.
+        </p>
+        
+        <div style="width:200px; height:200px; border:2px dashed var(--vas-gold, #c5a059); border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; background:#faf8f3; position:relative; overflow:hidden;">
+          <div id="aiScanLine" style="position:absolute; top:0; left:0; width:100%; height:4px; background:var(--vas-gold, #c5a059); box-shadow:0 0 10px var(--vas-gold, #c5a059); animation: scanAnim 1.8s infinite ease-in-out;"></div>
+          <span style="font-size:3.5rem;">🧘</span>
+        </div>
+        
+        <style>
+          @keyframes scanAnim { 0% { top:0%; } 50% { top:96%; } 100% { top:0%; } }
+        </style>
+
+        <div id="aiScanStatus" style="font-weight:600; font-size:0.95rem; margin-bottom:8px; color:var(--vas-gold-dark, #8a6d3b);">
+          Initializing High-Precision Optical Depth Camera...
+        </div>
+
+        <div style="background:var(--vas-surface-alt, #f5f0eb); height:10px; border-radius:5px; overflow:hidden; max-width:400px; margin:0 auto 20px;">
+          <div id="aiScanProgress" style="background:var(--vas-gold, #c5a059); height:100%; width:0%; transition:width 0.4s ease;"></div>
+        </div>
+      </div>
+    `;
+    openModal("genericModal");
+
+    if (window.vastraeMeasurementService) {
+      window.vastraeMeasurementService.runAIScannerSimulation(
+        function (step, statusText, percent) {
+          const statusEl = document.getElementById("aiScanStatus");
+          const progressEl = document.getElementById("aiScanProgress");
+          if (statusEl) statusEl.textContent = statusText;
+          if (progressEl) progressEl.style.width = percent + "%";
+        },
+        function (metrics) {
+          document.getElementById("mHeight") && (document.getElementById("mHeight").value = metrics.height);
+          document.getElementById("mChest") && (document.getElementById("mChest").value = metrics.bust);
+          document.getElementById("mWaist") && (document.getElementById("mWaist").value = metrics.waist);
+          document.getElementById("mHip") && (document.getElementById("mHip").value = metrics.hip);
+          document.getElementById("mShoulder") && (document.getElementById("mShoulder").value = metrics.shoulder);
+          document.getElementById("mSleeve") && (document.getElementById("mSleeve").value = metrics.sleeve);
+          document.getElementById("mBlouse") && (document.getElementById("mBlouse").value = metrics.blouseLength);
+          document.getElementById("mAnkle") && (document.getElementById("mAnkle").value = metrics.ankleHeight);
+
+          showToast("✓ AI Body Scan completed! 22-point metrics populated in fields.");
+          closeModal();
+        }
+      );
+    }
+  };
+
+  window.onMeasurementPresetChange = function (presetKey) {
+    if (presetKey === "self") {
+      document.getElementById("mHeight") && (document.getElementById("mHeight").value = "168");
+      document.getElementById("mChest") && (document.getElementById("mChest").value = "88");
+      document.getElementById("mWaist") && (document.getElementById("mWaist").value = "72");
+      document.getElementById("mHip") && (document.getElementById("mHip").value = "96");
+      document.getElementById("mShoulder") && (document.getElementById("mShoulder").value = "39");
+      document.getElementById("mSleeve") && (document.getElementById("mSleeve").value = "54");
+      document.getElementById("mBlouse") && (document.getElementById("mBlouse").value = "38");
+      document.getElementById("mAnkle") && (document.getElementById("mAnkle").value = "104");
+    } else if (presetKey === "family") {
+      document.getElementById("mHeight") && (document.getElementById("mHeight").value = "182");
+      document.getElementById("mChest") && (document.getElementById("mChest").value = "102");
+      document.getElementById("mWaist") && (document.getElementById("mWaist").value = "86");
+      document.getElementById("mHip") && (document.getElementById("mHip").value = "104");
+      document.getElementById("mShoulder") && (document.getElementById("mShoulder").value = "46");
+      document.getElementById("mSleeve") && (document.getElementById("mSleeve").value = "64");
+      document.getElementById("mBlouse") && (document.getElementById("mBlouse").value = "44");
+      document.getElementById("mAnkle") && (document.getElementById("mAnkle").value = "112");
+    } else if (presetKey === "wedding") {
+      document.getElementById("mHeight") && (document.getElementById("mHeight").value = "165");
+      document.getElementById("mChest") && (document.getElementById("mChest").value = "90");
+      document.getElementById("mWaist") && (document.getElementById("mWaist").value = "74");
+      document.getElementById("mHip") && (document.getElementById("mHip").value = "98");
+      document.getElementById("mShoulder") && (document.getElementById("mShoulder").value = "40");
+      document.getElementById("mSleeve") && (document.getElementById("mSleeve").value = "56");
+      document.getElementById("mBlouse") && (document.getElementById("mBlouse").value = "39");
+      document.getElementById("mAnkle") && (document.getElementById("mAnkle").value = "102");
+    }
+  };
+
+  window.saveMeasurements = function () {
+    const profileData = {
+      profileName: document.getElementById("mProfilePreset") ? document.getElementById("mProfilePreset").value : "Self",
+      height: document.getElementById("mHeight") ? document.getElementById("mHeight").value : 168,
+      bust: document.getElementById("mChest") ? document.getElementById("mChest").value : 88,
+      waist: document.getElementById("mWaist") ? document.getElementById("mWaist").value : 72,
+      hip: document.getElementById("mHip") ? document.getElementById("mHip").value : 96,
+      shoulder: document.getElementById("mShoulder") ? document.getElementById("mShoulder").value : 39,
+      sleeve: document.getElementById("mSleeve") ? document.getElementById("mSleeve").value : 54,
+      blouseLength: document.getElementById("mBlouse") ? document.getElementById("mBlouse").value : 38,
+      ankleHeight: document.getElementById("mAnkle") ? document.getElementById("mAnkle").value : 104
+    };
+
+    if (window.vastraeMeasurementService) {
+      window.vastraeMeasurementService.saveProfile(profileData);
+    }
+    showToast("✓ Measurement profile saved successfully to your Digital Vault!");
+  };
+
+  window.openAccessoryRecommendationsModal = function (criteria) {
+    if (!window.vastraeAccessoryService) return;
+    const recs = window.vastraeAccessoryService.getRecommendations(criteria || {});
+    const modalBody = document.getElementById("modalBody");
+    if (!modalBody) return;
+
+    modalBody.innerHTML = `
+      <div style="padding:10px;">
+        <span class="vas-eyebrow">COMPLETE LOOK &middot; ACCESSORY VAULT</span>
+        <h3 style="font-size:1.4rem; margin:6px 0 16px;">Curated Pairing Recommendations</h3>
+        <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:18px;">
+          Matching heirloom jewelry, embroidered juttis, and velvet potlis paired specifically for your selected outfit drape.
+        </p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+          ${recs.map(acc => `
+            <div style="border:1px solid var(--vas-border); border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
+              <img src="${acc.image}" alt="${acc.name}" style="width:100%; height:180px; object-fit:cover;" />
+              <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                  <span style="font-size:0.72rem; color:var(--vas-gold-dark, #8a6d3b); text-transform:uppercase; font-weight:700;">${acc.type}</span>
+                  <h4 style="font-size:0.95rem; margin:4px 0 8px;">${acc.name}</h4>
+                  <p style="font-size:0.78rem; color:var(--vas-muted); margin-bottom:10px;">${acc.description}</p>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--vas-border-subtle); padding-top:10px;">
+                  <strong style="font-size:1rem; color:var(--vas-ink);">₹${acc.price.toLocaleString()}</strong>
+                  <button class="vas-btn vas-btn-xs vas-btn-gold" onclick="window.addToCartFromModal('${acc.id}', '${acc.name}', ${acc.price}, '${acc.image}')">
+                    + Add to Outfit Bag
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    openModal("genericModal");
+  };
+
+  window.addToCartFromModal = function (id, name, price, image) {
+    if (window.vastraeCartService) {
+      window.vastraeCartService.addToCart({ id: id, name: name, price: price, image: image, category: "accessory" }, "Free Size", 1);
+    }
+    showToast(`✓ Added ${name} to your Shopping Bag.`);
+    closeModal();
   };
 
   // ------------------------------------------------------------------------
