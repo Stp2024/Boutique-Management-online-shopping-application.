@@ -55,42 +55,18 @@
             ☰
           </button>
 
-          <!-- Core Navigation Links (Organized for Before vs After Login) -->
+          <!-- Core Navigation Links (Exact Required Order: Home | About Us | Collections | Services | Contact Us | Login / Register) -->
           <nav class="vas-nav-menu" id="vasNavMenu">
-            <!-- Unauthenticated Visitor Navigation: Home | About Us | Collection | Services | Contact Us -->
-            <div id="unauthNavLinks" style="display:flex; align-items:center; gap:inherit;">
-              <a href="#home" class="vas-nav-link active" data-page="home" onclick="window.navigateToPage('home', event)">Home</a>
-              <a href="#about" class="vas-nav-link" data-page="about" onclick="window.navigateToPage('about', event)">About Us</a>
-              <a href="#collection" class="vas-nav-link" data-page="collection" onclick="window.navigateToPage('collection', event)">Collection</a>
-              <a href="#services" class="vas-nav-link" data-page="services" onclick="window.navigateToPage('services', event)">Services</a>
-              <a href="#contact" class="vas-nav-link" data-page="contact" onclick="window.navigateToPage('contact', event)">Contact Us</a>
-            </div>
-
-            <!-- Authenticated Member Navigation (Clean & Organized: Direct Boutique Services Access) -->
-            <div id="authNavLinks" style="display:none; align-items:center; gap:inherit;">
-              <a href="#home" class="vas-nav-link active" data-page="home" onclick="window.navigateToPage('home', event)">Home</a>
-              <a href="#collection" class="vas-nav-link" data-page="collection" onclick="window.navigateToPage('collection', event)">Collection</a>
-              <a href="#customize" class="vas-nav-link" data-page="services" onclick="window.navigateToSection('customize', event)">Customize Your Way</a>
-              <a href="#virtualTryOn" class="vas-nav-link" data-page="services" onclick="window.navigateToSection('virtualTryOn', event)">AI Try-On</a>
-              <a href="#sareeReborn" class="vas-nav-link" data-page="services" onclick="window.navigateToSection('sareeReborn', event)">Saree Reborn</a>
-              <a href="#contact" class="vas-nav-link" data-page="contact" onclick="window.navigateToPage('contact', event)">Contact Us</a>
-            </div>
+            <a href="#home" class="vas-nav-link active" data-page="home" onclick="window.navigateToPage('home', event)">Home</a>
+            <a href="#about" class="vas-nav-link" data-page="about" onclick="window.navigateToPage('about', event)">About Us</a>
+            <a href="#collection" class="vas-nav-link" data-page="collection" onclick="window.navigateToPage('collection', event)">Collections</a>
+            <a href="#services" class="vas-nav-link" data-page="services" onclick="window.navigateToPage('services', event)">Services</a>
+            <a href="#contact" class="vas-nav-link" data-page="contact" onclick="window.navigateToPage('contact', event)">Contact Us</a>
+            <a href="#login" class="vas-nav-link" data-page="login" id="navLoginRegisterLink" onclick="window.navigateToPage('login', event)">Login / Register</a>
           </nav>
 
           <!-- Navigation Actions -->
           <div class="vas-nav-actions" id="vasNavActions">
-            <!-- Unauthenticated Visitor State: ONLY VASTRAE Logo + Links + Login/Register button -->
-            <div id="unauthNavActions" style="display: flex; align-items: center;">
-              <button class="vas-btn-nav-login" onclick="window.openAuthModal('login')">
-                <span class="vas-nav-user-icon">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-                  </svg>
-                </span>
-                <span>Login / Register</span>
-              </button>
-            </div>
-
             <!-- Authenticated Customer State: Revealed only after login -->
             <div id="authNavActions" style="display: none; align-items: center; gap: 10px;">
               <button class="vas-icon-btn vas-icon-glass" onclick="window.openNotificationsModal()" title="Activity & Notifications">
@@ -380,12 +356,12 @@
               <div class="vas-about-media">
                 <div class="vas-about-media-col">
                   <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                    src="https://images.unsplash.com/photo-1594938291221-94f18cbb5660?auto=format&fit=crop&w=700&q=85"
                     alt="Master Tailor at work" />
                 </div>
                 <div class="vas-about-media-col" style="margin-top: 32px;">
                   <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                    src="https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=700&q=85"
                     alt="Handloom silk fabrics" />
                 </div>
               </div>
@@ -481,7 +457,7 @@
             <div class="vas-artisans-grid">
               <div class="vas-artisan-card">
                 <img
-                  src="images/products/women/emerald-pakistani-suit-front.jpg"
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
                   alt="Master Savitha"
                   class="vas-artisan-avatar" />
                 <h3>Master Savitha Rao</h3>
@@ -491,7 +467,7 @@
 
               <div class="vas-artisan-card">
                 <img
-                  src="images/products/women/emerald-pakistani-suit-front.jpg"
+                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80"
                   alt="Ustad Raheem"
                   class="vas-artisan-avatar" />
                 <h3>Ustad Raheem Khan</h3>
@@ -501,7 +477,7 @@
 
               <div class="vas-artisan-card">
                 <img
-                  src="images/products/women/emerald-pakistani-suit-front.jpg"
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
                   alt="Devraj M."
                   class="vas-artisan-avatar" />
                 <h3>Devraj Mallikarjun</h3>
@@ -617,7 +593,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
                   <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                    src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
                     alt="Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit" />
                   <span class="vas-badge-tag">Trending on Instagram</span>
                 </div>
@@ -640,7 +616,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
                   <img
-                    src="images/products/men/royal-blue-suit-front.jpg"
+                    src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
                     alt="Modern Ivory Pure Linen Kurta Pajama" />
                   <span class="vas-badge-tag">Essential Sartorial</span>
                 </div>
@@ -663,7 +639,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
                   <img
-                    src="images/products/women/mint-organza-saree-front.jpg"
+                    src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
                     alt="Blush Peach Scalloped Tiered Festive Suit" />
                   <span class="vas-badge-tag">High-Summer Edit</span>
                 </div>
@@ -686,7 +662,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
                   <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                    src="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
                     alt="Ivory Pearl Chikankari & Schiffli Kurta Set" />
                   <span class="vas-badge-tag">Semi-Formal Elegant</span>
                 </div>
@@ -709,7 +685,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
                   <img
-                    src="images/products/men/black-sherwani-gold-front.jpg"
+                    src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
                     alt="Slate Grey Structured Linen-Blend Waistcoat Set" />
                   <span class="vas-badge-tag">Semi-Formal Sartorial</span>
                 </div>
@@ -747,7 +723,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
                   <img
-                    src="images/products/accessories/bridal-potli-front.jpg"
+                    src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=85"
                     alt="Pearl Choker" />
                   <span class="vas-badge-tag">22K Gold Plated</span>
                 </div>
@@ -770,7 +746,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
                   <img
-                    src="images/products/accessories/bridal-potli-front.jpg"
+                    src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=700&q=85"
                     alt="Bridal Potli" />
                   <span class="vas-badge-tag">Atelier Handcrafted</span>
                 </div>
@@ -793,7 +769,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
                   <img
-                    src="images/products/women/maroon-maggam-blouse-front.jpg"
+                    src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=700&q=85"
                     alt="Raw Silk Juttis" />
                   <span class="vas-badge-tag">Memory Foam Sole</span>
                 </div>
@@ -816,7 +792,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
                   <img
-                    src="images/products/accessories/bridal-potli-front.jpg"
+                    src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=85"
                     alt="Maang Tikka and Passa" />
                   <span class="vas-badge-tag">Bridal Signature</span>
                 </div>
@@ -839,7 +815,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
                   <img
-                    src="images/products/women/crimson-banarasi-saree-front.jpg"
+                    src="https://images.unsplash.com/photo-1611591475152-4735d387e949?auto=format&fit=crop&w=700&q=85"
                     alt="Temple Waistbelt" />
                   <span class="vas-badge-tag">Heritage Temple Craft</span>
                 </div>
@@ -862,7 +838,7 @@
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
                   <img
-                    src="images/products/women/lavender-chiffon-dupatta-front.jpg"
+                    src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=700&q=85"
                     alt="Organza Stole" />
                   <span class="vas-badge-tag">Handloom Silk Organza</span>
                 </div>
@@ -941,7 +917,7 @@
               <article class="vas-service-card vas-glass-card">
                 <div class="vas-service-media">
                   <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                    src="https://images.unsplash.com/photo-1594938291221-94f18cbb5660?auto=format&fit=crop&w=700&q=85"
                     alt="Custom Stitching" />
                   <div class="vas-service-icon-badge">🪡</div>
                 </div>
@@ -968,7 +944,7 @@
               <article class="vas-service-card vas-glass-card">
                 <div class="vas-service-media">
                   <img
-                    src="images/products/women/crimson-banarasi-saree-front.jpg"
+                    src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=700&q=85"
                     alt="Outfit Design" />
                   <div class="vas-service-icon-badge">✨</div>
                 </div>
@@ -995,7 +971,7 @@
               <article class="vas-service-card vas-glass-card">
                 <div class="vas-service-media">
                   <img
-                    src="images/products/women/royal-blue-lehenga-front.jpg"
+                    src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=700&q=85"
                     alt="Saree Reborn" />
                   <div class="vas-service-icon-badge">♻️</div>
                 </div>
@@ -1093,7 +1069,7 @@
 
                   <div class="vas-preview-display" id="studioPreviewDisplay">
                     <img id="studioPreviewImg"
-                      src="images/products/women/emerald-pakistani-suit-front.jpg"
+                      src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
                       alt="Customized Look" />
                     <div class="vas-preview-overlay-tags" id="studioPreviewTags">
                       <!-- Updated live -->
@@ -1468,11 +1444,11 @@
                   <div class="vas-form-grid">
                     <div class="vas-form-group">
                       <label>Your Name *</label>
-                      <input type="text" id="cntName" class="vas-input" placeholder="e.g. Ananya Sharma" required />
+                      <input type="text" id="cntName" class="vas-input" placeholder="" required />
                     </div>
                     <div class="vas-form-group">
                       <label>WhatsApp Mobile (+91) *</label>
-                      <input type="tel" id="cntPhone" class="vas-input" placeholder="9886012345" required pattern="[6-9][0-9]{9}" />
+                      <input type="tel" id="cntPhone" class="vas-input" placeholder="" required pattern="[6-9][0-9]{9}" />
                     </div>
                     <div class="vas-form-group full">
                       <label>Subject / Service</label>
@@ -1486,7 +1462,7 @@
                     </div>
                     <div class="vas-form-group full">
                       <label>Message / Event Notes</label>
-                      <textarea id="cntMsg" class="vas-textarea" rows="3" placeholder="Tell us your wedding date or stitching requirements..." required></textarea>
+                      <textarea id="cntMsg" class="vas-textarea" rows="3" placeholder="" required></textarea>
                     </div>
                   </div>
                   <button type="submit" class="vas-btn vas-btn-rose" style="margin-top:14px; width:100%;">
@@ -1619,6 +1595,204 @@
         </section>
       </div>
 
+      <!-- ==================================================================
+           PAGE 6: LOGIN / REGISTRATION / FORGOT PASSWORD VIEW
+           ================================================================== -->
+      <div class="vas-page-view" id="page-login" style="display: none;">
+        <!-- Page Banner -->
+        <div class="vas-page-banner">
+          <div class="vas-container">
+            <span class="vas-eyebrow">VASTRAÉ ATELIER ACCESS</span>
+            <h1 class="vas-title">Customer <em>Sanctuary</em></h1>
+            <p class="vas-subtitle">
+              Sign in to manage your bespoke custom commissions, Saree Reborn orders, family measurement cards, and styling consultations.
+            </p>
+          </div>
+        </div>
+
+        <!-- Authentication Sanctuary Section -->
+        <section class="vas-section" id="authSanctuarySection" style="padding-top: 36px; padding-bottom: 72px;">
+          <div class="vas-container">
+            <div class="vas-auth-card" style="max-width: 520px; margin: 0 auto; background: #ffffff; border: 1px solid var(--vas-border); border-radius: var(--vas-radius-lg); padding: 36px 32px; box-shadow: var(--vas-shadow-lg);">
+              
+              <div style="text-align: center; margin-bottom: 22px;">
+                <span class="vas-eyebrow" style="letter-spacing: 0.14em;">CLIENT ACCESS</span>
+                <h2 id="authFormMainHeading" style="font-family: var(--vas-font-serif); font-size: 1.65rem; color: var(--vas-ink); margin: 6px 0 0;">Customer Sanctuary</h2>
+              </div>
+
+              <!-- Auth Mode Tabs (Sign In / Register Profile) -->
+              <div class="vas-auth-tabs" id="authTabsContainer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px;">
+                <button type="button" class="vas-auth-tab-btn active" id="tabLoginBtn" onclick="window.switchAuthTab('login')">Sign In</button>
+                <button type="button" class="vas-auth-tab-btn" id="tabRegisterBtn" onclick="window.switchAuthTab('register')">Register Profile</button>
+              </div>
+
+              <!-- General Alert / Error Message Box -->
+              <div id="authErrorMsg" style="display: none; background: var(--vas-danger-bg); color: var(--vas-danger); padding: 12px 16px; border-radius: 6px; font-size: 0.84rem; margin-bottom: 18px; border: 1px solid rgba(184, 51, 42, 0.2); line-height: 1.45;"></div>
+
+              <!-- --------------------------------------------------------
+                   1. LOGIN FORM CONTAINER
+                   -------------------------------------------------------- -->
+              <div id="loginFormContainer">
+                <form id="customerLoginForm" onsubmit="window.handleLoginSubmit(event)">
+                  <div class="vas-form-group">
+                    <label for="loginUser">Username or Email *</label>
+                    <input type="text" id="loginUser" class="vas-input" placeholder="Enter your username or email" autocomplete="username" required />
+                    <div class="vas-field-error" id="loginUserError" style="display:none;"></div>
+                  </div>
+
+                  <div class="vas-form-group" style="margin-bottom: 6px;">
+                    <label for="loginPass">Password *</label>
+                    <input type="password" id="loginPass" class="vas-input" placeholder="Enter your password" autocomplete="current-password" required />
+                    <div class="vas-field-error" id="loginPassError" style="display:none;"></div>
+                  </div>
+
+                  <!-- Forgot Password Link Below Password Field -->
+                  <div style="text-align: right; margin-bottom: 18px;">
+                    <a href="javascript:void(0)" class="vas-text-link" id="loginForgotLink" onclick="window.switchAuthTab('forgot')">Forgot Password?</a>
+                  </div>
+
+                  <button type="submit" class="vas-btn vas-btn-rose" id="loginSubmitBtn" style="width: 100%; justify-content: center;">
+                    Sign In &rarr;
+                  </button>
+                </form>
+
+                <!-- Below Login Form: Register Link -->
+                <p class="vas-auth-switch-text" style="text-align: center; margin-top: 22px; margin-bottom: 0; font-size: 0.88rem; color: var(--vas-muted);">
+                  Don't have an account? <a href="javascript:void(0)" id="loginRegisterHereLink" class="vas-text-link" onclick="window.switchAuthTab('register')">Register here</a>.
+                </p>
+              </div>
+
+              <!-- --------------------------------------------------------
+                   2. REGISTRATION FORM CONTAINER
+                   -------------------------------------------------------- -->
+              <div id="registerFormContainer" style="display: none;">
+                <form id="customerRegisterForm" onsubmit="window.handleRegisterSubmit(event)">
+                  <!-- Full Name (Only letters and spaces) -->
+                  <div class="vas-form-group">
+                    <label for="regFullName">Full Name *</label>
+                    <input type="text" id="regFullName" class="vas-input" placeholder="Enter your full name" required />
+                    <div class="vas-field-error" id="regFullNameError" style="display:none;"></div>
+                  </div>
+
+                  <!-- Username (Separate from Full Name) -->
+                  <div class="vas-form-group">
+                    <label for="regUsername">Username *</label>
+                    <input type="text" id="regUsername" class="vas-input" placeholder="Enter your username" required />
+                    <div class="vas-field-error" id="regUsernameError" style="display:none;"></div>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="vas-form-group">
+                    <label for="regEmail">Email Address *</label>
+                    <input type="email" id="regEmail" class="vas-input" placeholder="Enter your email address" required />
+                    <div class="vas-field-error" id="regEmailError" style="display:none;"></div>
+                  </div>
+
+                  <!-- Phone Number with Country Code Prefix -->
+                  <div class="vas-form-group">
+                    <label for="regPhone">Mobile Number *</label>
+                    <div class="vas-phone-group">
+                      <span class="vas-phone-prefix">+91</span>
+                      <input type="tel" id="regPhone" class="vas-phone-input" placeholder="Enter 10-digit mobile" maxlength="10" required />
+                    </div>
+                    <div class="vas-field-error" id="regPhoneError" style="display:none;"></div>
+                  </div>
+
+                  <!-- Password Requirements Note -->
+                  <div class="vas-pwd-rules" style="margin-top: 14px; margin-bottom: 14px;">
+                    <strong>Password Requirements:</strong><br />
+                    &bull; At least 6 characters in length<br />
+                    &bull; At least 1 uppercase letter (A-Z)<br />
+                    &bull; At least 1 lowercase letter (a-z)<br />
+                    &bull; At least 1 number (0-9)<br />
+                    &bull; At least 1 special character (@$!%*#?&_.-)
+                  </div>
+
+                  <div class="vas-form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="vas-form-group">
+                      <label for="regPassword">Password *</label>
+                      <input type="password" id="regPassword" class="vas-input" placeholder="Min 6 characters" required />
+                      <div class="vas-field-error" id="regPasswordError" style="display:none;"></div>
+                    </div>
+                    <div class="vas-form-group">
+                      <label for="regConfirmPassword">Confirm Password *</label>
+                      <input type="password" id="regConfirmPassword" class="vas-input" placeholder="Repeat password" required />
+                      <div class="vas-field-error" id="regConfirmPasswordError" style="display:none;"></div>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="vas-btn vas-btn-rose" id="regSubmitBtn" style="width: 100%; justify-content: center; margin-top: 10px;">
+                    Create My VASTRAÉ Account &rarr;
+                  </button>
+                </form>
+
+                <p class="vas-auth-switch-text" style="text-align: center; margin-top: 20px; margin-bottom: 0; font-size: 0.88rem; color: var(--vas-muted);">
+                  Already have an account? <a href="javascript:void(0)" class="vas-text-link" onclick="window.switchAuthTab('login')">Sign In here</a>.
+                </p>
+              </div>
+
+              <!-- --------------------------------------------------------
+                   3. FORGOT PASSWORD (PASSWORD RECOVERY) CONTAINER
+                   -------------------------------------------------------- -->
+              <div id="forgotFormContainer" style="display: none;">
+                <form id="customerForgotForm" onsubmit="window.handleForgotPasswordSubmit(event)">
+                  <div style="background: var(--vas-surface-alt); border: 1px solid var(--vas-border-subtle); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.78rem; color: var(--vas-muted); line-height: 1.5;">
+                    <strong style="color: var(--vas-gold-dark); display: block; margin-bottom: 2px;">ℹ️ Local Recovery Flow (Frontend Application)</strong>
+                    Enter your registered email address. Once verified, you can immediately set a new password without exposing stored account credentials.
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label for="forgotEmail">Registered Email Address *</label>
+                    <input type="email" id="forgotEmail" class="vas-input" placeholder="Enter your email address" required />
+                    <div class="vas-field-error" id="forgotEmailError" style="display:none;"></div>
+                  </div>
+
+                  <!-- Step 1 Button -->
+                  <div id="forgotStep1Wrap">
+                    <button type="submit" class="vas-btn vas-btn-rose" style="width: 100%; justify-content: center;">
+                      Verify Account &amp; Proceed &rarr;
+                    </button>
+                  </div>
+
+                  <!-- Step 2: Reset Password Fields (Revealed after verifying email) -->
+                  <div id="forgotResetFields" style="display: none; margin-top: 16px;">
+                    <div class="vas-pwd-rules" style="margin-bottom: 12px;">
+                      <strong>New Password Requirements:</strong><br />
+                      &bull; At least 6 characters in length<br />
+                      &bull; At least 1 uppercase letter (A-Z)<br />
+                      &bull; At least 1 lowercase letter (a-z)<br />
+                      &bull; At least 1 number (0-9)<br />
+                      &bull; At least 1 special character (@$!%*#?&_.-)
+                    </div>
+
+                    <div class="vas-form-group">
+                      <label for="forgotNewPass">New Password *</label>
+                      <input type="password" id="forgotNewPass" class="vas-input" placeholder="Enter new password" />
+                      <div class="vas-field-error" id="forgotNewPassError" style="display:none;"></div>
+                    </div>
+
+                    <div class="vas-form-group">
+                      <label for="forgotConfirmPass">Confirm New Password *</label>
+                      <input type="password" id="forgotConfirmPass" class="vas-input" placeholder="Repeat new password" />
+                      <div class="vas-field-error" id="forgotConfirmPassError" style="display:none;"></div>
+                    </div>
+
+                    <button type="button" class="vas-btn vas-btn-rose" style="width: 100%; justify-content: center;" onclick="window.handlePasswordResetFinalize()">
+                      Save New Password &rarr;
+                    </button>
+                  </div>
+                </form>
+
+                <p style="text-align: center; margin-top: 20px; margin-bottom: 0; font-size: 0.88rem;">
+                  <a href="javascript:void(0)" class="vas-text-link" onclick="window.switchAuthTab('login')">&larr; Back to Sign In</a>
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </section>
+      </div>
+
       <!-- ------------------------------------------------------------------
            FOOTER
            ------------------------------------------------------------------ -->
@@ -1703,8 +1877,8 @@
             <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.returnToPublicWebsite()">
               ← Return to Boutique
             </button>
-            <button class="vas-btn vas-btn-primary vas-btn-sm" onclick="window.handleLogout()">
-              Sign Out
+            <button class="vas-btn vas-btn-primary vas-btn-sm" id="dashLogoutBtn" onclick="window.handleLogout()">
+              🚪 Logout
             </button>
           </div>
         </div>
@@ -1751,6 +1925,9 @@
                 <button class="vas-dash-nav-btn" onclick="window.openAdminConsoleModal()">
                   🛡️ Admin Suite &amp; Inventory Hub
                 </button>
+                <button class="vas-dash-nav-btn" style="color:var(--vas-danger); margin-top:8px; font-weight:600;" onclick="window.handleLogout()">
+                  🚪 Logout
+                </button>
               </div>
             </nav>
           </aside>
@@ -1787,110 +1964,6 @@
     </div>
 
   </div> <!-- End #vastraeApp -->
-
-  <!-- ======================================================================
-       AUTHENTICATION MODAL (PART 5 - EXACT VALIDATION)
-       ====================================================================== -->
-  <div class="vas-modal" id="authModal">
-    <div class="vas-modal-card vas-auth-modal">
-      <button class="vas-modal-close" onclick="window.closeModal()">&times;</button>
-
-      <div style="text-align:center; margin-bottom:20px;">
-        <span class="vas-eyebrow">VASTRAÉ ATELIER ACCESS</span>
-        <h2 style="font-size:1.6rem; margin:4px 0;">Customer Sanctuary</h2>
-      </div>
-
-      <div class="vas-auth-tabs">
-        <button class="vas-auth-tab-btn active" id="tabLoginBtn" onclick="window.switchAuthTab('login')">Sign In</button>
-        <button class="vas-auth-tab-btn" id="tabRegisterBtn" onclick="window.switchAuthTab('register')">Register Profile</button>
-      </div>
-
-      <!-- Error Message Box -->
-      <div id="authErrorMsg" style="display:none; background:var(--vas-danger-bg); color:var(--vas-danger); padding:10px 14px; border-radius:6px; font-size:0.82rem; margin-bottom:14px;"></div>
-
-      <!-- Login Form Container -->
-      <div id="loginFormContainer">
-        <form onsubmit="window.handleLoginSubmit(event)">
-          <div class="vas-form-group">
-            <label>Username or Email Address</label>
-            <input type="text" id="loginUser" class="vas-input" placeholder="Enter your username or email" required />
-          </div>
-          <div class="vas-form-group">
-            <label>Password</label>
-            <input type="password" id="loginPass" class="vas-input" placeholder="Enter your 6-character password" required />
-          </div>
-          <button type="submit" class="vas-btn vas-btn-rose" style="width:100%;">
-            Sign In &rarr;
-          </button>
-        </form>
-
-        <!-- Quick 1-Click Role Switcher -->
-        <div style="margin-top:16px; padding:12px 14px; background:var(--vas-surface-alt); border-radius:8px; font-size:0.78rem; text-align:center; border:1px solid var(--vas-border-subtle);">
-          <strong style="color:var(--vas-gold-dark); display:block; margin-bottom:6px;">✨ 1-Click Direct Role Access:</strong>
-          <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
-            <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.quickLoginDemo('client')">👤 Client (Ananya)</button>
-            <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.quickLoginDemo('tailor')">🪡 Master Tailor</button>
-            <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.quickLoginDemo('admin')">🛡️ Admin Console</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Register Form Container (Strict Validation Enforced) -->
-      <div id="registerFormContainer" style="display:none;">
-        <form onsubmit="window.handleRegisterSubmit(event)">
-          <div class="vas-form-group">
-            <label>Username (Text Only *):</label>
-            <input type="text" id="regUsername" class="vas-input" placeholder="e.g. AnanyaSharma" required />
-            <small style="font-size:0.72rem; color:var(--vas-muted);">Accepts alphabetical characters only (no numbers).</small>
-          </div>
-
-          <div class="vas-form-group">
-            <label>Full Name *</label>
-            <input type="text" id="regFullName" class="vas-input" placeholder="e.g. Ananya Sharma" required />
-          </div>
-
-          <div class="vas-form-group">
-            <label>Email Address *</label>
-            <input type="email" id="regEmail" class="vas-input" placeholder="ananya@example.com" required />
-          </div>
-
-          <!-- Phone with Fixed +91 Display -->
-          <div class="vas-form-group">
-            <label>Mobile Number (+91 Fixed Prefix) *</label>
-            <div class="vas-phone-group">
-              <span class="vas-phone-prefix">+91</span>
-              <input type="tel" id="regPhone" class="vas-phone-input" placeholder="Enter 10-digit mobile" maxlength="10" required />
-            </div>
-            <small style="font-size:0.72rem; color:var(--vas-muted);">Customer enters only the 10-digit mobile number.</small>
-          </div>
-
-          <!-- Password Rules Note -->
-          <div class="vas-pwd-rules">
-            <strong>Password Requirements (Strict):</strong><br />
-            &bull; Exactly 6 characters in length<br />
-            &bull; At least 1 letter (A-Z or a-z)<br />
-            &bull; At least 1 number (0-9)<br />
-            &bull; At least 1 special character (@$!%*#?&_.)
-          </div>
-
-          <div class="vas-form-grid">
-            <div class="vas-form-group">
-              <label>Password (6 Chars) *</label>
-              <input type="password" id="regPassword" class="vas-input" maxlength="6" placeholder="e.g. V@s123" required />
-            </div>
-            <div class="vas-form-group">
-              <label>Confirm Password *</label>
-              <input type="password" id="regConfirmPassword" class="vas-input" maxlength="6" placeholder="Repeat password" required />
-            </div>
-          </div>
-
-          <button type="submit" class="vas-btn vas-btn-rose" style="width:100%; margin-top:10px;">
-            Create My VASTRAÉ Account &rarr;
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
 
   <!-- ======================================================================
        SHOPPING BAG (CART) MODAL

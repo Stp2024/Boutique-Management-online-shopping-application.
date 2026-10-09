@@ -27,10 +27,11 @@
   // Active session customer (strictly null by default; no demo profile)
   let currentUser = null;
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USER));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USER)) || JSON.parse(localStorage.getItem("vastrae_current_user"));
     // Purge legacy demo profile if previously stored in browser
     if (stored && (stored.username === "DiyaMehta" || stored.name === "Diya Mehta")) {
       localStorage.removeItem(STORAGE_KEY_USER);
+      localStorage.removeItem("vastrae_current_user");
       currentUser = null;
     } else {
       currentUser = stored;
@@ -80,6 +81,8 @@
   // 2. INITIALIZATION & ROUTING
   // ------------------------------------------------------------------------
   function initApp() {
+    setupAuthValidationListeners();
+    getStoredUsers();
     updateAuthUI();
     updateCartWishCounters();
     renderCollectionGrid();
@@ -87,26 +90,45 @@
     initSareeRebornUI();
     initVirtualTryOn();
 
+    // Explicitly ensure contact form inputs are empty
+    const cntName = document.getElementById("cntName");
+    const cntPhone = document.getElementById("cntPhone");
+    if (cntName) cntName.value = "";
+    if (cntPhone) cntPhone.value = "";
+
     // Route to correct page based on URL hash
     const initialHash = (window.location.hash || "").replace("#", "");
-    if (initialHash === "dashboard") {
-      if (currentUser) {
-        showDashboardView();
+    if (!currentUser) {
+      // Unauthenticated visitor: Home page is displayed first
+      if (initialHash === "dashboard") {
+        window.navigateToPage("login");
+        showToast("Please log in to access your Customer Workspace.");
+        showAuthError("Please log in to access your Customer Workspace.");
+      } else if (["about", "collection", "services", "contact", "login"].includes(initialHash)) {
+        window.navigateToPage(initialHash);
+      } else if (["customize", "sareeReborn", "ownFabric"].includes(initialHash)) {
+        window.navigateToPage("services");
+        showToast("🔒 Please sign in first to use our customization studio and tailoring services.");
+      } else if (initialHash === "accessories") {
+        window.navigateToSection(initialHash);
       } else {
-        showToast("Please sign in or register to access your Customer Workspace.");
-        openAuthModal("login");
+        // Default in the beginning: Home page
         window.navigateToPage("home");
       }
-    } else if (initialHash === "admin") {
-      window.openAdminConsoleModal();
-    } else if (initialHash === "tailor") {
-      window.openMasterTailorWorkspace();
-    } else if (["home", "about", "collection", "services", "contact"].includes(initialHash)) {
-      window.navigateToPage(initialHash);
-    } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(initialHash)) {
-      window.navigateToSection(initialHash);
     } else {
-      window.navigateToPage("home");
+      if (initialHash === "dashboard") {
+        showDashboardView();
+      } else if (initialHash === "admin") {
+        window.openAdminConsoleModal();
+      } else if (initialHash === "tailor") {
+        window.openMasterTailorWorkspace();
+      } else if (["home", "about", "collection", "services", "contact", "login"].includes(initialHash)) {
+        window.navigateToPage(initialHash);
+      } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(initialHash)) {
+        window.navigateToSection(initialHash);
+      } else {
+        window.navigateToPage("home");
+      }
     }
 
     // Transparent / Frosted Navbar on Scroll
@@ -144,9 +166,9 @@
       const currentRoute = (window.location.hash || "").replace("#", "");
       if (currentRoute === "dashboard") {
         if (!currentUser) {
-          showToast("Please sign in or register to access your Customer Workspace.");
-          openAuthModal("login");
-          window.navigateToPage("home");
+          showToast("Please log in to access your Customer Workspace.");
+          showAuthError("Please log in to access your Customer Workspace.");
+          window.navigateToPage("login");
         } else {
           showDashboardView();
         }
@@ -154,7 +176,7 @@
         window.openAdminConsoleModal();
       } else if (currentRoute === "tailor") {
         window.openMasterTailorWorkspace();
-      } else if (["home", "about", "collection", "services", "contact"].includes(currentRoute)) {
+      } else if (["home", "about", "collection", "services", "contact", "login"].includes(currentRoute)) {
         window.navigateToPage(currentRoute);
       } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(currentRoute)) {
         window.navigateToSection(currentRoute);
@@ -180,8 +202,9 @@
 
   function showDashboardView() {
     if (!currentUser) {
-      showToast("Please sign in or register to access your Customer Workspace.");
-      openAuthModal("login");
+      showToast("Please log in to access your Customer Workspace.");
+      showAuthError("Please log in to access your Customer Workspace.");
+      window.navigateToPage("login");
       return;
     }
     const pubView = document.getElementById("publicWebsiteView");
@@ -194,8 +217,9 @@
 
   window.openCustomerDashboard = function () {
     if (!currentUser) {
-      showToast("Please sign in or register to access your Customer Workspace.");
-      openAuthModal("login");
+      showToast("Please log in to access your Customer Workspace.");
+      showAuthError("Please log in to access your Customer Workspace.");
+      window.navigateToPage("login");
       return;
     }
     window.location.hash = "#dashboard";
@@ -206,8 +230,13 @@
     if (event) {
       event.preventDefault();
     }
-    const validPages = ["home", "about", "collection", "services", "contact"];
-    const target = validPages.includes(pageName) ? pageName : "home";
+    const validPages = ["home", "about", "collection", "services", "contact", "login"];
+    let target = validPages.includes(pageName) ? pageName : "home";
+
+    // Show services page; if unauthenticated, show helpful toast about signing in first to use interactive features
+    if (target === "services" && !currentUser) {
+      showToast("🔒 Welcome to Boutique Services. Please sign in first to use the customizer or submit orders.");
+    }
 
     const pubView = document.getElementById("publicWebsiteView");
     const dashView = document.getElementById("customerDashboardView");
@@ -226,6 +255,15 @@
       }
     });
 
+    // If navigating to login, ensure default sign in tab is activated
+    if (target === "login") {
+      const currentTab = document.getElementById("forgotFormContainer") && document.getElementById("forgotFormContainer").style.display === "block" ? "forgot" :
+        (document.getElementById("registerFormContainer") && document.getElementById("registerFormContainer").style.display === "block" ? "register" : "login");
+      if (currentTab !== "register" && currentTab !== "forgot") {
+        window.switchAuthTab("login");
+      }
+    }
+
     // Update active nav link
     document.querySelectorAll(".vas-nav-menu .vas-nav-link").forEach(link => {
       const pageAttr = link.getAttribute("data-page");
@@ -236,6 +274,7 @@
       }
     });
 
+    updateAuthUI();
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (window.history.pushState) {
@@ -246,15 +285,16 @@
   };
 
   window.navigateToSection = function (sectionId, event) {
-    if (["home", "about", "collection", "services", "contact"].includes(sectionId)) {
+    if (["home", "about", "collection", "services", "contact", "login"].includes(sectionId)) {
       window.navigateToPage(sectionId, event);
       return;
     }
-    // Gated service access before login: Customize, AI Try-On, Saree Reborn, Own Fabric
+    // Gated service usage before login: Customize, AI Try-On, Saree Reborn, Own Fabric
     if (["customize", "virtualTryOn", "sareeReborn", "ownFabric"].includes(sectionId)) {
       if (!currentUser) {
-        showToast("🔒 Please sign in or register to access boutique services.");
-        openAuthModal("login");
+        showToast("🔒 Please sign in first to use our customization studio and tailoring services.");
+        showAuthError("Please sign in first to use our customization studio and tailoring services.");
+        window.openAuthModal("login");
         return;
       }
       window.navigateToPage("services", event);
@@ -290,82 +330,308 @@
   // ------------------------------------------------------------------------
   // 4. AUTHENTICATION & PROFILE SYSTEM (EXACT VALIDATION REQUIREMENTS)
   // ------------------------------------------------------------------------
+  function getStoredUsers() {
+    let db = [];
+    try {
+      db = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_DB)) || JSON.parse(localStorage.getItem("vastrae_users")) || [];
+    } catch (e) {
+      db = [];
+    }
+    if (!Array.isArray(db)) {
+      db = [];
+    }
+    // Clean out legacy demo account if present
+    db = db.filter(u => u && u.username !== "AnanyaSharma" && u.email !== "ananya@example.com");
+    return db;
+  }
+
+  function showFieldError(elementId, msg) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+  }
+
+  function clearAllFieldErrors() {
+    document.querySelectorAll(".vas-field-error").forEach(el => {
+      el.textContent = "";
+      el.style.display = "none";
+    });
+    const errBox = document.getElementById("authErrorMsg");
+    if (errBox) errBox.style.display = "none";
+  }
+
+  function setupAuthValidationListeners() {
+    // Full Name: accepts only letters and spaces; rejects numbers and special characters; keeps valid text visible
+    const fullNameInput = document.getElementById("regFullName");
+    const fullNameError = document.getElementById("regFullNameError");
+    if (fullNameInput) {
+      fullNameInput.addEventListener("input", function (e) {
+        const rawVal = e.target.value;
+        if (/[^A-Za-z\s]/.test(rawVal)) {
+          // Reject numbers and special characters, keep valid text visible
+          e.target.value = rawVal.replace(/[^A-Za-z\s]/g, "");
+          if (fullNameError) {
+            fullNameError.textContent = "Only letters and spaces are allowed";
+            fullNameError.style.display = "block";
+          }
+        } else {
+          if (fullNameError) {
+            fullNameError.textContent = "";
+            fullNameError.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Username format check
+    const usernameInput = document.getElementById("regUsername");
+    const usernameError = document.getElementById("regUsernameError");
+    if (usernameInput) {
+      usernameInput.addEventListener("input", function (e) {
+        const val = e.target.value.trim();
+        if (val && !/^[A-Za-z0-9_]+$/.test(val)) {
+          if (usernameError) {
+            usernameError.textContent = "Username can only contain letters, numbers, and underscores.";
+            usernameError.style.display = "block";
+          }
+        } else if (val && val.length < 3) {
+          if (usernameError) {
+            usernameError.textContent = "Username must be at least 3 characters long.";
+            usernameError.style.display = "block";
+          }
+        } else {
+          if (usernameError) {
+            usernameError.textContent = "";
+            usernameError.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Email format check
+    const emailInput = document.getElementById("regEmail");
+    const emailError = document.getElementById("regEmailError");
+    if (emailInput) {
+      emailInput.addEventListener("input", function (e) {
+        const val = e.target.value.trim();
+        if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+          if (emailError) {
+            emailError.textContent = "Please enter a valid email address.";
+            emailError.style.display = "block";
+          }
+        } else {
+          if (emailError) {
+            emailError.textContent = "";
+            emailError.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Phone format check
+    const phoneInput = document.getElementById("regPhone");
+    const phoneError = document.getElementById("regPhoneError");
+    if (phoneInput) {
+      phoneInput.addEventListener("input", function (e) {
+        const val = e.target.value.replace(/\D/g, "");
+        if (val && val.length === 10 && !/^[6-9]/.test(val)) {
+          if (phoneError) {
+            phoneError.textContent = "Mobile number must start with 6, 7, 8, or 9.";
+            phoneError.style.display = "block";
+          }
+        } else if (val && val.length > 0 && val.length !== 10) {
+          if (phoneError) {
+            phoneError.textContent = "Please enter a valid 10-digit mobile number.";
+            phoneError.style.display = "block";
+          }
+        } else {
+          if (phoneError) {
+            phoneError.textContent = "";
+            phoneError.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Password rules check
+    const passwordInput = document.getElementById("regPassword");
+    const passwordError = document.getElementById("regPasswordError");
+    if (passwordInput) {
+      passwordInput.addEventListener("input", function (e) {
+        const val = e.target.value;
+        if (val) {
+          const res = window.vastraeValidation ? window.vastraeValidation.validatePassword(val) : { valid: val.length >= 6 };
+          if (!res.valid) {
+            if (passwordError) {
+              passwordError.textContent = res.message;
+              passwordError.style.display = "block";
+            }
+          } else {
+            if (passwordError) {
+              passwordError.textContent = "";
+              passwordError.style.display = "none";
+            }
+          }
+        } else {
+          if (passwordError) {
+            passwordError.textContent = "";
+            passwordError.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Confirm password check
+    const confirmPassInput = document.getElementById("regConfirmPassword");
+    const confirmPassError = document.getElementById("regConfirmPasswordError");
+    if (confirmPassInput) {
+      confirmPassInput.addEventListener("input", function (e) {
+        const pass = document.getElementById("regPassword") ? document.getElementById("regPassword").value : "";
+        if (e.target.value && e.target.value !== pass) {
+          if (confirmPassError) {
+            confirmPassError.textContent = "Confirm password does not match.";
+            confirmPassError.style.display = "block";
+          }
+        } else {
+          if (confirmPassError) {
+            confirmPassError.textContent = "";
+            confirmPassError.style.display = "none";
+          }
+        }
+      });
+    }
+  }
+
   window.openAuthModal = function (tab = "login") {
-    switchAuthTab(tab);
-    openModal("authModal");
+    window.navigateToPage("login");
+    window.switchAuthTab(tab);
   };
 
   window.switchAuthTab = function (tab) {
     const isLogin = tab === "login";
+    const isReg = tab === "register";
+    const isForgot = tab === "forgot";
+
     const tabLoginBtn = document.getElementById("tabLoginBtn");
     const tabRegBtn = document.getElementById("tabRegisterBtn");
+    const tabsContainer = document.getElementById("authTabsContainer");
     const loginContainer = document.getElementById("loginFormContainer");
     const regContainer = document.getElementById("registerFormContainer");
+    const forgotContainer = document.getElementById("forgotFormContainer");
     const errorBox = document.getElementById("authErrorMsg");
+    const heading = document.getElementById("authFormMainHeading");
 
+    if (tabsContainer) tabsContainer.style.display = isForgot ? "none" : "grid";
     if (tabLoginBtn) tabLoginBtn.classList.toggle("active", isLogin);
-    if (tabRegBtn) tabRegBtn.classList.toggle("active", !isLogin);
+    if (tabRegBtn) tabRegBtn.classList.toggle("active", isReg);
     if (loginContainer) loginContainer.style.display = isLogin ? "block" : "none";
-    if (regContainer) regContainer.style.display = isLogin ? "none" : "block";
+    if (regContainer) regContainer.style.display = isReg ? "block" : "none";
+    if (forgotContainer) forgotContainer.style.display = isForgot ? "block" : "none";
     if (errorBox) errorBox.style.display = "none";
+    clearAllFieldErrors();
+
+    if (heading) {
+      if (isForgot) heading.textContent = "Password Recovery";
+      else if (isReg) heading.textContent = "Register Profile";
+      else heading.textContent = "Customer Sanctuary";
+    }
+
+    if (isForgot) {
+      const step1Wrap = document.getElementById("forgotStep1Wrap");
+      const resetFields = document.getElementById("forgotResetFields");
+      const alertBox = document.getElementById("forgotAlertMsg");
+      if (step1Wrap) step1Wrap.style.display = "block";
+      if (resetFields) resetFields.style.display = "none";
+      if (alertBox) alertBox.style.display = "none";
+      const emailField = document.getElementById("forgotEmail");
+      if (emailField) emailField.value = "";
+    }
   };
 
-  // Validate Register Form
+  // Validate & Handle Register Form Submit
   window.handleRegisterSubmit = function (event) {
     event.preventDefault();
 
-    const username = document.getElementById("regUsername").value.trim();
     const fullName = document.getElementById("regFullName").value.trim();
+    const username = document.getElementById("regUsername").value.trim();
     const email = document.getElementById("regEmail").value.trim();
     const phone = document.getElementById("regPhone").value.trim();
     const password = document.getElementById("regPassword").value;
     const confirmPassword = document.getElementById("regConfirmPassword").value;
-    const errorBox = document.getElementById("authErrorMsg");
-    if (errorBox) errorBox.style.display = "none";
 
-    // 1. Username must accept text only
-    const usernameRegex = /^[A-Za-z\s]+$/;
-    if (!usernameRegex.test(username)) {
-      showAuthError("Username must accept text letters only (no numbers or symbols).");
-      return;
+    let hasError = false;
+    clearAllFieldErrors();
+
+    // 1. Full Name Validation: Only letters and spaces
+    const fnRes = window.vastraeValidation ? window.vastraeValidation.validateFullName(fullName) : { valid: /^[A-Za-z\s]+$/.test(fullName) };
+    if (!fnRes.valid) {
+      showFieldError("regFullNameError", fnRes.message || "Only letters and spaces are allowed");
+      hasError = true;
     }
 
-    // 2. Phone: 10-digit mobile number only
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneRegex.test(phone)) {
-      showAuthError("Please enter a valid 10-digit Indian mobile number (e.g. 9886012345).");
-      return;
+    // 2. Username Validation
+    const uRes = window.vastraeValidation ? window.vastraeValidation.validateUsername(username) : { valid: /^[A-Za-z0-9_]{3,}$/.test(username) };
+    if (!uRes.valid) {
+      showFieldError("regUsernameError", uRes.message || "Username must be at least 3 characters.");
+      hasError = true;
+    } else {
+      const usersDb = getStoredUsers();
+      if (usersDb.some(u => u.username && u.username.toLowerCase() === username.toLowerCase())) {
+        showFieldError("regUsernameError", "This username is already taken. Please choose another username.");
+        hasError = true;
+      }
     }
 
-    // 3. Password Requirement:
-    // Exactly 6 characters, at least 1 letter, at least 1 number, at least 1 special character
-    if (password.length !== 6) {
-      showAuthError("Password must contain exactly 6 characters.");
-      return;
+    // 3. Email Validation
+    const eRes = window.vastraeValidation ? window.vastraeValidation.validateEmail(email) : { valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) };
+    if (!eRes.valid) {
+      showFieldError("regEmailError", eRes.message || "Please enter a valid email address.");
+      hasError = true;
+    } else {
+      const usersDb = getStoredUsers();
+      if (usersDb.some(u => u.email && u.email.toLowerCase() === email.toLowerCase())) {
+        showFieldError("regEmailError", "An account with this email address already exists.");
+        hasError = true;
+      }
     }
 
-    const hasLetter = /[A-Za-z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    const hasSpecial = /[@$!%*#?&_\-\.]/.test(password);
-
-    if (!hasLetter || !hasNumber || !hasSpecial) {
-      showAuthError("Password must contain at least 1 letter, 1 number, and 1 special character (@$!%*#?&).");
-      return;
+    // 4. Phone Validation
+    const pRes = window.vastraeValidation ? window.vastraeValidation.validatePhone(phone) : { valid: /^[6-9]\d{9}$/.test(phone) };
+    if (!pRes.valid) {
+      showFieldError("regPhoneError", pRes.message || "Please enter a valid 10-digit mobile number.");
+      hasError = true;
     }
 
-    // 4. Confirm Password Match
+    // 5. Password Validation
+    const pwdRes = window.vastraeValidation ? window.vastraeValidation.validatePassword(password) : { valid: password.length >= 6 };
+    if (!pwdRes.valid) {
+      showFieldError("regPasswordError", pwdRes.message || "Password must be at least 6 characters long.");
+      hasError = true;
+    }
+
+    // 6. Confirm Password Match
     if (password !== confirmPassword) {
-      showAuthError("Confirm password does not match the chosen password.");
+      showFieldError("regConfirmPasswordError", "Confirm password does not match the chosen password.");
+      hasError = true;
+    }
+
+    if (hasError) {
+      showAuthError("Please correct the errors in the registration form before submitting.");
       return;
     }
 
     // Create authentic customer profile
-    currentUser = {
+    const usersDb = getStoredUsers();
+    const newUser = {
+      id: "USR-" + Date.now(),
       username: username,
       name: fullName,
       email: email,
-      phone: phone,
+      phone: pRes.formatted || ("+91 " + phone),
       password: password,
+      role: "customer",
       gender: "Female",
       dob: "1998-01-01",
       address: "100 Feet Road, Indiranagar, Bengaluru",
@@ -380,15 +646,17 @@
       ],
       addresses: [
         { label: "Default Address", address: "100 Feet Road, Indiranagar, Bengaluru - 560038", isDefault: true }
-      ]
+      ],
+      registeredAt: new Date().toISOString()
     };
 
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-
-    // Save into registered users database
-    let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_DB)) || [];
-    usersDb.push(currentUser);
+    usersDb.push(newUser);
     localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
+    localStorage.setItem("vastrae_users", JSON.stringify(usersDb));
+
+    currentUser = newUser;
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
 
     // Reset customer workspace for new patron
     cart = [];
@@ -401,7 +669,6 @@
     localStorage.setItem(STORAGE_KEY_WISH, JSON.stringify(wishlist));
 
     updateAuthUI();
-    closeModal();
     showToast(`✓ Welcome to VASTRAÉ, ${fullName}! Your client account has been created.`);
     openCustomerDashboard();
   };
@@ -412,62 +679,31 @@
     const loginUser = document.getElementById("loginUser").value.trim();
     const loginPass = document.getElementById("loginPass").value;
 
+    const errorBox = document.getElementById("authErrorMsg");
+    if (errorBox) errorBox.style.display = "none";
+    clearAllFieldErrors();
+
     if (!loginUser || !loginPass) {
       showAuthError("Please enter your username/email and password.");
       return;
     }
 
-    // Password must be exactly 6 characters as required
-    if (loginPass.length !== 6) {
-      showAuthError("Password must be exactly 6 characters.");
-      return;
-    }
-
-    // Check registered users database
-    let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_DB)) || [];
-    let matched = usersDb.find(u => 
-      (u.username.toLowerCase() === loginUser.toLowerCase() || u.email.toLowerCase() === loginUser.toLowerCase()) &&
+    const usersDb = getStoredUsers();
+    const query = loginUser.toLowerCase();
+    const matched = usersDb.find(u => 
+      ((u.username && u.username.toLowerCase() === query) || (u.email && u.email.toLowerCase() === query)) &&
       u.password === loginPass
     );
 
-    if (matched) {
-      currentUser = matched;
-    } else if (usersDb.length === 0) {
-      // If customer is logging in before database persistence, verify 6-char policy and create account
-      if (!/[A-Za-z]/.test(loginPass) || !/\d/.test(loginPass) || !/[@$!%*#?&_\-\.]/.test(loginPass)) {
-        showAuthError("Password must contain at least 1 letter, 1 number, and 1 special character.");
-        return;
-      }
-      currentUser = {
-        username: loginUser,
-        name: loginUser,
-        email: `${loginUser.toLowerCase().replace(/\s+/g, '')}@vastrae.com`,
-        phone: "9886012345",
-        password: loginPass,
-        gender: "Female",
-        dob: "1996-05-15",
-        address: "100 Feet Road, Indiranagar, Bengaluru - 560038",
-        city: "Bengaluru",
-        state: "Karnataka",
-        pincode: "560038",
-        avatar: loginUser.charAt(0).toUpperCase(),
-        tier: "Atelier Patron",
-        loyaltyPoints: 100,
-        familyProfiles: [
-          { name: loginUser, relation: "Self", bust: "34\"", waist: "28\"", hips: "36\"", shoulder: "14\"", blouseLength: "14\"" }
-        ],
-        addresses: [
-          { label: "Home", address: "Indiranagar, Bengaluru - 560038", isDefault: true }
-        ]
-      };
-      usersDb.push(currentUser);
-      localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
-    } else {
-      showAuthError("Account not found or password incorrect. Please switch to 'Register Profile' to create your account.");
+    if (!matched) {
+      showAuthError("Invalid username/email or password credentials.");
       return;
     }
 
+    currentUser = matched;
     localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
+
     cart = JSON.parse(localStorage.getItem(STORAGE_KEY_CART)) || [];
     wishlist = JSON.parse(localStorage.getItem(STORAGE_KEY_WISH)) || [];
     orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || [];
@@ -476,16 +712,121 @@
     ownFabricOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || [];
 
     updateAuthUI();
-    closeModal();
-    showToast(`✓ Welcome back, ${currentUser.name}!`);
+    showToast(`✓ Welcome back, ${currentUser.name || currentUser.username}!`);
+    openCustomerDashboard();
+  };
 
-    if (currentUser.username.toLowerCase() === "admin") {
-      window.openAdminConsoleModal();
-    } else if (currentUser.username.toLowerCase() === "tailor") {
-      window.openMasterTailorWorkspace();
-    } else {
-      openCustomerDashboard();
+  // Handle Forgot Password Submit
+  window.handleForgotPasswordSubmit = function (event) {
+    event.preventDefault();
+    const forgotEmail = document.getElementById("forgotEmail").value.trim();
+    const emailErr = document.getElementById("forgotEmailError");
+    const alertBox = document.getElementById("forgotAlertMsg");
+
+    if (emailErr) emailErr.style.display = "none";
+    if (alertBox) alertBox.style.display = "none";
+
+    // Validate email format
+    const eRes = window.vastraeValidation ? window.vastraeValidation.validateEmail(forgotEmail) : { valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail) };
+    if (!eRes.valid) {
+      if (emailErr) {
+        emailErr.textContent = "Please enter a valid email address.";
+        emailErr.style.display = "block";
+      }
+      return;
     }
+
+    // Check account exists
+    const usersDb = getStoredUsers();
+    const found = usersDb.find(u => u.email && u.email.toLowerCase() === forgotEmail.toLowerCase());
+    if (!found) {
+      if (alertBox) {
+        alertBox.textContent = "No account found with this email address. Please check your email or register.";
+        alertBox.style.background = "var(--vas-danger-bg)";
+        alertBox.style.color = "var(--vas-danger)";
+        alertBox.style.border = "1px solid rgba(184, 51, 42, 0.25)";
+        alertBox.style.display = "block";
+      }
+      if (emailErr) {
+        emailErr.textContent = "No account found with this email address.";
+        emailErr.style.display = "block";
+      }
+      return;
+    }
+
+    // Account exists! Show confirmation and reveal local reset flow
+    window.forgotRecoveryEmail = found.email;
+    if (alertBox) {
+      alertBox.textContent = `✓ Account verified for ${found.email}. Demonstration local recovery flow: Please set your new password below.`;
+      alertBox.style.background = "var(--vas-surface-alt)";
+      alertBox.style.color = "var(--vas-ink)";
+      alertBox.style.border = "1px solid var(--vas-gold)";
+      alertBox.style.display = "block";
+    }
+
+    const step1Wrap = document.getElementById("forgotStep1Wrap");
+    const resetFields = document.getElementById("forgotResetFields");
+    if (step1Wrap) step1Wrap.style.display = "none";
+    if (resetFields) resetFields.style.display = "block";
+  };
+
+  // Finalize Password Reset
+  window.handlePasswordResetFinalize = function () {
+    const newPass = document.getElementById("forgotNewPass").value;
+    const confirmPass = document.getElementById("forgotConfirmPass").value;
+    const newPassErr = document.getElementById("forgotNewPassError");
+    const confirmPassErr = document.getElementById("forgotConfirmPassError");
+    const alertBox = document.getElementById("forgotAlertMsg");
+
+    if (newPassErr) newPassErr.style.display = "none";
+    if (confirmPassErr) confirmPassErr.style.display = "none";
+
+    // Validate password
+    const pwdRes = window.vastraeValidation ? window.vastraeValidation.validatePassword(newPass) : { valid: newPass.length >= 6 };
+    if (!pwdRes.valid) {
+      if (newPassErr) {
+        newPassErr.textContent = pwdRes.message || "Password must be at least 6 characters with uppercase, lowercase, number, and special character.";
+        newPassErr.style.display = "block";
+      }
+      return;
+    }
+
+    if (newPass !== confirmPass) {
+      if (confirmPassErr) {
+        confirmPassErr.textContent = "Confirm password does not match new password.";
+        confirmPassErr.style.display = "block";
+      }
+      return;
+    }
+
+    // Update in database
+    const usersDb = getStoredUsers();
+    const user = usersDb.find(u => u.email && u.email.toLowerCase() === window.forgotRecoveryEmail.toLowerCase());
+    if (user) {
+      user.password = newPass;
+      localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
+      localStorage.setItem("vastrae_users", JSON.stringify(usersDb));
+    }
+
+    if (alertBox) {
+      alertBox.textContent = "✓ Password has been reset successfully! Redirecting to Sign In...";
+      alertBox.style.background = "#eef8f1";
+      alertBox.style.color = "#1d6c38";
+      alertBox.style.border = "1px solid #c2e6cd";
+      alertBox.style.display = "block";
+    }
+
+    const resetFields = document.getElementById("forgotResetFields");
+    if (resetFields) resetFields.style.display = "none";
+
+    setTimeout(() => {
+      window.switchAuthTab("login");
+      const userField = document.getElementById("loginUser");
+      if (userField) userField.value = window.forgotRecoveryEmail || "";
+      const passField = document.getElementById("loginPass");
+      if (passField) passField.value = "";
+      showToast("Password reset successfully. Please sign in with your new password.");
+    }, 1500);
   };
 
   function showAuthError(msg) {
@@ -496,81 +837,28 @@
     }
   }
 
-  // Quick 1-Click Role Switcher for Testing & Demonstration
+  // Demo-profile credentials and automatic demo logins removed per security requirements
   window.quickLoginDemo = function (role) {
-    if (role === "admin") {
-      currentUser = {
-        username: "admin",
-        name: "Atelier Director",
-        email: "director@vastrae.com",
-        phone: "9886012345",
-        tier: "Executive Administrator",
-        loyaltyPoints: 5000,
-        avatar: "A",
-        address: "Indiranagar Atelier Floor, Bengaluru",
-        familyProfiles: []
-      };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      updateAuthUI();
-      closeModal();
-      window.openAdminConsoleModal();
-      showToast("✓ Logged in as Atelier Administrator (Full Back-Office Access)");
-    } else if (role === "tailor") {
-      currentUser = {
-        username: "tailor",
-        name: "Master Savitha Devi",
-        email: "couturier@vastrae.com",
-        phone: "9886012345",
-        tier: "Chief Master Couturier",
-        loyaltyPoints: 3000,
-        avatar: "T",
-        address: "Indiranagar Drafting Loom Floor, Bengaluru",
-        familyProfiles: []
-      };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      updateAuthUI();
-      closeModal();
-      window.openMasterTailorWorkspace();
-      showToast("✓ Logged in as Master Tailor Savitha Devi (Production Studio)");
-    } else {
-      currentUser = {
-        username: "ananya",
-        name: "Ananya Sharma",
-        email: "ananya@vastrae.com",
-        phone: "9886012345",
-        tier: "Atelier Patron",
-        loyaltyPoints: 1250,
-        avatar: "A",
-        address: "100 Feet Road, Indiranagar, Bengaluru - 560038",
-        familyProfiles: [
-          { name: "Ananya Sharma", relation: "Self", bust: "34\"", waist: "28\"", hips: "36\"", shoulder: "14\"", blouseLength: "14\"" }
-        ]
-      };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      updateAuthUI();
-      closeModal();
-      openCustomerDashboard();
-      showToast("✓ Logged in as Patron Ananya Sharma (Customer Workspace)");
-    }
+    console.warn("Demo profile automatic logins have been removed for security.");
   };
 
   window.handleLogout = function () {
-    if (confirm("Are you sure you wish to log out from VASTRAÉ Atelier?")) {
-      currentUser = null;
-      localStorage.removeItem(STORAGE_KEY_USER);
-      cart = [];
-      wishlist = [];
-      savedDesigns = [];
-      orders = [];
-      sareeRebornOrders = [];
-      ownFabricOrders = [];
-      updateAuthUI();
-      returnToPublicWebsite();
-      showToast("You have been signed out safely.");
-    }
+    currentUser = null;
+    localStorage.removeItem(STORAGE_KEY_USER);
+    localStorage.removeItem("vastrae_current_user");
+    cart = [];
+    wishlist = [];
+    savedDesigns = [];
+    orders = [];
+    sareeRebornOrders = [];
+    ownFabricOrders = [];
+    updateAuthUI();
+    window.navigateToPage("login");
+    showToast("You have been signed out safely.");
   };
 
   function updateAuthUI() {
+    const navLoginRegister = document.getElementById("navLoginRegisterLink");
     const unauthGroup = document.getElementById("unauthNavActions");
     const authGroup = document.getElementById("authNavActions");
     const nameSpan = document.getElementById("navAuthName");
@@ -584,11 +872,13 @@
     const ownFabricForm = document.getElementById("ownFabricForm");
 
     if (currentUser) {
+      // Hide Login / Register option from navigation bar after login or registration
+      if (navLoginRegister) navLoginRegister.style.display = "none";
       if (unauthGroup) unauthGroup.style.display = "none";
       if (authGroup) authGroup.style.display = "flex";
       if (unauthNavLinks) unauthNavLinks.style.display = "none";
       if (authNavLinks) authNavLinks.style.display = "flex";
-      if (nameSpan) nameSpan.textContent = currentUser.name.split(" ")[0];
+      if (nameSpan) nameSpan.textContent = (currentUser.name || currentUser.username || "Client").split(" ")[0];
       if (studioLockOverlay) studioLockOverlay.style.display = "none";
       if (rebornLockOverlay) rebornLockOverlay.style.display = "none";
       if (ownFabricLockOverlay) ownFabricLockOverlay.style.display = "none";
@@ -597,12 +887,6 @@
       if (studioContent) studioContent.classList.remove("vas-service-content-locked");
       if (rebornForm) rebornForm.classList.remove("vas-service-content-locked");
       if (ownFabricForm) ownFabricForm.classList.remove("vas-service-content-locked");
-
-      // Auto pre-fill contact form if empty
-      const cntName = document.getElementById("cntName");
-      const cntPhone = document.getElementById("cntPhone");
-      if (cntName && !cntName.value) cntName.value = currentUser.name;
-      if (cntPhone && !cntPhone.value) cntPhone.value = currentUser.phone;
 
       // Notification badge
       const notifBadge = document.getElementById("navNotifCount");
@@ -613,6 +897,8 @@
 
       updateCartWishCounters();
     } else {
+      // Show Login / Register option when logged out
+      if (navLoginRegister) navLoginRegister.style.display = "";
       if (unauthGroup) unauthGroup.style.display = "flex";
       if (authGroup) authGroup.style.display = "none";
       if (unauthNavLinks) unauthNavLinks.style.display = "flex";

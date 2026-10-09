@@ -7,13 +7,23 @@
   "use strict";
 
   const vastraeValidation = {
-    // Username: Alphabetical & space characters only (no numbers)
+    // Full Name: Accepts only letters and spaces. Rejects numbers and special characters.
+    validateFullName: function (fullName) {
+      if (!fullName || typeof fullName !== "string") return { valid: false, message: "Full Name is required." };
+      const trimmed = fullName.trim();
+      if (trimmed.length < 2) return { valid: false, message: "Full Name must be at least 2 characters long." };
+      const regex = /^[A-Za-z\s]+$/;
+      if (!regex.test(trimmed)) return { valid: false, message: "Only letters and spaces are allowed" };
+      return { valid: true, value: trimmed };
+    },
+
+    // Username: Letters, numbers, and underscores (min 3 chars)
     validateUsername: function (username) {
       if (!username || typeof username !== "string") return { valid: false, message: "Username is required." };
       const trimmed = username.trim();
       if (trimmed.length < 3) return { valid: false, message: "Username must be at least 3 characters long." };
-      const regex = /^[A-Za-z\s]+$/;
-      if (!regex.test(trimmed)) return { valid: false, message: "Username accepts alphabetical characters and spaces only (no numbers or symbols)." };
+      const regex = /^[A-Za-z0-9_]+$/;
+      if (!regex.test(trimmed)) return { valid: false, message: "Username can only contain letters, numbers, and underscores (no spaces or special symbols)." };
       return { valid: true, value: trimmed };
     },
 
@@ -46,12 +56,12 @@
       const hasUpper = /[A-Z]/.test(password);
       const hasLower = /[a-z]/.test(password);
       const hasNumber = /[0-9]/.test(password);
-      const hasSpecial = /[@$!%*#?&_.]/.test(password);
+      const hasSpecial = /[@$!%*#?&_\-\.]/.test(password);
 
       if (!hasUpper) return { valid: false, message: "Password must contain at least 1 uppercase letter (A-Z)." };
       if (!hasLower) return { valid: false, message: "Password must contain at least 1 lowercase letter (a-z)." };
       if (!hasNumber) return { valid: false, message: "Password must contain at least 1 number (0-9)." };
-      if (!hasSpecial) return { valid: false, message: "Password must contain at least 1 special character (@$!%*#?&_.)." };
+      if (!hasSpecial) return { valid: false, message: "Password must contain at least 1 special character (@$!%*#?&_.-)." };
 
       return { valid: true, value: password };
     },
