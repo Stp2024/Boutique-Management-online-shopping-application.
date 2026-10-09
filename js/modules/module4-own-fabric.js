@@ -4,7 +4,7 @@
 
 (function () {
   let ownFabricState = {
-    uploadedPhoto: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+    uploadedPhoto: "images/products/women/emerald-pakistani-suit-front.jpg",
     fabricType: "Pure Kanjeevaram Silk",
     meters: 2.5,
     garmentType: "Designer Maggam Blouse",

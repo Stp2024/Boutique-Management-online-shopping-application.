@@ -12,14 +12,11 @@
   const vastraeProductsService = {
     // Retrieve complete product catalog
     getProducts: function () {
-      if (!window.vastraeStorage) return (window.VASTRAE_DATA && window.VASTRAE_DATA.products) ? window.VASTRAE_DATA.products : [];
-      const stored = window.vastraeStorage.get(STORAGE_KEY, null);
-      if (!stored) {
-        const initial = (window.VASTRAE_DATA && window.VASTRAE_DATA.products) ? window.VASTRAE_DATA.products : [];
+      const initial = (window.VASTRAE_DATA && window.VASTRAE_DATA.products) ? window.VASTRAE_DATA.products : [];
+      if (window.vastraeStorage && initial.length) {
         window.vastraeStorage.set(STORAGE_KEY, initial);
-        return initial;
       }
-      return stored;
+      return initial;
     },
 
     // Get single product by ID

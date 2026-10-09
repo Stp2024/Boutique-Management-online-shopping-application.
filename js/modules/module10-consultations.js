@@ -10,7 +10,7 @@
       role: "Chief Bridal Couture Director",
       experience: "16+ Years Experience",
       specialty: "Bridal Trousseau & Muhurtham Kanjeevarams",
-      img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80"
+      img: "images/products/women/emerald-pakistani-suit-front.jpg"
     },
     {
       id: "styl-2",
@@ -18,7 +18,7 @@
       role: "Master Aari & Zardozi Needlework Curator",
       experience: "20+ Years Experience",
       specialty: "Bespoke Blouse Necklines & Peacock Motifs",
-      img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80"
+      img: "images/products/women/emerald-pakistani-suit-front.jpg"
     },
     {
       id: "styl-3",
@@ -26,7 +26,7 @@
       role: "Contemporary Silhouette & Draping Stylist",
       experience: "9+ Years Experience",
       specialty: "Modern Indo-Western Corsets & Gala Evening Wear",
-      img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"
+      img: "images/products/women/emerald-pakistani-suit-front.jpg"
     },
     {
       id: "styl-4",
@@ -34,7 +34,7 @@
       role: "Little Princess & Family Twinning Designer",
       experience: "12+ Years Experience",
       specialty: "Handloom Cotton Frocks & Mother-Daughter Pairs",
-      img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80"
+      img: "images/products/women/emerald-pakistani-suit-front.jpg"
     }
   ];
 
