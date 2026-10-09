@@ -684,17 +684,20 @@
         <article class="vas-product-card" id="card-${p.id}">
           <div class="vas-product-media">
             <img id="card-img-${p.id}" src="${p.image}" alt="${p.name}" loading="lazy">
+            <button class="vas-card-360-badge" onclick="event.stopPropagation(); window.open360Modal('${p.id}')" title="Interactive 360° Drag Rotation">
+              🔄 360° View
+            </button>
             <span class="vas-badge-tag">${p.badge}</span>
-            <span class="vas-multi-angle-badge" title="Visual Zoom & Inspection: Full Outfit, Embroidery, Blouse, Sleeves, Neckline">🔍 5 Detail Zooms</span>
+            <span class="vas-multi-angle-badge" title="Multi-Angle 360° & Zoom Inspection">🔄 360° Garment View</span>
             <button class="vas-wish-btn ${isWish ? 'active' : ''}" onclick="window.toggleWishlist('${p.id}')" title="Save to Wishlist">
               ${isWish ? '♥' : '♡'}
             </button>
             <div class="vas-card-angle-bar" onclick="event.stopPropagation()">
-              <button type="button" class="vas-card-angle-btn active" data-angle="front" onclick="window.switchCardAngle('${p.id}', 'front', this, event)" title="1. Full Dress">Full</button>
-              <button type="button" class="vas-card-angle-btn" data-angle="detail" onclick="window.switchCardAngle('${p.id}', 'detail', this, event)" title="2. Embroidery & Fabric">Embroidery</button>
-              <button type="button" class="vas-card-angle-btn" data-angle="upper" onclick="window.switchCardAngle('${p.id}', 'upper', this, event)" title="3. Blouse / Kurta">Blouse</button>
-              <button type="button" class="vas-card-angle-btn" data-angle="sleeves" onclick="window.switchCardAngle('${p.id}', 'sleeves', this, event)" title="4. Sleeves & Cuffs">Sleeves</button>
-              <button type="button" class="vas-card-angle-btn" data-angle="neckline" onclick="window.switchCardAngle('${p.id}', 'neckline', this, event)" title="5. Neckline & Border">Neckline</button>
+              <button type="button" class="vas-card-angle-btn active" data-angle="front" onclick="window.switchCardAngle('${p.id}', 'front', this, event)" title="1. Front View (0°)">Front</button>
+              ${p.views && p.views.threequarter ? `<button type="button" class="vas-card-angle-btn" data-angle="threequarter" onclick="window.switchCardAngle('${p.id}', 'threequarter', this, event)" title="2. 3/4 View (45°)">3/4</button>` : ''}
+              ${p.views && p.views.side ? `<button type="button" class="vas-card-angle-btn" data-angle="side" onclick="window.switchCardAngle('${p.id}', 'side', this, event)" title="3. Side Profile (90°)">Side</button>` : ''}
+              ${p.views && p.views.back ? `<button type="button" class="vas-card-angle-btn" data-angle="back" onclick="window.switchCardAngle('${p.id}', 'back', this, event)" title="4. Back View (180°)">Back</button>` : ''}
+              ${p.views && p.views.detail ? `<button type="button" class="vas-card-angle-btn" data-angle="detail" onclick="window.switchCardAngle('${p.id}', 'detail', this, event)" title="5. Macro Detail">Detail</button>` : ''}
             </div>
           </div>
           <div class="vas-product-body">
@@ -706,6 +709,9 @@
               ${p.originalPrice ? `<span class="vas-price-old">₹${p.originalPrice.toLocaleString()}</span>` : ''}
             </div>
             <div class="vas-product-actions">
+              <button class="vas-btn vas-btn-sm vas-btn-360" onclick="window.open360Modal('${p.id}')" title="Interactive 360° Drag Viewer">
+                🔄 View 360°
+              </button>
               <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('${p.id}')">
                 Quick View
               </button>
@@ -731,7 +737,15 @@
     if (!p) return;
     const img = document.getElementById("card-img-" + productId);
     if (img && p.views && p.views[angleKey]) {
-      img.src = p.views[angleKey].url;
+      const v = p.views[angleKey];
+      img.src = v.url;
+      if (v.zoom) {
+        img.style.transform = `scale(${v.zoom})`;
+        img.style.transformOrigin = v.focus || "center center";
+      } else {
+        img.style.transform = "scale(1)";
+        img.style.transformOrigin = "center top";
+      }
     }
     if (btn && btn.parentElement) {
       btn.parentElement.querySelectorAll(".vas-card-angle-btn").forEach(b => b.classList.remove("active"));
@@ -752,102 +766,236 @@
   };
 
   // ------------------------------------------------------------------------
-  // 6. PRODUCT DETAIL MODAL & PURCHASE WORKFLOW (MODULE 2)
+  // 6. INTERACTIVE 360° PRODUCT TURNTABLE & MULTI-VIEW VIEWER
   // ------------------------------------------------------------------------
   let currentPdpProduct = null;
-  let currentPdpAngle = 'front';
-  const pdpAngleKeys = ['front', 'detail', 'upper', 'sleeves', 'neckline'];
+  let current360Frames = [];
+  let current360Index = 0;
+  let is360Dragging = false;
+  let drag360StartX = 0;
+  let drag360Accumulator = 0;
+  let autoRotateTimer = null;
+  let isZoomMagnified = false;
 
-  window.switchPdpAngle = function (angleKey) {
-    if (!currentPdpProduct || !currentPdpProduct.views || !currentPdpProduct.views[angleKey]) return;
-    currentPdpAngle = angleKey;
-    const view = currentPdpProduct.views[angleKey];
-    
-    // Update main image: Derived from the EXACT SAME master photo
-    const mainImg = document.getElementById("pdpMainImg");
-    if (mainImg) {
-      mainImg.src = view.url;
-      mainImg.alt = `${currentPdpProduct.name} - ${view.label}`;
-      mainImg.style.transform = "scale(1)";
-      mainImg.style.transformOrigin = view.focus || "center center";
+  window.open360Modal = function (productId) {
+    window.openProductDetailModal(productId, true);
+  };
+
+  window.switchTurntableFrame = function (index) {
+    if (!current360Frames.length) return;
+    current360Index = (index + current360Frames.length) % current360Frames.length;
+    const frame = current360Frames[current360Index];
+
+    const img = document.getElementById("pdp360Img");
+    if (img) {
+      img.src = frame.url;
+      img.alt = `${currentPdpProduct.name} - ${frame.label}`;
+      if (frame.zoom) {
+        img.style.transform = isZoomMagnified ? "scale(2.6)" : `scale(${frame.zoom})`;
+        img.style.transformOrigin = frame.focus || "center center";
+      } else {
+        img.style.transform = isZoomMagnified ? "scale(2.2)" : "scale(1)";
+        img.style.transformOrigin = frame.focus || "center top";
+      }
     }
 
-    // Update angle header badges
-    const angleTitle = document.getElementById("pdpAngleTitle");
-    const angleSub = document.getElementById("pdpAngleSub");
-    if (angleTitle) angleTitle.textContent = view.label.toUpperCase();
-    if (angleSub) angleSub.textContent = view.badge || "Detail Inspection";
+    const angleBadge = document.getElementById("pdp360AngleGauge");
+    if (angleBadge) {
+      angleBadge.innerHTML = `<span class="degree-pulse"></span> ${frame.label.toUpperCase()}`;
+    }
 
-    // Update inspection card
-    const inspectTitle = document.getElementById("pdpInspectTitle");
-    const inspectDesc = document.getElementById("pdpInspectDesc");
-    if (inspectTitle) inspectTitle.textContent = `Atelier Detail: ${view.label}`;
-    if (inspectDesc) inspectDesc.textContent = view.desc;
+    const inspectTitle = document.getElementById("pdp360InspectTitle");
+    const inspectDesc = document.getElementById("pdp360InspectDesc");
+    if (inspectTitle) {
+      inspectTitle.textContent = `Atelier View: ${frame.label}`;
+    }
+    if (inspectDesc) {
+      inspectDesc.textContent = frame.desc || `Direct multi-angle inspection of ${frame.label} on authentic ghost mannequin.`;
+    }
 
-    // Update active thumbnail
-    document.querySelectorAll(".vas-pdp-thumb").forEach(thumb => {
-      thumb.classList.toggle("active", thumb.dataset.angle === angleKey);
+    // Update thumbnails
+    document.querySelectorAll(".vas-360-thumb-item").forEach(thumb => {
+      thumb.classList.toggle("active", parseInt(thumb.dataset.index, 10) === current360Index);
+    });
+
+    // Update scrubber track
+    document.querySelectorAll(".vas-360-scrub-step").forEach(step => {
+      step.classList.toggle("active", parseInt(step.dataset.index, 10) === current360Index);
     });
   };
 
-  window.navigatePdpAngle = function (delta) {
-    if (!currentPdpProduct || !currentPdpProduct.views) return;
-    const availableKeys = pdpAngleKeys.filter(k => currentPdpProduct.views[k]);
-    if (!availableKeys.length) return;
-    let idx = availableKeys.indexOf(currentPdpAngle);
-    if (idx === -1) idx = 0;
-    
-    let nextIdx = idx + delta;
-    if (nextIdx >= availableKeys.length) {
-      // Completed all detail views of current product -> seamlessly rotate to Next Product at 1. Full Dress!
-      window.navigatePdpProduct(1);
-      return;
-    } else if (nextIdx < 0) {
-      // Go back to previous product's last detail view
-      window.navigatePdpProduct(-1, availableKeys.length - 1);
-      return;
-    }
-    window.switchPdpAngle(availableKeys[nextIdx]);
+  window.rotate360Step = function (delta) {
+    window.switchTurntableFrame(current360Index + delta);
   };
 
-  window.navigatePdpProduct = function (delta, targetAngleIndex = 0) {
+  window.toggleAutoRotate = function () {
+    const btn = document.getElementById("btnAutoRotate360");
+    if (autoRotateTimer) {
+      clearInterval(autoRotateTimer);
+      autoRotateTimer = null;
+      if (btn) {
+        btn.classList.remove("active");
+        btn.innerHTML = "▶ Auto-Rotate 360°";
+      }
+    } else {
+      if (btn) {
+        btn.classList.add("active");
+        btn.innerHTML = "⏸ Pause Auto-Rotate";
+      }
+      autoRotateTimer = setInterval(() => {
+        window.rotate360Step(1);
+      }, 750);
+    }
+  };
+
+  window.toggle360Zoom = function () {
+    isZoomMagnified = !isZoomMagnified;
+    const img = document.getElementById("pdp360Img");
+    const btn = document.getElementById("btnToggleZoom");
+    if (btn) btn.classList.toggle("active", isZoomMagnified);
+    if (img) {
+      img.style.transform = isZoomMagnified ? "scale(2.2)" : "scale(1)";
+    }
+  };
+
+  window.navigatePdpProduct = function (delta) {
     if (!currentPdpProduct) return;
     const allProducts = VASTRAE_DATA.products;
     const currIdx = allProducts.findIndex(p => p.id === currentPdpProduct.id);
     if (currIdx === -1) return;
     const nextProductIdx = (currIdx + delta + allProducts.length) % allProducts.length;
     const nextProduct = allProducts[nextProductIdx];
-    window.openProductDetailModal(nextProduct.id);
-    const availableKeys = pdpAngleKeys.filter(k => nextProduct.views && nextProduct.views[k]);
-    if (availableKeys.length && targetAngleIndex > 0 && targetAngleIndex < availableKeys.length) {
-      window.switchPdpAngle(availableKeys[targetAngleIndex]);
-    }
+    window.openProductDetailModal(nextProduct.id, false);
   };
 
-  function setupPdpZoom() {
-    const viewport = document.getElementById("pdpViewport");
-    const img = document.getElementById("pdpMainImg");
+  function setup360TurntableInteractions() {
+    const viewport = document.getElementById("pdp360Viewport");
+    const img = document.getElementById("pdp360Img");
     if (!viewport || !img) return;
 
-    viewport.onmousemove = function (e) {
-      const rect = viewport.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      img.style.transformOrigin = `${x}% ${y}%`;
-      img.style.transform = "scale(2.2)";
+    // Reset auto-rotate timer on modal open
+    if (autoRotateTimer) {
+      clearInterval(autoRotateTimer);
+      autoRotateTimer = null;
+    }
+    isZoomMagnified = false;
+
+    // Preload all multi-angle frame images
+    current360Frames.forEach(f => {
+      const preloadImg = new Image();
+      preloadImg.src = f.url;
+    });
+
+    // 1. Mouse Drag to Rotate 360°
+    viewport.onmousedown = function (e) {
+      is360Dragging = true;
+      drag360StartX = e.clientX;
+      drag360Accumulator = 0;
+      viewport.classList.add("dragging");
+      e.preventDefault();
     };
 
-    viewport.onmouseleave = function () {
-      img.style.transform = "scale(1)";
-      img.style.transformOrigin = "center center";
+    window.onmousemove = function (e) {
+      if (!is360Dragging) {
+        // Hover Zoom effect when not dragging
+        const rect = viewport.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          img.style.transformOrigin = `${x}% ${y}%`;
+          if (isZoomMagnified) {
+            img.style.transform = "scale(2.4)";
+          }
+        }
+        return;
+      }
+
+      const dx = e.clientX - drag360StartX;
+      drag360StartX = e.clientX;
+      drag360Accumulator += dx;
+
+      // Sensitivity threshold for smooth rotation: 22px per frame step
+      if (Math.abs(drag360Accumulator) >= 22) {
+        const step = drag360Accumulator > 0 ? -1 : 1;
+        window.rotate360Step(step);
+        drag360Accumulator = 0;
+      }
+    };
+
+    window.onmouseup = function () {
+      if (is360Dragging) {
+        is360Dragging = false;
+        viewport.classList.remove("dragging");
+      }
+    };
+
+    // 2. Mobile Touch Gestures (Swipe to Rotate)
+    let touchStartX = 0;
+    let touchAccumulator = 0;
+    viewport.ontouchstart = function (e) {
+      if (e.touches.length === 1) {
+        is360Dragging = true;
+        touchStartX = e.touches[0].clientX;
+        touchAccumulator = 0;
+      }
+    };
+
+    viewport.ontouchmove = function (e) {
+      if (!is360Dragging || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - touchStartX;
+      touchStartX = e.touches[0].clientX;
+      touchAccumulator += dx;
+
+      if (Math.abs(touchAccumulator) >= 20) {
+        const step = touchAccumulator > 0 ? -1 : 1;
+        window.rotate360Step(step);
+        touchAccumulator = 0;
+      }
+      e.preventDefault();
+    };
+
+    viewport.ontouchend = function () {
+      is360Dragging = false;
     };
   }
 
-  window.openProductDetailModal = function (productId) {
+  window.openProductDetailModal = function (productId, startIn360Mode = false) {
     const p = VASTRAE_DATA.products.find(item => item.id === productId);
     if (!p) return;
     currentPdpProduct = p;
-    currentPdpAngle = 'front';
+
+    // Build ordered list of 360 degree rotation frames
+    if (p.rotations_360 && p.rotations_360.length > 0) {
+      current360Frames = p.rotations_360.map(f => ({
+        url: f.url,
+        label: f.label || "Garment Angle",
+        angle: f.angle,
+        desc: (p.views && p.views[f.label.toLowerCase()]) ? p.views[f.label.toLowerCase()].desc : p.description
+      }));
+    } else if (p.views) {
+      // Assemble from views object in proper anatomical sequence: front, threequarter, side, back, detail
+      current360Frames = [];
+      const order = ['front', 'threequarter', 'side', 'back', 'detail', 'upper', 'sleeves', 'neckline'];
+      order.forEach(k => {
+        if (p.views[k] && !current360Frames.some(f => f.url === p.views[k].url)) {
+          current360Frames.push({
+            url: p.views[k].url,
+            label: p.views[k].label || k.toUpperCase(),
+            desc: p.views[k].desc || p.description
+          });
+        }
+      });
+      if (!current360Frames.length) {
+        current360Frames.push({ url: p.image, label: "Front View (0°)", desc: p.description });
+      }
+    } else {
+      current360Frames = [
+        { url: p.image, label: "Front View (0°)", desc: p.description }
+      ];
+    }
+
+    current360Index = 0;
+    const initialFrame = current360Frames[0];
 
     const allProducts = VASTRAE_DATA.products;
     const currIdx = allProducts.findIndex(item => item.id === productId);
@@ -861,16 +1009,9 @@
       occasion: "Festive, Wedding & Gala Occasions"
     };
 
-    // Ensure views structure exists with defaults
-    const views = p.views || {
-      front: { url: p.image, label: "Full Dress", badge: "1. Complete Outfit View", desc: "Full dress silhouette and cut proportions." }
-    };
-
-    const initialView = views.front || Object.values(views)[0];
-
     const modalContent = document.getElementById("modalBody");
     modalContent.innerHTML = `
-      <!-- Product Rotation Navigation Header -->
+      <!-- Navigation Header -->
       <div style="display:flex; justify-content:space-between; align-items:center; background:var(--vas-surface-alt); border:1px solid var(--vas-border); border-radius:8px; padding:8px 14px; margin-bottom:16px;">
         <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.navigatePdpProduct(-1)" title="Previous Outfit">
           &larr; Prev Outfit
@@ -884,58 +1025,68 @@
         </button>
       </div>
 
-      <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start;">
-        <!-- Left: Interactive Detail Zoom Gallery from SAME Original Image -->
-        <div class="vas-pdp-gallery-wrap">
-          <!-- Top Badges Row -->
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div class="vas-pdp-angle-badge">
-              <span id="pdpAngleTitle">${initialView.label.toUpperCase()}</span>
-              <span style="opacity:0.6;">•</span>
-              <span id="pdpAngleSub" style="font-weight:500; opacity:0.9;">${initialView.badge}</span>
+      <div style="display:grid; grid-template-columns: 1.15fr 1fr; gap: 32px; align-items: start;">
+        <!-- Left: Interactive 360° Turntable Viewport & Multi-View Controls -->
+        <div>
+          <!-- Header Bar: Angle Indicator Gauge & Original AI Photography Badge -->
+          <div class="vas-360-header-bar">
+            <div class="vas-360-angle-gauge" id="pdp360AngleGauge">
+              <span class="degree-pulse"></span> ${initialFrame.label.toUpperCase()}
             </div>
-            <div class="vas-pdp-zoom-badge">
-              <span>🔍 Hover to Magnify (2.2x)</span>
+            <div style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; display:flex; align-items:center; gap:5px;">
+              <span>✨ 100% Original AI Photography</span>
             </div>
           </div>
 
-          <!-- Main Interactive Viewport with Pan Zoom & Arrows -->
-          <div class="vas-pdp-viewport" id="pdpViewport">
-            <img id="pdpMainImg" src="${initialView.url}" alt="${p.name} - ${initialView.label}">
-            <button type="button" class="vas-pdp-nav-btn vas-pdp-prev" onclick="window.navigatePdpAngle(-1)" title="Previous View or Outfit">‹</button>
-            <button type="button" class="vas-pdp-nav-btn vas-pdp-next" onclick="window.navigatePdpAngle(1)" title="Next View or Outfit">›</button>
-          </div>
+          <!-- Main Interactive 360 Turntable Viewport (Drag to Rotate) -->
+          <div class="vas-360-turntable-container" id="pdp360Viewport" title="Click & Drag Horizontally to Rotate 360°">
+            <img class="vas-360-turntable-img" id="pdp360Img" src="${initialFrame.url}" alt="${p.name}">
+            
+            <!-- Side Navigation Arrows -->
+            <button type="button" class="vas-360-nav-arrow prev" onclick="window.rotate360Step(-1)" title="Rotate Left">‹</button>
+            <button type="button" class="vas-360-nav-arrow next" onclick="window.rotate360Step(1)" title="Rotate Right">›</button>
 
-          <!-- 5 Detail Zoom Thumbnails Strip (From SAME Original Image) -->
-          <div class="vas-pdp-thumbs-row" id="pdpThumbsRow" style="grid-template-columns:repeat(5, 1fr);">
-            ${pdpAngleKeys.map(k => {
-              const v = views[k];
-              if (!v) return '';
-              const shortLabel = k === 'front' ? '1. Full Dress' :
-                                 k === 'detail' ? '2. Embroidery' :
-                                 k === 'upper' ? '3. Blouse/Kurta' :
-                                 k === 'sleeves' ? '4. Sleeves' : '5. Neckline';
-              return `
-                <div class="vas-pdp-thumb ${k === 'front' ? 'active' : ''}" data-angle="${k}" onclick="window.switchPdpAngle('${k}')" title="${v.label}">
-                  <img src="${v.url}" alt="${v.label}">
-                  <span class="vas-pdp-thumb-label">${shortLabel}</span>
-                </div>
-              `;
-            }).join('')}
-          </div>
-
-          <!-- Detail Inspection Callout Card -->
-          <div class="vas-pdp-inspection-card" id="pdpInspectionCard">
-            <div class="vas-pdp-inspection-icon">🔍</div>
-            <div class="vas-pdp-inspection-text">
-              <strong id="pdpInspectTitle">Visual Detail Inspection: ${initialView.label}</strong>
-              <span id="pdpInspectDesc">${initialView.desc}</span>
+            <!-- Drag To Rotate Floating Guidance Overlay -->
+            <div class="vas-360-drag-indicator">
+              <span>🔄 Drag horizontally to rotate 360°</span>
             </div>
           </div>
 
-          <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.82rem; color:var(--vas-muted);">
-            <span>⭐ ${p.rating || '4.9'} / 5.0 (${p.reviewsCount || '32'} reviews)</span>
-            <span>📍 Same Garment Detail Inspection · Single Master Photo</span>
+          <!-- 360° Interactive Toolbar (Auto-Spin, Zoom, Scrub) -->
+          <div class="vas-360-toolbar">
+            <button type="button" class="vas-360-tool-btn" id="btnAutoRotate360" onclick="window.toggleAutoRotate()">
+              ▶ Auto-Rotate 360°
+            </button>
+            
+            <!-- Scrub Dots Track -->
+            <div class="vas-360-scrub-track" title="Angle Step Scrubber">
+              ${current360Frames.map((f, idx) => `
+                <div class="vas-360-scrub-step ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="window.switchTurntableFrame(${idx})" title="${f.label}"></div>
+              `).join('')}
+            </div>
+
+            <button type="button" class="vas-360-tool-btn" id="btnToggleZoom" onclick="window.toggle360Zoom()">
+              🔍 Zoom 2.2x
+            </button>
+          </div>
+
+          <!-- Multi-Angle Thumbnails Grid -->
+          <div class="vas-360-thumbs-grid">
+            ${current360Frames.map((f, idx) => `
+              <div class="vas-360-thumb-item ${idx === 0 ? 'active' : ''}" data-index="${idx}" onclick="window.switchTurntableFrame(${idx})" title="${f.label}">
+                <img src="${f.url}" alt="${f.label}">
+                <span class="thumb-label">${f.label}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Detail Inspection Callout -->
+          <div style="background:rgba(255,255,255,0.85); border:1px solid var(--vas-border); border-radius:8px; padding:10px 14px; margin-top:12px; display:flex; align-items:flex-start; gap:10px;">
+            <span style="font-size:1.1rem; color:var(--vas-gold-dark);">🔍</span>
+            <div style="font-size:0.8rem; line-height:1.45;">
+              <strong id="pdp360InspectTitle" style="display:block; color:var(--vas-ink); margin-bottom:2px;">Atelier View: ${initialFrame.label}</strong>
+              <span id="pdp360InspectDesc" style="color:var(--vas-muted);">${initialFrame.desc || 'Direct multi-angle inspection of garment on authentic ghost mannequin.'}</span>
+            </div>
           </div>
         </div>
 
@@ -990,7 +1141,7 @@
       </div>
     `;
     openModal("genericModal");
-    setupPdpZoom();
+    setup360TurntableInteractions();
   };
 
   // ------------------------------------------------------------------------

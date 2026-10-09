@@ -173,7 +173,7 @@
         <form onsubmit="window.saveTailorWipPhoto(event, '${orderId}')">
           <div style="margin-bottom:14px;">
             <label style="display:block; font-size:11px; font-weight:700; color:#4a0d17; text-transform:uppercase; margin-bottom:6px;">Sample Work-In-Progress Image URL</label>
-            <input id="tailorWipImg" value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" required class="nak-form-control">
+            <input id="tailorWipImg" value="images/products/women/emerald-pakistani-suit-front.jpg" required class="nak-form-control">
           </div>
           <div style="margin-bottom:18px;">
             <label style="display:block; font-size:11px; font-weight:700; color:#4a0d17; text-transform:uppercase; margin-bottom:6px;">Artisan Progress Note</label>

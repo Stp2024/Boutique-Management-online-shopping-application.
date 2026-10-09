@@ -1,1503 +1,2120 @@
 /* =====================================================
-   VASTRAÉ BOUTIQUE - CURATED PRODUCTS DATASET
-   40 Outfits across 13 bespoke styles with 5 views each
-   (Overview with 360° animation, Front, Back, Side, Top)
+   VASTRAÉ BOUTIQUE - CURATED AI PRODUCTS DATASET
+   100% Original AI Product Photography via Google Gemini
+   Consistent Garment Identity across all angles & views
 ===================================================== */
 
 const products = [
   {
-    "id": 101,
-    "name": "Peacock Maggam Hand-Embroidered Bridal Blouse",
+    "id": "W-EM-01",
+    "name": "Emerald Pakistani Zari Embroidered 3-Piece Suit",
+    "category": "suits",
     "gender": "women",
-    "style": "traditional",
-    "type": "Blouse",
-    "category": "blouse",
     "price": 6499,
-    "old": 8200,
-    "rating": "★★★★★",
-    "badge": "TRENDING ON INSTAGRAM",
-    "desc": "Heavy artisanal aari work peacock motifs on royal raw silk, studded with kundan stones, basra pearls, and antique gold zardozi piping.",
-    "img": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Pure Kanjeevaram Raw Silk",
-    "stock": 4,
-    "sku": "NK-BL-01",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 102,
-    "name": "Royal Crimson Velvet Zardozi Bridal Blouse",
-    "gender": "women",
-    "style": "wedding",
-    "type": "Blouse",
-    "category": "blouse",
-    "price": 5899,
-    "old": 7500,
-    "rating": "★★★★★",
-    "badge": "PINTEREST FAVORITE",
-    "desc": "Deep crimson micro-velvet with intricate metallic gold bullion work, deep sweetheart neckline, and handcrafted latkan back tie-ups.",
-    "img": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Italian Micro-Velvet & Zari",
-    "stock": 3,
-    "sku": "NK-BL-02",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 103,
-    "name": "Kanjeevaram Pure Gold Zari Temple Silk Saree",
-    "gender": "women",
-    "style": "traditional",
-    "type": "Saree",
-    "category": "saree",
-    "price": 18999,
-    "old": 24000,
-    "rating": "★★★★★",
-    "badge": "HERITAGE ATELIER",
-    "desc": "Authentic certified handloom silk from Kanchipuram with pure silver-plated 24k gold zari borders, Korvai temple weave, and contrast pallu.",
-    "img": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Pure Mulberry Silk & Silver Zari",
-    "stock": 2,
-    "sku": "NK-SAR-01",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 104,
-    "name": "Little Princess Handloom Cotton Twinning Frock",
-    "gender": "kids",
-    "style": "festive",
-    "type": "Frock",
-    "category": "frock",
-    "price": 2299,
-    "old": 2999,
-    "rating": "★★★★★",
-    "badge": "MOTHER-DAUGHTER EDIT",
-    "desc": "Soft handwoven breathable cotton frock with gold kasavu borders, hypoallergenic mulmul lining, and matching hair accessory.",
-    "img": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=85",
-    "fabric": "100% Handloom Cotton & Mulmul",
-    "stock": 6,
-    "sku": "NK-FRK-01",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 105,
-    "name": "Gulabi Rose Handcrafted Bridal Lehenga",
-    "gender": "women",
-    "style": "wedding",
-    "type": "Lehenga",
-    "category": "lehenga",
-    "price": 24500,
-    "old": 32000,
-    "rating": "★★★★★",
-    "badge": "VOGUE RUNWAY",
-    "desc": "36-kali flare raw silk lehenga with French knot floristry, cut-dana embroidery, scalloped dupatta border and can-can layering.",
-    "img": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Pure Raw Silk & Net",
-    "stock": 2,
-    "sku": "NK-LEH-01",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 106,
-    "name": "Kashmiri Tilla Hand-Embroidered Chanderi Kurti",
-    "gender": "women",
-    "style": "formal",
-    "type": "Kurti",
-    "category": "kurti",
-    "price": 4899,
-    "old": 6200,
-    "rating": "★★★★☆",
-    "badge": "DESK TO DINNER",
-    "desc": "Fine gold metallic threadwork across neckline and sleeves on breathable handloom Chanderi silk with side slits and santoon lining.",
-    "img": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Handloom Chanderi Silk",
+    "originalPrice": 8200,
+    "image": "images/products/women/emerald-pakistani-suit-front.jpg",
+    "badge": "Bespoke Haute Couture",
+    "description": "Handcrafted deep emerald Pakistani straight suit featuring fine tilla and zardozi threadwork along the split neckline and hem, paired with relaxed trousers and an embroidered organza dupatta.",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "Custom Tailored"
+    ],
     "stock": 5,
-    "sku": "NK-KUR-01",
+    "customizable": true,
+    "fabric": "Bangalore Raw Silk & Organza",
+    "color": "Emerald Green & Antique Gold",
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "specs": {
+      "craftsmanship": "Authentic Pakistani tilla wire embroidery, scalloped organza borders & hand-stitched piping",
+      "composition": "Pure Bangalore Raw Silk shell with Silk Organza Dupatta & Mulmul lining",
+      "care": "Archival Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Festive Soirées, Eid Gala & Wedding Receptions"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/emerald-pakistani-suit-front.jpg",
+        "angle": 0,
+        "label": "Front View (0°)"
+      },
+      {
+        "url": "images/products/women/emerald-pakistani-suit-threequarter.jpg",
+        "angle": 45,
+        "label": "Three-Quarter View (45°)"
+      },
+      {
+        "url": "images/products/women/emerald-pakistani-suit-side.jpg",
+        "angle": 90,
+        "label": "Side Profile (90°)"
+      },
+      {
+        "url": "images/products/women/emerald-pakistani-suit-back.jpg",
+        "angle": 180,
+        "label": "Back View (180°)"
+      },
+      {
+        "url": "images/products/women/emerald-pakistani-suit-detail.jpg",
+        "angle": null,
+        "label": "Zari & Neckline Macro"
+      }
+    ],
     "views": {
-      "overview": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=85"
+      "front": {
+        "url": "images/products/women/emerald-pakistani-suit-front.jpg",
+        "label": "Front View (0°)",
+        "badge": "1. Complete Front View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Front View: Straight-cut emerald silhouette featuring ornate neckline embroidery, full sleeves, and matching straight trousers."
+      },
+      "threequarter": {
+        "url": "images/products/women/emerald-pakistani-suit-threequarter.jpg",
+        "label": "Three-Quarter View (45°)",
+        "badge": "2. Three-Quarter View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "3/4 Perspective: Balanced 45° angle revealing fluid drape of the embroidered organza dupatta and side sleeve contour."
+      },
+      "side": {
+        "url": "images/products/women/emerald-pakistani-suit-side.jpg",
+        "label": "Side Profile (90°)",
+        "badge": "3. Side Profile",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Side Profile: Tailored side seam, side-slit needlework finishing, and clean sleeve pitch."
+      },
+      "back": {
+        "url": "images/products/women/emerald-pakistani-suit-back.jpg",
+        "label": "Back View (180°)",
+        "badge": "4. Back View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Back View: Clean rear neckline with concealed invisible closure, seamless pattern alignment, and back dupatta drape."
+      },
+      "detail": {
+        "url": "images/products/women/emerald-pakistani-suit-detail.jpg",
+        "label": "Zari & Neckline Macro",
+        "badge": "5. Artisanal Macro",
+        "zoom": "1.8x",
+        "focus": "50% 35%",
+        "desc": "Macro Inspection: High-definition close-up of intricate antique gold tilla threadwork, micro-beading, and pure raw silk weave."
+      }
     }
   },
   {
-    "id": 107,
-    "name": "Mother-Daughter Royal Twinning Silk Ensemble",
+    "id": "W-SA-02",
+    "name": "Crimson Red Banarasi Kadhwa Silk Saree",
+    "category": "sarees",
     "gender": "women",
-    "style": "festive",
-    "type": "Twinning Set",
-    "category": "twinning",
-    "price": 8499,
-    "old": 11000,
-    "rating": "★★★★★",
-    "badge": "TWINNING SIGNATURE",
-    "desc": "Coordinated duo set featuring adult flared Anarkali gown and matching little princess party frock in temple blush gold weave.",
-    "img": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Artisanal Silk & Soft Tulle",
-    "stock": 3,
-    "sku": "NK-TWIN-01",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 108,
-    "name": "Punjabi Phulkari Silk Patiala Salwar Suit",
-    "gender": "women",
-    "style": "festive",
-    "type": "Patiala",
-    "category": "patiala",
-    "price": 5299,
-    "old": 6800,
-    "rating": "★★★★★",
-    "badge": "FESTIVE EDIT",
-    "desc": "Geometric silk threadwork Phulkari dupatta paired with a pleated 4-meter Patiala salwar and tailored short kurti.",
-    "img": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85",
-    "fabric": "Chanderi Silk & Handspun Chiffon",
+    "price": 8899,
+    "originalPrice": 11500,
+    "image": "images/products/women/crimson-banarasi-saree-front.jpg",
+    "badge": "Bridal Signature",
+    "description": "Pure Katan silk crimson Banarasi saree woven in authentic Kadhwa technique featuring intricate gold floral jaal, heavy meenakari pallu, and matching unstitched blouse piece.",
+    "sizes": [
+      "Free Size (6.3m with Blouse)"
+    ],
     "stock": 4,
-    "sku": "NK-PAT-01",
+    "customizable": true,
+    "fabric": "100% Pure Katan Banarasi Silk",
+    "color": "Crimson Red & Gold Zari",
+    "rating": 5,
+    "reviewsCount": 39,
+    "specs": {
+      "craftsmanship": "Authentic handloom Kadhwa weave with real gold electroplated zari threads",
+      "composition": "100% Pure Mulberry Katan Silk with Silk Mark Certification",
+      "care": "Dry Clean Only; Store Wrapped in Pure Cotton Muslin",
+      "dispatch": "Express Dispatch in 24 Hours",
+      "occasion": "Bridal Trousseau, Traditional Weddings & Temple Rituals"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Authentic Crimson Red Banarasi saree in full length showcasing real gold Kadhwa weave."
+      },
+      {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Embroidery & Zari Zoom: Close examination of the hand-woven gold motifs and rich luster of pure crimson Katan silk."
+      },
+      {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Pleat Architecture: Detailed view of the waist pleats and gold border alignment on this saree."
+      },
+      {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Border Weave: Inspection of the selvedge edge, woven zari border, and fine silk thread density."
+      },
+      {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Pallu Craftsmanship: Focused look at the grand meenakari pallu with intricate floral vines."
+      }
+    ],
     "views": {
-      "overview": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85"
+      "front": {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Authentic Crimson Red Banarasi saree in full length showcasing real gold Kadhwa weave."
+      },
+      "detail": {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Embroidery & Zari Zoom: Close examination of the hand-woven gold motifs and rich luster of pure crimson Katan silk."
+      },
+      "upper": {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Pleat Architecture: Detailed view of the waist pleats and gold border alignment on this saree."
+      },
+      "sleeves": {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Border Weave: Inspection of the selvedge edge, woven zari border, and fine silk thread density."
+      },
+      "neckline": {
+        "url": "images/products/women/crimson-banarasi-saree-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Pallu Craftsmanship: Focused look at the grand meenakari pallu with intricate floral vines."
+      }
     }
   },
   {
-    "id": 3,
-    "name": "Savile Row Midnight Tuxedo",
-    "gender": "men",
-    "style": "formal",
-    "type": "Tuxedo",
-    "price": 8999,
-    "old": 10999,
-    "rating": "★★★★★",
-    "badge": "BESPOKE SARTORIAL",
-    "desc": "Hand-stitched wool-mohair blend, pure mulberry silk grosgrain peak lapel & hand-sewn buttonholes.",
-    "img": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 301,
-    "name": "Sculptural Crepe Gala Evening Gown",
+    "id": "W-SA-03",
+    "name": "Mint Green Hand-Painted Floral Organza Saree",
+    "category": "sarees",
     "gender": "women",
-    "style": "formal",
-    "type": "Gown",
-    "price": 9499,
-    "old": 11500,
-    "rating": "★★★★★",
-    "badge": "GALA ATELIER",
-    "desc": "Floor-length heavy Italian silk crepe, architectural asymmetric cowl neckline and structured internal corset.",
-    "img": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 302,
-    "name": "Three-Piece Italian Charcoal Suit",
-    "gender": "men",
-    "style": "formal",
-    "type": "Suit",
-    "price": 7999,
-    "old": 9299,
-    "rating": "★★★★★",
-    "badge": "SIGNATURE",
-    "desc": "Super 150s Australian Merino wool, tailored six-button double-breasted waistcoat & horn buttons.",
-    "img": "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 4,
-    "name": "Italian Cut Houndstooth Blazer",
-    "gender": "men",
-    "style": "semi-formal",
-    "type": "Blazer",
-    "price": 5999,
-    "old": 6999,
-    "rating": "★★★★☆",
-    "badge": "TWILIGHT EDIT",
-    "desc": "Unstructured soft shoulder tailoring, virgin wool blend, patch pockets & mother-of-pearl buttons.",
-    "img": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 401,
-    "name": "Twilight Silk Charmeuse Cocktail Wrap",
-    "gender": "women",
-    "style": "semi-formal",
-    "type": "Dress",
-    "price": 6499,
-    "old": 7800,
-    "rating": "★★★★★",
-    "badge": "COCKTAIL HOUR",
-    "desc": "Weighty 22-momme silk charmeuse, cascading bias-cut waterfall skirt & self-tie sash belt.",
-    "img": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 402,
-    "name": "Midnight Velvet Cocktail Tuxedo Blazer",
-    "gender": "men",
-    "style": "semi-formal",
-    "type": "Blazer",
-    "price": 6799,
-    "old": 8200,
-    "rating": "★★★★★",
-    "badge": "VIP LOUNGE",
-    "desc": "Plush cotton velvet in deep plum noir, contrast satin shawl collar & silk lining.",
-    "img": "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 7,
-    "name": "Nordic Architectural Minimalist Trench",
-    "gender": "women",
-    "style": "semi-modern",
-    "type": "Trench",
-    "price": 4999,
-    "old": 6200,
-    "rating": "★★★★★",
-    "badge": "NORDIC EDIT",
-    "desc": "Crisp water-repellent organic cotton gabardine, geometric storm flap & concealed magnetic closures.",
-    "img": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 16,
-    "name": "Modern Linen Drape Kurta-Shirt",
-    "gender": "men",
-    "style": "semi-modern",
-    "type": "Shirt",
-    "price": 2899,
-    "old": 3499,
-    "rating": "★★★★☆",
-    "badge": "STUDIO DROP",
-    "desc": "Pre-washed European flax linen, banded mandarin collar & subtle inverted pleat down back.",
-    "img": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 501,
-    "name": "Scandinavian Tailored Wool Overcoat",
-    "gender": "men",
-    "style": "semi-modern",
-    "type": "Overcoat",
-    "price": 6999,
-    "old": 8499,
-    "rating": "★★★★★",
-    "badge": "CLEAN LINES",
-    "desc": "Heavyweight recycled melange wool, unlined architectural drape & minimalist single-button closure.",
-    "img": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 14,
-    "name": "Sun-Washed Terracotta Linen Shirt Set",
-    "gender": "men",
-    "style": "casual",
-    "type": "Shirt",
-    "price": 2799,
-    "old": 3499,
-    "rating": "★★★★★",
-    "badge": "SUMMER BREEZE",
-    "desc": "Garment-dyed pure French flax linen, relaxed Cuban camp collar & natural coconut husk buttons.",
-    "img": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 601,
-    "name": "Golden-Hour Breezy Tiered Linen Maxi",
-    "gender": "women",
-    "style": "casual",
-    "type": "Maxi Dress",
-    "price": 3899,
-    "old": 4699,
-    "rating": "★★★★★",
-    "badge": "GOLDEN HOUR",
-    "desc": "Airy tiered organic cotton-linen gauze, smocked elastic back bodice and deep side pockets.",
-    "img": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 602,
-    "name": "Everyday Washed Silk Slip Dress",
-    "gender": "women",
-    "style": "casual",
-    "type": "Slip",
-    "price": 3499,
-    "old": 4200,
-    "rating": "★★★★☆",
-    "badge": "EASY LUXE",
-    "desc": "Sand-washed mulberry silk crepe, adjustable delicate straps & subtle side slit for walking ease.",
-    "img": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 10,
-    "name": "Royal Madder Banarasi Silk Saree",
-    "gender": "women",
-    "style": "ethnic",
-    "type": "Saree",
-    "price": 5499,
-    "old": 6899,
-    "rating": "★★★★★",
-    "badge": "HANDLOOM GI",
-    "desc": "Hand-loomed in Varanasi on pit looms, authentic vegetable madder red dye & intricate silver-gold zari booti.",
-    "img": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 701,
-    "name": "Heritage Paisley Embroidered Anarkali",
-    "gender": "women",
-    "style": "ethnic",
-    "type": "Anarkali",
-    "price": 6299,
-    "old": 7500,
-    "rating": "★★★★★",
-    "badge": "ROYAL HERITAGE",
-    "desc": "32-kali flared pure Chanderi silk silhouette with intricate hand-embroidered kashmiri tilla work.",
-    "img": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 702,
-    "name": "Lucknowi Chikankari Mukaish Silk Kurta Set",
-    "gender": "men",
-    "style": "ethnic",
-    "type": "Kurta Set",
     "price": 5799,
-    "old": 6999,
-    "rating": "★★★★★",
-    "badge": "MASTER ARTISAN",
-    "desc": "Pure mulberry silk, exquisite needle-embroidered shadow work with real silver wire mukaish dots.",
-    "img": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=800&q=85",
+    "originalPrice": 7400,
+    "image": "images/products/women/mint-organza-saree-front.jpg",
+    "badge": "Trending on Pinterest",
+    "description": "Featherlight mint green sheer silk organza saree adorned with delicate botanical floral artwork and hand-embroidered scalloped gota patti borders.",
+    "sizes": [
+      "Free Size (6.3m with Blouse)"
+    ],
+    "stock": 6,
+    "customizable": true,
+    "fabric": "Pure Sheer Silk Organza",
+    "color": "Pastel Mint Green & Rose Pink",
+    "rating": 4.9,
+    "reviewsCount": 31,
+    "specs": {
+      "craftsmanship": "Artisanal hand-painted botanical motifs with hand-stitched scalloped borders",
+      "composition": "Pure Silk Organza with Italian Crepe Blouse Fabric",
+      "care": "Mild Professional Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Summer Weddings, Mehendi Ceremonies & Garden Soirées"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Gossamer mint organza saree draped cleanly, showcasing soft translucent layers."
+      },
+      {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Floral Artwork: Watercolor botanical flora, micro gota ribbon embroidery, and organza weave."
+      },
+      {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Pallu Drape: Fluid shoulder drape displaying watercolor flora and airy sheer volume."
+      },
+      {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Scalloped Border: Precision hand-cut scallops and gold gota edging."
+      },
+      {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Fabric Sheer: High-definition inspection of the lightweight mulberry silk organza."
+      }
+    ],
     "views": {
-      "overview": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
+      "front": {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Gossamer mint organza saree draped cleanly, showcasing soft translucent layers."
+      },
+      "detail": {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Floral Artwork: Watercolor botanical flora, micro gota ribbon embroidery, and organza weave."
+      },
+      "upper": {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Pallu Drape: Fluid shoulder drape displaying watercolor flora and airy sheer volume."
+      },
+      "sleeves": {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Scalloped Border: Precision hand-cut scallops and gold gota edging."
+      },
+      "neckline": {
+        "url": "images/products/women/mint-organza-saree-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Fabric Sheer: High-definition inspection of the lightweight mulberry silk organza."
+      }
     }
   },
   {
-    "id": 9,
-    "name": "Marigold Zardozi Festive Sharara",
+    "id": "W-AN-04",
+    "name": "Ivory Imperial Gold Hand-Embroidered Anarkali Set",
+    "category": "suits",
     "gender": "women",
-    "style": "festive",
-    "type": "Sharara",
-    "price": 6999,
-    "old": 8499,
-    "rating": "★★★★★",
-    "badge": "JUBILEE GOLD",
-    "desc": "Bright marigold georgette, flared tiered sharara with micro-sequin scatter & hand-beaded gota border.",
-    "img": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 801,
-    "name": "Radiant Vermillion Raw Silk Bandhgala",
-    "gender": "men",
-    "style": "festive",
-    "type": "Bandhgala",
-    "price": 7499,
-    "old": 8999,
-    "rating": "★★★★★",
-    "badge": "FESTIVE ROYAL",
-    "desc": "Deep festive vermillion raw silk, structured Jodhpuri collar, gilded brass buttons & matched pocket square.",
-    "img": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 802,
-    "name": "Shimmering Mirror-Work Celebration Lehenga",
-    "gender": "women",
-    "style": "festive",
-    "type": "Lehenga",
-    "price": 8499,
-    "old": 10500,
-    "rating": "★★★★★",
-    "badge": "DIWALI SPECIAL",
-    "desc": "Flared magenta silk skirt embroidered with genuine glass mirror medallions that catch every festival light.",
-    "img": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 8,
-    "name": "Ultraviolet Liquid Sequin Cocktail Slip",
-    "gender": "women",
-    "style": "party",
-    "type": "Dress",
-    "price": 4999,
-    "old": 6200,
-    "rating": "★★★★★",
-    "badge": "NEON NIGHTS",
-    "desc": "High-density micro sequins shift from violet to electric magenta under nightlife lighting.",
-    "img": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 901,
-    "name": "Midnight High-Shine Velvet Tuxedo Blazer",
-    "gender": "men",
-    "style": "party",
-    "type": "Blazer",
-    "price": 6499,
-    "old": 7999,
-    "rating": "★★★★★",
-    "badge": "CLUB VIP",
-    "desc": "Deep obsidian Italian cotton velvet with subtle metallic thread sheen & tonal satin lapel.",
-    "img": "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 902,
-    "name": "Rose Gold Metallic Sculpted Corset Gown",
-    "gender": "women",
-    "style": "party",
-    "type": "Gown",
-    "price": 5899,
-    "old": 7200,
-    "rating": "★★★★★",
-    "badge": "STATEMENT",
-    "desc": "Molded metallic duchess satin with built-in boning and high-impact thigh-high slit.",
-    "img": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 6,
-    "name": "24K Real Zari Bridal Crimson Velvet Lehenga",
-    "gender": "women",
-    "style": "wedding",
-    "type": "Lehenga",
-    "price": 14999,
-    "old": 18500,
-    "rating": "★★★★★",
-    "badge": "ROYAL MATRIMONY",
-    "desc": "Pure mulberry silk micro-velvet, 24K real gold thread bullion hand-embroidery with semi-precious rubies.",
-    "img": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 12,
-    "name": "Imperial Ivory Mulberry Raw Silk Sherwani",
-    "gender": "men",
-    "style": "wedding",
-    "type": "Sherwani",
-    "price": 12999,
-    "old": 15500,
-    "rating": "★★★★★",
-    "badge": "GROOM COUTURE",
-    "desc": "Hand-spun Bhagalpur raw silk, tonal marori work, real basra pearl buttons & matched banarasi stole.",
-    "img": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1001,
-    "name": "Kanjeevaram Royal Bridal Swarna Pattu Saree",
-    "gender": "women",
-    "style": "wedding",
-    "type": "Saree",
-    "price": 11499,
-    "old": 13999,
-    "rating": "★★★★★",
-    "badge": "TEMPLE BRIDAL",
-    "desc": "Three-ply mulberry silk, korvai temple interlocking borders and full swarna bullion gold zari pallu.",
-    "img": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 11,
-    "name": "Obsidian Caviar Silk Haute Couture Gown",
-    "gender": "women",
-    "style": "luxury",
-    "type": "Gown",
-    "price": 16999,
-    "old": 21000,
-    "rating": "★★★★★",
-    "badge": "HAUTE COUTURE",
-    "desc": "Numbered atelier edition, 250 hours of hand-sewn caviar beads, liquid black silk and dramatic sweeping train.",
-    "img": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1101,
-    "name": "24K Bullion Cashmere Bespoke Overcoat",
-    "gender": "men",
-    "style": "luxury",
-    "type": "Coat",
-    "price": 15499,
-    "old": 18999,
-    "rating": "★★★★★",
-    "badge": "SALON EXCLUSIVE",
-    "desc": "Pure double-faced Mongolian cashmere, hand-stitched real gold bullion wire crested lapel.",
-    "img": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1102,
-    "name": "Molten Champagne Gold Pavéé Column Dress",
-    "gender": "women",
-    "style": "luxury",
-    "type": "Gown",
-    "price": 13999,
-    "old": 16999,
-    "rating": "★★★★★",
-    "badge": "24K BULLION",
-    "desc": "Hand-set Swarovski crystals on molten champagne gold silk mesh with floor-grazing cape sleeves.",
-    "img": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 13,
-    "name": "Metropolis Titanium Pinstripe Power Suit",
-    "gender": "women",
-    "style": "office",
-    "type": "Power Suit",
-    "price": 6799,
-    "old": 8200,
-    "rating": "★★★★★",
-    "badge": "EXECUTIVE",
-    "desc": "Crease-resistant bi-stretch Italian wool, razor-sharp peak lapel & high-waisted cigarette trousers.",
-    "img": "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1201,
-    "name": "Executive Wool Double-Breasted Boardroom Suit",
-    "gender": "men",
-    "style": "office",
-    "type": "Suit",
-    "price": 7899,
-    "old": 9499,
-    "rating": "★★★★★",
-    "badge": "C-SUITE",
-    "desc": "Navy twill English worsted wool, full canvas chest piece & functional surgeon cuffs.",
-    "img": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1202,
-    "name": "Architectural Trench & Tailored Trousers",
-    "gender": "women",
-    "style": "office",
-    "type": "Ensemble",
-    "price": 5499,
-    "old": 6799,
-    "rating": "★★★★☆",
-    "badge": "MODERN DESK",
-    "desc": "Structured compact gabardine double-breasted coat paired with wide-leg pleat-front wool trousers.",
-    "img": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 5,
-    "name": "Avant-Garde Deconstructed Acid Sculpture Gown",
-    "gender": "women",
-    "style": "designer",
-    "type": "Gown",
-    "price": 10999,
-    "old": 13500,
-    "rating": "★★★★★",
-    "badge": "RUNWAY SHOWCASE",
-    "desc": "Radical asymmetrical pleating, bonded chartreuse neoprene armature & open back sculptural cutaways.",
-    "img": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1301,
-    "name": "Runway Asymmetrical Cutaway Tailored Jacket",
-    "gender": "men",
-    "style": "designer",
-    "type": "Jacket",
-    "price": 8999,
-    "old": 11000,
-    "rating": "★★★★★",
-    "badge": "PARIS FASHION WEEK",
-    "desc": "Deconstructed half-lapel, exposed canvas basted stitchwork & draped pleated cummerbund sash.",
-    "img": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-    }
-  },
-  {
-    "id": 1302,
-    "name": "Monolithic Sculpted Mesh Runway Trench",
-    "gender": "women",
-    "style": "designer",
-    "type": "Coat",
     "price": 9499,
-    "old": 11999,
-    "rating": "★★★★★",
-    "badge": "AVANT-GARDE",
-    "desc": "Laser-perforated memory mesh, exaggerated cocoon shoulders and integrated harness hardware.",
-    "img": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85",
+    "originalPrice": 12900,
+    "image": "images/products/women/ivory-anarkali-suit-front.jpg",
+    "badge": "Royalty Edit",
+    "description": "Floor-length imperial ivory flared Anarkali gown with hand-sewn antique gold zardozi yoke, 32 kalis for voluminous flare, churidar, and embroidered tissue silk dupatta.",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "Bespoke Sizing"
+    ],
+    "stock": 4,
+    "customizable": true,
+    "fabric": "Pure Georgette & Tissue Gold",
+    "color": "Ivory White & Antique Gold",
+    "rating": 5,
+    "reviewsCount": 54,
+    "specs": {
+      "craftsmanship": "Meticulous 32-kali tailoring with antique gold zardozi wire embroidery and heavy can-can lining",
+      "composition": "Pure Viscose Georgette with Pure Mulmul Cotton Inner Slip & Tissue Gold Dupatta",
+      "care": "Archival Dry Clean Only",
+      "dispatch": "Custom Tailored in 4-6 Days",
+      "occasion": "Sangeet, Nikah, Royal Reception & Gala Events"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Regal ivory 32-kali flare, deep-set embroidered bodice, full sleeves, and cascading dupatta."
+      },
+      {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zardozi Needlework: Exquisite metallic bullion wire work, seed pearl insets, and fine georgette pleating."
+      },
+      {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Bodice Cut: Sweetheart yoke architecture with dense gold threadwork."
+      },
+      {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Fitted Sleeves: Churidar-style fitted georgette sleeves with embroidered cuffs."
+      },
+      {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Neckline Detail: Fine piping and collar embroidery border."
+      }
+    ],
     "views": {
-      "overview": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+      "front": {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Regal ivory 32-kali flare, deep-set embroidered bodice, full sleeves, and cascading dupatta."
+      },
+      "detail": {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zardozi Needlework: Exquisite metallic bullion wire work, seed pearl insets, and fine georgette pleating."
+      },
+      "upper": {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Bodice Cut: Sweetheart yoke architecture with dense gold threadwork."
+      },
+      "sleeves": {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Fitted Sleeves: Churidar-style fitted georgette sleeves with embroidered cuffs."
+      },
+      "neckline": {
+        "url": "images/products/women/ivory-anarkali-suit-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Neckline Detail: Fine piping and collar embroidery border."
+      }
     }
   },
   {
-    "id": 1,
-    "name": "Ivory Contemporary Evening Dress",
+    "id": "W-VE-05",
+    "name": "Midnight Black Micro-Velvet Zardozi Party Suit",
+    "category": "suits",
     "gender": "women",
-    "style": "modern",
-    "type": "Dress",
-    "price": 4999,
-    "old": 5999,
-    "rating": "★★★★★",
-    "badge": "ICONIC MODERN",
-    "desc": "Minimalist architectural silhouette, high-slit crepe jersey & clean geometric drape.",
-    "img": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+    "price": 7299,
+    "originalPrice": 9500,
+    "image": "images/products/women/black-velvet-suit-front.jpg",
+    "badge": "Winter Soirée",
+    "description": "Opulent midnight black micro-velvet straight suit with heavy gold bullion embroidery around the sweetheart collar and sleeves, paired with cigarette pants and silk stole.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "Custom"
+    ],
+    "stock": 5,
+    "customizable": true,
+    "fabric": "Italian Micro-Velvet & Pure Silk",
+    "color": "Midnight Black & Champagne Gold",
+    "rating": 4.8,
+    "reviewsCount": 27,
+    "specs": {
+      "craftsmanship": "Antique gold bullion thread needlework with satin piped borders and soft silk lining",
+      "composition": "High-density micro-velvet shell with pure crepe silk bottom",
+      "care": "Professional Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Winter Dinners, Cocktail Parties & Festive Gatherings"
     },
-    "vibe": "avant",
-    "craft": "Minimalist architectural jersey drape"
+    "rotations_360": [
+      {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Sleek midnight black velvet tunic with gold embroidered neckline, full sleeves, and trousers."
+      },
+      {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Velvet Pile & Zari: Deep plush velvet sheen and dense metallic gold bullion stitchwork."
+      },
+      {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Velvet Bodice: Tailored chest cut and regal gold threadwork framing."
+      },
+      {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Cuff Borders: Intricate zardozi embroidery adorning the velvet sleeve cuffs."
+      },
+      {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Sweetheart Collar: Clean velvet collar finish with gold cord piping."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Sleek midnight black velvet tunic with gold embroidered neckline, full sleeves, and trousers."
+      },
+      "detail": {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Velvet Pile & Zari: Deep plush velvet sheen and dense metallic gold bullion stitchwork."
+      },
+      "upper": {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Velvet Bodice: Tailored chest cut and regal gold threadwork framing."
+      },
+      "sleeves": {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Cuff Borders: Intricate zardozi embroidery adorning the velvet sleeve cuffs."
+      },
+      "neckline": {
+        "url": "images/products/women/black-velvet-suit-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Sweetheart Collar: Clean velvet collar finish with gold cord piping."
+      }
+    }
   },
   {
-    "id": 201,
-    "name": "Cyber-Chic Holographic Trench",
+    "id": "W-SH-06",
+    "name": "Pastel Blossom Mukaish & Gotapatti Sharara Set",
+    "category": "suits",
     "gender": "women",
-    "style": "modern",
-    "type": "Trench",
-    "vibe": "cyber",
-    "tag": "⚡ CYBER COUTURE",
-    "badge": "HOT DROP",
-    "rating": "★★★★★",
     "price": 6999,
-    "old": 8999,
-    "desc": "Liquid holographic waterproof membrane with laser-cut ventilation vents & iridescent cyan trim.",
-    "img": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+    "originalPrice": 9200,
+    "image": "images/products/women/pastel-pink-sharara-front.jpg",
+    "badge": "Instagram Trending",
+    "description": "Delicate pastel blush pink short peplum kurta with mukaish badla work, paired with an extravagantly flared 2-tier sharara and gossamer organza dupatta with scalloped borders.",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "Bespoke"
+    ],
+    "stock": 6,
+    "customizable": true,
+    "fabric": "Pure Chanderi Silk & Organza",
+    "color": "Blush Pastel Pink & Silver Zari",
+    "rating": 4.9,
+    "reviewsCount": 44,
+    "specs": {
+      "craftsmanship": "Hand-embossed mukaish badla dots, tiered gathers, and silver gotapatti edging",
+      "composition": "Pure Chanderi Silk shell with Mulmul Cotton Lining & Silk Organza Dupatta",
+      "care": "Gentle Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Daytime Mehendi, Engagement Soirée & Festive Galas"
     },
-    "craft": "Holographic liquid nylon membrane"
+    "rotations_360": [
+      {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Harmonious blush pink silhouette with short embroidered peplum kurta, multi-tiered sharara, and dupatta."
+      },
+      {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Mukaish Badla: Intricate hand-pressed silver metallic mukaish dots and gotapatti work."
+      },
+      {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Peplum Bodice: Tailored bodice with soft gathered flare."
+      },
+      {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Bracelet Sleeves: Graceful sleeve cut with scalloped silver lace."
+      },
+      {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Gala Cut: Split round neckline with delicate gota piping."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Harmonious blush pink silhouette with short embroidered peplum kurta, multi-tiered sharara, and dupatta."
+      },
+      "detail": {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Mukaish Badla: Intricate hand-pressed silver metallic mukaish dots and gotapatti work."
+      },
+      "upper": {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Peplum Bodice: Tailored bodice with soft gathered flare."
+      },
+      "sleeves": {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Bracelet Sleeves: Graceful sleeve cut with scalloped silver lace."
+      },
+      "neckline": {
+        "url": "images/products/women/pastel-pink-sharara-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Gala Cut: Split round neckline with delicate gota piping."
+      }
+    }
   },
   {
-    "id": 202,
-    "name": "Neo-Y2K Deconstructed Corset Blazer",
+    "id": "W-LE-07",
+    "name": "Royal Blue Heritage Peacock Zari Designer Lehenga",
+    "category": "lehenga",
     "gender": "women",
-    "style": "modern",
-    "type": "Blazer",
-    "vibe": "y2k",
-    "tag": "✨ Y2K REVIVAL",
-    "badge": "VIRAL",
-    "rating": "★★★★★",
+    "price": 14999,
+    "originalPrice": 18500,
+    "image": "images/products/women/royal-blue-lehenga-front.jpg",
+    "badge": "Masterpiece Couture",
+    "description": "Architectural royal blue velvet and raw silk designer lehenga skirt embellished with peacock motifs, accompanied by an intricately embroidered blouse and dual net dupatta.",
+    "sizes": [
+      "Custom Made to Measure (All Sizes)"
+    ],
+    "stock": 3,
+    "customizable": true,
+    "fabric": "Silk Velvet, Raw Silk & Double Can-Can",
+    "color": "Royal Sapphire Blue & Gold Zari",
+    "rating": 5,
+    "reviewsCount": 62,
+    "specs": {
+      "craftsmanship": "Artisanal zardozi peacock motifs, double-layer can-can underskirt, and hand-embroidered latkans",
+      "composition": "Silk Velvet skirt & blouse with pure silk satin lining",
+      "care": "Archival Dry Clean Only; Steam Press Only",
+      "dispatch": "Custom Tailored in 7-10 Days",
+      "occasion": "Wedding Gala, Sangeet Night & Grand Reception"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Expansive 6-meter flare of royal blue skirt with designer choli and draped dupatta."
+      },
+      {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Peacock Zari Work: High-density gold wire peacock embroidery studded with micro kundan stones."
+      },
+      {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Sweetheart Choli: Fitted velvet choli with heavy zardozi needlework."
+      },
+      {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Elbow Sleeves: Embroidered sleeve borders with antique gold fringe."
+      },
+      {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Deep Sweetheart Neckline: Sculpted neckline with fine kundan piping."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Expansive 6-meter flare of royal blue skirt with designer choli and draped dupatta."
+      },
+      "detail": {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Peacock Zari Work: High-density gold wire peacock embroidery studded with micro kundan stones."
+      },
+      "upper": {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Sweetheart Choli: Fitted velvet choli with heavy zardozi needlework."
+      },
+      "sleeves": {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Elbow Sleeves: Embroidered sleeve borders with antique gold fringe."
+      },
+      "neckline": {
+        "url": "images/products/women/royal-blue-lehenga-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Deep Sweetheart Neckline: Sculpted neckline with fine kundan piping."
+      }
+    }
+  },
+  {
+    "id": "W-KU-08",
+    "name": "Mustard Sunburst Gota-Patti Festive Kurta Set",
+    "category": "suits",
+    "gender": "women",
+    "price": 4899,
+    "originalPrice": 6500,
+    "image": "images/products/women/mustard-yellow-kurta-front.jpg",
+    "badge": "Haldi Festive Special",
+    "description": "Vibrant mustard yellow raw silk straight kurta featuring traditional Rajasthani gotapatti neckline, coordinating wide-leg palazzo pants, and sheer scalloped dupatta.",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "Custom"
+    ],
+    "stock": 7,
+    "customizable": true,
+    "fabric": "Raw Silk & Organza",
+    "color": "Mustard Sunburst Yellow & Gold",
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "specs": {
+      "craftsmanship": "Authentic Rajasthani gota patti handwork with scalloped gold lace borders",
+      "composition": "Pure Bangalore Raw Silk kurta with matching palazzo pants & sheer organza dupatta",
+      "care": "Gentle Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Haldi Rituals, Mehendi Celebrations & Festive Lunches"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Complete mustard yellow ensemble with straight kurta, flared palazzo trousers, and organza dupatta."
+      },
+      {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Gota Ribbon Work: Fine gold gota ribbon embroidery with resham center highlights."
+      },
+      {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Straight Bodice: Elegant straight-cut silhouette in lustrous raw silk."
+      },
+      {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Quarter Sleeves: Clean finished sleeve cuffs with gold border trim."
+      },
+      {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Gota Patti Neckline: Ornate split round neckline framed in gold gotapatti."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Complete mustard yellow ensemble with straight kurta, flared palazzo trousers, and organza dupatta."
+      },
+      "detail": {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Gota Ribbon Work: Fine gold gota ribbon embroidery with resham center highlights."
+      },
+      "upper": {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Straight Bodice: Elegant straight-cut silhouette in lustrous raw silk."
+      },
+      "sleeves": {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Quarter Sleeves: Clean finished sleeve cuffs with gold border trim."
+      },
+      "neckline": {
+        "url": "images/products/women/mustard-yellow-kurta-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Gota Patti Neckline: Ornate split round neckline framed in gold gotapatti."
+      }
+    }
+  },
+  {
+    "id": "W-CO-09",
+    "name": "Rich Maroon Velvet Peplum Flared Co-Ord Ensemble",
+    "category": "suits",
+    "gender": "women",
+    "price": 5999,
+    "originalPrice": 7800,
+    "image": "images/products/women/maroon-peplum-coord-front.jpg",
+    "badge": "Contemporary Couture",
+    "description": "Deep maroon plush micro-velvet peplum top featuring a tailored waistline with antique zari embroidery, matching straight cigarette trousers, and a lightweight chiffon dupatta.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "Custom"
+    ],
+    "stock": 5,
+    "customizable": true,
+    "fabric": "Plush Velvet & Silk Chiffon",
+    "color": "Rich Maroon & Antique Gold",
+    "rating": 4.9,
+    "reviewsCount": 35,
+    "specs": {
+      "craftsmanship": "Pleated peplum architecture with hand-embroidered zari waistband and sleeve cuffs",
+      "composition": "Plush Micro-Velvet with pure mulmul inner lining",
+      "care": "Archival Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Sangeet Soirée, Cocktail Gatherings & Festive Dinners"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Structured maroon peplum top with pleated flare, matching cigarette trousers, and graceful dupatta."
+      },
+      {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zari Waistband: Dense velvet luster and intricate metallic gold embroidery along the waistband."
+      },
+      {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Peplum Architecture: Tailored bodice transitioning into knife-pleated flare."
+      },
+      {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Fitted Sleeves: Sleek velvet sleeves with delicate gold border edging."
+      },
+      {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Boat Neckline: Refined boat neck with antique gold bullion piping."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Structured maroon peplum top with pleated flare, matching cigarette trousers, and graceful dupatta."
+      },
+      "detail": {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zari Waistband: Dense velvet luster and intricate metallic gold embroidery along the waistband."
+      },
+      "upper": {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Peplum Architecture: Tailored bodice transitioning into knife-pleated flare."
+      },
+      "sleeves": {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Fitted Sleeves: Sleek velvet sleeves with delicate gold border edging."
+      },
+      "neckline": {
+        "url": "images/products/women/maroon-peplum-coord-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Boat Neckline: Refined boat neck with antique gold bullion piping."
+      }
+    }
+  },
+  {
+    "id": "W-DU-10",
+    "name": "Lavender Chiffon Resham Embroidered Dupatta Ensemble",
+    "category": "accessories",
+    "gender": "women",
+    "price": 3499,
+    "originalPrice": 4900,
+    "image": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+    "badge": "Artisanal Capsule",
+    "description": "Pastel lavender pure chiffon dupatta intricately worked with ivory and silver resham floral jaal, finished with pearl scalloped lace and tassel borders over an elegant inner slip.",
+    "sizes": [
+      "Free Size (2.6m Length)"
+    ],
+    "stock": 8,
+    "customizable": true,
+    "fabric": "Pure Silk Chiffon",
+    "color": "Pastel Lavender & Pearl Silver",
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "specs": {
+      "craftsmanship": "Full body resham threadwork floral jaal with handcrafted pearl scallop trim",
+      "composition": "100% Pure Silk Chiffon with hand-rolled hems",
+      "care": "Gentle Hand Wash or Dry Clean",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Festive Layering, Summer Weddings & Day Soirées"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Complete dupatta display showcasing graceful translucent folds and all-over floral embroidery."
+      },
+      {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Resham Floral Jaal: Precision resham threadwork, micro pearl beads, and featherlight chiffon texture."
+      },
+      {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Shoulder Drape: Fluid cascade across the chest showing embroidery density."
+      },
+      {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Pearl Scallop Edge: Delicate handcrafted pearl drops along the border hem."
+      },
+      {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Inner Slip & Border: Clean framing against the inner slip."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Complete dupatta display showcasing graceful translucent folds and all-over floral embroidery."
+      },
+      "detail": {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Resham Floral Jaal: Precision resham threadwork, micro pearl beads, and featherlight chiffon texture."
+      },
+      "upper": {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Shoulder Drape: Fluid cascade across the chest showing embroidery density."
+      },
+      "sleeves": {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Pearl Scallop Edge: Delicate handcrafted pearl drops along the border hem."
+      },
+      "neckline": {
+        "url": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Inner Slip & Border: Clean framing against the inner slip."
+      }
+    }
+  },
+  {
+    "id": "W-SA-11",
+    "name": "Kanjeevaram Pure Gold Zari Temple Silk Saree",
+    "category": "sarees",
+    "gender": "women",
+    "price": 11999,
+    "originalPrice": 15500,
+    "image": "images/products/women/kanjeevaram-silk-saree-front.jpg",
+    "badge": "Heritage Heirloom",
+    "description": "Traditional Kanchipuram silk saree with korvai border weaving, real gold zari temple spires (Gopuram motifs), heavy contrast pallu, and unstitched blouse piece.",
+    "sizes": [
+      "Free Size (6.3m with Blouse)"
+    ],
+    "stock": 3,
+    "customizable": true,
+    "fabric": "Pure Mulberry Kanjeevaram Silk",
+    "color": "Emerald Green & Ruby Crimson",
+    "rating": 5,
+    "reviewsCount": 71,
+    "specs": {
+      "craftsmanship": "Authentic Korvai interlocking border technique with 3-ply twisted silk yarn",
+      "composition": "100% Pure Kanchipuram Silk with Silk Mark Certification",
+      "care": "Archival Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "South Indian Weddings, Muhurtham & Auspicious Festivals"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/women/kanjeevaram-silk-saree-front.jpg",
+        "angle": 0,
+        "label": "Front Pleats (0°)"
+      },
+      {
+        "url": "images/products/women/kanjeevaram-silk-saree-side.jpg",
+        "angle": 90,
+        "label": "Border Profile (90°)"
+      },
+      {
+        "url": "images/products/women/kanjeevaram-silk-saree-back.jpg",
+        "angle": 180,
+        "label": "Pallu Display (180°)"
+      },
+      {
+        "url": "images/products/women/kanjeevaram-silk-saree-drape.jpg",
+        "angle": 270,
+        "label": "Shoulder Drape (270°)"
+      },
+      {
+        "url": "images/products/women/kanjeevaram-silk-saree-detail.jpg",
+        "angle": null,
+        "label": "Temple Zari Macro"
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/kanjeevaram-silk-saree-front.jpg",
+        "label": "Front View (0°)",
+        "badge": "1. Complete Front View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Impeccably pleated Kanjeevaram saree showcasing authentic weight, border alignment, and drape."
+      },
+      "threequarter": {
+        "url": "images/products/women/kanjeevaram-silk-saree-side.jpg",
+        "label": "Border Profile (90°)",
+        "badge": "2. Three-Quarter View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "3/4 Perspective: 45° angle perspective showing fluid drape of this exact garment."
+      },
+      "side": {
+        "url": "images/products/women/kanjeevaram-silk-saree-back.jpg",
+        "label": "Pallu Display (180°)",
+        "badge": "3. Side Profile",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Border Profile View: Substantial temple border width and lustrous handloom silk drape."
+      },
+      "back": {
+        "url": "images/products/women/kanjeevaram-silk-saree-drape.jpg",
+        "label": "Shoulder Drape (270°)",
+        "badge": "4. Back View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Grand Pallu Display: Full view of the traditional heavy gold zari pallu with peacock and floral medallions."
+      },
+      "detail": {
+        "url": "images/products/women/kanjeevaram-silk-saree-detail.jpg",
+        "label": "Temple Zari Macro",
+        "badge": "5. Artisanal Macro",
+        "zoom": "1.8x",
+        "focus": "50% 35%",
+        "desc": "Zari Macro Inspection: Authentic gold zari threads, Korvai joints, and heavyweight natural silk weave."
+      }
+    }
+  },
+  {
+    "id": "W-BL-12",
+    "name": "Peacock Maggam Hand-Embroidered Raw Silk Blouse",
+    "category": "blouse",
+    "gender": "women",
     "price": 5499,
-    "old": 6800,
-    "desc": "Semi-sheer mesh waist corset insert, exaggerated boxy shoulders and silver chain piercings.",
-    "img": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+    "originalPrice": 7200,
+    "image": "images/products/women/maroon-maggam-blouse-front.jpg",
+    "badge": "Artisanal Aari Work",
+    "description": "Deep maroon Bangalore raw silk designer blouse embellished with peacock maggam aari work, antique kundan stones, basra pearls, and piped sweetheart neckline.",
+    "sizes": [
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+      "Bespoke"
+    ],
+    "stock": 5,
+    "customizable": true,
+    "fabric": "Bangalore Raw Silk & Kundan",
+    "color": "Deep Maroon & Antique Gold",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "specs": {
+      "craftsmanship": "Hand-worked aari needlework with kundan, zardozi and pearl embellishments",
+      "composition": "Pure Raw Silk with cotton-silk breathable lining and padded cups",
+      "care": "Dry Clean Only",
+      "dispatch": "Custom Tailored in 3-5 Days",
+      "occasion": "Bridal Wear, Reception & Festive Celebrations"
     },
-    "craft": "Semi-sheer mesh waist corset insert"
+    "rotations_360": [
+      {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Front View: Sweetheart neckline cut, elbow-length sleeves, and symmetric peacock embroidery on this blouse."
+      },
+      {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Aari Work Macro: Micro gold wire zardozi, hand-placed pearls, and sparkling uncut kundan stones."
+      },
+      {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Sweetheart Neckline: Precision sculpted front neckline with metallic gold cord piping."
+      },
+      {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Elbow Sleeve Work: Full sleeve peacock medallion aari embroidery and pearl drops."
+      },
+      {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Border Piping: Clean interior neck finish with comfortable padding."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Front View: Sweetheart neckline cut, elbow-length sleeves, and symmetric peacock embroidery on this blouse."
+      },
+      "detail": {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Aari Work Macro: Micro gold wire zardozi, hand-placed pearls, and sparkling uncut kundan stones."
+      },
+      "upper": {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Sweetheart Neckline: Precision sculpted front neckline with metallic gold cord piping."
+      },
+      "sleeves": {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Elbow Sleeve Work: Full sleeve peacock medallion aari embroidery and pearl drops."
+      },
+      "neckline": {
+        "url": "images/products/women/maroon-maggam-blouse-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Border Piping: Clean interior neck finish with comfortable padding."
+      }
+    }
   },
   {
-    "id": 203,
-    "name": "Oversized Cyber Cargo Pant-Suit",
+    "id": "M-SU-01",
+    "name": "Royal Blue Bespoke Checked Bandhgala 3-Piece Ensemble",
+    "category": "suits",
     "gender": "men",
-    "style": "modern",
-    "type": "Suit",
-    "vibe": "cyber",
-    "tag": "⚡ TECH STREETWEAR",
-    "badge": "NEW DROP",
-    "rating": "★★★★★",
-    "price": 6299,
-    "old": 7499,
-    "desc": "Ripstop nylon waterproof technical fabric with 12 tactical utility pockets & quick-release fidlock buckles.",
-    "img": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
+    "price": 12999,
+    "originalPrice": 16500,
+    "image": "images/products/men/royal-blue-suit-front.jpg",
+    "badge": "Sartorial Excellence",
+    "description": "Super 120s Italian wool-blend royal blue Bandhgala jacket with subtle check weave, handcrafted brass buttons, matching tailored trousers, and silk pocket square.",
+    "sizes": [
+      "36R",
+      "38R",
+      "40R",
+      "42R",
+      "44R",
+      "Bespoke Tailoring"
+    ],
+    "stock": 4,
+    "customizable": true,
+    "fabric": "Super 120s Italian Wool Blend",
+    "color": "Royal Navy Blue",
+    "rating": 5,
+    "reviewsCount": 46,
+    "specs": {
+      "craftsmanship": "Full canvas construction with hand-finished lapels and horn buttons",
+      "composition": "Pure Wool blend shell with Bemberg Cupro breathable lining",
+      "care": "Specialist Dry Clean Only",
+      "dispatch": "Tailored to Order in 5-7 Days",
+      "occasion": "Gala Dinners, Wedding Receptions & Black Tie Soirées"
     },
-    "craft": "Ripstop nylon with tactical fidlock buckles"
+    "rotations_360": [
+      {
+        "url": "images/products/men/royal-blue-suit-front.jpg",
+        "angle": 0,
+        "label": "Front View (0°)"
+      },
+      {
+        "url": "images/products/men/royal-blue-suit-side.jpg",
+        "angle": 90,
+        "label": "Side Profile (90°)"
+      },
+      {
+        "url": "images/products/men/royal-blue-suit-back.jpg",
+        "angle": 180,
+        "label": "Tailored Back (180°)"
+      },
+      {
+        "url": "images/products/men/royal-blue-suit-detail.jpg",
+        "angle": null,
+        "label": "Collar & Wool Macro"
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/men/royal-blue-suit-front.jpg",
+        "label": "Front View (0°)",
+        "badge": "1. Complete Front View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Front View: Structured Bandhgala silhouette with stand collar, clean button stance, and tailored trousers."
+      },
+      "threequarter": {
+        "url": "images/products/men/royal-blue-suit-side.jpg",
+        "label": "Side Profile (90°)",
+        "badge": "2. Three-Quarter View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "3/4 Perspective: 45° angle perspective showing fluid drape of this exact garment."
+      },
+      "side": {
+        "url": "images/products/men/royal-blue-suit-back.jpg",
+        "label": "Tailored Back (180°)",
+        "badge": "3. Side Profile",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Side Profile: Natural shoulder pitch, clean sleeve pitch, and double vent drop."
+      },
+      "back": {
+        "url": "images/products/men/royal-blue-suit-detail.jpg",
+        "label": "Collar & Wool Macro",
+        "badge": "4. Back View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Tailored Back: Contoured back waist suppressions and side vents for effortless posture."
+      }
+    }
   },
   {
-    "id": 2,
-    "name": "Kanjeevaram Swarna Zari Saree",
-    "gender": "women",
-    "style": "traditional",
-    "type": "Saree",
-    "price": 8499,
-    "old": 10500,
-    "rating": "★★★★★",
-    "badge": "TEMPLE SANCTUM",
-    "desc": "Woven in Kanchipuram with pure mulberry silk and authentic red-gold bullion zari border.",
-    "img": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85"
-    },
-    "subcat": "saree",
-    "origin": "Kanchipuram",
-    "craft": "Pure Mulberry Silk & 24K Swarna Gold Zari"
-  },
-  {
-    "id": 106,
-    "name": "Amber Raw Silk Royal Sherwani",
+    "id": "M-SH-02",
+    "name": "Nocturne Black & Gold Zari Imperial Sherwani",
+    "category": "sherwani",
     "gender": "men",
-    "style": "traditional",
-    "type": "Sherwani",
-    "price": 8999,
-    "old": 11500,
-    "rating": "★★★★★",
-    "badge": "HERITAGE ROYAL",
-    "desc": "Hand-spun Bhagalpur raw silk, tonal marori work, real basra pearl buttons & matched banarasi stole.",
-    "img": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
+    "price": 13499,
+    "originalPrice": 17900,
+    "image": "images/products/men/black-sherwani-gold-front.jpg",
+    "badge": "Imperial Groom",
+    "description": "Statement black silk brocade groom sherwani richly embroidered in gold bullion zari along the collar, placket, and cuffs. Accompanied by ivory churidar and stole.",
+    "sizes": [
+      "38",
+      "40",
+      "42",
+      "44",
+      "Custom"
+    ],
+    "stock": 3,
+    "customizable": true,
+    "fabric": "Silk Brocade & Gold Zari",
+    "color": "Nocturne Black & Antique Gold",
+    "rating": 4.9,
+    "reviewsCount": 37,
+    "specs": {
+      "craftsmanship": "Hand-embossed zardozi wirework along mandarin collar and front placket",
+      "composition": "Pure Silk Brocade with silk satin lining",
+      "care": "Archival Dry Clean Only",
+      "dispatch": "Custom Tailored in 5-7 Days",
+      "occasion": "Groom Wear, Sangeet Night & Royal Celebrations"
     },
-    "subcat": "sherwani",
-    "origin": "Varanasi",
-    "craft": "Handloom Raw Silk & Royal Mukaish Embroidery"
+    "rotations_360": [
+      {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Imposing imperial black sherwani with gold embellished collar, front placket, and tailored churidar."
+      },
+      {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zari Placket: Intricate hand-stitched gold bullion metallic embroidery on black brocade."
+      },
+      {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Mandarin Collar: Crisp stand collar framed in antique gold zari work."
+      },
+      {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Embroidered Cuffs: Matching gold bullion embroidery accenting the sherwani cuffs."
+      },
+      {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Placket Buttons: Handcrafted ornamental buttons along the front seam."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Imposing imperial black sherwani with gold embellished collar, front placket, and tailored churidar."
+      },
+      "detail": {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zari Placket: Intricate hand-stitched gold bullion metallic embroidery on black brocade."
+      },
+      "upper": {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Mandarin Collar: Crisp stand collar framed in antique gold zari work."
+      },
+      "sleeves": {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Embroidered Cuffs: Matching gold bullion embroidery accenting the sherwani cuffs."
+      },
+      "neckline": {
+        "url": "images/products/men/black-sherwani-gold-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Placket Buttons: Handcrafted ornamental buttons along the front seam."
+      }
+    }
   },
   {
-    "id": 110,
-    "name": "Jodhpuri Velvet Heritage Bandhgala",
+    "id": "M-SH-03",
+    "name": "Ivory Regalia Handcrafted Groom Wedding Sherwani",
+    "category": "sherwani",
     "gender": "men",
-    "style": "traditional",
-    "type": "Bandhgala",
-    "price": 8499,
-    "old": 10200,
-    "rating": "★★★★★",
-    "badge": "ROYAL HERITAGE",
-    "desc": "Heavy midnight royal blue micro-velvet, hand-crafted gold bullion crested buttons.",
-    "img": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85",
-    "views": {
-      "overview": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-      "front": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-      "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-      "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-      "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
+    "price": 14899,
+    "originalPrice": 19500,
+    "image": "images/products/men/ivory-wedding-sherwani-front.jpg",
+    "badge": "Royal Groom Choice",
+    "description": "Pure raw silk ivory wedding sherwani adorned with all-over tone-on-tone resham jaal, micro basra pearls, handcrafted fabric buttons, matching churidar, and safa.",
+    "sizes": [
+      "38",
+      "40",
+      "42",
+      "44",
+      "Bespoke"
+    ],
+    "stock": 3,
+    "customizable": true,
+    "fabric": "Pure Bangalore Raw Silk",
+    "color": "Imperial Ivory & Pearl Gold",
+    "rating": 5,
+    "reviewsCount": 52,
+    "specs": {
+      "craftsmanship": "Tone-on-tone hand resham embroidery with micro-pearl edging",
+      "composition": "100% Pure Raw Silk with Mulmul Cotton inner lining",
+      "care": "Archival Dry Clean Only",
+      "dispatch": "Custom Tailored in 7 Days",
+      "occasion": "Baraat, Royal Wedding Ceremony & Anand Karaj"
     },
-    "subcat": "temple",
-    "origin": "Jodhpur",
-    "craft": "Royal Micro-Velvet & Gold Bullion Crested Buttons"
+    "rotations_360": [
+      {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Majestic ivory groom sherwani with seamless chest architecture, collar work, and churidar."
+      },
+      {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Resham & Pearl Macro: Fine silk thread embroidery interspersed with seed pearls on rich raw silk."
+      },
+      {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Collar & Placket: Aristocratic collar styling with tone-on-tone embellishment."
+      },
+      {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Sleeve Embroidery: Subtle resham floral jaal extending across the sleeves."
+      },
+      {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Closure Finish: Handcrafted fabric-covered button closures."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Majestic ivory groom sherwani with seamless chest architecture, collar work, and churidar."
+      },
+      "detail": {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Resham & Pearl Macro: Fine silk thread embroidery interspersed with seed pearls on rich raw silk."
+      },
+      "upper": {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Collar & Placket: Aristocratic collar styling with tone-on-tone embellishment."
+      },
+      "sleeves": {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Sleeve Embroidery: Subtle resham floral jaal extending across the sleeves."
+      },
+      "neckline": {
+        "url": "images/products/men/ivory-wedding-sherwani-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Closure Finish: Handcrafted fabric-covered button closures."
+      }
+    }
   },
   {
-      "id": 1401,
-      "name": "Royal Crimson Banarasi Katan Silk Saree",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Saree",
-      "price": 8999,
-      "old": 11500,
-      "rating": "★★★★★",
-      "badge": "VARANASI HERITAGE",
-      "desc": "Hand-loomed in Varanasi with pure katan silk, intricate floral jaal Kadwa brocade, and antique gold bullion palla.",
-      "img": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85"
+    "id": "M-NJ-06",
+    "name": "Heritage Beige Handloom Nehru Jacket & Kurta Set",
+    "category": "nehru_jackets",
+    "gender": "men",
+    "price": 5899,
+    "originalPrice": 7500,
+    "image": "images/products/men/beige-nehru-jacket-front.jpg",
+    "badge": "Classic Sartorial",
+    "description": "Refined beige Tussar silk Nehru waistcoat with textured slub weave, brass coin buttons, accompanied by an ivory pure cotton kurta and churidar.",
+    "sizes": [
+      "38",
+      "40",
+      "42",
+      "44",
+      "46"
+    ],
+    "stock": 6,
+    "customizable": true,
+    "fabric": "Tussar Silk & Handloom Cotton",
+    "color": "Beige Tan & Ivory",
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "specs": {
+      "craftsmanship": "Authentic handloom Tussar slub texture with welt pockets and pocket square slot",
+      "composition": "100% Handloom Tussar Silk with Cotton lining",
+      "care": "Gentle Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Festive Puja, Daytime Weddings & Family Celebrations"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Structured Nehru jacket layered over ivory kurta with classic mandarin collar."
       },
-      "subcat": "saree",
-      "origin": "Varanasi",
-      "craft": "Pure Katan Silk & Antique Kadwa Gold Floral Jaal"
+      {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Tussar Weave: Natural Tussar silk slub character and antique metal button detail."
+      },
+      {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Chest & Collar: Tailored chest piece with welt pocket and pocket square slot."
+      },
+      {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Armhole Pitch: Clean armhole finishing allowing effortless movement."
+      },
+      {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Mandarin Collar: Stiffened stand collar with neat interior binding."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Structured Nehru jacket layered over ivory kurta with classic mandarin collar."
+      },
+      "detail": {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Tussar Weave: Natural Tussar silk slub character and antique metal button detail."
+      },
+      "upper": {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Chest & Collar: Tailored chest piece with welt pocket and pocket square slot."
+      },
+      "sleeves": {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Armhole Pitch: Clean armhole finishing allowing effortless movement."
+      },
+      "neckline": {
+        "url": "images/products/men/beige-nehru-jacket-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Mandarin Collar: Stiffened stand collar with neat interior binding."
+      }
+    }
   },
   {
-      "id": 1402,
-      "name": "Imperial Paithani Peacock Border Silk Saree",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Saree",
-      "price": 9499,
-      "old": 12000,
-      "rating": "★★★★★",
-      "badge": "ROYAL PAITHANI",
-      "desc": "Heirloom gold tissue pallu embellished with signature muniya parrot and mayil peacock motifs hand-woven in pure mulberry silk.",
-      "img": "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85"
+    "id": "K-FR-01",
+    "name": "Emerald Bloom Girls' Handcrafted Festive Frock",
+    "category": "kids_ethnic",
+    "gender": "kids",
+    "price": 3299,
+    "originalPrice": 4500,
+    "image": "images/products/kids/emerald-green-girls-frock-front.jpg",
+    "badge": "Little Princess Edit",
+    "description": "Delightful emerald green tiered party frock for girls crafted from soft silk organza with gold gota borders, comfortable cotton inner lining, and matching hair accessory.",
+    "sizes": [
+      "2-3 Yrs",
+      "4-5 Yrs",
+      "6-7 Yrs",
+      "8-9 Yrs",
+      "10-12 Yrs"
+    ],
+    "stock": 8,
+    "customizable": true,
+    "fabric": "Silk Organza & Soft Cotton Lining",
+    "color": "Emerald Green & Gold",
+    "rating": 4.9,
+    "reviewsCount": 34,
+    "specs": {
+      "craftsmanship": "Gentle anti-scratch soft cotton lining with lightweight tiered flare",
+      "composition": "Silk Organza with 100% Breathable Mulmul Cotton Lining",
+      "care": "Gentle Hand Wash or Dry Clean",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Birthday Parties, Weddings & Festive Celebrations"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Vibrant emerald green tiered frock with delicate bow accent and gentle flare."
       },
-      "subcat": "saree",
-      "origin": "Paithan, Maharashtra",
-      "craft": "Hand-Spun Silk with Real Zari Peacock Pallu"
+      {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Tiered Organza: Soft organza gathers and non-irritating kid-safe finishing."
+      },
+      {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Bodice Cut: Round comfortable neck with kid-friendly back zipper."
+      },
+      {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Puff Sleeves: Gentle gathers on puff sleeves with soft elastic cuffs."
+      },
+      {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Neckline Finish: Smooth edge binding preventing skin irritation."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Vibrant emerald green tiered frock with delicate bow accent and gentle flare."
+      },
+      "detail": {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Tiered Organza: Soft organza gathers and non-irritating kid-safe finishing."
+      },
+      "upper": {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Bodice Cut: Round comfortable neck with kid-friendly back zipper."
+      },
+      "sleeves": {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Puff Sleeves: Gentle gathers on puff sleeves with soft elastic cuffs."
+      },
+      "neckline": {
+        "url": "images/products/kids/emerald-green-girls-frock-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Neckline Finish: Smooth edge binding preventing skin irritation."
+      }
+    }
   },
   {
-      "id": 1403,
-      "name": "Sacred Kasavu Temple Gold Tissue Saree",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Saree",
-      "price": 5499,
-      "old": 6800,
-      "rating": "★★★★★",
-      "badge": "KERALA SANCTUM",
-      "desc": "Traditional sanctum weave featuring pure unbleached cotton-silk body with glistening 2-inch temple kasavu gold border.",
-      "img": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
+    "id": "K-SH-04",
+    "name": "Boys' Royal Antique Gold Brocade Sherwani Set",
+    "category": "kids_ethnic",
+    "gender": "kids",
+    "price": 3999,
+    "originalPrice": 5200,
+    "image": "images/products/kids/boys-brocade-sherwani-front.jpg",
+    "badge": "Little Maharaja Edit",
+    "description": "Regal antique gold and maroon brocade sherwani for young boys featuring embroidered mandarin collar, matching soft cotton pajama, and lightweight stole.",
+    "sizes": [
+      "3-4 Yrs",
+      "5-6 Yrs",
+      "7-8 Yrs",
+      "9-10 Yrs",
+      "11-12 Yrs"
+    ],
+    "stock": 6,
+    "customizable": true,
+    "fabric": "Banarasi Brocade & Soft Cotton Silk",
+    "color": "Antique Gold & Rich Maroon",
+    "rating": 4.9,
+    "reviewsCount": 37,
+    "specs": {
+      "craftsmanship": "Kid-friendly comfort cut with soft lining, front button closures, and elasticated waist pajama",
+      "composition": "Woven Brocade with 100% Soft Cotton Lining",
+      "care": "Mild Dry Clean Only",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Family Weddings, Sangeet & Festive Festivities"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Traditional brocade sherwani silhouette with mandarin collar and comfortable pajama."
       },
-      "subcat": "saree",
-      "origin": "Balaramapuram, Kerala",
-      "craft": "Organic Cotton-Silk & Sacred Kasavu Gold Zari"
+      {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Brocade Weave: Intricate metallic brocade floral motifs and soft comfortable lining."
+      },
+      {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Chest Architecture: Authentic sherwani front cut scaled comfortably for kids."
+      },
+      {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Straight Sleeves: Tailored sleeves with soft lining for easy wear."
+      },
+      {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Mandarin Collar: Soft-interfaced collar that does not poke or scratch."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Traditional brocade sherwani silhouette with mandarin collar and comfortable pajama."
+      },
+      "detail": {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Brocade Weave: Intricate metallic brocade floral motifs and soft comfortable lining."
+      },
+      "upper": {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Chest Architecture: Authentic sherwani front cut scaled comfortably for kids."
+      },
+      "sleeves": {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Straight Sleeves: Tailored sleeves with soft lining for easy wear."
+      },
+      "neckline": {
+        "url": "images/products/kids/boys-brocade-sherwani-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Mandarin Collar: Soft-interfaced collar that does not poke or scratch."
+      }
+    }
   },
   {
-      "id": 1404,
-      "name": "Chanderi Gold Mukaish Tissue Saree",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Saree",
-      "price": 6899,
-      "old": 8500,
-      "rating": "★★★★☆",
-      "badge": "ATELIER WEAVE",
-      "desc": "Gossamer translucent Chanderi silk with delicate silver and gold mukaish fardi needlework and handcrafted scalloped gold border.",
-      "img": "https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85"
+    "id": "A-BG-01",
+    "name": "Heirloom Zardozi Velvet Bridal Potli Bag",
+    "category": "accessories",
+    "gender": "accessories",
+    "price": 2299,
+    "originalPrice": 3200,
+    "image": "images/products/accessories/bridal-potli-front.jpg",
+    "badge": "Atelier Handcrafted",
+    "description": "Plush crimson-maroon velvet potli bag embroidered with real gold metallic wire floral motifs, finished with basra pearl tassels and silk drawstring.",
+    "sizes": [
+      "One Size"
+    ],
+    "stock": 12,
+    "customizable": true,
+    "fabric": "Plush Micro-Velvet & Real Zari",
+    "color": "Crimson Maroon & Antique Gold",
+    "rating": 4.9,
+    "reviewsCount": 56,
+    "specs": {
+      "craftsmanship": "Authentic aari embroidery with hand-strung pearl latkans and reinforced base",
+      "composition": "Micro-velvet with satin lining and heavy braided gold drawstring",
+      "care": "Wipe with Dry Soft Cloth; Keep in Dustbag",
+      "dispatch": "24-48 Hours Express Dispatch",
+      "occasion": "Bridal Ensemble, Weddings & Festive Parties"
+    },
+    "rotations_360": [
+      {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Opulent bridal potli with floral zardozi needlework and cascading pearl tassels."
       },
-      "subcat": "saree",
-      "origin": "Chanderi, Madhya Pradesh",
-      "craft": "Handloom Chanderi Silk with Needlework Mukaish"
-  },
-  {
-      "id": 1405,
-      "name": "Maharani Crimson Velvet Zardozi Bridal Lehenga",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Lehenga",
-      "price": 14999,
-      "old": 18500,
-      "rating": "★★★★★",
-      "badge": "MAHARANI BRIDAL",
-      "desc": "Grand 16-kali micro-velvet bridal skirt covered in hand-beaten dabka, zardozi gold wire, Basra pearls, and matched royal organza veil.",
-      "img": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+      {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zardozi Detail: Genuine metallic bullion thread embroidery and pearl cluster finishing."
       },
-      "subcat": "lehenga",
-      "origin": "Jaipur Ateliers",
-      "craft": "Pure Silk Velvet with Hand-Stitched 24K Gold Zardozi"
-  },
-  {
-      "id": 1406,
-      "name": "Amber Brocade Rajkumari Kalidar Lehenga",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Lehenga",
-      "price": 11999,
-      "old": 14200,
-      "rating": "★★★★★",
-      "badge": "ROYAL HERITAGE",
-      "desc": "Hand-loomed Banarasi Kadwa silk brocade with resham meenakari floral bouquets, embroidered velvet choli, and gold tissue dupatta.",
-      "img": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+      {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Drawstring & Tassels: Braided gold silk cord with hand-knotted pearl tassels."
       },
-      "subcat": "lehenga",
-      "origin": "Varanasi",
-      "craft": "Banarasi Kadwa Brocade & Resham Meenakari"
-  },
-  {
-      "id": 1407,
-      "name": "Gulabi Hand-Embroidered Gotapatti Festive Lehenga",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Lehenga",
-      "price": 9899,
-      "old": 12400,
-      "rating": "★★★★★",
-      "badge": "COURTYARD LOOM",
-      "desc": "Pure raw silk lehenga with authentic hand-cut copper gota patti work, mirror embellishments, and sheer bandhani dupatta.",
-      "img": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
+      {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Base Reinforcement: Structured circular base ensuring the potli maintains its full shape."
       },
-      "subcat": "lehenga",
-      "origin": "Rajasthan",
-      "craft": "Pure Raw Silk with Intricate Copper Gota Patti"
-  },
-  {
-      "id": 1408,
-      "name": "Nawabi Ivory Jamdani Angrakha Sherwani Set",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Sherwani",
-      "price": 9499,
-      "old": 11999,
-      "rating": "★★★★★",
-      "badge": "NAWABI ATELIER",
-      "desc": "Cross-over angrakha silhouette loomed in fine silk jamdani with antique gold bullion thread, basra pearl buttons, and stole.",
-      "img": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85"
+      {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Velvet Texture: Rich plush micro-velvet sheen under boutique studio lighting."
+      }
+    ],
+    "views": {
+      "front": {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Full Dress (0°)",
+        "badge": "1. Complete Outfit View",
+        "zoom": "1x",
+        "focus": "center top",
+        "desc": "Complete Outfit: Opulent bridal potli with floral zardozi needlework and cascading pearl tassels."
       },
-      "subcat": "sherwani",
-      "origin": "Lucknow",
-      "craft": "Fine Silk Jamdani Weave with Antique Gold Zari"
-  },
-  {
-      "id": 1409,
-      "name": "Regal Emerald Velvet Achkan Sherwani",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Sherwani",
-      "price": 10499,
-      "old": 13200,
-      "rating": "★★★★★",
-      "badge": "NIZAM COUTURE",
-      "desc": "Deep emerald silk velvet with gold wire bullion hand-embroidered royal crest, mandarin collar, and matched churidar.",
-      "img": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85"
+      "detail": {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Embroidery Zoom",
+        "badge": "2. Embroidery & Fabric Close-Up",
+        "zoom": "2.4x",
+        "focus": "50% 50%",
+        "desc": "Zardozi Detail: Genuine metallic bullion thread embroidery and pearl cluster finishing."
       },
-      "subcat": "sherwani",
-      "origin": "Hyderabad",
-      "craft": "Rich Silk Velvet with Handcrafted Gold Bullion Crest"
-  },
-  {
-      "id": 1410,
-      "name": "Imperial Tussar Silk Bundi Waistcoat & Kurta Set",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Kurta",
-      "price": 6499,
-      "old": 7999,
-      "rating": "★★★★☆",
-      "badge": "SANCTUM CLASSIC",
-      "desc": "Raw slub tussar silk kurta paired with a brocade bundi waistcoat featuring engraved brass buttons and silk pyjamas.",
-      "img": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85"
+      "upper": {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Bodice / Kurta",
+        "badge": "3. Upper Garment Architecture",
+        "zoom": "1.9x",
+        "focus": "50% 22%",
+        "desc": "Drawstring & Tassels: Braided gold silk cord with hand-knotted pearl tassels."
       },
-      "subcat": "sherwani",
-      "origin": "Bhagalpur",
-      "craft": "Handspun Tussar Silk with Brocade Bundi Waistcoat"
-  },
-  {
-      "id": 1411,
-      "name": "Pure Kanchipuram Pattu Panchakacham Veshti & Angavastram",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Dhoti",
-      "price": 7499,
-      "old": 9200,
-      "rating": "★★★★★",
-      "badge": "SACRED SANCTUM",
-      "desc": "10-yard pure mulberry silk Panchakacham dhoti with 4-inch Korvai red-gold temple border and matching angavastram stole.",
-      "img": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
+      "sleeves": {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Sleeves & Borders",
+        "badge": "4. Sleeves & Border Craftsmanship",
+        "zoom": "2.2x",
+        "focus": "75% 38%",
+        "desc": "Base Reinforcement: Structured circular base ensuring the potli maintains its full shape."
       },
-      "subcat": "temple",
-      "origin": "Kanchipuram",
-      "craft": "100% Pure Mulberry Silk with Korvai Gold Mayil Temple Border"
-  },
-  {
-      "id": 1412,
-      "name": "Vedic Swarna Pitambari Silk Dhoti & Stole Ensemble",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Ritual Set",
-      "price": 5999,
-      "old": 7500,
-      "rating": "★★★★★",
-      "badge": "MANDAPAM RITUAL",
-      "desc": "Sacred turmeric-hued Ahimsa silk dhoti adorned with sacred rudraksha and gopuram hand-woven gold borders.",
-      "img": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "temple",
-      "origin": "Varanasi",
-      "craft": "Sacred Ahimsa Spun Silk with Handwoven Rudraksha Motifs"
-  },
-  {
-      "id": 1413,
-      "name": "Royal Malabar Kasavu Silk Mundu & Kurta Ensemble",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Dhoti",
-      "price": 5299,
-      "old": 6700,
-      "rating": "★★★★★",
-      "badge": "HERITAGE TEMPLE",
-      "desc": "Pure handloom silk mundu paired with cream raw silk jubba kurta with solid 24K dipped gold kasavu borders.",
-      "img": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "temple",
-      "origin": "Kerala",
-      "craft": "Handloom Kerala Silk with Pure Gold Kasavu Zari Border"
-  },
-  {
-      "id": 1414,
-      "name": "Lucknowi Chikankari Mukaish Silk Flared Anarkali",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Anarkali",
-      "price": 8499,
-      "old": 10500,
-      "rating": "★★★★★",
-      "badge": "COURT HEIRLOOM",
-      "desc": "Floor-length pure silk georgette with 32 authentic Chikankari hand stitches and scattered gold mukaish stars.",
-      "img": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "anarkali",
-      "origin": "Lucknow",
-      "craft": "Fine Georgette-Silk with 32-Stitch Chikankari & Mukaish Stars"
-  },
-  {
-      "id": 1415,
-      "name": "Mughal Ruby Kalidar Floor-Length Silk Anarkali",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Anarkali",
-      "price": 9299,
-      "old": 11500,
-      "rating": "★★★★★",
-      "badge": "REGAL KALIDAR",
-      "desc": "36-panel flare crafted from rich ruby mashru silk with gota kinari border, churidar sleeves, and organza dupatta.",
-      "img": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "anarkali",
-      "origin": "Delhi Sultanate Ateliers",
-      "craft": "Pure Mashru Silk with Zari Gota Borders & Hand-Made Latkans"
-  },
-  {
-      "id": 1416,
-      "name": "Noor Saffron Jamawar Brocade Anarkali Suit",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Anarkali",
-      "price": 8999,
-      "old": 11000,
-      "rating": "★★★★☆",
-      "badge": "VALLEY HERITAGE",
-      "desc": "Hand-spun silk-pashmina blend adorned with heritage paisley jamawar weave, embellished neckline, and silk trousers.",
-      "img": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "anarkali",
-      "origin": "Kashmir",
-      "craft": "Fine Pashmina-Silk Blend Jamawar Floral Brocade Weave"
-  },
-  {
-      "id": 1417,
-      "name": "Temple Bharatanatyam Silk Classical Dance Costume",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Costume",
-      "price": 8999,
-      "old": 11200,
-      "rating": "★★★★★",
-      "badge": "CLASSICAL COSTUME",
-      "desc": "Authentic stitched classical Bharatanatyam dance costume in royal crimson and turmeric temple silk with pleated accordion fan front, kalash borders, and matching pyjama blouse.",
-      "img": "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "costume",
-      "origin": "Thanjavur, Tamil Nadu",
-      "craft": "Pure Dharmavaram Silk with Multi-Tier Fan Pleats & Temple Zari Borders"
-  },
-  {
-      "id": 1418,
-      "name": "Royal Durbar Kathak Kalidar Angrakha Dance Costume",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Costume",
-      "price": 9499,
-      "old": 11999,
-      "rating": "★★★★★",
-      "badge": "KATHAK REGALIA",
-      "desc": "Spectacular 48-kali high-flare spinning Kathak dance costume featuring gold mukaish embellishments, rich velvet bodice, and heavy ghungroo hemline.",
-      "img": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "costume",
-      "origin": "Lucknow Gharana",
-      "craft": "48-Kali High-Twist Georgette with Zardozi & Heavy Spin Flare"
-  },
-  {
-      "id": 1419,
-      "name": "Navratri Kutch Heritage Mirror-Work Chaniya Choli Costume",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Costume",
-      "price": 7999,
-      "old": 9999,
-      "rating": "★★★★★",
-      "badge": "FOLK HEIRLOOM",
-      "desc": "Vibrant festive folk dance costume handcrafted by Kutch master artisans with hundreds of real convex mirrors, hand-dyed bandhani, and brass cowrie shell tassels.",
-      "img": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "costume",
-      "origin": "Kutch, Gujarat",
-      "craft": "Hand-Dyed Cotton Bandhani with Real Convex Glass Mirror-Work & Rabari Embroidery"
-  },
-  {
-      "id": 1420,
-      "name": "Traditional South Indian Bridal Pattu Langa Voni Costume",
-      "gender": "women",
-      "style": "traditional",
-      "type": "Costume",
-      "price": 8799,
-      "old": 10800,
-      "rating": "★★★★★",
-      "badge": "HERITAGE RITUAL",
-      "desc": "Traditional ceremonial half-saree costume featuring pure silk pleated lehenga, heavy maggam zardozi blouse, and pure gold zari dhavani drape.",
-      "img": "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "costume",
-      "origin": "Tamil Nadu",
-      "craft": "Pure Kanchi Silk Langa with Gold Pavadai Borders & Embroidered Maggam Blouse"
-  },
-  {
-      "id": 1421,
-      "name": "Royal Rajwadi Durbar Safa Turban & Ceremonial Achkan Costume Set",
-      "gender": "men",
-      "style": "traditional",
-      "type": "Costume",
-      "price": 12499,
-      "old": 15500,
-      "rating": "★★★★★",
-      "badge": "ROYAL CORONATION",
-      "desc": "Complete royal ceremonial poshak costume set including hand-tied leheriya safa with basra pearl kalgi, brocade achkan, ceremonial kamarbandh, and sword-belt sash.",
-      "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=800&q=85",
-      "views": {
-          "overview": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1000&q=85",
-          "front": "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&w=1000&q=85",
-          "back": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85",
-          "side": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85",
-          "top": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85"
-      },
-      "subcat": "costume",
-      "origin": "Udaipur, Mewar",
-      "craft": "Hand-Tied Chanderi Leheriya Pagdi with Basra Pearl Kalgi & Brocade Achkan"
+      "neckline": {
+        "url": "images/products/accessories/bridal-potli-front.jpg",
+        "label": "Neckline & Collar",
+        "badge": "5. Neckline & Collar Detailing",
+        "zoom": "2.5x",
+        "focus": "50% 14%",
+        "desc": "Velvet Texture: Rich plush micro-velvet sheen under boutique studio lighting."
+      }
+    }
   }
 ];
+if (typeof window !== "undefined") { window.products = products; }
+if (typeof module !== "undefined" && module.exports) { module.exports = products; }

@@ -15,7 +15,7 @@
       style: "Bridal Traditional & Modern Chic",
       occasion: "Wedding & Royal Receptions",
       bio: "Collector of heirloom Kanjeevaram weaves, hand-embroidered aari blouses, and bespoke silhouettes for milestone family celebrations.",
-      photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+      photo: "images/products/women/emerald-pakistani-suit-front.jpg",
       addresses: [
         {
           id: "addr-1",
@@ -95,14 +95,14 @@
           id: "mb-1",
           title: "Peacock Maggam Blouse Inspiration",
           category: "Designer Blouses",
-          img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+          img: "images/products/women/emerald-pakistani-suit-front.jpg",
           notes: "Antique gold zardozi on deep crimson raw silk."
         },
         {
           id: "mb-2",
           title: "Mother-Daughter Twinning Palette",
           category: "Twinning Frocks",
-          img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=600&q=80",
+          img: "images/products/women/emerald-pakistani-suit-front.jpg",
           notes: "Pastel mint and peach tissue organza."
         }
       ],
@@ -123,7 +123,7 @@
       style: "Regal Sartorial & Classic Achkan",
       occasion: "Gala & Imperial Weddings",
       bio: "Purveyor of handcrafted bespoke bandhgalas, raw silk achkans and ceremonial drapes.",
-      photo: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=400&q=80",
+      photo: "images/products/women/emerald-pakistani-suit-front.jpg",
       addresses: [
         {
           id: "addr-v1",
@@ -782,7 +782,7 @@
           </div>
           <div>
             <label style="font-size:11px; font-weight:700; color:#4a0d17;">Image URL (Pinterest / Instagram / Magazine link)</label>
-            <input id="mbImg" required value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" class="nak-form-control">
+            <input id="mbImg" required value="images/products/women/emerald-pakistani-suit-front.jpg" class="nak-form-control">
           </div>
           <div>
             <label style="font-size:11px; font-weight:700; color:#4a0d17;">Artisan Notes</label>
