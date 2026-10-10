@@ -287,48 +287,14 @@
               </p>
             </div>
 
-            <div class="vas-reviews-grid">
-              <div class="vas-review-card vas-glass-card">
-                <div class="vas-review-stars">★★★★★</div>
-                <p class="vas-review-text">
-                  "For my wedding at Palace Grounds, VASTRAÉ turned my grandmother's 45-year-old Kanjeevaram into a spectacular contemporary lehenga. The respect they showed to the antique zari and the fit on the first trial was unbelievable."
-                </p>
-                <div class="vas-reviewer">
-                  <div class="vas-reviewer-avatar">AS</div>
-                  <div>
-                    <strong>Ananya Sharma</strong>
-                    <span>Bridal Client &middot; Indiranagar, Bengaluru</span>
-                  </div>
-                </div>
-              </div>
+            <div class="vas-reviews-grid" id="vasHomeReviewsGrid">
+              <!-- Dynamically populated from VASTRAE_DATA.reviews & localStorage -->
+            </div>
 
-              <div class="vas-review-card vas-glass-card">
-                <div class="vas-review-stars">★★★★★</div>
-                <p class="vas-review-text">
-                  "The 22-point measurement system is genuine Savile Row caliber. I ordered a midnight velvet bandhgala for our corporate awards gala. No bunching, no tightness around the shoulders—felt like second skin."
-                </p>
-                <div class="vas-reviewer">
-                  <div class="vas-reviewer-avatar">RK</div>
-                  <div>
-                    <strong>Rohit Krishnan</strong>
-                    <span>Patron Member &middot; Koramangala, Bengaluru</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="vas-review-card vas-glass-card">
-                <div class="vas-review-stars">★★★★★</div>
-                <p class="vas-review-text">
-                  "Their doorstep fabric pickup in Indiranagar was seamless. The master tailor brought fabric swatches, recorded my blouse measurements, and delivered the finished maggam-embroidered blouse in just 48 hours."
-                </p>
-                <div class="vas-reviewer">
-                  <div class="vas-reviewer-avatar">PV</div>
-                  <div>
-                    <strong>Pooja Venkatesh</strong>
-                    <span>Atelier Patron &middot; Lavelle Road, Bengaluru</span>
-                  </div>
-                </div>
-              </div>
+            <div style="text-align:center; margin-top:32px;">
+              <button type="button" class="vas-btn vas-btn-outline" onclick="window.openWriteReviewModal()">
+                ✍️ Share Your Atelier Experience
+              </button>
             </div>
           </div>
         </section>
@@ -454,36 +420,8 @@
               </p>
             </div>
 
-            <div class="vas-artisans-grid">
-              <div class="vas-artisan-card">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
-                  alt="Master Savitha"
-                  class="vas-artisan-avatar" />
-                <h3>Master Savitha Rao</h3>
-                <span class="vas-artisan-role">Chief Couturier &amp; Pattern Master</span>
-                <p>28 years drafting bespoke paper patterns for South Indian bridal cholis and Western sartorial cuts with zero fit errors.</p>
-              </div>
-
-              <div class="vas-artisan-card">
-                <img
-                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80"
-                  alt="Ustad Raheem"
-                  class="vas-artisan-avatar" />
-                <h3>Ustad Raheem Khan</h3>
-                <span class="vas-artisan-role">Head of Maggam &amp; Zardozi Loom</span>
-                <p>Third-generation embroidery artisan specializing in antique gold wire zardozi, Basra pearl seed stitching, and dabka work.</p>
-              </div>
-
-              <div class="vas-artisan-card">
-                <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
-                  alt="Devraj M."
-                  class="vas-artisan-avatar" />
-                <h3>Devraj Mallikarjun</h3>
-                <span class="vas-artisan-role">Silk Sourcing &amp; Loom Curator</span>
-                <p>Partners directly with handloom weaver cooperatives across Karnataka and Tamil Nadu to certify 100% pure silk and tested zari.</p>
-              </div>
+            <div class="vas-artisans-grid" id="vasArtisansGrid">
+              <!-- Dynamically populated from VASTRAE_DATA.artisans -->
             </div>
 
             <!-- Atelier Purity Pledge Box -->
@@ -588,121 +526,8 @@
               </p>
             </div>
 
-            <div class="vas-product-grid" style="grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));">
-              <!-- Spotlight 1: Modern Pakistani Lawn Suit -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
-                    alt="Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit" />
-                  <span class="vas-badge-tag">Trending on Instagram</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Modern Pakistani Lawn &middot; 3-Piece Suit</span>
-                  <h3 class="vas-product-name">Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit</h3>
-                  <p class="vas-product-desc">Breathable Pima lawn straight kurta with intricate schiffli laser-cut lace daman, resham neckline embroidery, matching straight cigarette pants, and printed silk-voile dupatta.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹4,899</span>
-                    <span class="vas-price-old">₹6,500</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('W-SAR-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('W-SAR-01')">✨ Customize</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Spotlight 2: Men's Pure Linen Kurta Pajama -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
-                    alt="Modern Ivory Pure Linen Kurta Pajama" />
-                  <span class="vas-badge-tag">Essential Sartorial</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Men's Sartorial &middot; Pure Irish Linen</span>
-                  <h3 class="vas-product-name">Modern Ivory Pure Linen Kurta Pajama</h3>
-                  <p class="vas-product-desc">Crisp breathable 100% pure Irish linen kurta with concealed placket, tailored mandarin collar, discreet side seam pockets, and matching straight-cut linen pajama.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹4,499</span>
-                    <span class="vas-price-old">₹6,000</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('M-BG-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('M-BG-01')">✨ Customize</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Spotlight 3: Blush Peach Tiered Festive Suit -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
-                    alt="Blush Peach Scalloped Tiered Festive Suit" />
-                  <span class="vas-badge-tag">High-Summer Edit</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Festive Occasion &middot; Silk Organza</span>
-                  <h3 class="vas-product-name">Blush Peach Scalloped Tiered Festive Suit</h3>
-                  <p class="vas-product-desc">A-line pastel peach kurta layered with scalloped embroidered borders, resham floral bootis, and breathable cotton-silk lining with straight trousers.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹6,299</span>
-                    <span class="vas-price-old">₹8,200</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('W-DR-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('W-DR-01')">✨ Customize</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Spotlight 4: Ivory Pearl Chikankari & Schiffli Kurta Set -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
-                    alt="Ivory Pearl Chikankari & Schiffli Kurta Set" />
-                  <span class="vas-badge-tag">Semi-Formal Elegant</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Pure Cotton Cambric &middot; Schiffli Lace</span>
-                  <h3 class="vas-product-name">Ivory Pearl Chikankari &amp; Schiffli Kurta Set</h3>
-                  <p class="vas-product-desc">Tone-on-tone Lucknowi chikankari floral jaal kurta with organza schiffli hem border, matching straight cigarette trousers, and featherlight kota doria dupatta.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹5,999</span>
-                    <span class="vas-price-old">₹7,800</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('W-KT-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('W-KT-01')">✨ Customize</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Spotlight 5: Slate Grey Structured Linen-Blend Waistcoat Set -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
-                    alt="Slate Grey Structured Linen-Blend Waistcoat Set" />
-                  <span class="vas-badge-tag">Semi-Formal Sartorial</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Men's Sartorial &middot; Linen-Wool Blend</span>
-                  <h3 class="vas-product-name">Slate Grey Structured Linen-Blend Waistcoat Set</h3>
-                  <p class="vas-product-desc">Tailored structured linen-blend waistcoat with micro threadwork, bespoke welt pockets, and brass crest buttons, worn over a tailored straight kurta.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹7,499</span>
-                    <span class="vas-price-old">₹9,800</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('M-BG-02')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('M-BG-02')">✨ Customize</button>
-                  </div>
-                </div>
-              </article>
+            <div class="vas-product-grid" id="vasEditorialGrid" style="grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));">
+              <!-- Dynamically populated from VASTRAE_DATA.products -->
             </div>
           </div>
         </section>
@@ -718,144 +543,8 @@
               </p>
             </div>
 
-            <div class="vas-product-grid">
-              <!-- 1. Jadau Choker -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=85"
-                    alt="Pearl Choker" />
-                  <span class="vas-badge-tag">22K Gold Plated</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Silver Alloy &amp; Basra Pearls</span>
-                  <h3 class="vas-product-name">Basra Pearl &amp; Polki Jadau Choker Set</h3>
-                  <p class="vas-product-desc">Antique gold dip with freshwater pearls and uncut polki stones. Includes matching jhumkas.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹4,899</span>
-                    <span class="vas-price-old">₹6,500</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-JW-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-JW-01')">+ Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- 2. Potli Bag -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=700&q=85"
-                    alt="Bridal Potli" />
-                  <span class="vas-badge-tag">Atelier Handcrafted</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Plush Micro-Velvet</span>
-                  <h3 class="vas-product-name">Heirloom Zardozi Velvet Bridal Potli</h3>
-                  <p class="vas-product-desc">Real zari wire floral embroidery with basra pearl tassels and silk cord drawstring.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹2,299</span>
-                    <span class="vas-price-old">₹3,200</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-BG-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-BG-01')">+ Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- 3. Juttis -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=700&q=85"
-                    alt="Raw Silk Juttis" />
-                  <span class="vas-badge-tag">Memory Foam Sole</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Pure Leather &amp; Raw Silk</span>
-                  <h3 class="vas-product-name">Embroidered Silk Festive Juttis</h3>
-                  <p class="vas-product-desc">Genuine leather sole with double memory-foam cushioning and hand-stitched dabka embroidery.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹2,699</span>
-                    <span class="vas-price-old">₹3,500</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-FT-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-FT-01')">+ Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- 4. Maang Tikka & Passa -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=700&q=85"
-                    alt="Maang Tikka and Passa" />
-                  <span class="vas-badge-tag">Bridal Signature</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Brass Alloy &amp; Kundan Pavé</span>
-                  <h3 class="vas-product-name">Kundan &amp; Pearl Tikka &amp; Passa Set</h3>
-                  <p class="vas-product-desc">22K micro-gold dipped crescent chand motifs, uncut kundan stones, and cascading Basra pearl drops with matching side passa.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹2,899</span>
-                    <span class="vas-price-old">₹3,800</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-JW-02')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-JW-02')">+ Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- 5. Kamarbandh Waistbelt -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1611591475152-4735d387e949?auto=format&fit=crop&w=700&q=85"
-                    alt="Temple Waistbelt" />
-                  <span class="vas-badge-tag">Heritage Temple Craft</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">Antique Matte Gold</span>
-                  <h3 class="vas-product-name">Temple Heritage Coin Kamarbandh</h3>
-                  <p class="vas-product-desc">Traditional South Indian heirloom waistbelt embossed with sacred coin motifs and micro ghungroos. Adjustable link chain.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹3,499</span>
-                    <span class="vas-price-old">₹4,600</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-WB-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-WB-01')">+ Add to Bag</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- 6. Silk Organza Stole -->
-              <article class="vas-product-card vas-glass-card">
-                <div class="vas-product-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=700&q=85"
-                    alt="Organza Stole" />
-                  <span class="vas-badge-tag">Handloom Silk Organza</span>
-                </div>
-                <div class="vas-product-body">
-                  <span class="vas-product-cat">100% Pure Mulberry Silk</span>
-                  <h3 class="vas-product-name">Pure Silk Organza Floral Zari Stole</h3>
-                  <p class="vas-product-desc">Featherlight sheer mulberry silk organza stole with hand-scalloped resham embroidery and woven tissue zari border. 2.5 meters length.</p>
-                  <div class="vas-product-price-row">
-                    <span class="vas-price-current">₹3,199</span>
-                    <span class="vas-price-old">₹4,200</span>
-                  </div>
-                  <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-ST-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-ST-01')">+ Add to Bag</button>
-                  </div>
-                </div>
-              </article>
+            <div class="vas-product-grid" id="vasAccessoriesGrid">
+              <!-- Dynamically populated from VASTRAE_DATA.products (accessories) -->
             </div>
           </div>
         </section>
@@ -902,97 +591,426 @@
         <div class="vas-page-banner">
           <div class="vas-container">
             <span class="vas-eyebrow">WHAT WE PROVIDE</span>
-            <h1 class="vas-title">Three Signature <em>Boutique Services</em></h1>
+            <h1 class="vas-title">Signature <em>Boutique Services &amp; AI Studio</em></h1>
             <p class="vas-subtitle">
-              Haute couture craftsmanship personalized around your unique silhouette, heirloom fabrics, and event timeline.
+              Haute couture craftsmanship personalized around your unique silhouette, heirloom fabrics, event timeline, and interactive AI styling.
             </p>
           </div>
         </div>
 
-        <!-- Section 2: Three Signature Boutique Services Cards -->
+        <!-- Section 2: Signature Boutique Services & AI Fashion Studio Cards -->
         <section class="vas-section" id="services">
           <div class="vas-container">
-            <div class="vas-services-grid vas-services-grid-three">
-              <!-- 1. Bespoke Custom Stitching -->
-              <article class="vas-service-card vas-glass-card">
-                <div class="vas-service-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1594938291221-94f18cbb5660?auto=format&fit=crop&w=700&q=85"
-                    alt="Custom Stitching" />
-                  <div class="vas-service-icon-badge">🪡</div>
-                </div>
-                <div class="vas-service-body">
-                  <h3>Bespoke Custom Stitching</h3>
-                  <span class="vas-service-subtitle">Precision Biometric Pattern Cut</span>
-                  <p>Individualized paper pattern drafted from scratch based on 22 body measurements. Includes mulmul lining and 2-inch side seam alteration allowance.</p>
-                  <div class="vas-service-inclusions">
-                    <strong>What's Included:</strong>
-                    <ul>
-                      <li>Calico trial drape before cutting precious silk</li>
-                      <li>Reinforced neckline piping &amp; bra strap tabs</li>
-                      <li>Lifetime alteration privileges on side seams</li>
-                    </ul>
-                  </div>
-                  <div class="vas-service-footer">
-                    <div class="vas-service-price">From <strong>₹1,800</strong></div>
-                    <a href="#customize" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('customize', event)">Start Customizing &rarr;</a>
-                  </div>
-                </div>
-              </article>
+            <div class="vas-services-grid vas-services-grid-four" id="vasServicesGrid">
+              <!-- Dynamically populated from VASTRAE_DATA.services -->
+            </div>
+          </div>
+        </section>
 
-              <!-- 2. Custom Outfit Design -->
-              <article class="vas-service-card vas-glass-card">
-                <div class="vas-service-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=700&q=85"
-                    alt="Outfit Design" />
-                  <div class="vas-service-icon-badge">✨</div>
+        <!-- Section 2B: VASTRAÉ AI Virtual Fashion Studio ("Your Style, Virtually!") -->
+        <section class="vas-section vas-tryon-studio-section" id="aiTryOnStudio">
+          <div class="vas-container">
+            <!-- Studio Editorial Header -->
+            <div class="vas-tryon-header">
+              <div class="vas-tryon-eyebrow">
+                <span>✨</span> VASTRAÉ DIGITAL FASHION STUDIO
+              </div>
+              <h2 class="vas-tryon-title">Your Style, <em>Virtually!</em></h2>
+              <div class="vas-tryon-tagline">See It. Style It. Make It Yours.</div>
+              <p class="vas-tryon-desc">
+                Step inside our digital couture atelier. Upload your photo as an authentic identity reference, select from handcrafted bridal lehengas, imperial anarkalis, and Pakistani suits, enter your measurements for tailored fit guidance, and experience a photorealistic virtual try-on with our interactive Before &amp; After studio tools.
+              </p>
+              
+              <!-- Engine Status Pill & Toolbar -->
+              <div class="vas-tryon-toolbar">
+                <div id="tryOnEngineStatusBadge" class="vas-engine-status-pill local-active" onclick="window.openAiIntegrationModal()" title="Click to view AI Engine Status & Integration Guide">
+                  <span class="vas-engine-dot local"></span>
+                  <span>Atelier Photometric Engine (Biometric Synthesis)</span>
                 </div>
-                <div class="vas-service-body">
-                  <h3>Custom Outfit Design</h3>
-                  <span class="vas-service-subtitle">Bespoke Bridal &amp; Gala Ensembles</span>
-                  <p>From initial moodboard sketches to loom execution. Handcrafted authentic maggam stone work, certified metallic zardozi, and resham embroidery.</p>
-                  <div class="vas-service-inclusions">
-                    <strong>What's Included:</strong>
-                    <ul>
-                      <li>1-on-1 chief couturier design sketch consultation</li>
-                      <li>HD loom progress preview photos &amp; swatches</li>
-                      <li>Swarovski crystals &amp; certified metallic zari</li>
-                    </ul>
-                  </div>
-                  <div class="vas-service-footer">
-                    <div class="vas-service-price">From <strong>₹4,500</strong></div>
-                    <button class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openConsultationModal()">Consult Stylist &rarr;</button>
-                  </div>
-                </div>
-              </article>
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openStyleBoardModal()">
+                  📌 My Style Board (<span id="styleBoardCount">0</span>)
+                </button>
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" onclick="window.openLookCompareModal()">
+                  ⚖️ Look Comparison
+                </button>
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" onclick="window.openAiIntegrationModal()" title="AI API Integration Settings">
+                  ⚙️ AI Settings
+                </button>
+              </div>
+            </div>
 
-              <!-- 3. Saree Reborn & Upcycling -->
-              <article class="vas-service-card vas-glass-card">
-                <div class="vas-service-media">
-                  <img
-                    src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=700&q=85"
-                    alt="Saree Reborn" />
-                  <div class="vas-service-icon-badge">♻️</div>
+            <!-- Guest Preview Banner for AI Try-On -->
+            <div id="tryOnAuthLockOverlay" class="vas-service-lock-card">
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span class="vas-lock-badge">🔒 STUDIO PREVIEW</span>
+                <span style="font-size:0.88rem; color:var(--vas-charcoal);">
+                  Explore boutique outfits, colourways &amp; fit guidance. <strong>Sign in to generate photorealistic AI Try-On looks and save to your style board.</strong>
+                </span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAuthModal('login')">
+                  Sign In to Studio
+                </button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openAuthModal('register')">
+                  Register Profile
+                </button>
+              </div>
+            </div>
+
+            <!-- 3-Step Virtual Styling Experience Shell -->
+            <div class="vas-tryon-studio-shell">
+              <!-- Studio Steps Progress Indicator -->
+              <div class="vas-tryon-step-nav">
+                <div class="vas-tryon-step-nav-item">
+                  <span class="step-num">1</span>
+                  <span>Photo &amp; Measurements</span>
                 </div>
-                <div class="vas-service-body">
-                  <h3>Saree Reborn &amp; Upcycling</h3>
-                  <span class="vas-service-subtitle">Vintage Heirloom Transformation</span>
-                  <p>Convert mom’s vintage Kanjeevaram into a chic designer blouse, flared lehenga choli, or luxury potli under strict physical master inspection.</p>
-                  <div class="vas-service-inclusions">
-                    <strong>What's Included:</strong>
-                    <ul>
-                      <li>Mandatory Master Tailor physical loom inspection</li>
-                      <li>Zero-waste pattern layout preserving rich pallu zari</li>
-                      <li>Fragile silk stabilization backing</li>
-                    </ul>
-                  </div>
-                  <div class="vas-service-footer">
-                    <div class="vas-service-price">From <strong>₹2,200</strong></div>
-                    <a href="#sareeReborn" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('sareeReborn', event)">Reborn Studio &rarr;</a>
+                <div class="vas-tryon-step-nav-item">
+                  <span class="step-num">2</span>
+                  <span>Choose Dress &amp; Colors</span>
+                </div>
+                <div class="vas-tryon-step-nav-item">
+                  <span class="step-num">3</span>
+                  <span>Photorealistic Result</span>
+                </div>
+              </div>
+
+              <!-- ==========================================================
+                   STEP 1 – CUSTOMER PHOTO & BODY MEASUREMENTS
+                   ========================================================== -->
+              <div class="vas-tryon-panel" id="tryOnStep1">
+                <div class="vas-tryon-panel-header">
+                  <div>
+                    <h3><span>📸</span> Step 1 &mdash; Customer Photo &amp; Fit Profile</h3>
+                    <p>Upload a clear face or standing photo as your authentic identity reference. Your real facial features and skin tone will be preserved.</p>
                   </div>
                 </div>
-              </article>
+
+                <div class="vas-tryon-step1-grid">
+                  <!-- Left: Customer Photo Upload & Identity Frame -->
+                  <div class="vas-tryon-upload-col">
+                    <!-- Drag-and-Drop Dropzone -->
+                    <div class="vas-tryon-dropzone" id="tryOnDropZone" onclick="document.getElementById('tryOnPhotoInput').click()">
+                      <div class="vas-tryon-drop-icon">📸</div>
+                      <h4 style="font-size:1.15rem; margin-bottom:6px; color:var(--vas-mauve-dark);">Upload Your Real Photo</h4>
+                      <p style="font-size:0.86rem; color:var(--vas-muted); margin-bottom:16px;">
+                        Upload a clear face portrait or standing photo (JPG, PNG, WEBP up to 15MB).<br>
+                        <strong>We preserve your real face &amp; identity — no random AI avatars.</strong>
+                      </p>
+                      <button type="button" class="vas-btn vas-btn-rose vas-btn-sm" onclick="event.stopPropagation(); document.getElementById('tryOnPhotoInput').click()">
+                        📁 Choose Photo from Device
+                      </button>
+                      <input type="file" id="tryOnPhotoInput" accept="image/*" style="display:none;" />
+                    </div>
+
+                    <!-- Uploaded Photo Preview Frame -->
+                    <div class="vas-tryon-preview-wrap" id="tryOnPhotoPreviewWrap">
+                      <div class="vas-tryon-preview-frame">
+                        <img id="tryOnUserPreviewImg" src="" alt="Uploaded Customer Reference" />
+                        <span id="tryOnFaceDetectBadge" class="vas-tryon-preview-badge">✓ Real Face Reference Preserved</span>
+                        <div class="vas-tryon-tone-pill-tag">
+                          <span id="tryOnSkinSwatchDot" class="vas-skin-swatch-dot"></span>
+                          <span id="tryOnSkinToneBadge">Warm Ivory</span>
+                        </div>
+                      </div>
+                      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                        <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="document.getElementById('tryOnPhotoInput').click()">
+                          🔄 Replace Photo
+                        </button>
+                        <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" style="color:var(--vas-danger);" onclick="window.removeTryOnPhoto()">
+                          ✕ Remove Photo
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: Body Measurements & Fit Guidance (Requirement 4) -->
+                  <div class="vas-tryon-meas-col">
+                    <div class="vas-meas-card">
+                      <div class="vas-meas-header">
+                        <div>
+                          <h4 style="font-family:var(--vas-font-serif); font-size:1.15rem; margin:0 0 2px; color:var(--vas-charcoal);">
+                            📏 Body Measurements &amp; Fit Guidance
+                          </h4>
+                          <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">
+                            Calibrate garment proportions and drape contour to your body shape.
+                          </p>
+                        </div>
+                        <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.syncSavedProfileMeasurements()">
+                          🔄 Sync with Profile
+                        </button>
+                      </div>
+
+                      <div class="vas-meas-fields-grid">
+                        <div class="vas-meas-group">
+                          <label>Height (cm):</label>
+                          <input type="number" id="tryOnMeasHeight" value="165" min="120" max="220"
+                            onchange="window.updateTryOnMeasurement('height', this.value)" class="vas-meas-input" />
+                        </div>
+                        <div class="vas-meas-group">
+                          <label>Bust / Chest (in):</label>
+                          <input type="number" id="tryOnMeasBust" value="34" min="26" max="60"
+                            onchange="window.updateTryOnMeasurement('bust', this.value)" class="vas-meas-input" />
+                        </div>
+                        <div class="vas-meas-group">
+                          <label>Waist (in):</label>
+                          <input type="number" id="tryOnMeasWaist" value="28" min="20" max="55"
+                            onchange="window.updateTryOnMeasurement('waist', this.value)" class="vas-meas-input" />
+                        </div>
+                        <div class="vas-meas-group">
+                          <label>Hips (in):</label>
+                          <input type="number" id="tryOnMeasHips" value="38" min="26" max="65"
+                            onchange="window.updateTryOnMeasurement('hips', this.value)" class="vas-meas-input" />
+                        </div>
+                        <div class="vas-meas-group full-width">
+                          <label>Fit Preference:</label>
+                          <select id="tryOnMeasFit" onchange="window.updateTryOnMeasurement('fitPreference', this.value)" class="vas-meas-input">
+                            <option value="tailored">Tailored / Royal Snug (Close silhouette fit)</option>
+                            <option value="comfort" selected>Master Comfort (Balanced drape with ease)</option>
+                            <option value="flared">Flowing / Flared (Relaxed graceful drape)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Fit Guidance Disclaimer (Mandatory Requirement 4) -->
+                      <div class="vas-meas-disclaimer">
+                        <span class="vas-disclaimer-icon">ℹ️</span>
+                        <div class="vas-disclaimer-text">
+                          <strong>Boutique Fit Guidance Disclosure:</strong>
+                          Body measurements are utilized for digital drape guidance and silhouette contour calibration. The generated virtual try-on provides a realistic styling reference and does not guarantee exact millimeter physical garment fit or absolute bespoke proportions. Our Master Tailor conducts final stitch calibrations.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Skin Tone Analysis & Recommended Shades (Requirement 5) -->
+                <div id="tryOnToneGuidancePanel" style="margin-top:20px;">
+                  <!-- Rendered dynamically by tryon-service.js -->
+                </div>
+              </div>
+
+              <!-- ==========================================================
+                   STEP 2 – CHOOSE DESIGNER OUTFIT & COLORS
+                   ========================================================== -->
+              <div class="vas-tryon-panel" id="tryOnStep2">
+                <div class="vas-tryon-panel-header">
+                  <div>
+                    <h3><span>👗</span> Step 2 &mdash; Choose Designer Outfit &amp; Colors</h3>
+                    <p>Select from authentic handcrafted ensembles (Bridal Lehengas, Imperial Anarkalis, Pakistani Suits, and Festive Sets), calibrate measurements, and customize colorways.</p>
+                  </div>
+                  <button type="button" class="vas-btn vas-btn-sm vas-btn-rose" id="tryOnSurpriseBtn" onclick="window.surpriseMeTryOn()">
+                    🎲 ✨ Surprise Me
+                  </button>
+                </div>
+
+                <!-- Outfit Category & Occasion Filters -->
+                <div class="vas-tryon-filter-bar">
+                  <!-- Category Pills -->
+                  <div class="vas-tryon-pills-row">
+                    <span style="font-size:0.8rem; font-weight:700; color:var(--vas-mauve); margin-right:4px;">Category:</span>
+                    <button type="button" class="vas-tryon-cat-pill active" onclick="window.filterTryOnCategory('all', this)">All Outfits</button>
+                    <button type="button" class="vas-tryon-cat-pill" onclick="window.filterTryOnCategory('lehenga', this)">Lehengas &amp; Anarkalis</button>
+                    <button type="button" class="vas-tryon-cat-pill" onclick="window.filterTryOnCategory('suits', this)">Pakistani &amp; Party Suits</button>
+                    <button type="button" class="vas-tryon-cat-pill" onclick="window.filterTryOnCategory('sharara', this)">Shararas &amp; Kurta Sets</button>
+                  </div>
+
+                  <!-- Occasion Discovery -->
+                  <div class="vas-tryon-pills-row">
+                    <span style="font-size:0.8rem; font-weight:700; color:var(--vas-gold-dark); margin-right:4px;">Occasion:</span>
+                    <button type="button" class="vas-tryon-occ-pill active" onclick="window.filterTryOnOccasion('all', this)">All Occasions</button>
+                    <button type="button" class="vas-tryon-occ-pill" onclick="window.filterTryOnOccasion('weddings', this)">💍 Weddings &amp; Bridal</button>
+                    <button type="button" class="vas-tryon-occ-pill" onclick="window.filterTryOnOccasion('festivals', this)">🪔 Festivals &amp; Rituals</button>
+                    <button type="button" class="vas-tryon-occ-pill" onclick="window.filterTryOnOccasion('party', this)">✨ Soirées &amp; Galas</button>
+                  </div>
+                </div>
+
+                <!-- Live Search & Reset -->
+                <div class="vas-tryon-search-row">
+                  <input type="text" id="tryOnSearchInput" class="vas-tryon-search-input"
+                    placeholder="Search outfits by style, fabric (Raw Silk, Velvet, Organza), or color..."
+                    oninput="window.searchTryOnOutfits(this.value)" />
+                  <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.resetTryOnFilters()">
+                    ↺ Reset Filters
+                  </button>
+                </div>
+
+                <!-- Women's Designer Outfit Grid -->
+                <div style="margin-bottom:8px;">
+                  <span style="font-size:0.85rem; font-weight:700; color:var(--vas-mauve-dark); text-transform:uppercase; letter-spacing:0.06em;">
+                    Select Boutique Outfit:
+                  </span>
+                </div>
+                <div class="vas-tryon-outfit-grid" id="tryOnOutfitGrid">
+                  <!-- Rendered dynamically by tryon-service.js using women boutique apparel -->
+                </div>
+
+                <!-- Outfit Color Customizer -->
+                <div class="vas-tryon-color-section">
+                  <div class="vas-color-sec-header">
+                    <div>
+                      <h4 style="font-family:var(--vas-font-serif); font-size:1.15rem; margin:0 0 2px; color:var(--vas-charcoal);">
+                        🎨 Outfit Colourway &amp; Texture Customizer
+                      </h4>
+                      <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">
+                        Choose an alternate colorway. Our rendering preserves original gold zari, zardozi embroidery, and fabric texture intact.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="vas-color-variants-bar" id="tryOnColorVariantsWrap">
+                    <!-- Rendered by tryon-service.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- ==========================================================
+                   STEP 3 – REALISTIC TRY-ON RESULT & COMPARISON (Requirements 3 & 6)
+                   ========================================================== -->
+              <div class="vas-tryon-panel" id="tryOnStep3">
+                <div class="vas-tryon-panel-header" style="text-align:center; justify-content:center; flex-direction:column; align-items:center;">
+                  <h3><span>✨</span> Step 3 &mdash; Generate Photorealistic Look</h3>
+                  <p>Generate a natural photograph of yourself in the selected outfit, preserving facial identity, skin tone, fabric folds, and lighting.</p>
+                  
+                  <div style="margin-top:16px;">
+                    <button type="button" id="tryOnGenerateBtn" class="vas-btn-tryon-gradient" onclick="window.generateVirtualTryOn()">
+                      ✨ Generate Realistic Try-On
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Stage 1: Ready State Notice -->
+                <div id="tryOnReadyState" style="text-align:center; padding:36px 20px; background:var(--vas-cream-card); border-radius:18px; border:1px dashed var(--vas-lavender-border);">
+                  <div style="font-size:2.4rem; margin-bottom:8px;">🪞</div>
+                  <h4 style="font-size:1.15rem; color:var(--vas-mauve-dark); margin-bottom:6px;">Atelier Virtual Studio Ready</h4>
+                  <p style="font-size:0.86rem; color:var(--vas-muted); max-width:480px; margin:0 auto;">
+                    Make sure you have uploaded your photo in Step 1 and selected an outfit in Step 2, then click <strong>"✨ Generate Realistic Try-On"</strong> to create your virtual look.
+                  </p>
+                </div>
+
+                <!-- Stage 2: Loading State Animation -->
+                <div id="tryOnLoadingState" class="vas-tryon-loading-wrap">
+                  <div class="vas-tryon-spinner"></div>
+                  <h4 style="font-size:1.2rem; color:var(--vas-charcoal); margin:0 0 6px;">Synthesizing Photorealistic Look…</h4>
+                  <p id="tryOnProgressText" style="font-size:0.88rem; color:var(--vas-mauve); margin:0;">
+                    Preserving customer facial identity &amp; skin tone...
+                  </p>
+                  <div class="vas-tryon-progress-container">
+                    <div id="tryOnProgressBar" class="vas-tryon-progress-fill"></div>
+                  </div>
+                  <div style="font-size:0.75rem; color:var(--vas-muted); margin-top:16px;">
+                    Atelier High-Fidelity Rendering &middot; Real photo face preserved
+                  </div>
+                </div>
+
+                <!-- Stage 3: Virtual Look Result & Comparisons (Requirement 6) -->
+                <div id="tryOnResultState" class="vas-tryon-result-wrap">
+                  <!-- Product Metadata Strip (Product Name, Price, Thumb, Engine) -->
+                  <div class="vas-tryon-result-meta">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                      <img id="tryOnResultDressThumb" class="vas-result-dress-thumb" src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Selected Boutique Outfit" />
+                      <div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                          <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-mauve); font-weight:700;">Women's Haute Couture</span>
+                          <span id="tryOnResultDrapeStyleBadge" class="vas-badge-tag" style="display:none; background:var(--vas-mauve-dark); color:#fff; font-size:0.7rem; padding:2px 8px;">Tailored Fit</span>
+                        </div>
+                        <h4 id="tryOnResultOutfitTitle" style="font-family:var(--vas-font-serif); font-size:1.3rem; margin:2px 0 0; color:var(--vas-charcoal);">Emerald Pakistani Zari Embroidered 3-Piece Suit</h4>
+                        <span id="tryOnResultFabricNote" style="font-size:0.78rem; color:var(--vas-muted);">Bangalore Raw Silk &middot; Tailored Silhouette</span>
+                      </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                      <span id="tryOnResultOutfitPrice" style="font-size:1.35rem; font-weight:700; color:var(--vas-mauve-dark);">₹6,499</span>
+                      <span id="tryOnResultEngineBadge" class="vas-engine-result-badge">Atelier Photometric Synthesis</span>
+                    </div>
+                  </div>
+
+                  <!-- Comparison Mode Switcher (Slider vs Side-by-Side Dual View) -->
+                  <div class="vas-comparison-mode-bar">
+                    <button type="button" id="tryOnTabSlider" class="vas-comp-tab-btn active" onclick="window.setComparisonMode('slider')">
+                      ↔ Interactive Draggable Slider
+                    </button>
+                    <button type="button" id="tryOnTabDual" class="vas-comp-tab-btn" onclick="window.setComparisonMode('sideBySide')">
+                      ◫ Side-by-Side Dual View
+                    </button>
+                  </div>
+
+                  <!-- Viewport 1: Interactive Draggable Slider -->
+                  <div class="vas-ba-slider" id="tryOnSliderContainer">
+                    <!-- Layer 1 (Base): After / Generated Photorealistic Try-On Result -->
+                    <img id="tryOnSliderAfterImg" class="vas-ba-slider-after-img" src="" alt="Virtual Try-On Result" />
+                    <span class="vas-ba-tag after">VASTRAÉ TRY-ON RESULT</span>
+
+                    <!-- Layer 2 (Clipped Overlay): Before / Original Customer Photo -->
+                    <div class="vas-ba-slider-before-wrap" id="tryOnSliderBeforeWrap">
+                      <img id="tryOnSliderBeforeImg" class="vas-ba-slider-before-img" src="" alt="Original Customer Reference" />
+                      <span class="vas-ba-tag before">ORIGINAL PHOTO</span>
+                    </div>
+
+                    <!-- Layer 3: Draggable Divider Handle -->
+                    <div class="vas-ba-slider-handle" id="tryOnSliderHandle">
+                      <div class="vas-ba-slider-thumb">‹ ›</div>
+                    </div>
+                  </div>
+
+                  <!-- Viewport 2: Side-by-Side Dual Viewport -->
+                  <div class="vas-dual-view-container" id="tryOnDualContainer" style="display:none;">
+                    <div class="vas-dual-col">
+                      <div class="vas-dual-frame">
+                        <img id="tryOnDualBeforeImg" src="" alt="Original Customer Photo" />
+                        <span class="vas-ba-tag before">1. ORIGINAL CUSTOMER PHOTO</span>
+                      </div>
+                      <span class="vas-dual-col-label">Customer Identity Reference</span>
+                    </div>
+                    <div class="vas-dual-col">
+                      <div class="vas-dual-frame">
+                        <img id="tryOnDualAfterImg" src="" alt="Realistic Virtual Try-On Result" />
+                        <span class="vas-ba-tag after">2. REALISTIC TRY-ON RESULT</span>
+                      </div>
+                      <span class="vas-dual-col-label">Photorealistic Couture Fit</span>
+                    </div>
+                  </div>
+
+                  <div class="vas-ba-hint">
+                    ⇄ <strong>Before &amp; After Comparison:</strong> Slide the circular thumb or switch to Side-by-Side view to compare your original photo with the virtual styled result.
+                  </div>
+
+                  <!-- Result Action Controls (Requirement 6) -->
+                  <div class="vas-tryon-result-actions">
+                    <button type="button" class="vas-btn vas-btn-mauve" onclick="window.shopTryOnLook()">
+                      🛍️ Shop This Look
+                    </button>
+                    <button type="button" class="vas-btn vas-btn-rose" onclick="window.downloadTryOnLook()">
+                      ⬇️ Download High-Res Look
+                    </button>
+                    <button type="button" class="vas-btn vas-btn-outline" onclick="window.saveToStyleBoard()">
+                      📌 Save to Style Board
+                    </button>
+                    <button type="button" class="vas-btn vas-btn-ghost" onclick="document.getElementById('tryOnStep2').scrollIntoView({behavior:'smooth'})">
+                      🔄 Try Another Dress
+                    </button>
+                    <button type="button" class="vas-btn vas-btn-ghost" style="color:var(--vas-danger);" onclick="window.removeTryOnPhoto()">
+                      📸 Change Photo
+                    </button>
+                  </div>
+
+                  <!-- Complete the Look: Stylist Matched Accessories -->
+                  <div class="vas-tryon-accessories-section" id="tryOnAccessoriesWrap" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px;">
+                      <div>
+                        <span class="vas-eyebrow" style="color:var(--vas-mauve);">STYLIST RECOMMENDATIONS</span>
+                        <h4 style="font-family:var(--vas-font-serif); font-size:1.25rem; margin:4px 0 0; color:var(--vas-charcoal);">
+                          ✨ Complete the Look
+                        </h4>
+                        <p style="font-size:0.84rem; color:var(--vas-muted); margin:2px 0 0;">
+                          Coordinated Kundan chokers, handcrafted bridal potlis, and silk juttis curated for this ensemble.
+                        </p>
+                      </div>
+                    </div>
+                    <div class="vas-tryon-accessories-grid" id="tryOnAccessoriesGrid">
+                      <!-- Rendered by tryon-service.js -->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -1008,18 +1026,19 @@
               </p>
             </div>
 
-            <!-- Sanctuary Lock Overlay for Unauthenticated Visitors -->
+            <!-- Guest Preview Banner for Customizer -->
             <div id="studioAuthLockOverlay" class="vas-service-lock-card">
-              <div class="vas-lock-badge">🔒 PRIVATE BESPOKE ATELIER</div>
-              <h3 style="font-family:var(--vas-font-serif); font-size:1.6rem; margin:10px 0 8px;">Exclusive to Registered Patrons</h3>
-              <p style="color:var(--vas-muted); font-size:0.92rem; line-height:1.6; max-width:540px; margin:0 auto 18px;">
-                Customizing silhouettes, necklines, pure handloom fabrics, AI Virtual Try-On, and bespoke tailor commissioning is reserved for VASTRAÉ members. Please sign in or register to unlock full studio access.
-              </p>
-              <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <button class="vas-btn vas-btn-gold" onclick="window.openAuthModal('login')">
-                  Sign In to Customize
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span class="vas-lock-badge">🔒 ATELIER PREVIEW</span>
+                <span style="font-size:0.88rem; color:var(--vas-charcoal);">
+                  Customize silhouettes, necklines, pure handloom fabrics &amp; live prices. <strong>Sign in when you are ready to commission this custom creation.</strong>
+                </span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAuthModal('login')">
+                  Sign In to Commission
                 </button>
-                <button class="vas-btn vas-btn-outline" onclick="window.openAuthModal('register')">
+                <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openAuthModal('register')">
                   Register Profile &rarr;
                 </button>
               </div>
@@ -1069,7 +1088,7 @@
 
                   <div class="vas-preview-display" id="studioPreviewDisplay">
                     <img id="studioPreviewImg"
-                      src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85"
+                      src="images/products/women/ivory-anarkali-suit-front.jpg"
                       alt="Customized Look" />
                     <div class="vas-preview-overlay-tags" id="studioPreviewTags">
                       <!-- Updated live -->
@@ -1079,21 +1098,13 @@
                   <!-- AI / Virtual Try-On Controls -->
                   <div class="vas-ai-panel" id="virtualTryOn">
                     <div class="vas-ai-header">
-                      <strong>🪞 AI Virtual Model Try-On</strong>
+                      <strong>🪞 AI Virtual Try-On</strong>
                       <span style="font-size:0.75rem; color:var(--vas-muted);">Studio Simulation</span>
-                    </div>
-
-                    <!-- Choose Virtual Model -->
-                    <div style="margin-bottom:14px;">
-                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:6px;">Choose Virtual Model:</label>
-                      <div id="virtualModelSelect" style="display:flex; gap:10px; justify-content:space-between;">
-                        <!-- Injected from data.js -->
-                      </div>
                     </div>
 
                     <!-- Upload Customer Photo -->
                     <div style="margin-bottom:14px;">
-                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:4px;">Or Upload Your Own Photo:</label>
+                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:4px;">Upload Your Photo for AI Virtual Try-On:</label>
                       <input type="file" accept="image/*" class="vas-input" style="padding:6px; font-size:0.78rem;"
                         onchange="window.handleCustomerPhotoUpload(event)" />
                     </div>
@@ -1142,135 +1153,642 @@
           </div>
         </section>
 
-        <!-- Section 4: Saree Reborn Commission & Own-Fabric Concierge -->
+        <!-- Section 4: Saree Reborn Commission & Saree Quality & Transformation Studio -->
         <section class="vas-section" id="sareeReborn">
           <div class="vas-container">
             <div class="vas-section-header">
-              <span class="vas-eyebrow">CIRCULAR HAUTE COUTURE</span>
-              <h2 class="vas-title">Saree Reborn &middot; <em>Waste-to-Best</em></h2>
+              <span class="vas-eyebrow">CIRCULAR HAUTE COUTURE &middot; UP-CYCLING</span>
+              <h2 class="vas-title">Saree Reborn &middot; <em>Saree Quality &amp; Transformation Studio</em></h2>
               <p class="vas-subtitle">
-                Don't leave mother’s or grandmother’s heritage sarees folded away in wardrobes. Reincarnate heirloom silks into modern blouses, lehengas, and festive potlis.
+                Give your heirloom sarees a graceful second life. Evaluate fabric strength, discover designer silhouettes suited to your silk's condition, plan zero-waste border and pallu placements, and request a Master Tailor loom inspection.
               </p>
             </div>
 
-            <!-- 6-Stage Saree Reborn Flow -->
-            <div class="vas-reborn-flow">
-              <div class="vas-flow-step">
-                <div class="vas-flow-step-num">1</div>
-                <h4>Submit Saree</h4>
-                <p>Enter vintage age, weave type, and preferred redesign goal.</p>
-              </div>
-              <div class="vas-flow-step">
-                <div class="vas-flow-step-num">2</div>
-                <h4>Pickup / Ship</h4>
-                <p>Free doorstep collection in Bengaluru or prepaid insured courier label.</p>
-              </div>
-              <div class="vas-flow-step">
-                <div class="vas-flow-step-num">3</div>
-                <h4>Tailor Inspection</h4>
-                <p>Physical warp, weft, and zari integrity test on atelier drafting loom.</p>
-              </div>
-              <div class="vas-flow-step">
-                <div class="vas-flow-step-num">4</div>
-                <h4>Usable / Not Usable</h4>
-                <p>Tailor certifies whether silk can withstand needle stitching.</p>
-              </div>
-              <div class="vas-flow-step">
-                <div class="vas-flow-step-num">5</div>
-                <h4>Client Approval</h4>
-                <p>Pattern preview shared over WhatsApp before cutting.</p>
-              </div>
-              <div class="vas-flow-step">
-                <div class="vas-flow-step-num">6</div>
-                <h4>Stitching &amp; Delivery</h4>
-                <p>Stitched with mulmul backing and returned in luxury casket.</p>
-              </div>
-            </div>
-
-            <!-- Strict Physical Inspection Alert Policy -->
-            <div class="vas-inspection-alert">
-              <div class="vas-inspection-alert-icon">⚠️</div>
-              <div class="vas-inspection-alert-text">
-                <strong>Mandatory Master Tailor Physical Inspection Policy:</strong>
-                <p>
-                  Our shipping delivery team cannot judge fabric tensile strength. Every vintage saree must be inspected physically on our Indiranagar drafting loom. If the fabric is determined to be <em>Not Usable</em> due to brittle silk age, we inform you immediately and safely return the saree (customer pays applicable return shipping charges of ₹180).
-                </p>
-              </div>
-            </div>
-
-            <!-- Saree Reborn Member Lock Card -->
+            <!-- Saree Reborn Member Banner -->
             <div id="rebornAuthLockOverlay" class="vas-service-lock-card">
-              <div class="vas-lock-badge">🔒 SAREE REBORN SANCTUARY</div>
-              <h4 style="font-family:var(--vas-font-serif); font-size:1.4rem; margin:8px 0 6px;">Sign In to Commission Upcycling</h4>
-              <p style="color:var(--vas-muted); font-size:0.9rem; margin:0 auto 16px; max-width:480px;">
-                Physical loom inspection and vintage saree transformation is reserved for registered patrons. Please sign in or register to submit your commission.
-              </p>
-              <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <button class="vas-btn vas-btn-rose vas-btn-sm" onclick="window.openAuthModal('login')">Sign In &rarr;</button>
-                <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAuthModal('register')">Register Profile</button>
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span class="vas-lock-badge">🔒 STUDIO PREVIEW</span>
+                <span style="font-size:0.88rem; color:var(--vas-charcoal);">
+                  Explore quality assessment, silhouettes &amp; fabric reuse planning. <strong>Sign in to book doorstep collection &amp; Master Tailor loom inspection.</strong>
+                </span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openAuthModal('login')">
+                  Sign In to Request
+                </button>
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openAuthModal('register')">
+                  Register Profile
+                </button>
               </div>
             </div>
 
-            <!-- Interactive Saree Reborn Commission Form -->
-            <div class="vas-glass-panel"
-              style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:36px; padding:36px; margin-bottom: 24px;">
-              <div>
-                <h3 style="margin-bottom:8px;">Commission a Saree Reborn</h3>
-                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">Submit your vintage saree details to schedule physical loom intake.</p>
-                <form id="sareeRebornForm" onsubmit="window.handleSareeRebornSubmit(event)">
+            <!-- 5-STEP SAREE REBORN STUDIO -->
+            <div class="vas-sr-studio">
+              <!-- Step Progress Navigation -->
+              <nav class="vas-sr-wizard" aria-label="Saree Reborn Steps">
+                <button type="button" class="vas-sr-step-btn active" id="srStepBtn1" onclick="window.switchRebornStep(1)">
+                  <span class="sr-num">1</span>
+                  <span>1. Upload Your Saree</span>
+                </button>
+                <button type="button" class="vas-sr-step-btn" id="srStepBtn2" onclick="window.switchRebornStep(2)">
+                  <span class="sr-num">2</span>
+                  <span>2. Quality Check</span>
+                </button>
+                <button type="button" class="vas-sr-step-btn" id="srStepBtn3" onclick="window.switchRebornStep(3)">
+                  <span class="sr-num">3</span>
+                  <span>3. Discover Stitching Options</span>
+                </button>
+                <button type="button" class="vas-sr-step-btn" id="srStepBtn4" onclick="window.switchRebornStep(4)">
+                  <span class="sr-num">4</span>
+                  <span>4. Fabric Reuse Planner</span>
+                </button>
+                <button type="button" class="vas-sr-step-btn" id="srStepBtn5" onclick="window.switchRebornStep(5)">
+                  <span class="sr-num">5</span>
+                  <span>5. Tailor Consultation</span>
+                </button>
+              </nav>
+
+              <!-- STEP 1: UPLOAD YOUR SAREE -->
+              <div class="vas-sr-panel active" id="srPanel1">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                  <div>
+                    <h3 style="color:#5a1827; margin-bottom:4px; font-family:var(--vas-font-serif);">Step 1: Upload Your Saree</h3>
+                    <p style="font-size:0.88rem; color:var(--vas-muted);">Photograph key areas of your saree so our atelier can evaluate warp, border, and zari viability.</p>
+                  </div>
+                  <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.loadSampleRebornSaree()" style="border-color:#c5a059; color:#5a1827;">
+                    ✨ Load Sample Vintage Kanjeevaram Saree
+                  </button>
+                </div>
+
+                <!-- 4 Photo Upload Slots -->
+                <div class="vas-sr-upload-grid">
+                  <!-- Slot 1: Fabric / Body -->
+                  <div class="vas-sr-upload-card" onclick="document.getElementById('srUploadBodyInput').click()">
+                    <input type="file" id="srUploadBodyInput" accept="image/*" style="display:none;" onchange="window.handleRebornPhotoUpload('body', event)">
+                    <img id="srPreviewBody" class="vas-sr-upload-preview" alt="Saree Body Preview">
+                    <div id="srPlaceholderBody">
+                      <div class="vas-sr-upload-icon">🪡</div>
+                      <strong style="display:block; font-size:0.88rem; color:#5a1827; margin-bottom:4px;">1. Saree Body / Fabric</strong>
+                      <span style="font-size:0.75rem; color:var(--vas-muted);">Main field silk texture &amp; color</span>
+                    </div>
+                    <span id="srBadgeBody" class="vas-badge-pill" style="display:none; margin-top:8px; font-size:0.7rem; background:#2e7d32; color:#fff;">✓ Uploaded</span>
+                  </div>
+
+                  <!-- Slot 2: Border -->
+                  <div class="vas-sr-upload-card" onclick="document.getElementById('srUploadBorderInput').click()">
+                    <input type="file" id="srUploadBorderInput" accept="image/*" style="display:none;" onchange="window.handleRebornPhotoUpload('border', event)">
+                    <img id="srPreviewBorder" class="vas-sr-upload-preview" alt="Saree Border Preview">
+                    <div id="srPlaceholderBorder">
+                      <div class="vas-sr-upload-icon">🎗️</div>
+                      <strong style="display:block; font-size:0.88rem; color:#5a1827; margin-bottom:4px;">2. Saree Border</strong>
+                      <span style="font-size:0.75rem; color:var(--vas-muted);">Zari strip, temple border or lace</span>
+                    </div>
+                    <span id="srBadgeBorder" class="vas-badge-pill" style="display:none; margin-top:8px; font-size:0.7rem; background:#2e7d32; color:#fff;">✓ Uploaded</span>
+                  </div>
+
+                  <!-- Slot 3: Pallu -->
+                  <div class="vas-sr-upload-card" onclick="document.getElementById('srUploadPalluInput').click()">
+                    <input type="file" id="srUploadPalluInput" accept="image/*" style="display:none;" onchange="window.handleRebornPhotoUpload('pallu', event)">
+                    <img id="srPreviewPallu" class="vas-sr-upload-preview" alt="Saree Pallu Preview">
+                    <div id="srPlaceholderPallu">
+                      <div class="vas-sr-upload-icon">👑</div>
+                      <strong style="display:block; font-size:0.88rem; color:#5a1827; margin-bottom:4px;">3. Saree Pallu</strong>
+                      <span style="font-size:0.75rem; color:var(--vas-muted);">Ornamental endpiece &amp; heavy motifs</span>
+                    </div>
+                    <span id="srBadgePallu" class="vas-badge-pill" style="display:none; margin-top:8px; font-size:0.7rem; background:#2e7d32; color:#fff;">✓ Uploaded</span>
+                  </div>
+
+                  <!-- Slot 4: Damaged / Worn Areas -->
+                  <div class="vas-sr-upload-card" onclick="document.getElementById('srUploadDamageInput').click()">
+                    <input type="file" id="srUploadDamageInput" accept="image/*" style="display:none;" onchange="window.handleRebornPhotoUpload('damage', event)">
+                    <img id="srPreviewDamage" class="vas-sr-upload-preview" alt="Damage / Stains Preview">
+                    <div id="srPlaceholderDamage">
+                      <div class="vas-sr-upload-icon">🔍</div>
+                      <strong style="display:block; font-size:0.88rem; color:#5a1827; margin-bottom:4px;">4. Damaged / Worn Areas</strong>
+                      <span style="font-size:0.75rem; color:var(--vas-muted);">Pinholes, stains, fraying or tears</span>
+                    </div>
+                    <span id="srBadgeDamage" class="vas-badge-pill" style="display:none; margin-top:8px; font-size:0.7rem; background:#c5a059; color:#2a1017;">✓ Inspected</span>
+                  </div>
+                </div>
+
+                <!-- Fabric Details Form -->
+                <div style="background:#ffffff; border:1px solid rgba(197,160,89,0.3); border-radius:14px; padding:22px; margin-top:20px;">
+                  <h4 style="color:#5a1827; margin-bottom:14px; font-size:0.95rem;">Fabric Characteristics &amp; Vintage Context</h4>
                   <div class="vas-form-grid">
                     <div class="vas-form-group">
-                      <label>Saree Silk Type</label>
-                      <select id="rebSareeType" class="vas-select">
-                        <option>Vintage Kanjeevaram Temple Silk</option>
-                        <option>Banarasi Brocade Pure Silk</option>
-                        <option>Paithani Pure Zari Saree</option>
-                        <option>Tussar / Raw Silk Heirloom</option>
-                        <option>Chiffon / Georgette Zari</option>
+                      <label for="srFabricType">Select Fabric Type (if known)</label>
+                      <select id="srFabricType" class="vas-select" onchange="window.onRebornInputsChanged()">
+                        <option value="kanjeevaram">Pure Kanjeevaram Temple Silk</option>
+                        <option value="banarasi">Pure Banarasi Katan / Brocade Silk</option>
+                        <option value="paithani">Paithani Silk with Pure Gold Zari</option>
+                        <option value="chanderi">Chanderi / Maheshwari Silk-Cotton</option>
+                        <option value="tussar">Tussar / Raw Silk Heirloom</option>
+                        <option value="georgette">Pure Georgette / Silk Crepe with Zari</option>
+                        <option value="cotton">Handloom Fine Cotton / Mulmul Saree</option>
+                        <option value="unknown">Not Sure (Tailor will test during loom inspection)</option>
                       </select>
                     </div>
                     <div class="vas-form-group">
-                      <label>Approximate Age of Saree</label>
-                      <select id="rebSareeAge" class="vas-select">
-                        <option>10 – 20 Years Old (Good Strength)</option>
-                        <option>20 – 35 Years Old (Fragile Zari)</option>
-                        <option>35+ Years Old (Heirloom Heritage)</option>
+                      <label for="srSareeAge">Approximate Age of Saree</label>
+                      <select id="srSareeAge" class="vas-select" onchange="window.onRebornInputsChanged()">
+                        <option value="young">Under 10 Years (Strong Warp &amp; Resilient Weft)</option>
+                        <option value="vintage" selected>10 – 25 Years (Good Strength, Tender Borders)</option>
+                        <option value="heirloom">25 – 40 Years (Vintage Heirloom, Fragile Folds)</option>
+                        <option value="antique">40+ Years (Ancestral Heirloom, Brittle Silk)</option>
                       </select>
                     </div>
                     <div class="vas-form-group">
-                      <label>Desired Redesign Garment</label>
-                      <select id="rebTargetGarment" class="vas-select">
-                        <option>Bridal Designer Blouse &amp; Matching Potli Bag</option>
-                        <option>Full Flared Lehenga Choli</option>
-                        <option>Organza / Silk Contrast Dupatta</option>
-                        <option>Long Cape Trench / Jacket</option>
-                        <option>Little Princess Cotton-Silk Frock</option>
+                      <label for="srVisibleCondition">Visible Condition (Your Observation)</label>
+                      <select id="srVisibleCondition" class="vas-select" onchange="window.onRebornInputsChanged()">
+                        <option value="excellent">Excellent – Worn gently, crisp zari, no tears or stains</option>
+                        <option value="good" selected>Good – Mild fading or minor thread fuzz, intact borders</option>
+                        <option value="repair">Needs Repair – Small pinholes, watermarks or frayed edges</option>
+                        <option value="damaged">Heavily Damaged – Tears along pleats, brittle fold lines, stains</option>
                       </select>
                     </div>
                     <div class="vas-form-group">
-                      <label>Pickup Location / Address</label>
-                      <input type="text" id="rebPickupAddress" class="vas-input"
-                        placeholder="e.g. Indiranagar, Bengaluru or Outstation" required />
-                    </div>
-                    <div class="vas-form-group full">
-                      <label>Special Notes for Master Tailor</label>
-                      <textarea id="rebNotes" class="vas-textarea" rows="2"
-                        placeholder="Tell us about sentimental borders, tear spots to avoid, or preferred necklines..."></textarea>
+                      <label for="srSentimentalNote">Sentimental Note / Heritage History</label>
+                      <input type="text" id="srSentimentalNote" class="vas-input" placeholder="e.g. Mother's wedding reception saree from 1988">
                     </div>
                   </div>
-                  <button type="submit" class="vas-btn vas-btn-rose" style="margin-top:12px;">
-                    ♻️ Book Doorstep Saree Collection &amp; Loom Intake
+                </div>
+
+                <div class="vas-sr-btn-row">
+                  <span style="font-size:0.82rem; color:var(--vas-muted);">💡 Photos uploaded stay private and are used only for preliminary pattern assessment.</span>
+                  <button type="button" class="vas-btn vas-btn-gold" onclick="window.computeRebornQualityAndNext()">
+                    Analyze Saree Quality &rarr;
                   </button>
-                </form>
+                </div>
               </div>
 
-              <!-- Active Reborn Status Card -->
-              <div>
-                <h3 style="margin-bottom:8px;">Live Saree Reborn Commissions</h3>
-                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:16px;">Track physical inspection verdicts in real-time.</p>
-                <div id="sareeRebornOrdersList">
-                  <!-- Rendered by js/app.js -->
+              <!-- STEP 2: SAREE QUALITY CHECK -->
+              <div class="vas-sr-panel" id="srPanel2">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+                  <div>
+                    <h3 style="color:#5a1827; margin-bottom:4px; font-family:var(--vas-font-serif);">Step 2: Preliminary Saree Quality Check</h3>
+                    <p style="font-size:0.88rem; color:var(--vas-muted);">Visual analysis based on your uploaded photos and vintage fabric profile.</p>
+                  </div>
+                  <div>
+                    <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--vas-muted); display:block; margin-bottom:4px;">Estimated Overall Rating</span>
+                    <span id="srConditionBadge" class="vas-sr-rating-badge good">● Good Condition (78/100)</span>
+                  </div>
                 </div>
+
+                <!-- Quality Gauges Grid -->
+                <div class="vas-sr-gauge-grid">
+                  <div class="vas-sr-gauge-card">
+                    <div class="vas-sr-gauge-header">
+                      <span>🎨 Color Brilliance &amp; Fading</span>
+                      <span id="srGaugeFadingVal">82%</span>
+                    </div>
+                    <div class="vas-sr-gauge-bar">
+                      <div class="vas-sr-gauge-fill" id="srGaugeFadingFill" style="width:82%;"></div>
+                    </div>
+                    <p id="srGaugeFadingDesc" style="font-size:0.74rem; color:var(--vas-muted); margin-top:8px;">Deep dye retention across field silk; mild pallu sheen softening.</p>
+                  </div>
+
+                  <div class="vas-sr-gauge-card">
+                    <div class="vas-sr-gauge-header">
+                      <span>💧 Stain &amp; Watermark Severity</span>
+                      <span id="srGaugeStainsVal">85% Clean</span>
+                    </div>
+                    <div class="vas-sr-gauge-bar">
+                      <div class="vas-sr-gauge-fill" id="srGaugeStainsFill" style="width:85%;"></div>
+                    </div>
+                    <p id="srGaugeStainsDesc" style="font-size:0.74rem; color:var(--vas-muted); margin-top:8px;">Minor spot along lower pleat; 90% surface area clean.</p>
+                  </div>
+
+                  <div class="vas-sr-gauge-card">
+                    <div class="vas-sr-gauge-header">
+                      <span>🪡 Warp, Weft &amp; Hole Integrity</span>
+                      <span id="srGaugeTearsVal">76%</span>
+                    </div>
+                    <div class="vas-sr-gauge-bar">
+                      <div class="vas-sr-gauge-fill" id="srGaugeTearsFill" style="width:76%;"></div>
+                    </div>
+                    <p id="srGaugeTearsDesc" style="font-size:0.74rem; color:var(--vas-muted); margin-top:8px;">Minor pinhole at waist tuck; warp remains structurally sound.</p>
+                  </div>
+
+                  <div class="vas-sr-gauge-card">
+                    <div class="vas-sr-gauge-header">
+                      <span>✨ Zari &amp; Loose Thread Health</span>
+                      <span id="srGaugeZariVal">72%</span>
+                    </div>
+                    <div class="vas-sr-gauge-bar">
+                      <div class="vas-sr-gauge-fill" id="srGaugeZariFill" style="width:72%;"></div>
+                    </div>
+                    <p id="srGaugeZariDesc" style="font-size:0.74rem; color:var(--vas-muted); margin-top:8px;">Borders intact; minor metallic thread loosening on pallu edges.</p>
+                  </div>
+                </div>
+
+                <!-- Reusable Areas Breakdown -->
+                <h4 style="color:#5a1827; margin:22px 0 10px; font-size:0.95rem;">Which Areas May Still Be Reusable?</h4>
+                <div class="vas-sr-reuse-grid">
+                  <div class="vas-sr-reuse-item">
+                    <strong style="color:#5a1827; font-size:0.86rem; display:block; margin-bottom:4px;">🪡 Main Body Silk (~4.2 – 4.8m)</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      Ample strong silk available. Prime candidate for a full lehenga skirt, ethnic kurti, or tailored anarkali panels.
+                    </p>
+                  </div>
+                  <div class="vas-sr-reuse-item">
+                    <strong style="color:#5a1827; font-size:0.86rem; display:block; margin-bottom:4px;">👑 Ornate Pallu Section (~0.9m)</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      Densely woven zari motifs. Recommended as a statement blouse back, jacket front yoke, or luxury heirloom cushion cover.
+                    </p>
+                  </div>
+                  <div class="vas-sr-reuse-item">
+                    <strong style="color:#5a1827; font-size:0.86rem; display:block; margin-bottom:4px;">🎗️ Metallic Border Length (~8.5m)</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      Intact border strips will be carefully unstitched, hand-pressed, and repurposed along new hems, necklines, and cuffs.
+                    </p>
+                  </div>
+                  <div class="vas-sr-reuse-item" style="border-left-color:#b71c1c;">
+                    <strong style="color:#b71c1c; font-size:0.86rem; display:block; margin-bottom:4px;">✂️ Damaged / Worn Zones (~0.5 – 0.8m)</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      Frayed pleat lines will be strategically isolated and excluded from pattern cutting. No damaged silk will touch the final garment.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Prominent Disclaimer Box -->
+                <div class="vas-sr-disclaimer-box">
+                  <div style="font-size:1.8rem; line-height:1;">⚠️</div>
+                  <div style="font-size:0.84rem; color:#3e101b; line-height:1.55;">
+                    <strong style="color:#5a1827; display:block; margin-bottom:4px; font-size:0.9rem;">Tailor Physical Loom Inspection Mandatory Policy</strong>
+                    Image-based results are <em>preliminary visual estimates only</em>. Photographs cannot test fabric tensile pull, micro-brittleness under sewing machine tension, or hidden warp deterioration. Our Master Tailor must physically inspect the saree on our Indiranagar atelier drafting loom before cutting. If the silk is determined to be too brittle to hold needle seams, we inform you immediately and safely return the saree in an archival wrap.
+                  </div>
+                </div>
+
+                <div class="vas-sr-btn-row">
+                  <button type="button" class="vas-btn vas-btn-outline" onclick="window.switchRebornStep(1)">
+                    &larr; Back to Saree Photos
+                  </button>
+                  <button type="button" class="vas-btn vas-btn-gold" onclick="window.switchRebornStep(3)">
+                    Discover Stitching Options &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 3: DISCOVER WHAT CAN BE STITCHED -->
+              <div class="vas-sr-panel" id="srPanel3">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                  <div>
+                    <h3 style="color:#5a1827; margin-bottom:4px; font-family:var(--vas-font-serif);">Step 3: Discover What Can Be Stitched</h3>
+                    <p style="font-size:0.88rem; color:var(--vas-muted);">Recommended bespoke creations based on your saree's fabric type and assessed condition.</p>
+                  </div>
+                  <span style="font-size:0.75rem; background:rgba(197,160,89,0.15); color:#8c6820; padding:6px 14px; border-radius:20px; font-weight:600;">
+                    ⚠️ All yardages and prices are preliminary estimates
+                  </span>
+                </div>
+
+                <!-- Active Selection Pill -->
+                <div id="srSelectedDesignPill" style="background:#fbf4ea; border:1px solid #c5a059; padding:12px 18px; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
+                  <span>Selected Silhouette: <strong id="srSelectedDesignName" style="color:#5a1827;">Flared Lehenga &amp; Designer Blouse</strong></span>
+                  <span id="srSelectedDesignCost" style="color:#8c6820; font-weight:700;">Est. Tailoring: ₹3,800 – ₹4,600</span>
+                </div>
+
+                <!-- Stitching Options Grid -->
+                <div class="vas-sr-options-grid" id="srOptionsGrid">
+                  <!-- Populated dynamically by js/app.js -->
+                </div>
+
+                <div class="vas-sr-btn-row">
+                  <button type="button" class="vas-btn vas-btn-outline" onclick="window.switchRebornStep(2)">
+                    &larr; Back to Quality Check
+                  </button>
+                  <button type="button" class="vas-btn vas-btn-gold" onclick="window.switchRebornStep(4)">
+                    Plan Fabric Reuse &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 4: SMART FABRIC REUSE PLANNER -->
+              <div class="vas-sr-panel" id="srPanel4">
+                <div style="margin-bottom:20px;">
+                  <h3 style="color:#5a1827; margin-bottom:4px; font-family:var(--vas-font-serif);">Step 4: Smart Fabric Reuse Planner</h3>
+                  <p style="font-size:0.88rem; color:var(--vas-muted);">Maximize every meter of your heirloom silk. Zero-waste pattern layout preserving rich pallu zari.</p>
+                </div>
+
+                <!-- Interactive Visual Blueprint -->
+                <div class="vas-sr-blueprint">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:#dfc7a7;">Atelier Loom Cutting Layout (Standard 5.5m Saree)</span>
+                    <span style="font-size:0.78rem; color:#c5a059; font-weight:700;">Target: Zero-Waste Upcycling</span>
+                  </div>
+
+                  <div class="vas-sr-blueprint-bar">
+                    <div class="vas-sr-blueprint-seg body" title="Main Body: Primary Outfit Panels">
+                      Body (3.6m &middot; Skirt / Kurti)
+                    </div>
+                    <div class="vas-sr-blueprint-seg border" title="Zari Border: Hems & Detailing">
+                      Border (0.6m)
+                    </div>
+                    <div class="vas-sr-blueprint-seg pallu" title="Pallu: Focal Blouse / Yoke">
+                      Pallu (0.8m)
+                    </div>
+                    <div class="vas-sr-blueprint-seg leftover" title="Leftover Fabric: Accessories">
+                      Leftovers (0.5m)
+                    </div>
+                  </div>
+
+                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#dfc7a7; flex-wrap:wrap; gap:8px;">
+                    <span>🪡 Garment Yardage: <strong id="srBlueprintGarmentYardage" style="color:#fff;">~4.5m</strong></span>
+                    <span>🌿 Leftover Remnants: <strong id="srBlueprintLeftoverYardage" style="color:#c5a059;">~0.8m available for keepsakes</strong></span>
+                  </div>
+                </div>
+
+                <!-- 4 Strategy Cards -->
+                <div class="vas-sr-reuse-grid" style="margin-bottom:24px;">
+                  <div class="vas-sr-reuse-item">
+                    <strong style="color:#5a1827; font-size:0.86rem; display:block; margin-bottom:4px;">🎗️ Border Utilization Strategy</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      Borders are unpicked by hand without slicing the warp. Repurposed as ornate hem borders on lehenga kalis, sleeve cuffs, or waistbands.
+                    </p>
+                  </div>
+
+                  <div class="vas-sr-reuse-item">
+                    <strong style="color:#5a1827; font-size:0.86rem; display:block; margin-bottom:4px;">👑 Pallu Spotlight Placement</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      The dense zari pallu is placed on the most visible focal point: the back bodice of your blouse, the front yoke of an anarkali, or a statement jacket lapel.
+                    </p>
+                  </div>
+
+                  <div class="vas-sr-reuse-item">
+                    <strong style="color:#5a1827; font-size:0.86rem; display:block; margin-bottom:4px;">🛡️ Preserving Valuable Embroidery &amp; Zari</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      Antique silver/gold zari is secured with micro-interfacing and lined with pure cotton mulmul so metal threads never rub uncomfortably against skin.
+                    </p>
+                  </div>
+
+                  <div class="vas-sr-reuse-item" style="border-left-color:#b71c1c;">
+                    <strong style="color:#b71c1c; font-size:0.86rem; display:block; margin-bottom:4px;">⚠️ Damage Mitigation Strategy</strong>
+                    <p style="font-size:0.78rem; color:var(--vas-muted); margin:0;">
+                      When vintage fold lines or watermarks limit seamless cutting, tailor drafts flared kalis (panels) instead of a single piece, tucking flaws away.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Creative Leftover Fabric Add-ons -->
+                <div style="background:#ffffff; border:1px solid rgba(197,160,89,0.3); border-radius:14px; padding:22px;">
+                  <h4 style="color:#5a1827; margin-bottom:6px; font-size:0.95rem;">Creative Leftover Fabric Add-ons</h4>
+                  <p style="font-size:0.8rem; color:var(--vas-muted); margin-bottom:14px;">Select zero-waste keepsake products crafted from your saree's remaining fabric scraps:</p>
+
+                  <div id="srAddonsContainer">
+                    <label class="vas-sr-addon-row">
+                      <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="checkbox" id="srAddonPotli" value="450" onchange="window.toggleLeftoverAddon('potli', 450, 'Matching Silk Potli Bag', this)">
+                        <div>
+                          <strong style="font-size:0.86rem; color:#5a1827; display:block;">Matching Bridal Potli Bag</strong>
+                          <span style="font-size:0.75rem; color:var(--vas-muted);">Uses ~0.4m scrap fabric with zari tassel strings &amp; lining</span>
+                        </div>
+                      </div>
+                      <span style="font-weight:700; color:#8c6820; font-size:0.85rem;">+₹450 (Est.)</span>
+                    </label>
+
+                    <label class="vas-sr-addon-row">
+                      <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="checkbox" id="srAddonCushions" value="650" onchange="window.toggleLeftoverAddon('cushions', 650, 'Set of 2 Silk Cushion Covers', this)">
+                        <div>
+                          <strong style="font-size:0.86rem; color:#5a1827; display:block;">Set of 2 Luxury Silk Cushion Covers (16x16")</strong>
+                          <span style="font-size:0.75rem; color:var(--vas-muted);">Uses ~0.6m scrap fabric with concealed zipper &amp; gold piping</span>
+                        </div>
+                      </div>
+                      <span style="font-weight:700; color:#8c6820; font-size:0.85rem;">+₹650 (Est.)</span>
+                    </label>
+
+                    <label class="vas-sr-addon-row">
+                      <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="checkbox" id="srAddonScrunchies" value="250" onchange="window.toggleLeftoverAddon('scrunchies', 250, 'Silk Scrunchies & Headband Set', this)">
+                        <div>
+                          <strong style="font-size:0.86rem; color:#5a1827; display:block;">Pure Silk Scrunchie &amp; Bow Headband Pair</strong>
+                          <span style="font-size:0.75rem; color:var(--vas-muted);">Zero-waste micro-scraps repurposed into hair accessories</span>
+                        </div>
+                      </div>
+                      <span style="font-weight:700; color:#8c6820; font-size:0.85rem;">+₹250 (Est.)</span>
+                    </label>
+
+                    <label class="vas-sr-addon-row">
+                      <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="checkbox" id="srAddonPocketSquare" value="350" onchange="window.toggleLeftoverAddon('pocket', 350, 'Pocket Square & Brooch Lapel', this)">
+                        <div>
+                          <strong style="font-size:0.86rem; color:#5a1827; display:block;">Men's Silk Pocket Square &amp; Zari Brooch Set</strong>
+                          <span style="font-size:0.75rem; color:var(--vas-muted);">Hand-rolled silk edge pocket square to twin at family weddings</span>
+                        </div>
+                      </div>
+                      <span style="font-weight:700; color:#8c6820; font-size:0.85rem;">+₹350 (Est.)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="vas-sr-btn-row">
+                  <button type="button" class="vas-btn vas-btn-outline" onclick="window.switchRebornStep(3)">
+                    &larr; Back to Stitching Options
+                  </button>
+                  <button type="button" class="vas-btn vas-btn-gold" onclick="window.switchRebornStep(5)">
+                    Proceed to Tailor Consultation &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 5: TAILOR CONSULTATION -->
+              <div class="vas-sr-panel" id="srPanel5">
+                <div id="srConsultationView">
+                  <div style="margin-bottom:20px;">
+                    <h3 style="color:#5a1827; margin-bottom:4px; font-family:var(--vas-font-serif);">Step 5: Master Tailor Consultation &amp; Loom Inspection</h3>
+                    <p style="font-size:0.88rem; color:var(--vas-muted);">Schedule physical intake for your saree. Provide your measurements or request a doorstep fitting.</p>
+                  </div>
+
+                  <!-- Commission Summary Card -->
+                  <div style="background:#ffffff; border:1px solid rgba(197,160,89,0.3); border-radius:14px; padding:22px; margin-bottom:24px;">
+                    <h4 style="color:#5a1827; margin-bottom:12px; font-size:0.95rem;">Commission Summary</h4>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; font-size:0.84rem;">
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Target Garment:</span>
+                        <strong id="srSummGarment" style="color:#5a1827;">Flared Lehenga &amp; Designer Blouse</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Saree Fabric &amp; Vintage:</span>
+                        <strong id="srSummFabric" style="color:#5a1827;">10-25 Yrs · Kanjeevaram Temple Silk</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Assessed Condition:</span>
+                        <strong id="srSummCondition" style="color:#8c6820;">Good Condition (78/100)</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Leftover Add-ons:</span>
+                        <strong id="srSummAddons" style="color:#5a1827;">None selected</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Estimated Tailoring Total:</span>
+                        <strong id="srSummTotalCost" style="color:#8c6820; font-size:1.05rem;">₹3,800 – ₹4,600 (Est.)</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Consultation & Pickup Form -->
+                  <form id="sareeRebornForm" onsubmit="window.submitRebornInspectionRequest(event)">
+                    <div style="background:#ffffff; border:1px solid rgba(197,160,89,0.3); border-radius:14px; padding:22px; margin-bottom:20px;">
+                      <h4 style="color:#5a1827; margin-bottom:14px; font-size:0.95rem;">Measurements &amp; Fitting Preference</h4>
+                      
+                      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.86rem; cursor:pointer;">
+                          <input type="radio" name="srFitMethod" value="doorstep" checked onchange="window.toggleMeasurementInputs('doorstep')">
+                          <span>Master Tailor takes measurements during doorstep saree collection (Bengaluru)</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.86rem; cursor:pointer;">
+                          <input type="radio" name="srFitMethod" value="sample" onchange="window.toggleMeasurementInputs('sample')">
+                          <span>I will send my best-fitting sample blouse / dress along with the saree for copying</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.86rem; cursor:pointer;">
+                          <input type="radio" name="srFitMethod" value="online" onchange="window.toggleMeasurementInputs('online')">
+                          <span>I want to enter my measurements online right now</span>
+                        </label>
+                      </div>
+
+                      <!-- Expandable Online Measurement Fields -->
+                      <div id="srOnlineMeasurementFields" style="display:none; padding:16px; background:#fbf7f0; border-radius:10px; margin-bottom:16px;">
+                        <div class="vas-form-grid">
+                          <div class="vas-form-group">
+                            <label for="srMeasBust">Bust (inches)</label>
+                            <input type="number" id="srMeasBust" class="vas-input" placeholder="e.g. 36" step="0.5">
+                          </div>
+                          <div class="vas-form-group">
+                            <label for="srMeasWaist">Waist (inches)</label>
+                            <input type="number" id="srMeasWaist" class="vas-input" placeholder="e.g. 30" step="0.5">
+                          </div>
+                          <div class="vas-form-group">
+                            <label for="srMeasHips">Hips (inches)</label>
+                            <input type="number" id="srMeasHips" class="vas-input" placeholder="e.g. 39" step="0.5">
+                          </div>
+                          <div class="vas-form-group">
+                            <label for="srMeasLength">Desired Garment Length (inches)</label>
+                            <input type="number" id="srMeasLength" class="vas-input" placeholder="e.g. 42" step="0.5">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="vas-form-group full">
+                        <label for="srConsultationNotes">Special Tailor Instructions &amp; Sentimental Guidelines</label>
+                        <textarea id="srConsultationNotes" class="vas-textarea" rows="3" placeholder="Tell our Master Tailor about sentimental borders to preserve, necklines preferred, sleeve length, or areas with weak zari..."></textarea>
+                      </div>
+                    </div>
+
+                    <!-- Doorstep Collection & Contact Details -->
+                    <div style="background:#ffffff; border:1px solid rgba(197,160,89,0.3); border-radius:14px; padding:22px; margin-bottom:20px;">
+                      <h4 style="color:#5a1827; margin-bottom:14px; font-size:0.95rem;">Doorstep Saree Pickup &amp; Client Details</h4>
+                      <div class="vas-form-grid">
+                        <div class="vas-form-group">
+                          <label for="srClientName">Your Full Name</label>
+                          <input type="text" id="srClientName" class="vas-input" placeholder="e.g. Priya Venkatesh" required>
+                        </div>
+                        <div class="vas-form-group">
+                          <label for="srClientPhone">Mobile Number (for Loom Status Updates)</label>
+                          <input type="tel" id="srClientPhone" class="vas-input" placeholder="e.g. 9876543210" pattern="[6-9][0-9]{9}" required>
+                        </div>
+                        <div class="vas-form-group">
+                          <label for="srPickupDate">Preferred Pickup Date</label>
+                          <input type="date" id="srPickupDate" class="vas-input" min="2026-10-10" required>
+                        </div>
+                        <div class="vas-form-group">
+                          <label for="srPickupSlot">Preferred Time Slot</label>
+                          <select id="srPickupSlot" class="vas-select">
+                            <option>Morning (10:00 AM – 01:00 PM)</option>
+                            <option>Afternoon (02:00 PM – 05:00 PM)</option>
+                            <option>Evening (05:00 PM – 08:00 PM)</option>
+                          </select>
+                        </div>
+                        <div class="vas-form-group full">
+                          <label for="srPickupAddress">Complete Pickup Address / Pin Code</label>
+                          <input type="text" id="srPickupAddress" class="vas-input" placeholder="e.g. Flat 302, Casa Grande, 12th Main Indiranagar, Bengaluru - 560038" required>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="vas-sr-btn-row">
+                      <button type="button" class="vas-btn vas-btn-outline" onclick="window.switchRebornStep(4)">
+                        &larr; Back to Reuse Planner
+                      </button>
+                      <button type="submit" class="vas-btn vas-btn-gold" style="font-size:0.95rem; padding:12px 28px;">
+                        ♻️ Request Tailor Inspection &rarr;
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- CONFIRMATION RECEIPT SCREEN (Displayed ONLY after request is successfully recorded) -->
+                <div id="srConfirmationScreen" style="display:none;">
+                  <div class="vas-sr-receipt">
+                    <div class="vas-sr-receipt-header">
+                      <div>
+                        <span style="font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:#c5a059; font-weight:700;">VASTRAÉ ATELIER &middot; OFFICIAL RECEIPT</span>
+                        <h3 style="color:#5a1827; margin:4px 0; font-family:var(--vas-font-serif);">Tailor Inspection Request Confirmed</h3>
+                        <span style="font-size:0.8rem; color:var(--vas-muted);">Request ID: <strong id="srReceiptId" style="color:#5a1827;">REBORN-2026-881</strong></span>
+                      </div>
+                      <span class="vas-badge-pill" style="background:#2e7d32; color:#fff; font-size:0.75rem; padding:6px 14px;">
+                        ✓ Scheduled for Loom Intake
+                      </span>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:20px; font-size:0.85rem;">
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Selected Redesign Garment:</span>
+                        <strong id="srReceiptGarment" style="color:#5a1827;">Flared Lehenga &amp; Designer Blouse</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Saree Textile:</span>
+                        <strong id="srReceiptTextile" style="color:#5a1827;">Pure Kanjeevaram Silk</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Assigned Master Tailor:</span>
+                        <strong style="color:#5a1827;">Master Savitha Devi (Indiranagar Atelier)</strong>
+                      </div>
+                      <div>
+                        <span style="color:var(--vas-muted); display:block;">Pickup Slot &amp; Date:</span>
+                        <strong id="srReceiptSlot" style="color:#5a1827;">10 Oct 2026 &middot; Morning</strong>
+                      </div>
+                      <div style="grid-column: span 2;">
+                        <span style="color:var(--vas-muted); display:block;">Pickup Address:</span>
+                        <span id="srReceiptAddress" style="color:#3e101b;">Indiranagar, Bengaluru</span>
+                      </div>
+                      <div style="grid-column: span 2;">
+                        <span style="color:var(--vas-muted); display:block;">Estimated Tailoring Charge:</span>
+                        <strong id="srReceiptCost" style="color:#8c6820; font-size:1.1rem;">₹3,800 – ₹4,600 (Estimate)</strong>
+                      </div>
+                    </div>
+
+                    <div style="background:#fcf9f5; border:1px solid #c5a059; border-radius:10px; padding:14px; margin-bottom:20px; font-size:0.82rem; color:#5a1827;">
+                      <strong>Next Steps for Your Vintage Saree:</strong>
+                      <ol style="margin:8px 0 0 18px; padding:0; line-height:1.6;">
+                        <li>Our concierge arrives at your doorstep on the scheduled date with an archival protective box.</li>
+                        <li>Master Savitha Devi mounts the saree on our drafting loom for tensile and needle inspection.</li>
+                        <li>You receive a digital Loom Verdict notification with pattern layout photos before any cutting occurs.</li>
+                      </ol>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                      <button type="button" class="vas-btn vas-btn-outline" onclick="window.resetRebornStudio()">
+                        ↺ Start Another Saree Evaluation
+                      </button>
+                      <button type="button" class="vas-btn vas-btn-gold" onclick="window.simulateInspectionFromReceipt()">
+                        🔍 Simulate Master Tailor Loom Decision
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Reborn Status Card & Live Tracker -->
+            <div class="vas-glass-panel" style="padding:28px; margin-top:28px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                <div>
+                  <h3 style="margin:0; color:#5a1827; font-family:var(--vas-font-serif);">Live Saree Reborn Commissions</h3>
+                  <p style="font-size:0.84rem; color:var(--vas-muted); margin:4px 0 0;">Track physical inspection verdicts and loom progress in real-time.</p>
+                </div>
+                <span class="vas-badge-pill gold" id="srOrdersCountPill">0 Active Requests</span>
+              </div>
+              <div id="sareeRebornOrdersList">
+                <!-- Rendered dynamically by js/app.js -->
               </div>
             </div>
           </div>
@@ -1287,16 +1805,21 @@
               </p>
             </div>
 
-            <!-- Own-Fabric Member Lock Card -->
+            <!-- Own-Fabric Member Banner -->
             <div id="ownFabricAuthLockOverlay" class="vas-service-lock-card">
-              <div class="vas-lock-badge">🔒 DOORSTEP FABRIC PICKUP</div>
-              <h4 style="font-family:var(--vas-font-serif); font-size:1.4rem; margin:8px 0 6px;">Sign In to Schedule Tailor Pickup</h4>
-              <p style="color:var(--vas-muted); font-size:0.9rem; margin:0 auto 16px; max-width:480px;">
-                Doorstep fabric collection and made-to-measure tailoring is available exclusively to registered patrons. Please sign in or create an account to book your collection slot.
-              </p>
-              <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.openAuthModal('login')">Sign In &rarr;</button>
-                <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAuthModal('register')">Register Profile</button>
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span class="vas-lock-badge">🔒 CONCIERGE PREVIEW</span>
+                <span style="font-size:0.88rem; color:var(--vas-charcoal);">
+                  Browse fabric types, tailoring estimates &amp; collection slots. <strong>Sign in to schedule doorstep tailor pickup.</strong>
+                </span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAuthModal('login')">
+                  Sign In to Schedule
+                </button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openAuthModal('register')">
+                  Register Profile
+                </button>
               </div>
             </div>
 
@@ -1485,30 +2008,14 @@
               </p>
             </div>
 
-            <div class="vas-reviews-grid">
-              <div class="vas-review-card">
-                <div class="vas-stars">★★★★★</div>
-                <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
-                  &ldquo;I had my mother's 30-year-old Kanjeevaram wedding saree converted into a lehenga and potli bag through Saree Reborn. Master Savitha physically inspected the weave and stabilized the silk. The fit was astonishing!&rdquo;
-                </p>
-                <strong>Pooja Nambiar</strong> &middot; <small style="color:var(--vas-muted);">Indiranagar, Bengaluru</small>
-              </div>
+            <div class="vas-reviews-grid" id="vasContactReviewsGrid">
+              <!-- Dynamically populated from VASTRAE_DATA.reviews & localStorage -->
+            </div>
 
-              <div class="vas-review-card">
-                <div class="vas-stars">★★★★★</div>
-                <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
-                  &ldquo;Ordered a custom peacock maggam blouse through the interactive customizer. The virtual model draping was super helpful, and the 2-inch side seam allowance gave me total peace of mind.&rdquo;
-                </p>
-                <strong>Sneha Reddy</strong> &middot; <small style="color:var(--vas-muted);">Whitefield, Bengaluru</small>
-              </div>
-
-              <div class="vas-review-card">
-                <div class="vas-stars">★★★★★</div>
-                <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
-                  &ldquo;First time getting a bespoke Bandhgala suit stitched online. They picked up my raw silk fabric from my doorstep and delivered it within 5 days with surgeon cuffs and perfect shoulder slope.&rdquo;
-                </p>
-                <strong>Rohan Singhania</strong> &middot; <small style="color:var(--vas-muted);">Koramangala, Bengaluru</small>
-              </div>
+            <div style="text-align:center; margin-top:28px;">
+              <button type="button" class="vas-btn vas-btn-outline" onclick="window.openWriteReviewModal()">
+                ✍️ Leave Patron Feedback
+              </button>
             </div>
           </div>
         </section>
@@ -1562,34 +2069,16 @@
               </p>
             </div>
 
-            <div class="vas-faq-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">Do I need an appointment to visit the Indiranagar salon?</h4>
-                <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Walk-ins are warmly welcomed from Monday to Saturday (10:00 AM – 8:30 PM) for browsing fabrics and collections. For bridal trousseau consultations or calico fittings, reserving a time slot is recommended.
-                </p>
-              </div>
+            <!-- Live FAQ Search -->
+            <div style="max-width:540px; margin:0 auto 28px;">
+              <input type="text" id="faqSearchInput" class="vas-input"
+                style="padding:12px 20px; border-radius:30px; font-size:0.92rem; background:#fff; border:1px solid var(--vas-border); box-shadow:0 4px 12px rgba(0,0,0,0.03);"
+                placeholder="🔍 Search inquiries (turnaround, appointment, silk, alterations)..."
+                oninput="window.searchFaqs(this.value)" />
+            </div>
 
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">What is the typical turnaround time for custom tailoring?</h4>
-                <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Standard custom blouse and kurti stitching takes 48 to 72 hours. Hand-embroidered maggam bridal blouses require 5 to 7 days, and full wedding lehengas require 10 to 14 days. Express 24-hr rush service is available.
-                </p>
-              </div>
-
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">Can I bring my own fabric or heirloom saree?</h4>
-                <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Absolutely! You can drop off your fabric at our flagship salon or use our doorstep collection service across Bengaluru. Our master tailors physically inspect the weave and draft your custom pattern.
-                </p>
-              </div>
-
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">What if my garment needs sizing adjustments later?</h4>
-                <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Every garment crafted at VASTRAÉ includes generous 2-inch internal seam allowances and complimentary lifetime alteration privileges. Simply bring it in or request a courier pickup.
-                </p>
-              </div>
+            <div class="vas-faq-grid" id="vasFaqGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
+              <!-- Dynamically populated from VASTRAE_DATA.faqs -->
             </div>
           </div>
         </section>
@@ -2005,6 +2494,168 @@
   </div>
 
   <!-- ======================================================================
+       MY STYLE BOARD (TRY-ON MOODBOARDS) MODAL
+       ====================================================================== -->
+  <div class="vas-modal" id="tryOnStyleBoardModal" style="display:none;">
+    <div class="vas-modal-card" style="max-width:760px;">
+      <button class="vas-modal-close" onclick="window.closeStyleBoardModal()">&times;</button>
+      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
+        <span class="vas-eyebrow" style="color:var(--vas-mauve);">VASTRAÉ ATELIER MOODBOARDS</span>
+        <h2 style="font-size:1.5rem; margin:0; font-family:var(--vas-font-serif); color:var(--vas-charcoal);">My Style Board</h2>
+        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">Curated collection of your virtual try-on looks and saved couture ensembles.</p>
+      </div>
+      <div id="styleBoardItemsList">
+        <!-- Rendered by tryon-service.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       LOOK COMPARISON MODAL (SIDE-BY-SIDE EVALUATION)
+       ====================================================================== -->
+  <div class="vas-modal" id="tryOnCompareModal" style="display:none;">
+    <div class="vas-modal-card" style="max-width:920px;">
+      <button class="vas-modal-close" onclick="window.closeLookCompareModal()">&times;</button>
+      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
+        <span class="vas-eyebrow" style="color:var(--vas-mauve);">SIDE-BY-SIDE EVALUATION</span>
+        <h2 style="font-size:1.5rem; margin:0; font-family:var(--vas-font-serif); color:var(--vas-charcoal);">Look Comparison</h2>
+        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">Compare selected silhouettes, fabrics, and pricing side-by-side to choose your perfect ensemble.</p>
+      </div>
+      <div id="tryOnCompareGrid" class="vas-compare-grid">
+        <!-- Rendered by tryon-service.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       AI VIRTUAL TRY-ON BACKEND INTEGRATION & SETTINGS MODAL
+       ====================================================================== -->
+  <div class="vas-modal" id="tryOnAiIntegrationModal" style="display:none;">
+    <div class="vas-modal-card" style="max-width:780px;">
+      <button class="vas-modal-close" onclick="window.closeAiIntegrationModal()">&times;</button>
+      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
+        <span class="vas-eyebrow" style="color:var(--vas-mauve);">ARCHITECTURE &amp; API SECURITY</span>
+        <h2 style="font-size:1.5rem; margin:0; font-family:var(--vas-font-serif); color:var(--vas-charcoal);">AI Try-On Service Gateway</h2>
+        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">Connect real diffusion-based Virtual Try-On APIs with secure server-side key management.</p>
+      </div>
+      
+      <div class="vas-ai-guide-content">
+        <!-- Security Guarantee Alert -->
+        <div class="vas-ai-alert-box">
+          <span style="font-size:1.3rem;">🔒</span>
+          <div>
+            <strong>Strict Frontend Security Guarantee:</strong>
+            <p style="margin:2px 0 0; font-size:0.82rem; color:var(--vas-ink);">
+              Secret AI API keys are stored solely on your secure local backend (<code>backend_config.json</code> or server environment variables) and <strong>never exposed in frontend JavaScript</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Integration Status Overview -->
+        <div class="vas-ai-status-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:0.85rem; font-weight:700; color:var(--vas-charcoal);">Active Engine Architecture:</span>
+            <span id="aiModalEngineBadge" class="vas-engine-status-pill local-active">
+              <span class="vas-engine-dot local"></span> Atelier Photometric Engine (Biometric Synthesis)
+            </span>
+          </div>
+          <p style="font-size:0.83rem; color:var(--vas-muted); margin:0 0 10px; line-height:1.5;">
+            The studio dynamically detects whether our Python backend (<code>backend_server.py</code>) has an active Neural AI key (e.g. IDM-VTON on Replicate or FASHN.ai). When no cloud key is provided, the high-fidelity <strong>VASTRAÉ Atelier Photometric Synthesis Engine</strong> executes client-side biometric calibration without placeholder deception.
+          </p>
+        </div>
+
+        <!-- Integration Steps -->
+        <div style="margin-top:16px;">
+          <h4 style="font-size:0.95rem; margin:0 0 8px; color:var(--vas-charcoal);">How to Connect Real Neural AI Diffusion Services:</h4>
+          <div class="vas-ai-step-list">
+            <div class="vas-ai-step-item">
+              <span class="vas-ai-step-num">1</span>
+              <div>
+                <strong>Launch the Secure Backend Gateway:</strong>
+                <p style="margin:2px 0 0; font-size:0.8rem; color:var(--vas-muted);">
+                  Run <code>python backend_server.py</code> in the project directory. The gateway runs on port 8080.
+                </p>
+              </div>
+            </div>
+            <div class="vas-ai-step-item">
+              <span class="vas-ai-step-num">2</span>
+              <div>
+                <strong>Supported Neural VTON Providers:</strong>
+                <p style="margin:2px 0 0; font-size:0.8rem; color:var(--vas-muted);">
+                  <strong>IDM-VTON (Replicate):</strong> Diffusion-based virtual try-on preserving garment textures.<br>
+                  <strong>FASHN.ai:</strong> Commercial high-resolution fashion garment warp API.<br>
+                  <strong>Google Gemini Vision / Multimodal:</strong> Multimodal prompt-guided clothing synthesis.
+                </p>
+              </div>
+            </div>
+            <div class="vas-ai-step-item">
+              <span class="vas-ai-step-num">3</span>
+              <div>
+                <strong>Configure Secret API Key in <code>backend_config.json</code>:</strong>
+                <pre style="background:#221b1f; color:#f5d5de; padding:10px; border-radius:8px; font-size:0.78rem; overflow-x:auto; margin:6px 0 0;">
+{
+  "provider": "replicate_idm_vton",
+  "api_key": "r8_YourSecretTokenHere..."
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px; display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.vastraeTryOn.checkStatus(); if(window.showToast) window.showToast('Checked AI backend status.');">
+            🔄 Re-check Backend Connection
+          </button>
+          <button type="button" class="vas-btn vas-btn-sm vas-btn-mauve" onclick="window.closeAiIntegrationModal()">
+            Close Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Write a Review Modal -->
+  <div class="vas-modal" id="writeReviewModal" style="display:none;" onclick="if(event.target===this)window.closeWriteReviewModal()">
+    <div class="vas-modal-dialog" style="max-width:480px;">
+      <div class="vas-modal-header">
+        <h3 style="margin:0; font-family:var(--vas-font-serif);">Share Your Atelier Story</h3>
+        <button class="vas-modal-close" onclick="window.closeWriteReviewModal()">&times;</button>
+      </div>
+      <div class="vas-modal-body" style="padding:24px;">
+        <form onsubmit="window.submitPatronReview(event)">
+          <div class="vas-form-group" style="margin-bottom:14px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px;">Your Name</label>
+            <input type="text" id="revAuthor" class="vas-input" required placeholder="e.g. Radhika Sharma" />
+          </div>
+          <div class="vas-form-group" style="margin-bottom:14px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px;">Location / City</label>
+            <input type="text" id="revLocation" class="vas-input" required placeholder="e.g. Indiranagar, Bengaluru" />
+          </div>
+          <div class="vas-form-group" style="margin-bottom:14px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px;">Occasion / Service</label>
+            <input type="text" id="revOccasion" class="vas-input" placeholder="e.g. Bridal Lehengas / Saree Reborn" />
+          </div>
+          <div class="vas-form-group" style="margin-bottom:14px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px;">Rating</label>
+            <select id="revStars" class="vas-input">
+              <option value="5">★★★★★ (5 Stars - Exceptional Couture)</option>
+              <option value="4">★★★★☆ (4 Stars - Highly Pleased)</option>
+              <option value="3">★★★☆☆ (3 Stars - Good)</option>
+            </select>
+          </div>
+          <div class="vas-form-group" style="margin-bottom:20px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px;">Your Experience / Feedback</label>
+            <textarea id="revText" class="vas-input" rows="4" required placeholder="Tell patrons about your fit, fabric, or atelier experience..."></textarea>
+          </div>
+          <button type="submit" class="vas-btn vas-btn-gold" style="width:100%;">
+            ✨ Publish Patron Review
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
        TOAST NOTIFICATION CONTAINER
        ====================================================================== -->
   <div id="vasToast" class="vas-toast"></div>
@@ -2027,6 +2678,7 @@
   <script src="js/services/tailor-service.js"></script>
   <script src="js/services/admin-service.js"></script>
   <script src="js/services/notification-service.js"></script>
+  <script src="js/services/tryon-service.js"></script>
   <script src="js/app.js"></script>
 </body>
 

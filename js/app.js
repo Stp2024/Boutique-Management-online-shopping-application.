@@ -86,6 +86,13 @@
     updateAuthUI();
     updateCartWishCounters();
     renderCollectionGrid();
+    renderEditorialGrid();
+    renderAccessoriesGrid();
+    renderServicesGrid();
+    renderArtisansGrid();
+    renderReviewsGrid();
+    renderFaqGrid();
+    initDynamicDatesAndCounters();
     initCustomizeStudio();
     initSareeRebornUI();
     initVirtualTryOn();
@@ -106,9 +113,8 @@
         showAuthError("Please log in to access your Customer Workspace.");
       } else if (["about", "collection", "services", "contact", "login"].includes(initialHash)) {
         window.navigateToPage(initialHash);
-      } else if (["customize", "sareeReborn", "ownFabric"].includes(initialHash)) {
-        window.navigateToPage("services");
-        showToast("🔒 Please sign in first to use our customization studio and tailoring services.");
+      } else if (["customize", "sareeReborn", "ownFabric", "aiTryOnStudio"].includes(initialHash)) {
+        window.navigateToSection(initialHash);
       } else if (initialHash === "accessories") {
         window.navigateToSection(initialHash);
       } else {
@@ -289,17 +295,11 @@
       window.navigateToPage(sectionId, event);
       return;
     }
-    // Gated service usage before login: Customize, AI Try-On, Saree Reborn, Own Fabric
-    if (["customize", "virtualTryOn", "sareeReborn", "ownFabric"].includes(sectionId)) {
-      if (!currentUser) {
-        showToast("🔒 Please sign in first to use our customization studio and tailoring services.");
-        showAuthError("Please sign in first to use our customization studio and tailoring services.");
-        window.openAuthModal("login");
-        return;
-      }
+    if (["customize", "virtualTryOn", "sareeReborn", "ownFabric", "aiTryOnStudio"].includes(sectionId)) {
       window.navigateToPage("services", event);
       setTimeout(() => {
-        const el = document.getElementById(sectionId);
+        const targetId = sectionId === "virtualTryOn" ? "customize" : sectionId;
+        const el = document.getElementById(targetId);
         if (el) {
           const headerOffset = 84;
           const pos = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
@@ -867,9 +867,11 @@
     const studioLockOverlay = document.getElementById("studioAuthLockOverlay");
     const rebornLockOverlay = document.getElementById("rebornAuthLockOverlay");
     const ownFabricLockOverlay = document.getElementById("ownFabricAuthLockOverlay");
+    const tryOnLockOverlay = document.getElementById("tryOnAuthLockOverlay");
     const studioContent = document.querySelector(".vas-customize-studio");
     const rebornForm = document.getElementById("sareeRebornForm");
     const ownFabricForm = document.getElementById("ownFabricForm");
+    const tryOnShell = document.querySelector(".vas-tryon-studio-shell");
 
     if (currentUser) {
       // Hide Login / Register option from navigation bar after login or registration
@@ -882,11 +884,13 @@
       if (studioLockOverlay) studioLockOverlay.style.display = "none";
       if (rebornLockOverlay) rebornLockOverlay.style.display = "none";
       if (ownFabricLockOverlay) ownFabricLockOverlay.style.display = "none";
+      if (tryOnLockOverlay) tryOnLockOverlay.style.display = "none";
 
       // Unlock interactive service panels
       if (studioContent) studioContent.classList.remove("vas-service-content-locked");
       if (rebornForm) rebornForm.classList.remove("vas-service-content-locked");
       if (ownFabricForm) ownFabricForm.classList.remove("vas-service-content-locked");
+      if (tryOnShell) tryOnShell.classList.remove("vas-service-content-locked");
 
       // Notification badge
       const notifBadge = document.getElementById("navNotifCount");
@@ -906,11 +910,13 @@
       if (studioLockOverlay) studioLockOverlay.style.display = "flex";
       if (rebornLockOverlay) rebornLockOverlay.style.display = "flex";
       if (ownFabricLockOverlay) ownFabricLockOverlay.style.display = "flex";
+      if (tryOnLockOverlay) tryOnLockOverlay.style.display = "flex";
 
-      // Lock interactive service panels for unauthenticated visitors
-      if (studioContent) studioContent.classList.add("vas-service-content-locked");
-      if (rebornForm) rebornForm.classList.add("vas-service-content-locked");
-      if (ownFabricForm) ownFabricForm.classList.add("vas-service-content-locked");
+      // Services remain fully viewable and interactive for guests; login required to order/submit
+      if (studioContent) studioContent.classList.remove("vas-service-content-locked");
+      if (rebornForm) rebornForm.classList.remove("vas-service-content-locked");
+      if (ownFabricForm) ownFabricForm.classList.remove("vas-service-content-locked");
+      if (tryOnShell) tryOnShell.classList.remove("vas-service-content-locked");
 
       const cartBadge = document.getElementById("navCartCount");
       const wishBadge = document.getElementById("navWishCount");
@@ -998,6 +1004,9 @@
               <button class="vas-btn vas-btn-sm vas-btn-360" onclick="window.open360Modal('${p.id}')" title="Interactive 360° Drag Viewer">
                 🔄 View 360°
               </button>
+              <button class="vas-btn vas-btn-sm vas-btn-rose" onclick="event.stopPropagation(); window.launchTryOnForProduct('${p.id}')" title="Try On in AI Virtual Studio">
+                ✦ Try On
+              </button>
               <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('${p.id}')">
                 Quick View
               </button>
@@ -1050,6 +1059,301 @@
     activeSearch = query;
     renderCollectionGrid();
   };
+
+  // ------------------------------------------------------------------------
+  // 5B. DYNAMIC RUNWAY EDITORIAL & ACCESSORIES VAULT
+  // ------------------------------------------------------------------------
+  function renderEditorialGrid() {
+    const grid = document.getElementById("vasEditorialGrid");
+    if (!grid || !window.VASTRAE_DATA || !window.VASTRAE_DATA.products) return;
+
+    // Curated runway spotlight items
+    const spotlightIds = ["W-SAR-01", "M-BG-01", "W-SH-06", "W-EM-01", "M-SU-01"];
+    const items = spotlightIds.map(id => window.VASTRAE_DATA.products.find(p => p.id === id)).filter(Boolean);
+
+    grid.innerHTML = items.map(p => {
+      const isWish = wishlist.includes(p.id);
+      return `
+        <article class="vas-product-card vas-glass-card" id="card-ed-${p.id}">
+          <div class="vas-product-media" style="aspect-ratio:3/4;">
+            <img id="card-img-${p.id}" src="${p.image}" alt="${p.name}" loading="lazy">
+            <button class="vas-card-360-badge" onclick="event.stopPropagation(); window.open360Modal('${p.id}')" title="Interactive 360° Drag Rotation">
+              🔄 360° View
+            </button>
+            <span class="vas-badge-tag">${p.badge || 'Runway Edit'}</span>
+            <button class="vas-wish-btn ${isWish ? 'active' : ''}" onclick="window.toggleWishlist('${p.id}')" title="Save to Wishlist">
+              ${isWish ? '♥' : '♡'}
+            </button>
+            <div class="vas-card-angle-bar" onclick="event.stopPropagation()">
+              <button type="button" class="vas-card-angle-btn active" data-angle="front" onclick="window.switchCardAngle('${p.id}', 'front', this, event)" title="Front">Front</button>
+              ${p.views && p.views.threequarter ? `<button type="button" class="vas-card-angle-btn" data-angle="threequarter" onclick="window.switchCardAngle('${p.id}', 'threequarter', this, event)" title="3/4">3/4</button>` : ''}
+              ${p.views && p.views.back ? `<button type="button" class="vas-card-angle-btn" data-angle="back" onclick="window.switchCardAngle('${p.id}', 'back', this, event)" title="Back">Back</button>` : ''}
+              ${p.views && p.views.detail ? `<button type="button" class="vas-card-angle-btn" data-angle="detail" onclick="window.switchCardAngle('${p.id}', 'detail', this, event)" title="Detail">Detail</button>` : ''}
+            </div>
+          </div>
+          <div class="vas-product-body">
+            <span class="vas-product-cat">${p.fabric}</span>
+            <h3 class="vas-product-name">${p.name}</h3>
+            <p class="vas-product-desc">${p.description}</p>
+            <div class="vas-product-price-row">
+              <span class="vas-price-current">₹${Number(p.price).toLocaleString()}</span>
+              ${p.originalPrice ? `<span class="vas-price-old">₹${Number(p.originalPrice).toLocaleString()}</span>` : ''}
+            </div>
+            <div class="vas-product-actions">
+              <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('${p.id}')">Quick View</button>
+              <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('${p.id}')">✨ Customize</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderAccessoriesGrid() {
+    const grid = document.getElementById("vasAccessoriesGrid");
+    if (!grid || !window.VASTRAE_DATA || !window.VASTRAE_DATA.products) return;
+
+    const accessories = window.VASTRAE_DATA.products.filter(p => p.gender === "accessories" || p.category === "accessories");
+
+    grid.innerHTML = accessories.map(p => {
+      const isWish = wishlist.includes(p.id);
+      return `
+        <article class="vas-product-card vas-glass-card" id="card-acc-${p.id}">
+          <div class="vas-product-media">
+            <img src="${p.image}" alt="${p.name}" loading="lazy">
+            <span class="vas-badge-tag">${p.badge}</span>
+            <button class="vas-wish-btn ${isWish ? 'active' : ''}" onclick="window.toggleWishlist('${p.id}')" title="Save to Wishlist">
+              ${isWish ? '♥' : '♡'}
+            </button>
+          </div>
+          <div class="vas-product-body">
+            <span class="vas-product-cat">${p.fabric}</span>
+            <h3 class="vas-product-name">${p.name}</h3>
+            <p class="vas-product-desc">${p.description}</p>
+            <div class="vas-product-price-row">
+              <span class="vas-price-current">₹${Number(p.price).toLocaleString()}</span>
+              ${p.originalPrice ? `<span class="vas-price-old">₹${Number(p.originalPrice).toLocaleString()}</span>` : ''}
+            </div>
+            <div class="vas-product-actions">
+              <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('${p.id}')">Quick View</button>
+              <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('${p.id}')">+ Add to Bag</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderServicesGrid() {
+    const grid = document.getElementById("vasServicesGrid");
+    if (!grid || !window.VASTRAE_DATA || !window.VASTRAE_DATA.services) return;
+
+    grid.innerHTML = window.VASTRAE_DATA.services.map(s => `
+      <article class="vas-service-card vas-glass-card ${s.badge.includes('NEW') ? 'vas-service-card-featured' : ''}">
+        <div class="vas-service-media">
+          <img src="${s.image}" alt="${s.title}" loading="lazy" />
+          <div class="vas-service-icon-badge">${s.icon}</div>
+          ${s.badge.includes('NEW') ? `<span class="vas-card-pill-tag">${s.badge}</span>` : ''}
+        </div>
+        <div class="vas-service-body">
+          <h3>${s.title}</h3>
+          <span class="vas-service-subtitle">${s.subtitle}</span>
+          <p>${s.description}</p>
+          <div class="vas-service-inclusions">
+            <strong>What's Included:</strong>
+            <ul>
+              ${s.inclusions.map(inc => `<li>${inc}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="vas-service-footer">
+            <div class="vas-service-price">${s.startingPrice.startsWith('₹') ? 'From ' : ''}<strong>${s.startingPrice}</strong></div>
+            ${s.actionTarget === 'consultation' ?
+              `<button class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openConsultationModal()">${s.actionText}</button>` :
+              `<a href="#${s.actionTarget}" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('${s.actionTarget}', event)">${s.actionText}</a>`
+            }
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function renderArtisansGrid() {
+    const grid = document.getElementById("vasArtisansGrid");
+    if (!grid || !window.VASTRAE_DATA || !window.VASTRAE_DATA.artisans) return;
+
+    grid.innerHTML = window.VASTRAE_DATA.artisans.map(art => `
+      <div class="vas-artisan-card vas-glass-card" style="padding:22px; text-align:center; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
+        <img src="${art.avatar}" alt="${art.name}" class="vas-artisan-avatar" style="width:110px; height:110px; border-radius:50%; object-fit:cover; margin:0 auto 14px; border:2px solid var(--vas-gold-dark);" />
+        <span class="vas-badge-tag" style="display:inline-block; margin-bottom:8px; font-size:0.68rem; background:rgba(188,160,91,0.15); color:var(--vas-gold-dark);">${art.tag}</span>
+        <h3 style="font-size:1.15rem; margin:0 0 4px; color:var(--vas-charcoal);">${art.name}</h3>
+        <span class="vas-artisan-role" style="display:block; font-size:0.8rem; color:var(--vas-mauve); font-weight:700; margin-bottom:8px;">${art.role}</span>
+        <p style="font-size:0.84rem; color:var(--vas-muted); line-height:1.5; margin-bottom:12px;">${art.bio}</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; border-top:1px dashed var(--vas-border); padding-top:10px; margin-top:8px;">
+          <span style="color:var(--vas-gold-dark); font-weight:600;">⏳ ${art.experience}</span>
+          <span style="color:var(--vas-success, #2e7d32); font-weight:700;">● ${art.status}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const STORAGE_KEY_REVIEWS = "vastrae_patron_reviews";
+  function getDynamicReviews() {
+    let custom = [];
+    try {
+      custom = JSON.parse(localStorage.getItem(STORAGE_KEY_REVIEWS)) || [];
+    } catch(e) { custom = []; }
+    const defaults = (window.VASTRAE_DATA && window.VASTRAE_DATA.reviews) ? window.VASTRAE_DATA.reviews : [];
+    return [...custom, ...defaults];
+  }
+
+  function renderReviewsGrid() {
+    const homeGrid = document.getElementById("vasHomeReviewsGrid");
+    const contactGrid = document.getElementById("vasContactReviewsGrid");
+    const reviews = getDynamicReviews();
+
+    const homeHtml = reviews.slice(0, 3).map(r => `
+      <div class="vas-review-card vas-glass-card">
+        <div class="vas-review-stars" style="color:var(--vas-gold-dark); font-size:1.05rem; margin-bottom:10px;">${"★".repeat(r.stars)}</div>
+        <p class="vas-review-text" style="font-size:0.92rem; line-height:1.65; margin-bottom:16px;">
+          &ldquo;${r.text}&rdquo;
+        </p>
+        <div class="vas-reviewer">
+          <div class="vas-reviewer-avatar" style="background:var(--vas-mauve-dark); color:#fff; font-weight:700;">${r.initials}</div>
+          <div>
+            <strong>${r.name}</strong>
+            <span style="display:block; font-size:0.75rem; color:var(--vas-muted);">${r.role} &middot; ${r.location}</span>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    const contactHtml = reviews.map(r => `
+      <div class="vas-review-card vas-glass-card" style="padding:22px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
+        <div class="vas-stars" style="color:var(--vas-gold-dark); margin-bottom:8px;">${"★".repeat(r.stars)}</div>
+        <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
+          &ldquo;${r.text}&rdquo;
+        </p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong style="display:block; font-size:0.88rem;">${r.name}</strong>
+            <small style="color:var(--vas-muted);">${r.location}</small>
+          </div>
+          <span style="font-size:0.72rem; padding:3px 8px; border-radius:12px; background:rgba(188,160,91,0.12); color:var(--vas-gold-dark); font-weight:700;">
+            ${r.occasion || 'Verified Patron'}
+          </span>
+        </div>
+      </div>
+    `).join("");
+
+    if (homeGrid) homeGrid.innerHTML = homeHtml;
+    if (contactGrid) contactGrid.innerHTML = contactHtml;
+  }
+
+  window.openWriteReviewModal = function() {
+    const m = document.getElementById("writeReviewModal");
+    if (m) m.style.display = "flex";
+  };
+
+  window.closeWriteReviewModal = function() {
+    const m = document.getElementById("writeReviewModal");
+    if (m) m.style.display = "none";
+  };
+
+  window.submitPatronReview = function(event) {
+    event.preventDefault();
+    const author = document.getElementById("revAuthor").value.trim();
+    const location = document.getElementById("revLocation").value.trim();
+    const occasion = document.getElementById("revOccasion").value.trim() || "Atelier Experience";
+    const stars = parseInt(document.getElementById("revStars").value, 10) || 5;
+    const text = document.getElementById("revText").value.trim();
+
+    if (!author || !text) return;
+
+    const initials = author.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "AP";
+    const newRev = {
+      id: "REV-USER-" + Date.now(),
+      name: author,
+      role: "Verified Patron",
+      location: location,
+      initials: initials,
+      stars: stars,
+      text: text,
+      date: "Just Now",
+      occasion: occasion
+    };
+
+    let userReviews = [];
+    try {
+      userReviews = JSON.parse(localStorage.getItem(STORAGE_KEY_REVIEWS)) || [];
+    } catch(e) { userReviews = []; }
+    userReviews.unshift(newRev);
+    localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(userReviews));
+
+    renderReviewsGrid();
+    window.closeWriteReviewModal();
+    showToast("✓ Thank you! Your atelier review has been published dynamically.");
+  };
+
+  function renderFaqGrid(filterQuery = "") {
+    const grid = document.getElementById("vasFaqGrid");
+    if (!grid || !window.VASTRAE_DATA || !window.VASTRAE_DATA.faqs) return;
+
+    let items = window.VASTRAE_DATA.faqs;
+    if (filterQuery) {
+      const q = filterQuery.toLowerCase().trim();
+      items = items.filter(f => f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q) || f.category.toLowerCase().includes(q));
+    }
+
+    if (items.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1; text-align:center; padding:32px; background:#fff; border-radius:12px; border:1px solid var(--vas-border);">
+          <p style="font-family:var(--vas-font-serif); font-size:1.15rem; margin-bottom:4px;">No inquiries found matching "${filterQuery}"</p>
+          <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="document.getElementById('faqSearchInput').value=''; renderFaqGrid();">Clear Search</button>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = items.map((faq, idx) => `
+      <div class="vas-faq-card vas-glass-card" style="padding:22px 24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border); transition:all 0.3s ease;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; cursor:pointer;" onclick="window.toggleFaqItem(${idx})">
+          <h4 style="font-size:1.02rem; margin:0; color:var(--vas-ink); line-height:1.4;">${faq.question}</h4>
+          <span id="faq-icon-${idx}" style="font-size:1.2rem; line-height:1; color:var(--vas-gold-dark); transition:transform 0.3s ease;">+</span>
+        </div>
+        <p id="faq-ans-${idx}" style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:12px 0 0; display:block;">
+          ${faq.answer}
+        </p>
+        <span style="display:inline-block; margin-top:10px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-gold-dark); font-weight:700;">
+          Category: ${faq.category}
+        </span>
+      </div>
+    `).join("");
+  }
+
+  window.searchFaqs = function(query) {
+    renderFaqGrid(query);
+  };
+
+  window.toggleFaqItem = function(idx) {
+    const ans = document.getElementById("faq-ans-" + idx);
+    const icon = document.getElementById("faq-icon-" + idx);
+    if (!ans) return;
+    if (ans.style.display === "none") {
+      ans.style.display = "block";
+      if (icon) icon.textContent = "−";
+    } else {
+      ans.style.display = "none";
+      if (icon) icon.textContent = "+";
+    }
+  };
+
+  function initDynamicDatesAndCounters() {
+    const today = new Date().toISOString().split("T")[0];
+    const consDate = document.getElementById("consDate");
+    const ownFabDate = document.getElementById("ownFabDate");
+    if (consDate) consDate.min = today;
+    if (ownFabDate) ownFabDate.min = today;
+  }
 
   // ------------------------------------------------------------------------
   // 6. INTERACTIVE 360° PRODUCT TURNTABLE & MULTI-VIEW VIEWER
@@ -1416,6 +1720,9 @@
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
             <button class="vas-btn vas-btn-primary" onclick="window.addToCart('${p.id}'); window.closeModal();" style="flex:1;">
               🛍️ Add to Shopping Bag
+            </button>
+            <button class="vas-btn vas-btn-rose" onclick="window.closeModal(); window.launchTryOnForProduct('${p.id}');" style="flex:1;">
+              ✦ Virtual Try-On
             </button>
             ${p.customizable ? `
               <button class="vas-btn vas-btn-gold" onclick="window.startCustomizeFromProduct('${p.id}'); window.closeModal();" style="flex:1;">
@@ -1832,7 +2139,7 @@
     const fallbackMen = VASTRAE_DATA.products.find(item => item.id === "M-BG-01") || VASTRAE_DATA.products.find(item => item.gender === "men");
     const fallbackKids = VASTRAE_DATA.products.find(item => item.id === "K-LE-01") || VASTRAE_DATA.products.find(item => item.gender === "kids");
 
-    let targetImg = (fallbackWomen && fallbackWomen.views && fallbackWomen.views[angle]) ? fallbackWomen.views[angle].url : "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&h=1200&crop=faces,top&q=85";
+    let targetImg = (fallbackWomen && fallbackWomen.views && fallbackWomen.views[angle]) ? fallbackWomen.views[angle].url : "images/products/women/ivory-anarkali-suit-front.jpg";
     let basePrice = 4899;
 
     // Check if customized from a specific loaded product
@@ -1905,14 +2212,9 @@
   // Virtual Try-on Sub-options
   function initVirtualTryOn() {
     const modelGallery = document.getElementById("virtualModelSelect");
-    if (!modelGallery) return;
-
-    modelGallery.innerHTML = VASTRAE_DATA.virtualModels.map((m, idx) => `
-      <div style="text-align:center; cursor:pointer;" onclick="window.selectVirtualModel('${m.id}', '${m.image}', this)">
-        <img src="${m.image}" alt="${m.name}" style="width:54px; height:54px; border-radius:50%; object-fit:cover; border:2px solid ${idx === 0 ? 'var(--vas-gold)' : 'var(--vas-border)'}; margin:0 auto 4px;">
-        <span style="font-size:0.68rem; display:block;">${m.name.split(' ')[0]}</span>
-      </div>
-    `).join("");
+    if (modelGallery) {
+      modelGallery.innerHTML = "";
+    }
   }
 
   window.selectVirtualModel = function (modelId, imgUrl, el) {
@@ -1921,12 +2223,11 @@
       openAuthModal("login");
       return;
     }
-    customState.selectedModelId = modelId;
-    customState.customerPhoto = null; // Clear manual upload
-    document.querySelectorAll("#virtualModelSelect img").forEach(i => i.style.borderColor = "var(--vas-border)");
-    if (el) el.querySelector("img").style.borderColor = "var(--vas-gold)";
-    document.getElementById("studioPreviewImg").src = imgUrl;
-    showToast(`✓ Applied Virtual Drape on Model`);
+    customState.customerPhoto = null;
+    if (imgUrl) {
+      document.getElementById("studioPreviewImg").src = imgUrl;
+      showToast(`✓ Applied Virtual Drape`);
+    }
   };
 
   window.handleCustomerPhotoUpload = function (event) {
@@ -2003,11 +2304,6 @@
   };
 
   window.startCustomizeFromProduct = function (productId) {
-    if (!currentUser) {
-      showToast("🔒 Please sign in or register to customize garments on loom.");
-      openAuthModal("login");
-      return;
-    }
     const p = VASTRAE_DATA.products.find(item => item.id === productId);
     if (!p) return;
     customState.gender = p.gender === "accessories" ? "women" : p.gender;
@@ -2019,77 +2315,600 @@
   };
 
   // ------------------------------------------------------------------------
-  // 8. SAREE REBORN / WASTE-TO-BEST MODULE (PART 11)
+  // 8. SAREE REBORN — QUALITY ASSESSMENT & TRANSFORMATION STUDIO
   // ------------------------------------------------------------------------
-  function initSareeRebornUI() {
-    renderSareeRebornTracker();
+  const REBORN_DESIGNS = [
+    {
+      id: "lehenga",
+      title: "Flared Lehenga & Designer Blouse",
+      category: "Bridal & Festive Haute Couture",
+      image: "images/products/women/royal-blue-lehenga-front.jpg",
+      fabricReq: "Est. Fabric: 4.8 – 5.5 meters",
+      estCost: "₹3,800 – ₹4,600 (Est.)",
+      baseCostNum: 4200,
+      minScore: 55,
+      features: [
+        "16–24 Kali flared skirt layout",
+        "Full ornate pallu placed as blouse back / sleeves",
+        "Pure mulmul cotton comfort lining"
+      ],
+      preservation: "Preserves continuous border along lehenga ghera hem.",
+      suitability: "Highly Recommended for sarees with intact body silk."
+    },
+    {
+      id: "kurti",
+      title: "Straight Kurti or Floor Ethnic Dress",
+      category: "Contemporary Heritage Everyday",
+      image: "images/products/women/mustard-yellow-kurta-front.jpg",
+      fabricReq: "Est. Fabric: 2.5 – 3.2 meters",
+      estCost: "₹1,850 – ₹2,400 (Est.)",
+      baseCostNum: 2100,
+      minScore: 40,
+      features: [
+        "A-line or straight silhouette with side slits",
+        "Border repurposed along sleeve cuffs & hemline",
+        "Leftover fabric can create matching potli & scrunchies"
+      ],
+      preservation: "Easily bypasses isolated stains or tear spots.",
+      suitability: "Excellent even if up to 1.5m of the saree is damaged."
+    },
+    {
+      id: "anarkali",
+      title: "Kalidar Imperial Anarkali Suit",
+      category: "Imperial Festive Attire",
+      image: "images/products/women/ivory-anarkali-suit-front.jpg",
+      fabricReq: "Est. Fabric: 4.5 – 5.2 meters",
+      estCost: "₹3,400 – ₹4,200 (Est.)",
+      baseCostNum: 3800,
+      minScore: 60,
+      features: [
+        "Multiple tapered kalis showcasing delicate buttis",
+        "Grand pallu tailored into ornamental yoke bodice",
+        "Can include matching silk churidar / cigarette pants"
+      ],
+      preservation: "Maximizes zari border along the massive anarkali flare.",
+      suitability: "Best for sarees with strong body fabric & rich borders."
+    },
+    {
+      id: "jacket",
+      title: "Designer Peplum Jacket / Cape",
+      category: "Indo-Western Haute Couture",
+      image: "images/products/women/maroon-peplum-coord-front.jpg",
+      fabricReq: "Est. Fabric: 2.0 – 2.8 meters",
+      estCost: "₹2,600 – ₹3,200 (Est.)",
+      baseCostNum: 2900,
+      minScore: 45,
+      features: [
+        "Structured silhouette with stand collar & lapels",
+        "Micro-interfacing gives vintage silk crisp structure",
+        "Ideal to layer over skirts, trousers, or slip dresses"
+      ],
+      preservation: "Uses heavy zari pallu on back panel or lapel.",
+      suitability: "Ideal when body silk has minor tears but pallu/borders are pristine."
+    },
+    {
+      id: "blouse-skirt",
+      title: "Maggam Work Blouse & Pleated Skirt",
+      category: "Two-Piece Statement Ensemble",
+      image: "images/products/women/maroon-maggam-blouse-front.jpg",
+      fabricReq: "Est. Fabric: 4.0 – 4.5 meters",
+      estCost: "₹2,900 – ₹3,800 (Est.)",
+      baseCostNum: 3350,
+      minScore: 50,
+      features: [
+        "Princess cut heavily-embroidered blouse",
+        "Box-pleated ankle length silk skirt",
+        "Contrasting border styling on waistband and hem"
+      ],
+      preservation: "Concentrates heaviest zari onto the blouse architecture.",
+      suitability: "Great for medium-weight silk with localized wear."
+    },
+    {
+      id: "potli-accessories",
+      title: "Bridal Potli Bags & Accessories Suite",
+      category: "Heirloom Accessories & Keepsakes",
+      image: "images/products/accessories/bridal-potli-front.jpg",
+      fabricReq: "Est. Fabric: 1.0 – 1.8 meters",
+      estCost: "₹1,200 – ₹1,800 (Est.)",
+      baseCostNum: 1500,
+      minScore: 20,
+      features: [
+        "Set of 2-3 bridal drawstring potli bags with pearl tassels",
+        "Matching silk clutch pouch and hair accessories",
+        "Sentimental wedding gift set for daughters/nieces"
+      ],
+      preservation: "Rescues intricate motifs even from small undamaged patches.",
+      suitability: "Ideal for heavily damaged, torn, or antique sarees."
+    },
+    {
+      id: "cushions-home",
+      title: "Luxury Silk Cushion Covers & Table Runner",
+      category: "Heritage Home Living",
+      image: "images/products/women/crimson-banarasi-saree-front.jpg",
+      fabricReq: "Est. Fabric: 1.5 – 2.5 meters",
+      estCost: "₹1,400 – ₹2,100 (Est.)",
+      baseCostNum: 1750,
+      minScore: 25,
+      features: [
+        "Set of 4 statement 16x16\" or 18x18\" cushion covers",
+        "1 grand dining table runner framed with original borders",
+        "Concealed Japanese zippers and heavy backing"
+      ],
+      preservation: "Preserves heirloom silk in your living space without wearing.",
+      suitability: "Perfect when fabric is slightly brittle for high-friction apparel."
+    }
+  ];
+
+  const sareeRebornState = {
+    step: 1,
+    photos: {
+      body: null,
+      border: null,
+      pallu: null,
+      damage: null
+    },
+    fabricType: "kanjeevaram",
+    sareeAge: "vintage",
+    visibleCondition: "good",
+    sentimentalNote: "",
+    scores: {
+      fading: 82,
+      stains: 85,
+      tears: 76,
+      zari: 72,
+      overall: 78
+    },
+    ratingClass: "good",
+    ratingLabel: "Good Condition",
+    selectedDesign: "lehenga",
+    selectedAddons: [],
+    measurementMethod: "doorstep",
+    lastSubmittedId: null
+  };
+
+  function capitalizeWord(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  window.handleSareeRebornSubmit = function (event) {
-    event.preventDefault();
+  function initSareeRebornUI() {
+    renderSareeRebornTracker();
+    window.computeRebornQuality();
+    renderRebornOptions();
+    const today = new Date().toISOString().split("T")[0];
+    const dateInput = document.getElementById("srPickupDate");
+    if (dateInput) dateInput.value = today;
+  }
+
+  window.switchRebornStep = function (stepNum) {
+    sareeRebornState.step = stepNum;
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.getElementById(`srStepBtn${i}`);
+      const panel = document.getElementById(`srPanel${i}`);
+      if (btn) {
+        btn.classList.toggle("active", i === stepNum);
+        btn.classList.toggle("completed", i < stepNum);
+      }
+      if (panel) {
+        panel.classList.toggle("active", i === stepNum);
+      }
+    }
+    if (stepNum === 3) {
+      renderRebornOptions();
+    }
+    if (stepNum === 4 || stepNum === 5) {
+      updateRebornSummaries();
+    }
+    if (stepNum === 5 && currentUser) {
+      const nameInput = document.getElementById("srClientName");
+      const addrInput = document.getElementById("srPickupAddress");
+      const phoneInput = document.getElementById("srClientPhone");
+      if (nameInput && !nameInput.value) nameInput.value = currentUser.name || currentUser.username || "";
+      if (addrInput && !addrInput.value) addrInput.value = currentUser.address || "";
+      if (phoneInput && !phoneInput.value) phoneInput.value = currentUser.phone || "";
+    }
+    const section = document.getElementById("sareeReborn");
+    if (section) {
+      const headerOffset = 76;
+      const pos = section.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      window.scrollTo({ top: Math.max(0, pos), behavior: "smooth" });
+    }
+  };
+
+  window.handleRebornPhotoUpload = function (type, event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const dataUrl = e.target.result;
+      sareeRebornState.photos[type] = dataUrl;
+      const cap = capitalizeWord(type);
+      const previewImg = document.getElementById(`srPreview${cap}`);
+      const placeholder = document.getElementById(`srPlaceholder${cap}`);
+      const badge = document.getElementById(`srBadge${cap}`);
+      if (previewImg) {
+        previewImg.src = dataUrl;
+        previewImg.style.display = "block";
+      }
+      if (placeholder) placeholder.style.display = "none";
+      if (badge) badge.style.display = "inline-block";
+      showToast(`✓ Uploaded ${type} photograph.`);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.loadSampleRebornSaree = function () {
+    const sampleUrl = "images/products/women/crimson-banarasi-saree-front.jpg";
+    ["body", "border", "pallu", "damage"].forEach(type => {
+      sareeRebornState.photos[type] = sampleUrl;
+      const cap = capitalizeWord(type);
+      const previewImg = document.getElementById(`srPreview${cap}`);
+      const placeholder = document.getElementById(`srPlaceholder${cap}`);
+      const badge = document.getElementById(`srBadge${cap}`);
+      if (previewImg) {
+        previewImg.src = sampleUrl;
+        previewImg.style.display = "block";
+      }
+      if (placeholder) placeholder.style.display = "none";
+      if (badge) badge.style.display = "inline-block";
+    });
+
+    const fabricEl = document.getElementById("srFabricType");
+    const ageEl = document.getElementById("srSareeAge");
+    const condEl = document.getElementById("srVisibleCondition");
+    const noteEl = document.getElementById("srSentimentalNote");
+    if (fabricEl) fabricEl.value = "kanjeevaram";
+    if (ageEl) ageEl.value = "vintage";
+    if (condEl) condEl.value = "good";
+    if (noteEl) noteEl.value = "1994 Heirloom Kanjeevaram Silk with intact temple zari border.";
+
+    sareeRebornState.fabricType = "kanjeevaram";
+    sareeRebornState.sareeAge = "vintage";
+    sareeRebornState.visibleCondition = "good";
+    sareeRebornState.sentimentalNote = noteEl ? noteEl.value : "";
+
+    showToast("✨ Sample Vintage Kanjeevaram Saree loaded! Click 'Analyze Saree Quality' to continue.");
+  };
+
+  window.onRebornInputsChanged = function () {
+    const fabricEl = document.getElementById("srFabricType");
+    const ageEl = document.getElementById("srSareeAge");
+    const condEl = document.getElementById("srVisibleCondition");
+    const noteEl = document.getElementById("srSentimentalNote");
+    if (fabricEl) sareeRebornState.fabricType = fabricEl.value;
+    if (ageEl) sareeRebornState.sareeAge = ageEl.value;
+    if (condEl) sareeRebornState.visibleCondition = condEl.value;
+    if (noteEl) sareeRebornState.sentimentalNote = noteEl.value;
+  };
+
+  window.computeRebornQuality = function () {
+    window.onRebornInputsChanged();
+    let base = 80;
+    if (sareeRebornState.visibleCondition === "excellent") base = 92;
+    else if (sareeRebornState.visibleCondition === "good") base = 78;
+    else if (sareeRebornState.visibleCondition === "repair") base = 58;
+    else if (sareeRebornState.visibleCondition === "damaged") base = 38;
+
+    let ageMod = 0;
+    if (sareeRebornState.sareeAge === "young") ageMod = +6;
+    else if (sareeRebornState.sareeAge === "vintage") ageMod = 0;
+    else if (sareeRebornState.sareeAge === "heirloom") ageMod = -8;
+    else if (sareeRebornState.sareeAge === "antique") ageMod = -16;
+
+    let fabricMod = 0;
+    if (sareeRebornState.fabricType === "kanjeevaram" || sareeRebornState.fabricType === "banarasi") fabricMod = +4;
+    else if (sareeRebornState.fabricType === "georgette") fabricMod = -3;
+
+    const fading = Math.min(98, Math.max(30, base + ageMod + 4));
+    const stains = Math.min(98, Math.max(25, base + 6));
+    const tears = Math.min(98, Math.max(20, base + ageMod - 2));
+    const zari = Math.min(98, Math.max(28, base + fabricMod - 4));
+    const overall = Math.round((fading + stains + tears + zari) / 4);
+
+    sareeRebornState.scores = { fading, stains, tears, zari, overall };
+
+    let rClass = "good";
+    let rLabel = "Good Condition";
+    if (overall >= 85) {
+      rClass = "excellent";
+      rLabel = "Excellent Condition";
+    } else if (overall >= 70) {
+      rClass = "good";
+      rLabel = "Good Condition";
+    } else if (overall >= 50) {
+      rClass = "repair";
+      rLabel = "Needs Repair / Reinforcement";
+    } else {
+      rClass = "damaged";
+      rLabel = "Heavily Damaged";
+    }
+
+    sareeRebornState.ratingClass = rClass;
+    sareeRebornState.ratingLabel = rLabel;
+
+    const badge = document.getElementById("srConditionBadge");
+    if (badge) {
+      badge.className = `vas-sr-rating-badge ${rClass}`;
+      badge.textContent = `● ${rLabel} (${overall}/100)`;
+    }
+
+    const setGauge = (id, val, textSuffix = "%") => {
+      const fill = document.getElementById(`srGauge${id}Fill`);
+      const valEl = document.getElementById(`srGauge${id}Val`);
+      if (fill) fill.style.width = `${val}%`;
+      if (valEl) valEl.textContent = `${val}${textSuffix}`;
+    };
+
+    setGauge("Fading", fading);
+    setGauge("Stains", stains, "% Clean");
+    setGauge("Tears", tears);
+    setGauge("Zari", zari);
+  };
+
+  window.computeRebornQualityAndNext = function () {
+    window.computeRebornQuality();
+    window.switchRebornStep(2);
+  };
+
+  function renderRebornOptions() {
+    const grid = document.getElementById("srOptionsGrid");
+    if (!grid) return;
+    const overallScore = sareeRebornState.scores ? sareeRebornState.scores.overall : 78;
+
+    grid.innerHTML = REBORN_DESIGNS.map(des => {
+      const isSelected = sareeRebornState.selectedDesign === des.id;
+      let suitabilityBadge = `<span class="vas-badge-pill" style="background:rgba(46,125,50,0.12); color:#2e7d32; font-size:0.72rem;">✓ Ideal for this Silk</span>`;
+      if (overallScore < des.minScore) {
+        suitabilityBadge = `<span class="vas-badge-pill" style="background:rgba(230,81,0,0.12); color:#e65100; font-size:0.72rem;">⚠️ Requires Mulmul Reinforcement</span>`;
+      } else if (des.id === "potli-accessories" || des.id === "cushions-home") {
+        suitabilityBadge = `<span class="vas-badge-pill" style="background:rgba(197,160,89,0.18); color:#8c6820; font-size:0.72rem;">🌿 Zero-Waste Keepsake</span>`;
+      }
+
+      return `
+        <div class="vas-sr-option-card ${isSelected ? 'selected' : ''}" onclick="window.selectRebornDesign('${des.id}')">
+          <img src="${des.image}" alt="${des.title}" class="vas-sr-option-img" onerror="this.src='images/products/women/crimson-banarasi-saree-front.jpg'">
+          <div class="vas-sr-option-body">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
+              <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--vas-muted);">${des.category}</span>
+              ${suitabilityBadge}
+            </div>
+            <h4 style="font-size:1.05rem; color:#5a1827; margin:0 0 6px; font-family:var(--vas-font-serif);">${des.title}</h4>
+            <p style="font-size:0.78rem; color:var(--vas-muted); margin-bottom:12px; line-height:1.45;">${des.suitability}</p>
+            
+            <div style="background:#fcf9f5; border:1px solid rgba(197,160,89,0.25); border-radius:8px; padding:10px 12px; font-size:0.78rem; margin-bottom:14px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span style="color:var(--vas-muted);">Fabric Required:</span>
+                <strong style="color:#5a1827;">${des.fabricReq}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--vas-muted);">Est. Tailoring:</span>
+                <strong style="color:#8c6820; font-weight:700;">${des.estCost}</strong>
+              </div>
+            </div>
+
+            <ul style="font-size:0.76rem; color:#3e101b; margin:0 0 16px 16px; padding:0; line-height:1.5;">
+              ${des.features.map(f => `<li>${f}</li>`).join("")}
+            </ul>
+
+            <div style="margin-top:auto;">
+              <button type="button" class="vas-btn vas-btn-sm ${isSelected ? 'vas-btn-gold' : 'vas-btn-outline'}" style="width:100%;" onclick="event.stopPropagation(); window.selectRebornDesign('${des.id}')">
+                ${isSelected ? '✓ Selected Design' : 'Select This Design'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  window.selectRebornDesign = function (id) {
+    sareeRebornState.selectedDesign = id;
+    const selected = REBORN_DESIGNS.find(d => d.id === id);
+    if (selected) {
+      const nameEl = document.getElementById("srSelectedDesignName");
+      const costEl = document.getElementById("srSelectedDesignCost");
+      if (nameEl) nameEl.textContent = selected.title;
+      if (costEl) costEl.textContent = `Est. Tailoring: ${selected.estCost}`;
+      showToast(`✓ Selected: ${selected.title}`);
+    }
+    renderRebornOptions();
+    updateRebornSummaries();
+  };
+
+  window.toggleLeftoverAddon = function (id, price, name, el) {
+    if (el && el.checked) {
+      if (!sareeRebornState.selectedAddons.some(a => a.id === id)) {
+        sareeRebornState.selectedAddons.push({ id, price, name });
+      }
+    } else {
+      sareeRebornState.selectedAddons = sareeRebornState.selectedAddons.filter(a => a.id !== id);
+    }
+    updateRebornSummaries();
+  };
+
+  window.toggleMeasurementInputs = function (method) {
+    sareeRebornState.measurementMethod = method;
+    const onlineFields = document.getElementById("srOnlineMeasurementFields");
+    if (onlineFields) {
+      onlineFields.style.display = method === "online" ? "block" : "none";
+    }
+  };
+
+  function updateRebornSummaries() {
+    const selected = REBORN_DESIGNS.find(d => d.id === sareeRebornState.selectedDesign) || REBORN_DESIGNS[0];
+    const fabricMap = {
+      kanjeevaram: "Pure Kanjeevaram Temple Silk",
+      banarasi: "Pure Banarasi Katan / Brocade Silk",
+      paithani: "Paithani Pure Zari Silk",
+      chanderi: "Chanderi / Maheshwari Silk",
+      tussar: "Tussar / Raw Silk Heirloom",
+      georgette: "Pure Georgette with Zari",
+      cotton: "Fine Handloom Mulmul Cotton",
+      unknown: "Vintage Heirloom Silk"
+    };
+    const ageMap = {
+      young: "<10 Yrs Old",
+      vintage: "10-25 Yrs Old",
+      heirloom: "25-40 Yrs Old",
+      antique: "40+ Yrs Old"
+    };
+
+    const fabricText = `${ageMap[sareeRebornState.sareeAge] || "Vintage"} · ${fabricMap[sareeRebornState.fabricType] || "Pure Silk"}`;
+    const addonsCost = sareeRebornState.selectedAddons.reduce((sum, a) => sum + a.price, 0);
+    const totalEstNum = selected.baseCostNum + addonsCost;
+    const totalCostStr = `₹${(totalEstNum - 300).toLocaleString('en-IN')} – ₹${(totalEstNum + 400).toLocaleString('en-IN')} (Estimate)`;
+
+    const summGarment = document.getElementById("srSummGarment");
+    const summFabric = document.getElementById("srSummFabric");
+    const summCondition = document.getElementById("srSummCondition");
+    const summAddons = document.getElementById("srSummAddons");
+    const summTotalCost = document.getElementById("srSummTotalCost");
+
+    if (summGarment) summGarment.textContent = selected.title;
+    if (summFabric) summFabric.textContent = fabricText;
+    if (summCondition) summCondition.textContent = `${sareeRebornState.ratingLabel} (${sareeRebornState.scores.overall}/100)`;
+    if (summAddons) {
+      summAddons.textContent = sareeRebornState.selectedAddons.length > 0
+        ? sareeRebornState.selectedAddons.map(a => a.name).join(", ")
+        : "None selected";
+    }
+    if (summTotalCost) summTotalCost.textContent = totalCostStr;
+  }
+
+  window.submitRebornInspectionRequest = function (event) {
+    if (event) event.preventDefault();
     if (!currentUser) {
-      showToast("Please sign in or register to submit a Saree Reborn commission.");
+      showToast("Please sign in or register to request a Master Tailor inspection.");
       openAuthModal("login");
       return;
     }
-    const sareeType = document.getElementById("rebSareeType").value;
-    const sareeAge = document.getElementById("rebSareeAge").value;
-    const targetGarment = document.getElementById("rebTargetGarment").value;
-    const pickupAddress = document.getElementById("rebPickupAddress").value;
-    const notes = document.getElementById("rebNotes").value;
+
+    const clientName = (document.getElementById("srClientName") && document.getElementById("srClientName").value.trim()) || currentUser.name || "Client";
+    const clientPhone = (document.getElementById("srClientPhone") && document.getElementById("srClientPhone").value.trim()) || currentUser.phone || "";
+    const pickupDate = (document.getElementById("srPickupDate") && document.getElementById("srPickupDate").value) || new Date().toISOString().split("T")[0];
+    const pickupSlot = (document.getElementById("srPickupSlot") && document.getElementById("srPickupSlot").value) || "Morning (10:00 AM – 01:00 PM)";
+    const pickupAddress = (document.getElementById("srPickupAddress") && document.getElementById("srPickupAddress").value.trim()) || currentUser.address || "Indiranagar, Bengaluru";
+    const notes = (document.getElementById("srConsultationNotes") && document.getElementById("srConsultationNotes").value.trim()) || "";
+
+    const selected = REBORN_DESIGNS.find(d => d.id === sareeRebornState.selectedDesign) || REBORN_DESIGNS[0];
+    const addonsCost = sareeRebornState.selectedAddons.reduce((sum, a) => sum + a.price, 0);
+    const totalEstimate = selected.baseCostNum + addonsCost;
 
     const ref = "REBORN-2026-" + Math.floor(100 + Math.random() * 900);
+    sareeRebornState.lastSubmittedId = ref;
+
+    const fabricMap = {
+      kanjeevaram: "Pure Kanjeevaram Temple Silk",
+      banarasi: "Pure Banarasi Katan / Brocade Silk",
+      paithani: "Paithani Pure Zari Silk",
+      chanderi: "Chanderi / Maheshwari Silk",
+      tussar: "Tussar / Raw Silk Heirloom",
+      georgette: "Pure Georgette with Zari",
+      cotton: "Fine Handloom Mulmul Cotton",
+      unknown: "Vintage Heirloom Silk"
+    };
+
     const newRequest = {
       id: ref,
       date: new Date().toISOString().split("T")[0],
-      sareeType: `${sareeAge} Yrs Old · ${sareeType}`,
-      targetGarment: targetGarment,
+      clientName: clientName,
+      clientPhone: clientPhone,
+      sareeType: `${sareeRebornState.sareeAge === "antique" ? "40+ Yrs" : "Vintage"} · ${fabricMap[sareeRebornState.fabricType] || "Pure Silk"}`,
+      targetGarment: selected.title,
+      addons: sareeRebornState.selectedAddons.map(a => a.name).join(", ") || "None",
       pickupAddress: pickupAddress,
-      inspectionStatus: "Awaiting Doorstep Pickup & Physical Inspection",
-      fabricCondition: "Pending physical loom examination by Master Tailor",
+      pickupDate: pickupDate,
+      pickupSlot: pickupSlot,
+      fitMethod: sareeRebornState.measurementMethod,
+      inspectionStatus: "Awaiting Doorstep Pickup & Loom Intake",
+      fabricCondition: `${sareeRebornState.ratingLabel} (${sareeRebornState.scores.overall}/100)`,
       stage: "Pickup Scheduled",
-      estimate: 2400,
-      notes: notes
+      estimate: totalEstimate,
+      notes: notes,
+      masterTailor: "Master Savitha Devi (Indiranagar Atelier)"
     };
 
     sareeRebornOrders.unshift(newRequest);
     localStorage.setItem(STORAGE_KEY_REBORN, JSON.stringify(sareeRebornOrders));
     renderSareeRebornTracker();
 
-    document.getElementById("sareeRebornForm").reset();
-    showToast(`✓ Saree Reborn Request #${ref} created! Pickup concierge assigned.`);
+    // Display Confirmation Receipt
+    const consultView = document.getElementById("srConsultationView");
+    const confirmScreen = document.getElementById("srConfirmationScreen");
+    if (consultView) consultView.style.display = "none";
+    if (confirmScreen) confirmScreen.style.display = "block";
+
+    const rId = document.getElementById("srReceiptId");
+    const rGarment = document.getElementById("srReceiptGarment");
+    const rTextile = document.getElementById("srReceiptTextile");
+    const rSlot = document.getElementById("srReceiptSlot");
+    const rAddress = document.getElementById("srReceiptAddress");
+    const rCost = document.getElementById("srReceiptCost");
+
+    if (rId) rId.textContent = ref;
+    if (rGarment) rGarment.textContent = selected.title;
+    if (rTextile) rTextile.textContent = newRequest.sareeType;
+    if (rSlot) rSlot.textContent = `${pickupDate} · ${pickupSlot}`;
+    if (rAddress) rAddress.textContent = pickupAddress;
+    if (rCost) rCost.textContent = `₹${(totalEstimate - 300).toLocaleString('en-IN')} – ₹${(totalEstimate + 400).toLocaleString('en-IN')} (Estimate)`;
+
+    showToast(`✓ Saree Reborn Request #${ref} confirmed! Scheduled for Master Tailor inspection.`);
+  };
+
+  window.simulateInspectionFromReceipt = function () {
+    if (sareeRebornState.lastSubmittedId) {
+      window.simulateInspectionUpdate(sareeRebornState.lastSubmittedId);
+    } else if (sareeRebornOrders.length > 0) {
+      window.simulateInspectionUpdate(sareeRebornOrders[0].id);
+    }
+  };
+
+  window.resetRebornStudio = function () {
+    const consultView = document.getElementById("srConsultationView");
+    const confirmScreen = document.getElementById("srConfirmationScreen");
+    if (consultView) consultView.style.display = "block";
+    if (confirmScreen) confirmScreen.style.display = "none";
+    window.switchRebornStep(1);
+    const form = document.getElementById("sareeRebornForm");
+    if (form) form.reset();
   };
 
   function renderSareeRebornTracker() {
     const container = document.getElementById("sareeRebornOrdersList");
+    const countPill = document.getElementById("srOrdersCountPill");
+    if (countPill) countPill.textContent = `${sareeRebornOrders.length} Active Request${sareeRebornOrders.length === 1 ? '' : 's'}`;
     if (!container) return;
 
     if (sareeRebornOrders.length === 0) {
-      container.innerHTML = `<p style="color:var(--vas-muted); font-size:0.85rem;">No active Saree Reborn commissions.</p>`;
+      container.innerHTML = `<p style="color:var(--vas-muted); font-size:0.85rem;">No active Saree Reborn commissions. Request a consultation above to start.</p>`;
       return;
     }
 
     container.innerHTML = sareeRebornOrders.map(order => `
-      <div style="background:#fff; border:1px solid var(--vas-border); border-radius:8px; padding:18px; margin-bottom:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div style="background:#fff; border:1px solid rgba(197,160,89,0.3); border-radius:12px; padding:20px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,0.03);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
           <div>
-            <strong style="font-size:0.95rem; color:var(--vas-ink);">${order.id}</strong>
-            <span style="display:block; font-size:0.75rem; color:var(--vas-muted);">${order.date}</span>
+            <strong style="font-size:0.95rem; color:#5a1827;">${order.id}</strong>
+            <span style="display:block; font-size:0.75rem; color:var(--vas-muted);">${order.date} &middot; ${order.clientName || 'Client'}</span>
           </div>
-          <span style="background:var(--vas-gold-pale); color:var(--vas-gold-dark); font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:12px;">
+          <span style="background:rgba(197,160,89,0.18); color:#8c6820; font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:12px;">
             ${order.stage}
           </span>
         </div>
-        <p style="font-size:0.85rem; margin-bottom:4px;"><strong>Vintage Textile:</strong> ${order.sareeType}</p>
-        <p style="font-size:0.85rem; margin-bottom:8px;"><strong>Redesign Goal:</strong> ${order.targetGarment}</p>
-        <div style="background:var(--vas-surface-alt); padding:10px 14px; border-radius:6px; font-size:0.8rem; margin-bottom:10px;">
-          🔍 <strong>Master Tailor Physical Inspection:</strong><br>
-          <span style="color:var(--vas-gold-dark); font-weight:600;">${order.inspectionStatus}</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:8px; font-size:0.84rem; margin-bottom:12px;">
+          <p style="margin:0;"><strong>Vintage Textile:</strong> ${order.sareeType}</p>
+          <p style="margin:0;"><strong>Redesign Goal:</strong> ${order.targetGarment}</p>
+          ${order.addons && order.addons !== 'None' ? `<p style="margin:0;"><strong>Keepsake Add-ons:</strong> ${order.addons}</p>` : ''}
+          <p style="margin:0;"><strong>Pickup Location:</strong> ${order.pickupAddress}</p>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
-          <span>Stitching Estimate: <b>₹${order.estimate}</b></span>
-          <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.simulateInspectionUpdate('${order.id}')">
-            Simulate Inspection Decision
+        <div style="background:#fcf9f5; border:1px solid rgba(197,160,89,0.3); padding:10px 14px; border-radius:8px; font-size:0.8rem; margin-bottom:12px;">
+          🔍 <strong>Master Tailor Physical Inspection Verdict:</strong><br>
+          <span style="color:#5a1827; font-weight:600;">${order.inspectionStatus}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; flex-wrap:wrap; gap:10px;">
+          <span>Stitching Estimate: <b style="color:#8c6820;">₹${order.estimate} (Est.)</b></span>
+          <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.simulateInspectionUpdate('${order.id}')" style="border-color:#c5a059; color:#5a1827;">
+            Simulate Loom Decision
           </button>
         </div>
       </div>
@@ -2102,22 +2921,22 @@
 
     const modalBody = document.getElementById("modalBody");
     modalBody.innerHTML = `
-      <h3 style="margin-bottom:12px;">Tailor Physical Inspection Decision (${orderId})</h3>
-      <p style="font-size:0.9rem; color:var(--vas-muted); margin-bottom:20px;">
-        Master Savitha Devi has physically inspected the warp, weft, and zari strength on the atelier drafting loom. Choose the physical outcome:
+      <h3 style="margin-bottom:12px; color:#5a1827; font-family:var(--vas-font-serif);">Tailor Physical Inspection Decision (${orderId})</h3>
+      <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">
+        Master Savitha Devi has physically inspected the warp, weft, and zari strength on the Indiranagar atelier drafting loom. Choose the physical verdict:
       </p>
       
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
-        <div style="border:2px solid var(--vas-success); border-radius:8px; padding:18px; cursor:pointer;" onclick="window.applyInspectionDecision('${orderId}', true)">
-          <div style="font-size:1.8rem; margin-bottom:6px;">✅</div>
+        <div style="border:2px solid var(--vas-success); border-radius:12px; padding:18px; cursor:pointer; background:#f4fbf5;" onclick="window.applyInspectionDecision('${orderId}', true)">
+          <div style="font-size:2rem; margin-bottom:6px;">✅</div>
           <strong style="color:var(--vas-success); display:block; margin-bottom:4px;">FABRIC IS USABLE</strong>
-          <p style="font-size:0.8rem; color:var(--vas-muted);">Warp is strong. Tailor proceeds to pattern cut and stitch your chosen garment.</p>
+          <p style="font-size:0.8rem; color:var(--vas-muted); margin:0;">Warp &amp; weft are tensile-sound. Tailor proceeds to pattern drafting and stitch.</p>
         </div>
 
-        <div style="border:2px solid var(--vas-danger); border-radius:8px; padding:18px; cursor:pointer;" onclick="window.applyInspectionDecision('${orderId}', false)">
-          <div style="font-size:1.8rem; margin-bottom:6px;">⚠️</div>
+        <div style="border:2px solid var(--vas-danger); border-radius:12px; padding:18px; cursor:pointer; background:#fff8f8;" onclick="window.applyInspectionDecision('${orderId}', false)">
+          <div style="font-size:2rem; margin-bottom:6px;">⚠️</div>
           <strong style="color:var(--vas-danger); display:block; margin-bottom:4px;">NOT USABLE (BRITTLE SILK)</strong>
-          <p style="font-size:0.8rem; color:var(--vas-muted);">Weave would tear during stitching. Saree returned safely to customer (return shipping applies).</p>
+          <p style="font-size:0.8rem; color:var(--vas-muted); margin:0;">Silk fibers would split at needle perforation. Saree returned safely in archival box.</p>
         </div>
       </div>
     `;
@@ -2135,13 +2954,14 @@
     } else {
       order.inspectionStatus = "REJECTED - Silk Weave Too Brittle to Stitch";
       order.stage = "Packaged for Return Dispatch (Courier fee ₹180)";
-      showToast(`⚠️ Inspection failed: Saree scheduled for safe return courier.`);
+      showToast(`⚠️ Inspection verdict: Saree scheduled for safe return courier.`);
     }
 
     localStorage.setItem(STORAGE_KEY_REBORN, JSON.stringify(sareeRebornOrders));
     renderSareeRebornTracker();
     closeModal();
   };
+
 
   // ------------------------------------------------------------------------
   // 9. OWN-FABRIC SERVICE (PART 12 & MODULE 4)

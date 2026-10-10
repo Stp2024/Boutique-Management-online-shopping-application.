@@ -1,81 +1,327 @@
 <!-- =====================================================
-TRY ON SECTION
-===================================================== -->
-<section class="tryon" id="tryon">
- <div class="heading">
-  <small>
-   SMART FASHION LAB
-  </small>
-  <h2>
-   AI Self Try-On
-  </h2>
-  <p>
-   Upload a photograph, choose an outfit and create a digital try-on
-         request.
-  </p>
- </div>
- <div class="tryon-layout">
-  <div>
-   <div class="preview" id="tryPreview">
-    <div>
-     <div style="font-size: 35px">
-      ◇
-     </div>
-     Upload your photo
-     <br/>
-     to begin
+     VASTRAÉ ATELIER — MODULAR AI VIRTUAL TRY-ON COMPONENT
+     ===================================================== -->
+<section class="vas-section vas-tryon-studio-section" id="tryon">
+  <div class="vas-container">
+    <div class="vas-tryon-header">
+      <div class="vas-tryon-eyebrow">
+        <span>✨</span> VASTRAÉ DIGITAL FASHION STUDIO
+      </div>
+      <h2 class="vas-tryon-title">AI Self <em>Try-On</em></h2>
+      <div class="vas-tryon-tagline">See It. Style It. Make It Yours.</div>
+      <p class="vas-tryon-desc">
+        Upload your photograph as an authentic facial identity reference, choose from our handcrafted bridal lehengas, imperial anarkalis, and Pakistani suits, enter your measurements for tailored fit guidance, and generate a photorealistic try-on preview.
+      </p>
+      
+      <div class="vas-tryon-toolbar">
+        <div id="tryOnEngineStatusBadgeModular" class="vas-engine-status-pill local-active" onclick="window.openAiIntegrationModal()">
+          <span class="vas-engine-dot local"></span>
+          <span>Atelier Photometric Synthesis Engine</span>
+        </div>
+        <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openStyleBoardModal()">
+          📌 My Style Board (<span id="styleBoardCount">0</span>)
+        </button>
+        <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" onclick="window.openLookCompareModal()">
+          ⚖️ Look Comparison
+        </button>
+      </div>
     </div>
-   </div>
-   <br/>
-   <input accept="image/*" onchange="previewTry(event)" type="file"/>
+
+    <!-- 3-Step Studio Component -->
+    <div class="vas-tryon-studio-shell">
+      <div class="vas-tryon-step-nav">
+        <div class="vas-tryon-step-nav-item">
+          <span class="step-num">1</span>
+          <span>Photo &amp; Measurements</span>
+        </div>
+        <div class="vas-tryon-step-nav-item">
+          <span class="step-num">2</span>
+          <span>Choose Dress &amp; Colors</span>
+        </div>
+        <div class="vas-tryon-step-nav-item">
+          <span class="step-num">3</span>
+          <span>Photorealistic Result</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Customer Photo & Measurements -->
+      <div class="vas-tryon-panel" id="tryOnModularStep1">
+        <div class="vas-tryon-panel-header">
+          <div>
+            <h3><span>📸</span> Step 1 &mdash; Customer Photo &amp; Fit Profile</h3>
+            <p>Upload a clear face or standing photo. Your genuine facial identity and skin tone are preserved.</p>
+          </div>
+        </div>
+
+        <div class="vas-tryon-step1-grid">
+          <div class="vas-tryon-upload-col">
+            <div class="vas-tryon-dropzone" id="tryOnDropZone" onclick="document.getElementById('tryOnPhotoInput').click()">
+              <div class="vas-tryon-drop-icon">📸</div>
+              <h4 style="font-size:1.15rem; margin-bottom:6px; color:var(--vas-mauve-dark);">Upload Your Real Photo</h4>
+              <p style="font-size:0.86rem; color:var(--vas-muted); margin-bottom:16px;">
+                Upload a clear face portrait or standing photo (JPG, PNG, WEBP up to 15MB).<br>
+                <strong>Preserves real face, identity &amp; natural skin tone.</strong>
+              </p>
+              <button type="button" class="vas-btn vas-btn-rose vas-btn-sm" onclick="event.stopPropagation(); document.getElementById('tryOnPhotoInput').click()">
+                📁 Choose Photo from Device
+              </button>
+              <input type="file" id="tryOnPhotoInput" accept="image/*" style="display:none;" />
+            </div>
+
+            <div class="vas-tryon-preview-wrap" id="tryOnPhotoPreviewWrap">
+              <div class="vas-tryon-preview-frame">
+                <img id="tryOnUserPreviewImg" src="" alt="Uploaded Customer Reference" />
+                <span id="tryOnFaceDetectBadge" class="vas-tryon-preview-badge">✓ Real Face Reference Preserved</span>
+                <div class="vas-tryon-tone-pill-tag">
+                  <span id="tryOnSkinSwatchDot" class="vas-skin-swatch-dot"></span>
+                  <span id="tryOnSkinToneBadge">Warm Ivory</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="document.getElementById('tryOnPhotoInput').click()">
+                  🔄 Replace Photo
+                </button>
+                <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" style="color:var(--vas-danger);" onclick="window.removeTryOnPhoto()">
+                  ✕ Remove Photo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vas-tryon-meas-col">
+            <div class="vas-meas-card">
+              <div class="vas-meas-header">
+                <div>
+                  <h4 style="font-family:var(--vas-font-serif); font-size:1.15rem; margin:0 0 2px; color:var(--vas-charcoal);">
+                    📏 Body Measurements &amp; Fit Guidance
+                  </h4>
+                  <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">
+                    Calibrate garment drape and proportions to your body shape.
+                  </p>
+                </div>
+                <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.syncSavedProfileMeasurements()">
+                  🔄 Sync with Profile
+                </button>
+              </div>
+
+              <div class="vas-meas-fields-grid">
+                <div class="vas-meas-group">
+                  <label>Height (cm):</label>
+                  <input type="number" id="tryOnMeasHeight" value="165" min="120" max="220"
+                    onchange="window.updateTryOnMeasurement('height', this.value)" class="vas-meas-input" />
+                </div>
+                <div class="vas-meas-group">
+                  <label>Bust / Chest (in):</label>
+                  <input type="number" id="tryOnMeasBust" value="34" min="26" max="60"
+                    onchange="window.updateTryOnMeasurement('bust', this.value)" class="vas-meas-input" />
+                </div>
+                <div class="vas-meas-group">
+                  <label>Waist (in):</label>
+                  <input type="number" id="tryOnMeasWaist" value="28" min="20" max="55"
+                    onchange="window.updateTryOnMeasurement('waist', this.value)" class="vas-meas-input" />
+                </div>
+                <div class="vas-meas-group">
+                  <label>Hips (in):</label>
+                  <input type="number" id="tryOnMeasHips" value="38" min="26" max="65"
+                    onchange="window.updateTryOnMeasurement('hips', this.value)" class="vas-meas-input" />
+                </div>
+                <div class="vas-meas-group full-width">
+                  <label>Fit Preference:</label>
+                  <select id="tryOnMeasFit" onchange="window.updateTryOnMeasurement('fitPreference', this.value)" class="vas-meas-input">
+                    <option value="tailored">Tailored / Royal Snug (Close silhouette fit)</option>
+                    <option value="comfort" selected>Master Comfort (Balanced drape with ease)</option>
+                    <option value="flared">Flowing / Flared (Relaxed graceful drape)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="vas-meas-disclaimer">
+                <span class="vas-disclaimer-icon">ℹ️</span>
+                <div class="vas-disclaimer-text">
+                  <strong>Boutique Fit Guidance Disclosure:</strong>
+                  Body measurements guide digital drape calibration and silhouette simulation. Virtual try-on offers an authentic styling reference and does not guarantee exact millimeter physical garment fit.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tryOnToneGuidancePanel" style="margin-top:20px;"></div>
+      </div>
+
+      <!-- Step 2: Choose Designer Outfit & Colors -->
+      <div class="vas-tryon-panel" id="tryOnModularStep2">
+        <div class="vas-tryon-panel-header">
+          <div>
+            <h3><span>👗</span> Step 2 &mdash; Choose Designer Outfit &amp; Colors</h3>
+            <p>Select from authentic handcrafted ensembles (Bridal Lehengas, Imperial Anarkalis, Pakistani Suits, and Festive Sets), calibrate measurements, and customize colorways.</p>
+          </div>
+          <button type="button" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.surpriseMeTryOn()">
+            🎲 ✨ Surprise Me
+          </button>
+        </div>
+
+        <div class="vas-tryon-filter-bar">
+          <div class="vas-tryon-pills-row">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--vas-mauve); margin-right:4px;">Category:</span>
+            <button type="button" class="vas-tryon-cat-pill active" onclick="window.filterTryOnCategory('all', this)">All Outfits</button>
+            <button type="button" class="vas-tryon-cat-pill" onclick="window.filterTryOnCategory('lehenga', this)">Lehengas &amp; Anarkalis</button>
+            <button type="button" class="vas-tryon-cat-pill" onclick="window.filterTryOnCategory('suits', this)">Pakistani &amp; Party Suits</button>
+            <button type="button" class="vas-tryon-cat-pill" onclick="window.filterTryOnCategory('sharara', this)">Shararas &amp; Kurta Sets</button>
+          </div>
+
+          <div class="vas-tryon-pills-row">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--vas-gold-dark); margin-right:4px;">Occasion:</span>
+            <button type="button" class="vas-tryon-occ-pill active" onclick="window.filterTryOnOccasion('all', this)">All Occasions</button>
+            <button type="button" class="vas-tryon-occ-pill" onclick="window.filterTryOnOccasion('weddings', this)">💍 Weddings &amp; Bridal</button>
+            <button type="button" class="vas-tryon-occ-pill" onclick="window.filterTryOnOccasion('festivals', this)">🪔 Festivals &amp; Rituals</button>
+            <button type="button" class="vas-tryon-occ-pill" onclick="window.filterTryOnOccasion('party', this)">✨ Soirées &amp; Galas</button>
+          </div>
+        </div>
+
+        <div class="vas-tryon-search-row">
+          <input type="text" id="tryOnSearchInput" class="vas-tryon-search-input"
+            placeholder="Search outfits by style, fabric (Raw Silk, Velvet, Organza), or color..."
+            oninput="window.searchTryOnOutfits(this.value)" />
+          <button type="button" class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.resetTryOnFilters()">
+            ↺ Reset Filters
+          </button>
+        </div>
+
+        <!-- Women's Designer Outfit Grid -->
+        <div style="margin-bottom:8px;">
+          <span style="font-size:0.85rem; font-weight:700; color:var(--vas-mauve-dark); text-transform:uppercase; letter-spacing:0.06em;">
+            Select Boutique Outfit:
+          </span>
+        </div>
+        <div class="vas-tryon-outfit-grid" id="tryOnOutfitGrid"></div>
+
+        <div class="vas-tryon-color-section">
+          <div class="vas-color-sec-header">
+            <h4 style="font-family:var(--vas-font-serif); font-size:1.15rem; margin:0 0 2px; color:var(--vas-charcoal);">
+              🎨 Outfit Colourway &amp; Texture Customizer
+            </h4>
+            <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">
+              Preserves authentic gold zari embroidery, borders, and fabric texture while customizing base shade.
+            </p>
+          </div>
+          <div class="vas-color-variants-bar" id="tryOnColorVariantsWrap"></div>
+        </div>
+      </div>
+
+      <!-- Step 3: Realistic Try-On Result -->
+      <div class="vas-tryon-panel" id="tryOnModularStep3">
+        <div class="vas-tryon-panel-header" style="text-align:center; justify-content:center; flex-direction:column; align-items:center;">
+          <h3><span>✨</span> Step 3 &mdash; Generate Photorealistic Look</h3>
+          <p>Generate a natural photograph of yourself in the selected outfit, preserving facial identity, skin tone, fabric folds, and lighting.</p>
+          <div style="margin-top:16px;">
+            <button type="button" id="tryOnGenerateBtn" class="vas-btn-tryon-gradient" onclick="window.generateVirtualTryOn()">
+              ✨ Generate Realistic Try-On
+            </button>
+          </div>
+        </div>
+
+        <div id="tryOnReadyState" style="text-align:center; padding:36px 20px; background:var(--vas-cream-card); border-radius:18px; border:1px dashed var(--vas-lavender-border);">
+          <div style="font-size:2.4rem; margin-bottom:8px;">🪞</div>
+          <h4 style="font-size:1.15rem; color:var(--vas-mauve-dark); margin-bottom:6px;">Atelier Virtual Studio Ready</h4>
+          <p style="font-size:0.86rem; color:var(--vas-muted); max-width:480px; margin:0 auto;">
+            Upload your photo in Step 1, choose an outfit in Step 2, and click <strong>"✨ Generate Realistic Try-On"</strong> to view your result.
+          </p>
+        </div>
+
+        <div id="tryOnLoadingState" class="vas-tryon-loading-wrap">
+          <div class="vas-tryon-spinner"></div>
+          <h4 style="font-size:1.2rem; color:var(--vas-charcoal); margin:0 0 6px;">Synthesizing Photorealistic Look…</h4>
+          <p id="tryOnProgressText" style="font-size:0.88rem; color:var(--vas-mauve); margin:0;">Preserving customer facial identity &amp; skin tone...</p>
+          <div class="vas-tryon-progress-container">
+            <div id="tryOnProgressBar" class="vas-tryon-progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="tryOnResultState" class="vas-tryon-result-wrap">
+          <div class="vas-tryon-result-meta">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img id="tryOnResultDressThumb" class="vas-result-dress-thumb" src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Selected Boutique Outfit" />
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-mauve); font-weight:700;">Women's Haute Couture</span>
+                  <span id="tryOnResultDrapeStyleBadge" class="vas-badge-tag" style="display:none; background:var(--vas-mauve-dark); color:#fff; font-size:0.7rem; padding:2px 8px;">Tailored Fit</span>
+                </div>
+                <h4 id="tryOnResultOutfitTitle" style="font-family:var(--vas-font-serif); font-size:1.3rem; margin:2px 0 0; color:var(--vas-charcoal);">Emerald Pakistani Zari Embroidered 3-Piece Suit</h4>
+                <span id="tryOnResultFabricNote" style="font-size:0.78rem; color:var(--vas-muted);">Bangalore Raw Silk &middot; Tailored Silhouette</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+              <span id="tryOnResultOutfitPrice" style="font-size:1.35rem; font-weight:700; color:var(--vas-mauve-dark);">₹6,499</span>
+              <span id="tryOnResultEngineBadge" class="vas-engine-result-badge">Atelier Photometric Synthesis</span>
+            </div>
+          </div>
+
+          <div class="vas-comparison-mode-bar">
+            <button type="button" id="tryOnTabSlider" class="vas-comp-tab-btn active" onclick="window.setComparisonMode('slider')">
+              ↔ Interactive Draggable Slider
+            </button>
+            <button type="button" id="tryOnTabDual" class="vas-comp-tab-btn" onclick="window.setComparisonMode('sideBySide')">
+              ◫ Side-by-Side Dual View
+            </button>
+          </div>
+
+          <div class="vas-ba-slider" id="tryOnSliderContainer">
+            <img id="tryOnSliderAfterImg" class="vas-ba-slider-after-img" src="" alt="Virtual Try-On Result" />
+            <span class="vas-ba-tag after">VASTRAÉ TRY-ON RESULT</span>
+            <div class="vas-ba-slider-before-wrap" id="tryOnSliderBeforeWrap">
+              <img id="tryOnSliderBeforeImg" class="vas-ba-slider-before-img" src="" alt="Original Customer Reference" />
+              <span class="vas-ba-tag before">ORIGINAL PHOTO</span>
+            </div>
+            <div class="vas-ba-slider-handle" id="tryOnSliderHandle">
+              <div class="vas-ba-slider-thumb">‹ ›</div>
+            </div>
+          </div>
+
+          <div class="vas-dual-view-container" id="tryOnDualContainer" style="display:none;">
+            <div class="vas-dual-col">
+              <div class="vas-dual-frame">
+                <img id="tryOnDualBeforeImg" src="" alt="Original Customer Photo" />
+                <span class="vas-ba-tag before">1. ORIGINAL PHOTO</span>
+              </div>
+              <span class="vas-dual-col-label">Customer Identity Reference</span>
+            </div>
+            <div class="vas-dual-col">
+              <div class="vas-dual-frame">
+                <img id="tryOnDualAfterImg" src="" alt="Realistic Virtual Try-On Result" />
+                <span class="vas-ba-tag after">2. REALISTIC TRY-ON RESULT</span>
+              </div>
+              <span class="vas-dual-col-label">Photorealistic Couture Fit</span>
+            </div>
+          </div>
+
+          <div class="vas-tryon-result-actions">
+            <button type="button" class="vas-btn vas-btn-mauve" onclick="window.shopTryOnLook()">
+              🛍️ Shop This Look
+            </button>
+            <button type="button" class="vas-btn vas-btn-rose" onclick="window.downloadTryOnLook()">
+              ⬇️ Download High-Res Look
+            </button>
+            <button type="button" class="vas-btn vas-btn-outline" onclick="window.saveToStyleBoard()">
+              📌 Save to Style Board
+            </button>
+            <button type="button" class="vas-btn vas-btn-ghost" onclick="document.getElementById('tryOnModularStep2').scrollIntoView({behavior:'smooth'})">
+              🔄 Try Another Dress
+            </button>
+            <button type="button" class="vas-btn vas-btn-ghost" style="color:var(--vas-danger);" onclick="window.removeTryOnPhoto()">
+              📸 Change Photo
+            </button>
+          </div>
+
+          <div class="vas-tryon-accessories-section" id="tryOnAccessoriesWrap" style="display:none;">
+            <span class="vas-eyebrow" style="color:var(--vas-mauve);">STYLIST RECOMMENDATIONS</span>
+            <h4 style="font-family:var(--vas-font-serif); font-size:1.25rem; margin:4px 0 0; color:var(--vas-charcoal);">
+              ✨ Complete the Look
+            </h4>
+            <div class="vas-tryon-accessories-grid" id="tryOnAccessoriesGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="try-controls">
-   <h3>
-    Visualize Your Look
-   </h3>
-   <p>
-    Choose an outfit from the boutique and request a personalized
-           visualization.
-   </p>
-   <select id="tryOutfit">
-    <option>
-     Ivory Evening Dress
-    </option>
-    <option>
-     Midnight Tailored Suit
-    </option>
-    <option>
-     Royal Silk Saree
-    </option>
-    <option>
-     Emerald Designer Lehenga
-    </option>
-    <option>
-     Premium Sherwani
-    </option>
-   </select>
-   <select id="tryStyle">
-    <option>
-     Modern
-    </option>
-    <option>
-     Traditional
-    </option>
-    <option>
-     Formal
-    </option>
-    <option>
-     Festive
-    </option>
-    <option>
-     Wedding
-    </option>
-   </select>
-   <button class="btn btn-dark" onclick="generateTryOn()">
-    ✦ Generate Try-On
-   </button>
-   <p id="tryMessage">
-   </p>
-  </div>
- </div>
 </section>

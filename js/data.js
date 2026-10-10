@@ -2126,6 +2126,233 @@ const VASTRAE_DATA = {
         }
       }
     }
+    ,
+    {
+      "id": "W-SAR-01",
+      "name": "Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit",
+      "category": "suits",
+      "gender": "women",
+      "price": 4899,
+      "originalPrice": 6500,
+      "image": "images/products/women/emerald-pakistani-suit-front.jpg",
+      "badge": "Trending on Instagram",
+      "description": "Breathable Pima lawn straight kurta with intricate schiffli laser-cut lace daman, resham neckline embroidery, matching straight cigarette pants, and printed silk-voile dupatta.",
+      "sizes": ["XS", "S", "M", "L", "XL", "Custom Tailored"],
+      "stock": 8,
+      "customizable": true,
+      "fabric": "Breathable Pima Lawn & Silk",
+      "color": "Sage Green & Ivory",
+      "rating": 4.9,
+      "reviewsCount": 42,
+      "specs": {
+        "craftsmanship": "Laser-cut schiffli lace embroidery & handcrafted resham neckline",
+        "composition": "100% Pima Lawn Cotton with Silk-Voile Dupatta",
+        "care": "Gentle Handwash / Dry Clean",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "Summer Galas, Daytime Soirées & Casual Festive"
+      },
+      "rotations_360": [
+        { "url": "images/products/women/emerald-pakistani-suit-front.jpg", "angle": 0, "label": "Front View (0°)" },
+        { "url": "images/products/women/emerald-pakistani-suit-threequarter.jpg", "angle": 45, "label": "Three-Quarter View (45°)" },
+        { "url": "images/products/women/emerald-pakistani-suit-side.jpg", "angle": 90, "label": "Side Profile (90°)" },
+        { "url": "images/products/women/emerald-pakistani-suit-back.jpg", "angle": 180, "label": "Back View (180°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/women/emerald-pakistani-suit-front.jpg", "label": "Full Dress (0°)", "badge": "1. Complete Outfit View", "zoom": "1x", "focus": "center top", "desc": "Complete Outfit: Pima lawn kurta with laser-cut lace." },
+        "threequarter": { "url": "images/products/women/emerald-pakistani-suit-threequarter.jpg", "label": "Three-Quarter (45°)", "badge": "2. Dimension & Silhouette", "zoom": "1.3x", "focus": "50% 30%", "desc": "Three-quarter silhouette." },
+        "side": { "url": "images/products/women/emerald-pakistani-suit-side.jpg", "label": "Side Profile (90°)", "badge": "3. Side Architecture", "zoom": "1.3x", "focus": "50% 30%", "desc": "Side silhouette." },
+        "back": { "url": "images/products/women/emerald-pakistani-suit-back.jpg", "label": "Back View (180°)", "badge": "4. Back Detailing", "zoom": "1.3x", "focus": "50% 30%", "desc": "Clean back finishing." },
+        "detail": { "url": "images/products/women/emerald-pakistani-suit-detail.jpg", "label": "Macro Detail", "badge": "5. Schiffli Embroidery Detail", "zoom": "2.4x", "focus": "50% 40%", "desc": "Fine schiffli needlework." }
+      }
+    },
+    {
+      "id": "M-BG-01",
+      "name": "Modern Ivory Pure Linen Kurta Pajama",
+      "category": "nehru_jackets",
+      "gender": "men",
+      "price": 4499,
+      "originalPrice": 6000,
+      "image": "images/products/men/charcoal-grey-suit-front.jpg",
+      "badge": "Essential Sartorial",
+      "description": "Crisp breathable 100% pure Irish linen kurta with concealed placket, tailored mandarin collar, discreet side seam pockets, and matching straight-cut linen pajama.",
+      "sizes": ["38", "40", "42", "44", "Custom Biometric"],
+      "stock": 10,
+      "customizable": true,
+      "fabric": "Pure Irish Linen",
+      "color": "Ivory Natural Linen",
+      "rating": 4.8,
+      "reviewsCount": 35,
+      "specs": {
+        "craftsmanship": "Concealed front placket, hand-stitched bar tacks & tailored French seams",
+        "composition": "100% Pure Long-Staple Irish Linen",
+        "care": "Gentle Machine Wash / Warm Iron",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "Summer Celebrations, Daytime Puja & Resort Weddings"
+      },
+      "rotations_360": [
+        { "url": "images/products/men/charcoal-grey-suit-front.jpg", "angle": 0, "label": "Front View (0°)" },
+        { "url": "images/products/men/charcoal-grey-suit-back.jpg", "angle": 180, "label": "Back View (180°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/men/charcoal-grey-suit-front.jpg", "label": "Front View (0°)", "badge": "1. Complete Outfit View", "zoom": "1x", "focus": "center top", "desc": "Complete Outfit: Tailored linen kurta pajama." },
+        "back": { "url": "images/products/men/charcoal-grey-suit-back.jpg", "label": "Back View (180°)", "badge": "2. Back Structure", "zoom": "1.3x", "focus": "50% 30%", "desc": "Back drape and shoulder yoke." }
+      }
+    },
+    {
+      "id": "A-JW-01",
+      "name": "Basra Pearl & Polki Jadau Choker Set",
+      "category": "accessories",
+      "gender": "accessories",
+      "price": 4899,
+      "originalPrice": 6500,
+      "image": "images/products/accessories/bridal-potli-front.jpg",
+      "badge": "22K Gold Plated",
+      "description": "Antique gold dip silver alloy choker embellished with natural Basra pearls and uncut polki stones. Includes matching handcrafted jhumkas.",
+      "sizes": ["Free Size"],
+      "stock": 6,
+      "customizable": false,
+      "fabric": "Silver Alloy & Basra Pearls",
+      "color": "Antique Gold & Pearl",
+      "rating": 4.9,
+      "reviewsCount": 28,
+      "specs": {
+        "craftsmanship": "Traditional Jadau setting with foil-backed polki and strung pearls",
+        "composition": "22K Micro-Gold Plated Silver Alloy with Natural Basra Pearls",
+        "care": "Keep away from moisture & perfume. Store in velvet pouch.",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "Bridal Trousseau, Receptions & Sangeet Nights"
+      },
+      "rotations_360": [
+        { "url": "images/products/accessories/bridal-potli-front.jpg", "angle": 0, "label": "Front View (0°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/accessories/bridal-potli-front.jpg", "label": "Jewellery Set", "badge": "1. Complete Set", "zoom": "1x", "focus": "center center", "desc": "Polki choker with matching earrings." }
+      }
+    },
+    {
+      "id": "A-JW-02",
+      "name": "22K Gold Temple Kemp Kamarbandh",
+      "category": "accessories",
+      "gender": "accessories",
+      "price": 3899,
+      "originalPrice": 5200,
+      "image": "images/products/accessories/bridal-potli-front.jpg",
+      "badge": "Temple Heritage",
+      "description": "Sculpted heritage waist belt with ruby kemp stones and antique gold Lakshmi repoussé motifs, engineered with an adjustable velvet cord closure.",
+      "sizes": ["Adjustable (26-40 in)"],
+      "stock": 5,
+      "customizable": false,
+      "fabric": "Antique Gold Plated Kemp",
+      "color": "Antique Gold & Ruby Red",
+      "rating": 4.9,
+      "reviewsCount": 19,
+      "specs": {
+        "craftsmanship": "Authentic Chola style temple repoussé with bezel-set kemp stones",
+        "composition": "Brass Alloy with 22K Matte Temple Gold Polish",
+        "care": "Wipe with dry microfiber cloth after wear.",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "South Indian Weddings, Muhurtham & Arangetrams"
+      },
+      "rotations_360": [
+        { "url": "images/products/accessories/bridal-potli-front.jpg", "angle": 0, "label": "Front View (0°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/accessories/bridal-potli-front.jpg", "label": "Waist Belt", "badge": "1. Complete Belt View", "zoom": "1x", "focus": "center center", "desc": "Temple waist harness." }
+      }
+    },
+    {
+      "id": "A-ST-01",
+      "name": "Pure Mulberry Silk Zari Stole",
+      "category": "accessories",
+      "gender": "accessories",
+      "price": 2699,
+      "originalPrice": 3600,
+      "image": "images/products/women/lavender-chiffon-dupatta-front.jpg",
+      "badge": "Handwoven Zari",
+      "description": "Feather-light pure mulberry silk stole with certified metallic gold zari border and hand-knotted silk tassels on both ends.",
+      "sizes": ["2.2 Meters"],
+      "stock": 14,
+      "customizable": false,
+      "fabric": "Mulberry Silk & Zari",
+      "color": "Champagne Gold & Ivory",
+      "rating": 4.8,
+      "reviewsCount": 31,
+      "specs": {
+        "craftsmanship": "Handloom jacquard woven borders with hand-tied tassel fringe",
+        "composition": "100% Pure Mulberry Silk Warp & Weft",
+        "care": "Dry Clean Only",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "Evening Galas, Cocktail Stoles & Festive Drapes"
+      },
+      "rotations_360": [
+        { "url": "images/products/women/lavender-chiffon-dupatta-front.jpg", "angle": 0, "label": "Front View (0°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/women/lavender-chiffon-dupatta-front.jpg", "label": "Full Stole", "badge": "1. Complete Stole View", "zoom": "1x", "focus": "center center", "desc": "Pure silk stole drape." }
+      }
+    },
+    {
+      "id": "A-JW-03",
+      "name": "Chandbali Polki & Pearl Jhumkas",
+      "category": "accessories",
+      "gender": "accessories",
+      "price": 2499,
+      "originalPrice": 3400,
+      "image": "images/products/accessories/bridal-potli-front.jpg",
+      "badge": "Royal Nizam Motif",
+      "description": "Crescent moon chandbali earrings handcrafted with uncut polki, delicate seed pearl clusters, and midnight meenakari enamel reverse.",
+      "sizes": ["Free Size"],
+      "stock": 9,
+      "customizable": false,
+      "fabric": "Meenakari & Polki",
+      "color": "Antique Gold & Seed Pearl",
+      "rating": 4.9,
+      "reviewsCount": 44,
+      "specs": {
+        "craftsmanship": "Meenakari reverse enamel with seed pearl fringe hanging",
+        "composition": "22K Gold Dipped Brass Alloy with Glass Polki",
+        "care": "Store in airtight pouch provided.",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "Festive Celebrations, Haldi & Eid Receptions"
+      },
+      "rotations_360": [
+        { "url": "images/products/accessories/bridal-potli-front.jpg", "angle": 0, "label": "Front View (0°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/accessories/bridal-potli-front.jpg", "label": "Jhumka Pair", "badge": "1. Pair View", "zoom": "1x", "focus": "center center", "desc": "Chandbali jhumkas." }
+      }
+    },
+    {
+      "id": "A-FT-01",
+      "name": "Artisanal Metallic Zari Mojaris",
+      "category": "accessories",
+      "gender": "accessories",
+      "price": 2899,
+      "originalPrice": 3900,
+      "image": "images/products/accessories/bridal-potli-front.jpg",
+      "badge": "Hand-Stitched Sole",
+      "description": "Ultra-cushioned genuine leather mojaris hand-embroidered with metallic gold zari thread and dabka coils on royal velvet upper.",
+      "sizes": ["EU 37", "EU 38", "EU 39", "EU 40", "EU 41", "EU 42"],
+      "stock": 11,
+      "customizable": false,
+      "fabric": "Genuine Leather & Real Zari",
+      "color": "Antique Gold & Velvet",
+      "rating": 4.8,
+      "reviewsCount": 37,
+      "specs": {
+        "craftsmanship": "Hand-stitched leather sole with memory foam footbed lining",
+        "composition": "Natural Cowhide Leather Sole with Velvet Upper & Zari Embroidery",
+        "care": "Clean with damp cloth. Store away from direct sunlight.",
+        "dispatch": "24-48 Hours Express Dispatch",
+        "occasion": "Weddings, Groom Trousseau & Festive Evenings"
+      },
+      "rotations_360": [
+        { "url": "images/products/accessories/bridal-potli-front.jpg", "angle": 0, "label": "Front View (0°)" }
+      ],
+      "views": {
+        "front": { "url": "images/products/accessories/bridal-potli-front.jpg", "label": "Mojari Pair", "badge": "1. Mojaris View", "zoom": "1x", "focus": "center center", "desc": "Zari embroidered mojaris." }
+      }
+    }
   ],
   "fabricsInventory": [
     {
@@ -2283,7 +2510,250 @@ const VASTRAE_DATA = {
         "revenue": 165576
       }
     ]
-  }
+  },
+  "services": [
+    {
+      "id": "SRV-01",
+      "title": "Bespoke Custom Stitching",
+      "subtitle": "Precision Biometric Pattern Cut",
+      "icon": "🪡",
+      "image": "images/products/women/emerald-pakistani-suit-front.jpg",
+      "description": "Individualized paper pattern drafted from scratch based on 22 body measurements. Includes mulmul lining and 2-inch side seam alteration allowance.",
+      "inclusions": [
+        "Calico trial drape before cutting precious silk",
+        "Reinforced neckline piping & bra strap tabs",
+        "Lifetime alteration privileges on side seams"
+      ],
+      "startingPrice": "₹1,800",
+      "actionText": "Start Customizing →",
+      "actionTarget": "customize",
+      "badge": "Signature Craft"
+    },
+    {
+      "id": "SRV-02",
+      "title": "Custom Outfit Design",
+      "subtitle": "Bespoke Bridal & Gala Ensembles",
+      "icon": "✨",
+      "image": "images/products/women/royal-blue-lehenga-front.jpg",
+      "description": "From initial moodboard sketches to loom execution. Handcrafted authentic maggam stone work, certified metallic zardozi, and resham embroidery.",
+      "inclusions": [
+        "1-on-1 chief couturier design sketch consultation",
+        "HD loom progress preview photos & swatches",
+        "Swarovski crystals & certified metallic zari"
+      ],
+      "startingPrice": "₹4,500",
+      "actionText": "Consult Stylist →",
+      "actionTarget": "consultation",
+      "badge": "Haute Couture"
+    },
+    {
+      "id": "SRV-03",
+      "title": "Saree Reborn & Upcycling",
+      "subtitle": "Vintage Heirloom Transformation",
+      "icon": "♻️",
+      "image": "images/products/women/crimson-banarasi-saree-front.jpg",
+      "description": "Convert mom’s vintage Kanjeevaram into a chic designer blouse, flared lehenga choli, or luxury potli under strict physical master inspection.",
+      "inclusions": [
+        "Mandatory Master Tailor physical loom inspection",
+        "Zero-waste pattern layout preserving rich pallu zari",
+        "Fragile silk stabilization backing"
+      ],
+      "startingPrice": "₹2,200",
+      "actionText": "Reborn Studio →",
+      "actionTarget": "sareeReborn",
+      "badge": "Heritage Upcycling"
+    },
+    {
+      "id": "SRV-04",
+      "title": "AI Virtual Fashion Studio",
+      "subtitle": "Your Style, Virtually! See It. Style It. Make It Yours.",
+      "icon": "🪞",
+      "image": "images/products/women/ivory-anarkali-suit-front.jpg",
+      "description": "Step into our virtual fashion studio. Upload your silhouette photo to preview sarees, lehengas, and couture outfits with our interactive Before & After studio slider.",
+      "inclusions": [
+        "Interactive Before & After draggable slider",
+        "Occasion discovery & personal Style Moodboard",
+        "Curated 'Complete the Look' jewellery & accessories"
+      ],
+      "startingPrice": "Complimentary",
+      "actionText": "Launch Studio →",
+      "actionTarget": "aiTryOnStudio",
+      "badge": "NEW ATELIER FEATURE"
+    }
+  ],
+  "artisans": [
+    {
+      "id": "ART-01",
+      "name": "Master Savitha Devi",
+      "role": "Head Couturière & Master Pattern Drafter",
+      "experience": "32 Years Generational Craft",
+      "specialty": "Bridal Lehengas & Saree Reborn Specialist",
+      "location": "Indiranagar Atelier Floor",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+      "tag": "Master Patron of Loom",
+      "status": "Loom Active",
+      "bio": "Trained under generational Kanchipuram master weavers. Personally inspects every vintage heirloom saree submitted for Saree Reborn."
+    },
+    {
+      "id": "ART-02",
+      "name": "Master Khaleel Ahmed",
+      "role": "Chief Zari & Zardozi Embroiderer",
+      "experience": "28 Years Haute Zardozi Craft",
+      "specialty": "Metallic Zardozi, Maggam & Real Zari Wire",
+      "location": "Indiranagar Embroidery Studio",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
+      "tag": "Zari Maestro",
+      "status": "Studio Active",
+      "bio": "Generational aari and zardozi craftsman from Varanasi. Oversees all certified pure metallic thread and antique stone setting needlework."
+    },
+    {
+      "id": "ART-03",
+      "name": "Master Arjun Verma",
+      "role": "Chief Sartorial Cutter & Master Tailor",
+      "experience": "24 Years Bespoke Tailoring",
+      "specialty": "Savile Row Bandhgalas, Sherwanis & Tuxedos",
+      "location": "Men's Sartorial Salon",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80",
+      "tag": "Bespoke Sartorialist",
+      "status": "Accepting Commissions",
+      "bio": "Savile Row trained master cutter specializing in anatomical posture balance, floating chest canvas, and 22-point biometric drafting."
+    },
+    {
+      "id": "ART-04",
+      "name": "Master Geetha Kumari",
+      "role": "Master Silk Drape & Fitting Specialist",
+      "experience": "20 Years Couture Drapery",
+      "specialty": "Calico Muslin Trials & Hand-Finishing",
+      "location": "Bridal Fitting Suite",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+      "tag": "Drape Perfectionist",
+      "status": "Fittings Active",
+      "bio": "Perfectionist in hand-rolled hems, reinforced bra strap tabs, and custom calico muslin fitting trials for brides."
+    }
+  ],
+  "stylists": [
+    {
+      "id": "STY-01",
+      "name": "Master Savitha Devi",
+      "role": "Chief Bridal Couturière",
+      "experience": "32 Years Haute Craft",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "STY-02",
+      "name": "Master Khaleel Ahmed",
+      "role": "Master Zardozi Specialist",
+      "experience": "28 Years Zari Embroidery",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "STY-03",
+      "name": "Master Arjun Verma",
+      "role": "Chief Sartorialist",
+      "experience": "24 Years Savile Row Craft",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "REV-01",
+      "name": "Ananya Sharma",
+      "role": "Bridal Client",
+      "location": "Indiranagar, Bengaluru",
+      "initials": "AS",
+      "stars": 5,
+      "text": "For my wedding at Palace Grounds, VASTRAÉ turned my grandmother's 45-year-old Kanjeevaram into a spectacular contemporary lehenga. The respect they showed to the antique zari and the fit on the first trial was unbelievable.",
+      "date": "September 2026",
+      "occasion": "Bridal Heritage"
+    },
+    {
+      "id": "REV-02",
+      "name": "Rohit Krishnan",
+      "role": "Patron Member",
+      "location": "Koramangala, Bengaluru",
+      "initials": "RK",
+      "stars": 5,
+      "text": "The 22-point measurement system is genuine Savile Row caliber. I ordered a midnight velvet bandhgala for our corporate awards gala. No bunching, no tightness around the shoulders—felt like second skin.",
+      "date": "August 2026",
+      "occasion": "Black-Tie Gala"
+    },
+    {
+      "id": "REV-03",
+      "name": "Pooja Venkatesh",
+      "role": "Atelier Patron",
+      "location": "Lavelle Road, Bengaluru",
+      "initials": "PV",
+      "stars": 5,
+      "text": "Their doorstep fabric pickup in Indiranagar was seamless. The master tailor brought fabric swatches, recorded my blouse measurements, and delivered the finished maggam-embroidered blouse in just 48 hours.",
+      "date": "October 2026",
+      "occasion": "Bespoke Blouse"
+    },
+    {
+      "id": "REV-04",
+      "name": "Pooja Nambiar",
+      "role": "Saree Reborn Patron",
+      "location": "Indiranagar, Bengaluru",
+      "initials": "PN",
+      "stars": 5,
+      "text": "I had my mother's 30-year-old Kanjeevaram wedding saree converted into a lehenga and potli bag through Saree Reborn. Master Savitha physically inspected the weave and stabilized the silk. The fit was astonishing!",
+      "date": "September 2026",
+      "occasion": "Saree Reborn"
+    },
+    {
+      "id": "REV-05",
+      "name": "Sneha Reddy",
+      "role": "Custom Client",
+      "location": "Whitefield, Bengaluru",
+      "initials": "SR",
+      "stars": 5,
+      "text": "Ordered a custom peacock maggam blouse through the interactive customizer. The virtual model draping was super helpful, and the 2-inch side seam allowance gave me total peace of mind.",
+      "date": "October 2026",
+      "occasion": "Custom Tailoring"
+    },
+    {
+      "id": "REV-06",
+      "name": "Rohan Singhania",
+      "role": "Bespoke Patron",
+      "location": "Koramangala, Bengaluru",
+      "initials": "RS",
+      "stars": 5,
+      "text": "First time getting a bespoke Bandhgala suit stitched online. They picked up my raw silk fabric from my doorstep and delivered it within 5 days with surgeon cuffs and perfect shoulder slope.",
+      "date": "August 2026",
+      "occasion": "Bespoke Bandhgala"
+    }
+  ],
+  "faqs": [
+    {
+      "category": "Appointments",
+      "question": "Do I need an appointment to visit the Indiranagar salon?",
+      "answer": "Walk-ins are warmly welcomed from Monday to Saturday (10:00 AM – 8:30 PM) for browsing fabrics and collections. For bridal trousseau consultations or calico fittings, reserving a time slot is recommended."
+    },
+    {
+      "category": "Turnaround",
+      "question": "What is the typical turnaround time for custom tailoring?",
+      "answer": "Standard custom blouse and kurti stitching takes 48 to 72 hours. Hand-embroidered maggam bridal blouses require 5 to 7 days, and full wedding lehengas require 10 to 14 days. Express 24-hr rush service is available."
+    },
+    {
+      "category": "Own Fabric",
+      "question": "Can I bring my own fabric or heirloom saree?",
+      "answer": "Absolutely! You can drop off your fabric at our flagship salon or use our doorstep collection service across Bengaluru. Our master tailors physically inspect the weave and draft your custom pattern."
+    },
+    {
+      "category": "Alterations",
+      "question": "What if my garment needs sizing adjustments later?",
+      "answer": "Every garment crafted at VASTRAÉ includes generous 2-inch internal seam allowances and complimentary lifetime alteration privileges. Simply bring it in or request a courier pickup."
+    },
+    {
+      "category": "Virtual Try-On",
+      "question": "How does the AI Virtual Fashion Studio work?",
+      "answer": "Upload your full-length silhouette photo, select any outfit from our boutique collection, and our AI engine generates a realistic try-on view with an interactive draggable Before & After comparison slider."
+    },
+    {
+      "category": "Fabric Purity",
+      "question": "Are your handloom silks and metallic zari certified?",
+      "answer": "Yes, 100% of our raw silks and Banarasi/Kanjeevaram weaves are certified handloom pure silk. All zari thread is certified electroplated metallic silver and gold."
+    }
+  ]
 };
 
 if (typeof window !== "undefined") {
