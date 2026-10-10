@@ -1316,6 +1316,7 @@ img {
   margin-bottom: 14px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -2252,7 +2253,15 @@ img {
 .vas-dashboard-view {
   background: var(--vas-bg);
   min-height: calc(100vh - 78px);
-  padding: 40px 0 80px;
+  padding: 120px 0 80px; /* Generous top padding ensures header buttons sit completely below the sticky navbar for customer view */
+}
+
+.vas-dashboard-view.vas-standalone-dashboard {
+  padding: 36px 0 80px; /* Standalone Admin and Tailor dashboards start cleanly at the top when public navbar is hidden */
+}
+
+.vas-dashboard-view.vas-standalone-dashboard .vas-dashboard-sidebar {
+  top: 32px;
 }
 
 .vas-dashboard-layout {
@@ -3743,4 +3752,152 @@ img {
 .vas-360-thumb-item.active {
   border-color: var(--vas-gold-dark);
   box-shadow: 0 0 0 2px rgba(184, 142, 76, 0.35);
-}
+}
+
+/* --------------------------------------------------------------------------
+   16. DASHBOARD TOPBAR & PICTORIAL STATS
+   -------------------------------------------------------------------------- */
+.vas-dash-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 28px;
+  padding: 24px 32px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--vas-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.vas-visual-card {
+  background: #ffffff;
+  border: 1px solid var(--vas-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--vas-shadow-sm);
+  margin-bottom: 24px;
+}
+
+.vas-gauge-track {
+  width: 100%;
+  height: 12px;
+  background: #ede7dc;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  margin: 12px 0 16px;
+}
+
+.vas-gauge-seg {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.vas-gauge-seg.gold {
+  background: linear-gradient(90deg, #d4af37, #b88e4c);
+}
+
+.vas-gauge-seg.rose {
+  background: linear-gradient(90deg, #dfa393, #c97967);
+}
+
+.vas-gauge-seg.navy {
+  background: linear-gradient(90deg, #3a506b, #1c2541);
+}
+
+.vas-gauge-seg.emerald {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+.vas-gauge-seg.ruby {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+/* 6-Stage Visual Stepper */
+.vas-stepper-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin: 20px 0 12px;
+  padding: 0 8px;
+}
+
+.vas-stepper-track::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background: #e6dfd5;
+  z-index: 1;
+}
+
+.vas-stepper-progress {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, #27ae60, #d4af37);
+  z-index: 2;
+  transition: width 0.4s ease;
+}
+
+.vas-stepper-node {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.vas-stepper-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #d4c8b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vas-muted);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: all 0.25s ease;
+}
+
+.vas-stepper-node.completed .vas-stepper-icon {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #ffffff;
+}
+
+.vas-stepper-node.active .vas-stepper-icon {
+  background: #b88e4c;
+  border-color: #b88e4c;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(184, 142, 76, 0.25);
+  transform: scale(1.12);
+}
+
+.vas-stepper-lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--vas-muted);
+  margin-top: 6px;
+  max-width: 80px;
+  line-height: 1.25;
+}
+
+.vas-stepper-node.active .vas-stepper-lbl {
+  color: var(--vas-gold-dark);
+  font-weight: 700;
+}
+

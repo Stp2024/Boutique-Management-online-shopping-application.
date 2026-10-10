@@ -1,7 +1,7 @@
 /* ==========================================================================
    VASTRAÉ — ORDER & TRACKING ENGINE SERVICE
-   Handles checkout order placement, order lifecycle, master tailor assignment,
-   and 6-stage production tracking console persistence.
+   Dynamic client orders, tailor assignment, 6-stage lifecycle persistence.
+   Strictly NO fake demo orders.
    ========================================================================== */
 
 (function (window) {
@@ -21,58 +21,53 @@
   const vastraeOrderService = {
     STAGES: STAGES,
 
+    // Initial orders database: strictly empty (no fake orders)
     getInitialOrders: function () {
-      return [
-        {
-          id: "VST-ORD-1001",
-          userId: "USR-101",
-          customerName: "Ananya Sharma",
-          customerPhone: "+91 98860 12345",
-          items: [
-            {
-              id: "W-SAR-01",
-              name: "Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit",
-              price: 7499,
-              quantity: 1,
-              image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85",
-              size: "M"
-            }
-          ],
-          totalAmount: 7499,
-          paymentStatus: "Paid (UPI / Online)",
-          orderDate: new Date().toISOString(),
-          currentStage: 4,
-          stageTitle: "Master Tailor Stitching",
-          assignedTailorId: "TAIL-101",
-          assignedTailorName: "Master Savitha Devi",
-          wipImages: ["https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=85"],
-          notes: "Tailoring in progress with 2-inch concealed seam allowance.",
-          estimatedDelivery: "2026-10-14",
-          address: "No. 42, 100 Feet Road, Indiranagar, Bengaluru, KA - 560038"
-        }
-      ];
+      return [];
     },
 
     getOrders: function () {
-      if (!window.vastraeStorage) return this.getInitialOrders();
-      const stored = window.vastraeStorage.get(STORAGE_KEY, null);
-      if (!stored) {
-        const initial = this.getInitialOrders();
-        window.vastraeStorage.set(STORAGE_KEY, initial);
-        return initial;
+      let stored = null;
+      if (window.vastraeStorage) {
+        stored = window.vastraeStorage.get(STORAGE_KEY, null);
+      } else {
+        try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { stored = null; }
       }
-      return stored;
+
+      if (!stored || !Array.isArray(stored)) {
+        return [];
+      }
+
+      // Filter out legacy demo order VST-ORD-1001 or Ananya Sharma demo order
+      const cleaned = stored.filter(function (o) {
+        return o.id !== "VST-ORD-1001" && o.userId !== "USR-101" &&
+               (o.customerName || "").toLowerCase() !== "ananya sharma";
+      });
+
+      if (cleaned.length !== stored.length) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
+      }
+
+      return cleaned;
     },
 
-    getCustomerOrders: function (userId) {
+    getCustomerOrders: function (userId, customerName) {
       const all = this.getOrders();
-      if (!userId) return all;
-      return all.filter((o) => o.userId === userId || o.customerName === userId);
+      if (!userId && !customerName) return [];
+      return all.filter(function (o) {
+        return (userId && o.userId === userId) ||
+               (customerName && (o.customerName || "").toLowerCase() === customerName.toLowerCase());
+      });
     },
 
-    getTailorOrders: function (tailorId) {
+    getTailorOrders: function (tailorId, tailorName) {
       const all = this.getOrders();
-      return all.filter((o) => o.assignedTailorId === tailorId);
+      if (!tailorId && !tailorName) return [];
+      return all.filter(function (o) {
+        return (tailorId && o.assignedTailorId === tailorId) ||
+               (tailorName && (o.assignedTailorName || "").toLowerCase() === tailorName.toLowerCase());
+      });
     },
 
     createOrder: function (orderData) {
@@ -81,55 +76,67 @@
 
       const newOrder = {
         id: id,
+        orderId: id,
         userId: orderData.userId || "GUEST",
         customerName: orderData.customerName || "Customer",
         customerPhone: orderData.customerPhone || "",
         items: orderData.items || [],
-        totalAmount: orderData.totalAmount || 0,
-        paymentStatus: orderData.paymentStatus || "Paid",
+        total: orderData.totalAmount || orderData.total || 0,
+        totalAmount: orderData.totalAmount || orderData.total || 0,
+        paymentStatus: orderData.paymentStatus || "Paid (UPI / Online)",
         orderDate: new Date().toISOString(),
         currentStage: 1,
         stageTitle: STAGES[0].title,
-        assignedTailorId: orderData.assignedTailorId || "TAIL-101",
-        assignedTailorName: orderData.assignedTailorName || "Master Savitha Devi",
+        status: "Placed",
+        assignedTailorId: orderData.assignedTailorId || null,
+        assignedTailorName: orderData.assignedTailorName || "Unassigned",
         wipImages: [],
-        notes: "Order placed. Fabric sourcing & inspection initiated.",
+        notes: orderData.notes || "Order placed. Fabric sourcing & inspection initiated.",
+        measurements: orderData.measurements || null,
         estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        address: orderData.address || "Bengaluru Delivery Address"
+        address: orderData.address || "Indiranagar, Bengaluru"
       };
 
       all.unshift(newOrder);
-      window.vastraeStorage.set(STORAGE_KEY, all);
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
       return newOrder;
     },
 
     updateOrderStage: function (orderId, newStage, tailorNotes = null, wipImage = null) {
       const all = this.getOrders();
-      const index = all.findIndex((o) => o.id === orderId);
+      const index = all.findIndex(function (o) { return o.id === orderId || o.orderId === orderId; });
       if (index === -1) return null;
 
       const order = all[index];
       order.currentStage = Math.min(6, Math.max(1, newStage));
       order.stageTitle = STAGES[order.currentStage - 1].title;
+      order.status = order.currentStage === 6 ? "Delivered" : (order.currentStage >= 4 ? "Ready" : "Tailoring");
       if (tailorNotes) order.notes = tailorNotes;
-      if (wipImage) order.wipImages.push(wipImage);
+      if (wipImage) {
+        if (!order.wipImages) order.wipImages = [];
+        order.wipImages.push(wipImage);
+      }
 
       all[index] = order;
-      window.vastraeStorage.set(STORAGE_KEY, all);
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
       return order;
     },
 
     assignTailorToOrder: function (orderId, tailorId, tailorName) {
       const all = this.getOrders();
-      const index = all.findIndex((o) => o.id === orderId);
+      const index = all.findIndex(function (o) { return o.id === orderId || o.orderId === orderId; });
       if (index === -1) return null;
 
       const order = all[index];
       order.assignedTailorId = tailorId;
       order.assignedTailorName = tailorName;
+      order.tailor = tailorName;
 
       all[index] = order;
-      window.vastraeStorage.set(STORAGE_KEY, all);
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
       return order;
     }
   };

@@ -10,54 +10,41 @@
   const STORAGE_KEY = "vastrae_measurements";
 
   const vastraeMeasurementService = {
-    // Default initial measurement profiles
+    // Measurement profiles: strictly empty by default (created by authentic clients)
     getInitialProfiles: function () {
-      return [
-        {
-          id: "PROF-SELF-01",
-          userId: "USR-101",
-          profileName: "Ananya Sharma (Self)",
-          category: "Self",
-          gender: "women",
-          bust: 88,
-          waist: 72,
-          hip: 96,
-          shoulder: 39,
-          sleeve: 54,
-          blouseLength: 38,
-          ankleHeight: 104,
-          height: 168,
-          isDefault: true,
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: "PROF-FAM-02",
-          userId: "USR-101",
-          profileName: "Devendra Sharma (Spouse)",
-          category: "Family",
-          gender: "men",
-          chest: 102,
-          waist: 86,
-          hip: 104,
-          shoulder: 46,
-          sleeve: 64,
-          height: 182,
-          isDefault: false,
-          updatedAt: new Date().toISOString()
-        }
-      ];
+      return [];
     },
 
     // Get all measurement profiles
     getProfiles: function () {
-      if (!window.vastraeStorage) return this.getInitialProfiles();
-      const stored = window.vastraeStorage.get(STORAGE_KEY, null);
-      if (!stored) {
-        const initial = this.getInitialProfiles();
-        window.vastraeStorage.set(STORAGE_KEY, initial);
-        return initial;
+      let stored = null;
+      if (window.vastraeStorage) {
+        stored = window.vastraeStorage.get(STORAGE_KEY, null);
+      } else {
+        try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { stored = null; }
       }
-      return stored;
+
+      if (!stored || !Array.isArray(stored)) {
+        return [];
+      }
+
+      // Purge demo records for USR-101
+      const cleaned = stored.filter(function (p) {
+        return p.userId !== "USR-101" && (p.profileName || "").indexOf("Ananya") === -1;
+      });
+
+      if (cleaned.length !== stored.length) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
+      }
+
+      return cleaned;
+    },
+
+    getUserProfiles: function (userId) {
+      const all = this.getProfiles();
+      if (!userId) return [];
+      return all.filter(function (p) { return p.userId === userId; });
     },
 
     // Save or update a profile

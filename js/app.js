@@ -27,9 +27,15 @@
   // Active session customer (strictly null by default; no demo profile)
   let currentUser = null;
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USER));
-    // Purge legacy demo profile if previously stored in browser
-    if (stored && (stored.username === "DiyaMehta" || stored.name === "Diya Mehta")) {
+    const authUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    const stored = authUser || JSON.parse(localStorage.getItem(STORAGE_KEY_USER));
+    // Purge legacy demo profiles if previously stored in browser
+    if (stored && (
+      stored.username === "DiyaMehta" || stored.name === "Diya Mehta" ||
+      stored.username === "AnanyaSharma" || stored.name === "Ananya Sharma" ||
+      stored.username === "SavithaDevi" || stored.name === "Master Savitha Devi"
+    )) {
+      if (window.vastraeAuth) window.vastraeAuth.logout();
       localStorage.removeItem(STORAGE_KEY_USER);
       currentUser = null;
     } else {
@@ -39,13 +45,15 @@
     currentUser = null;
   }
 
-  // Authentic client storage (empty for guest until login/registration)
+  // Authentic storage (empty for guest until login/registration)
   let cart = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_CART)) || []) : [];
   let wishlist = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_WISH)) || []) : [];
   let savedDesigns = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || []) : [];
-  let orders = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || []) : [];
-  let sareeRebornOrders = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []) : [];
-  let ownFabricOrders = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || []) : [];
+  let orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || [];
+  // Clean fake demo orders
+  orders = orders.filter(o => o.id !== "VST-ORD-1001" && (o.customerName || "").toLowerCase() !== "ananya sharma");
+  let sareeRebornOrders = (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []).filter(r => r.id !== "VST-SR-1001");
+  let ownFabricOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || [];
 
   // Active state for Customize Your Way module
   let customState = {
@@ -88,25 +96,76 @@
     initVirtualTryOn();
 
     // Route to correct page based on URL hash
-    const initialHash = (window.location.hash || "").replace("#", "");
-    if (initialHash === "dashboard") {
-      if (currentUser) {
-        showDashboardView();
+    function handleRouteNavigation(hashStr) {
+      const route = (hashStr || window.location.hash || "").replace("#", "");
+      if (route === "dashboard" || route === "client-dashboard") {
+        if (!currentUser) {
+          showToast("Please sign in or register to access your Customer Workspace.");
+          openAuthModal("login");
+          window.navigateToPage("home");
+        } else if (currentUser.role === "admin") {
+          window.showAdminDashboard();
+        } else if (currentUser.role === "tailor") {
+          window.showTailorDashboard();
+        } else {
+          window.showCustomerDashboard();
+        }
+      } else if (route === "admin" || route === "admin-dashboard") {
+        if (currentUser && currentUser.role === "admin") {
+          window.showAdminDashboard();
+        } else {
+          showToast("Please sign in with administrator credentials.");
+          openAuthModal("login");
+          window.navigateToPage("home");
+        }
+      } else if (route === "tailor" || route === "tailor-dashboard") {
+        if (currentUser && currentUser.role === "tailor") {
+          window.showTailorDashboard();
+        } else {
+          showToast("Please sign in with tailor credentials.");
+          openAuthModal("login");
+          window.navigateToPage("home");
+        }
+      } else if (["home", "about", "collection", "services", "contact"].includes(route)) {
+        if (currentUser && currentUser.role === "admin") {
+          window.showAdminDashboard();
+          return;
+        }
+        if (currentUser && currentUser.role === "tailor") {
+          window.showTailorDashboard();
+          return;
+        }
+        window.navigateToPage(route);
+      } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(route)) {
+        if (currentUser && currentUser.role === "admin") {
+          window.showAdminDashboard();
+          return;
+        }
+        if (currentUser && currentUser.role === "tailor") {
+          window.showTailorDashboard();
+          return;
+        }
+        window.navigateToSection(route);
       } else {
-        showToast("Please sign in or register to access your Customer Workspace.");
-        openAuthModal("login");
+        if (currentUser && currentUser.role === "admin") {
+          window.showAdminDashboard();
+          return;
+        }
+        if (currentUser && currentUser.role === "tailor") {
+          window.showTailorDashboard();
+          return;
+        }
         window.navigateToPage("home");
       }
-    } else if (initialHash === "admin") {
-      window.openAdminConsoleModal();
-    } else if (initialHash === "tailor") {
-      window.openMasterTailorWorkspace();
-    } else if (["home", "about", "collection", "services", "contact"].includes(initialHash)) {
-      window.navigateToPage(initialHash);
-    } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(initialHash)) {
-      window.navigateToSection(initialHash);
+    }
+
+    // Direct role dispatch on initial load
+    if (currentUser && currentUser.role === "admin") {
+      window.showAdminDashboard();
+    } else if (currentUser && currentUser.role === "tailor") {
+      window.showTailorDashboard();
     } else {
-      window.navigateToPage("home");
+      handleRouteNavigation(window.location.hash);
     }
 
     // Transparent / Frosted Navbar on Scroll
@@ -141,23 +200,12 @@
 
     // Hash change handler
     window.addEventListener("hashchange", function () {
-      const currentRoute = (window.location.hash || "").replace("#", "");
-      if (currentRoute === "dashboard") {
-        if (!currentUser) {
-          showToast("Please sign in or register to access your Customer Workspace.");
-          openAuthModal("login");
-          window.navigateToPage("home");
-        } else {
-          showDashboardView();
-        }
-      } else if (currentRoute === "admin") {
-        window.openAdminConsoleModal();
-      } else if (currentRoute === "tailor") {
-        window.openMasterTailorWorkspace();
-      } else if (["home", "about", "collection", "services", "contact"].includes(currentRoute)) {
-        window.navigateToPage(currentRoute);
-      } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(currentRoute)) {
-        window.navigateToSection(currentRoute);
+      if (currentUser && currentUser.role === "admin") {
+        window.showAdminDashboard();
+      } else if (currentUser && currentUser.role === "tailor") {
+        window.showTailorDashboard();
+      } else {
+        handleRouteNavigation(window.location.hash);
       }
     });
 
@@ -168,29 +216,68 @@
   }
 
   // ------------------------------------------------------------------------
-  // 3. VIEW SWITCHER (PUBLIC WEBSITE vs CUSTOMER DASHBOARD)
+  // 3. VIEW SWITCHER (PUBLIC WEBSITE vs 3 SEPARATE ROLE DASHBOARDS)
   // ------------------------------------------------------------------------
+  function hideAllDashboards() {
+    const custView = document.getElementById("customerDashboardView");
+    const adminView = document.getElementById("adminDashboardView");
+    const tailorView = document.getElementById("tailorDashboardView");
+    if (custView) custView.style.display = "none";
+    if (adminView) adminView.style.display = "none";
+    if (tailorView) tailorView.style.display = "none";
+  }
+
   function showPublicView() {
+    hideAllDashboards();
+    const topHeader = document.getElementById("topHeader");
+    if (topHeader) topHeader.style.display = "";
     const pubView = document.getElementById("publicWebsiteView");
-    const dashView = document.getElementById("customerDashboardView");
     if (pubView) pubView.style.display = "block";
-    if (dashView) dashView.style.display = "none";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function showDashboardView() {
+  window.returnToPublicWebsite = function () {
+    if (currentUser && (currentUser.role === "admin" || currentUser.role === "tailor")) {
+      window.handleLogout(true);
+      return;
+    }
+    showPublicView();
+    window.navigateToPage("home");
+  };
+
+  // CLIENT DASHBOARD (Existing functionality completely preserved)
+  window.showCustomerDashboard = function () {
     if (!currentUser) {
       showToast("Please sign in or register to access your Customer Workspace.");
       openAuthModal("login");
       return;
     }
+    if (currentUser.role === "admin") {
+      window.showAdminDashboard();
+      return;
+    }
+    if (currentUser.role === "tailor") {
+      window.showTailorDashboard();
+      return;
+    }
+
+    // Ensure public header is visible for clients
+    const topHeader = document.getElementById("topHeader");
+    if (topHeader) topHeader.style.display = "";
+
     const pubView = document.getElementById("publicWebsiteView");
-    const dashView = document.getElementById("customerDashboardView");
     if (pubView) pubView.style.display = "none";
-    if (dashView) dashView.style.display = "block";
+    hideAllDashboards();
+
+    const custView = document.getElementById("customerDashboardView");
+    if (custView) {
+      custView.style.display = "block";
+      custView.classList.remove("vas-standalone-dashboard");
+    }
+
     renderDashboardOverview();
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  };
 
   window.openCustomerDashboard = function () {
     if (!currentUser) {
@@ -199,20 +286,127 @@
       return;
     }
     window.location.hash = "#dashboard";
-    showDashboardView();
+    window.showCustomerDashboard();
+  };
+
+  // ADMIN DASHBOARD
+  window.showAdminDashboard = function () {
+    if (!currentUser || currentUser.role !== "admin") {
+      showToast("Access restricted to Atelier Administrator.");
+      openAuthModal("login");
+      return;
+    }
+
+    // Hide public navbar and public website
+    const topHeader = document.getElementById("topHeader");
+    if (topHeader) topHeader.style.display = "none";
+
+    const pubView = document.getElementById("publicWebsiteView");
+    if (pubView) pubView.style.display = "none";
+    hideAllDashboards();
+
+    const adminView = document.getElementById("adminDashboardView");
+    if (adminView) {
+      adminView.style.display = "block";
+      adminView.classList.add("vas-standalone-dashboard");
+    }
+
+    window.location.hash = "#admin";
+
+    if (window.renderAdminDashboard) {
+      window.renderAdminDashboard(window.currentAdminTab || "overview");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  window.openAdminDashboard = function () {
+    if (!currentUser || currentUser.role !== "admin") {
+      showToast("Access restricted to Atelier Administrator.");
+      openAuthModal("login");
+      return;
+    }
+    window.showAdminDashboard();
+  };
+
+  // TAILOR DASHBOARD
+  window.showTailorDashboard = function () {
+    if (!currentUser || currentUser.role !== "tailor") {
+      showToast("Access restricted to Master Tailors.");
+      openAuthModal("login");
+      return;
+    }
+
+    // Check active status
+    if ((currentUser.status || "Active").toLowerCase() === "inactive") {
+      if (window.vastraeAuth) window.vastraeAuth.logout();
+      currentUser = null;
+      updateAuthUI();
+      showToast("Your tailor account is currently inactive. Please contact the Atelier Director.");
+      openAuthModal("login");
+      return;
+    }
+
+    // Hide public navbar and public website
+    const topHeader = document.getElementById("topHeader");
+    if (topHeader) topHeader.style.display = "none";
+
+    const pubView = document.getElementById("publicWebsiteView");
+    if (pubView) pubView.style.display = "none";
+    hideAllDashboards();
+
+    const tailorView = document.getElementById("tailorDashboardView");
+    if (tailorView) {
+      tailorView.style.display = "block";
+      tailorView.classList.add("vas-standalone-dashboard");
+    }
+
+    window.location.hash = "#tailor";
+
+    const nameEl = document.getElementById("tailorNameDisplay");
+    if (nameEl) nameEl.textContent = currentUser.name || "Master Tailor";
+    const emailEl = document.getElementById("tailorEmailDisplay");
+    if (emailEl) emailEl.textContent = currentUser.email || "";
+    const phoneEl = document.getElementById("tailorPhoneDisplay");
+    if (phoneEl) phoneEl.textContent = currentUser.phone || "";
+    const badgeEl = document.getElementById("tailorStatusBadge");
+    if (badgeEl) badgeEl.textContent = `${currentUser.specialization || "Master Couturier"} · Active`;
+
+    if (window.renderTailorDashboard) {
+      window.renderTailorDashboard(window.currentTailorTab || "queue");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  window.openTailorDashboard = function () {
+    if (!currentUser || currentUser.role !== "tailor") {
+      showToast("Access restricted to Master Tailors.");
+      openAuthModal("login");
+      return;
+    }
+    window.showTailorDashboard();
   };
 
   window.navigateToPage = function (pageName, event) {
     if (event) {
       event.preventDefault();
     }
+    if (currentUser && currentUser.role === "admin") {
+      window.showAdminDashboard();
+      return;
+    }
+    if (currentUser && currentUser.role === "tailor") {
+      window.showTailorDashboard();
+      return;
+    }
+
     const validPages = ["home", "about", "collection", "services", "contact"];
     const target = validPages.includes(pageName) ? pageName : "home";
 
+    hideAllDashboards();
+    const topHeader = document.getElementById("topHeader");
+    if (topHeader) topHeader.style.display = "";
     const pubView = document.getElementById("publicWebsiteView");
-    const dashView = document.getElementById("customerDashboardView");
     if (pubView) pubView.style.display = "block";
-    if (dashView) dashView.style.display = "none";
 
     // Close mobile nav drawer if open
     const menu = document.querySelector(".vas-nav-menu");
@@ -246,6 +440,14 @@
   };
 
   window.navigateToSection = function (sectionId, event) {
+    if (currentUser && currentUser.role === "admin") {
+      window.showAdminDashboard();
+      return;
+    }
+    if (currentUser && currentUser.role === "tailor") {
+      window.showTailorDashboard();
+      return;
+    }
     if (["home", "about", "collection", "services", "contact"].includes(sectionId)) {
       window.navigateToPage(sectionId, event);
       return;
@@ -284,6 +486,7 @@
   };
 
   window.returnToPublicWebsite = function () {
+    showPublicView();
     window.navigateToPage("home");
   };
 
@@ -359,132 +562,83 @@
       return;
     }
 
-    // Create authentic customer profile
-    currentUser = {
+    // Create authentic customer profile through vastraeAuth
+    const regResult = window.vastraeAuth ? window.vastraeAuth.registerCustomer({
       username: username,
-      name: fullName,
+      fullName: fullName,
       email: email,
       phone: phone,
       password: password,
-      gender: "Female",
-      dob: "1998-01-01",
-      address: "100 Feet Road, Indiranagar, Bengaluru",
-      city: "Bengaluru",
-      state: "Karnataka",
-      pincode: "560038",
-      avatar: fullName.charAt(0).toUpperCase(),
-      tier: "Atelier Patron Member",
-      loyaltyPoints: 100,
-      familyProfiles: [
-        { name: fullName, relation: "Self", bust: "34\"", waist: "28\"", hips: "36\"", shoulder: "14\"", blouseLength: "14\"" }
-      ],
-      addresses: [
-        { label: "Default Address", address: "100 Feet Road, Indiranagar, Bengaluru - 560038", isDefault: true }
-      ]
-    };
+      confirmPassword: confirmPassword
+    }) : { success: false, message: "Auth service missing." };
 
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    if (!regResult.success) {
+      showAuthError(regResult.message);
+      return;
+    }
 
-    // Save into registered users database
-    let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_DB)) || [];
-    usersDb.push(currentUser);
-    localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
+    currentUser = regResult.user;
 
-    // Reset customer workspace for new patron
+    // Initialize customer workspace for new patron
     cart = [];
     wishlist = [];
     savedDesigns = [];
-    orders = [];
-    sareeRebornOrders = [];
-    ownFabricOrders = [];
+    orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || [];
+    sareeRebornOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || [];
+    ownFabricOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || [];
     localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
     localStorage.setItem(STORAGE_KEY_WISH, JSON.stringify(wishlist));
 
     updateAuthUI();
     closeModal();
-    showToast(`✓ Welcome to VASTRAÉ, ${fullName}! Your client account has been created.`);
-    openCustomerDashboard();
+    showToast(regResult.message);
+    window.openCustomerDashboard();
   };
 
-  // Handle Login Submit
+  // Handle Login Submit (One Common Login Page for Client, Admin, Tailor)
   window.handleLoginSubmit = function (event) {
     event.preventDefault();
     const loginUser = document.getElementById("loginUser").value.trim();
-    const loginPass = document.getElementById("loginPass").value;
+    const loginPass = document.getElementById("loginPass").value.trim();
 
     if (!loginUser || !loginPass) {
       showAuthError("Please enter your username/email and password.");
       return;
     }
 
-    // Password must be exactly 6 characters as required
-    if (loginPass.length !== 6) {
-      showAuthError("Password must be exactly 6 characters.");
+    if (!window.vastraeAuth) {
+      showAuthError("Authentication service is unavailable.");
       return;
     }
 
-    // Check registered users database
-    let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_DB)) || [];
-    let matched = usersDb.find(u => 
-      (u.username.toLowerCase() === loginUser.toLowerCase() || u.email.toLowerCase() === loginUser.toLowerCase()) &&
-      u.password === loginPass
-    );
-
-    if (matched) {
-      currentUser = matched;
-    } else if (usersDb.length === 0) {
-      // If customer is logging in before database persistence, verify 6-char policy and create account
-      if (!/[A-Za-z]/.test(loginPass) || !/\d/.test(loginPass) || !/[@$!%*#?&_\-\.]/.test(loginPass)) {
-        showAuthError("Password must contain at least 1 letter, 1 number, and 1 special character.");
-        return;
-      }
-      currentUser = {
-        username: loginUser,
-        name: loginUser,
-        email: `${loginUser.toLowerCase().replace(/\s+/g, '')}@vastrae.com`,
-        phone: "9886012345",
-        password: loginPass,
-        gender: "Female",
-        dob: "1996-05-15",
-        address: "100 Feet Road, Indiranagar, Bengaluru - 560038",
-        city: "Bengaluru",
-        state: "Karnataka",
-        pincode: "560038",
-        avatar: loginUser.charAt(0).toUpperCase(),
-        tier: "Atelier Patron",
-        loyaltyPoints: 100,
-        familyProfiles: [
-          { name: loginUser, relation: "Self", bust: "34\"", waist: "28\"", hips: "36\"", shoulder: "14\"", blouseLength: "14\"" }
-        ],
-        addresses: [
-          { label: "Home", address: "Indiranagar, Bengaluru - 560038", isDefault: true }
-        ]
-      };
-      usersDb.push(currentUser);
-      localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
-    } else {
-      showAuthError("Account not found or password incorrect. Please switch to 'Register Profile' to create your account.");
+    const authRes = window.vastraeAuth.login(loginUser, loginPass);
+    if (!authRes.success) {
+      showAuthError(authRes.message);
       return;
     }
 
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    currentUser = authRes.user;
+
+    // Synchronize workspace storage
     cart = JSON.parse(localStorage.getItem(STORAGE_KEY_CART)) || [];
     wishlist = JSON.parse(localStorage.getItem(STORAGE_KEY_WISH)) || [];
-    orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || [];
     savedDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
+    orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || [];
     sareeRebornOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || [];
     ownFabricOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || [];
 
     updateAuthUI();
     closeModal();
-    showToast(`✓ Welcome back, ${currentUser.name}!`);
-
-    if (currentUser.username.toLowerCase() === "admin") {
-      window.openAdminConsoleModal();
-    } else if (currentUser.username.toLowerCase() === "tailor") {
-      window.openMasterTailorWorkspace();
+    // Automatic role-based redirection to respective dashboard only
+    if (currentUser.role === "admin") {
+      showToast(`Welcome Administrator, ${currentUser.name || "Admin"}!`);
+      window.showAdminDashboard();
+    } else if (currentUser.role === "tailor") {
+      showToast(`Welcome Master Tailor, ${currentUser.name || "Tailor"}!`);
+      window.showTailorDashboard();
     } else {
-      openCustomerDashboard();
+      showToast(authRes.message);
+      window.openCustomerDashboard();
     }
   };
 
@@ -496,66 +650,9 @@
     }
   }
 
-  // Quick 1-Click Role Switcher for Testing & Demonstration
-  window.quickLoginDemo = function (role) {
-    if (role === "admin") {
-      currentUser = {
-        username: "admin",
-        name: "Atelier Director",
-        email: "director@vastrae.com",
-        phone: "9886012345",
-        tier: "Executive Administrator",
-        loyaltyPoints: 5000,
-        avatar: "A",
-        address: "Indiranagar Atelier Floor, Bengaluru",
-        familyProfiles: []
-      };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      updateAuthUI();
-      closeModal();
-      window.openAdminConsoleModal();
-      showToast("✓ Logged in as Atelier Administrator (Full Back-Office Access)");
-    } else if (role === "tailor") {
-      currentUser = {
-        username: "tailor",
-        name: "Master Savitha Devi",
-        email: "couturier@vastrae.com",
-        phone: "9886012345",
-        tier: "Chief Master Couturier",
-        loyaltyPoints: 3000,
-        avatar: "T",
-        address: "Indiranagar Drafting Loom Floor, Bengaluru",
-        familyProfiles: []
-      };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      updateAuthUI();
-      closeModal();
-      window.openMasterTailorWorkspace();
-      showToast("✓ Logged in as Master Tailor Savitha Devi (Production Studio)");
-    } else {
-      currentUser = {
-        username: "ananya",
-        name: "Ananya Sharma",
-        email: "ananya@vastrae.com",
-        phone: "9886012345",
-        tier: "Atelier Patron",
-        loyaltyPoints: 1250,
-        avatar: "A",
-        address: "100 Feet Road, Indiranagar, Bengaluru - 560038",
-        familyProfiles: [
-          { name: "Ananya Sharma", relation: "Self", bust: "34\"", waist: "28\"", hips: "36\"", shoulder: "14\"", blouseLength: "14\"" }
-        ]
-      };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      updateAuthUI();
-      closeModal();
-      openCustomerDashboard();
-      showToast("✓ Logged in as Patron Ananya Sharma (Customer Workspace)");
-    }
-  };
-
-  window.handleLogout = function () {
-    if (confirm("Are you sure you wish to log out from VASTRAÉ Atelier?")) {
+  window.handleLogout = function (skipConfirm = false) {
+    if (skipConfirm || confirm("Are you sure you wish to log out from VASTRAÉ Atelier?")) {
+      if (window.vastraeAuth) window.vastraeAuth.logout();
       currentUser = null;
       localStorage.removeItem(STORAGE_KEY_USER);
       cart = [];
@@ -565,7 +662,12 @@
       sareeRebornOrders = [];
       ownFabricOrders = [];
       updateAuthUI();
-      returnToPublicWebsite();
+      hideAllDashboards();
+      const topHeader = document.getElementById("topHeader");
+      if (topHeader) topHeader.style.display = "";
+      const pubView = document.getElementById("publicWebsiteView");
+      if (pubView) pubView.style.display = "block";
+      window.navigateToPage("home");
       showToast("You have been signed out safely.");
     }
   };
@@ -574,6 +676,7 @@
     const unauthGroup = document.getElementById("unauthNavActions");
     const authGroup = document.getElementById("authNavActions");
     const nameSpan = document.getElementById("navAuthName");
+    const authBtn = document.getElementById("navAuthBtn");
     const unauthNavLinks = document.getElementById("unauthNavLinks");
     const authNavLinks = document.getElementById("authNavLinks");
     const studioLockOverlay = document.getElementById("studioAuthLockOverlay");
@@ -588,7 +691,27 @@
       if (authGroup) authGroup.style.display = "flex";
       if (unauthNavLinks) unauthNavLinks.style.display = "none";
       if (authNavLinks) authNavLinks.style.display = "flex";
-      if (nameSpan) nameSpan.textContent = currentUser.name.split(" ")[0];
+
+      if (currentUser.role === "admin") {
+        if (nameSpan) nameSpan.textContent = "Admin";
+        if (authBtn) {
+          authBtn.onclick = function () { window.showAdminDashboard(); };
+          authBtn.title = "Admin Console";
+        }
+      } else if (currentUser.role === "tailor") {
+        if (nameSpan) nameSpan.textContent = "Tailor";
+        if (authBtn) {
+          authBtn.onclick = function () { window.showTailorDashboard(); };
+          authBtn.title = "Master Tailor Studio";
+        }
+      } else {
+        if (nameSpan) nameSpan.textContent = (currentUser.name || "Client").split(" ")[0];
+        if (authBtn) {
+          authBtn.onclick = function () { window.openCustomerDashboard(); };
+          authBtn.title = "Client Sanctuary";
+        }
+      }
+
       if (studioLockOverlay) studioLockOverlay.style.display = "none";
       if (rebornLockOverlay) rebornLockOverlay.style.display = "none";
       if (ownFabricLockOverlay) ownFabricLockOverlay.style.display = "none";
@@ -601,14 +724,14 @@
       // Auto pre-fill contact form if empty
       const cntName = document.getElementById("cntName");
       const cntPhone = document.getElementById("cntPhone");
-      if (cntName && !cntName.value) cntName.value = currentUser.name;
-      if (cntPhone && !cntPhone.value) cntPhone.value = currentUser.phone;
+      if (cntName && !cntName.value) cntName.value = currentUser.name || "";
+      if (cntPhone && !cntPhone.value) cntPhone.value = currentUser.phone || "";
 
       // Notification badge
       const notifBadge = document.getElementById("navNotifCount");
       if (notifBadge) {
-        notifBadge.textContent = "2";
-        notifBadge.style.display = "flex";
+        notifBadge.textContent = "0";
+        notifBadge.style.display = "none";
       }
 
       updateCartWishCounters();
@@ -2049,15 +2172,22 @@
     const orderId = "VAS-ORD-2026-" + Math.floor(1000 + Math.random() * 9000);
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+    const activeTailors = window.vastraeAuth ? window.vastraeAuth.getTailors().filter(t => (t.status || 'Active').toLowerCase() === 'active') : [];
+    const defaultTailorName = activeTailors.length > 0 ? activeTailors[0].name : "Unassigned (Awaiting Allocation)";
+
     const newOrder = {
       orderId: orderId,
+      customerId: currentUser ? currentUser.id : "GUEST",
+      customerName: currentUser ? currentUser.name : "Client Patron",
+      customerPhone: currentUser ? currentUser.phone : "",
+      customerEmail: currentUser ? currentUser.email : "",
       date: new Date().toISOString().split("T")[0],
       items: cart.map(i => `${i.name} (x${i.quantity})`),
       total: totalAmount,
       type: "Online Atelier Order",
       status: "Placed",
-      tailor: "Master Savitha Devi",
-      expectedDelivery: "2026-10-18",
+      tailor: defaultTailorName,
+      expectedDelivery: new Date(Date.now() + 8 * 86400000).toISOString().split("T")[0],
       stageIndex: 1
     };
 
@@ -2203,18 +2333,31 @@
   // 11. CUSTOMER DASHBOARD CONTROLLER (PART 6 & 7)
   // ------------------------------------------------------------------------
   function renderDashboardOverview() {
-    // Populate profile cards
-    document.getElementById("dashUserAvatar").textContent = currentUser.avatar || "D";
-    document.getElementById("dashUserName").textContent = currentUser.name;
-    document.getElementById("dashUserEmail").textContent = currentUser.email;
-    document.getElementById("dashUserPhone").textContent = "+91 " + currentUser.phone;
-    document.getElementById("dashUserTier").textContent = currentUser.tier || "VIP Patron";
+    if (!currentUser) return;
+    const myOrders = (orders || []).filter(o => !o.customerId || o.customerId === currentUser.id || (o.customerName && o.customerName.toLowerCase() === currentUser.name.toLowerCase()));
+    const myReborn = (sareeRebornOrders || []).filter(r => !r.customerId || r.customerId === currentUser.id || (r.customerName && r.customerName.toLowerCase() === currentUser.name.toLowerCase()));
 
-    // Quick Stats
-    document.getElementById("dashStatOrders").textContent = orders.length;
-    document.getElementById("dashStatCustom").textContent = savedDesigns.length;
-    document.getElementById("dashStatReborn").textContent = sareeRebornOrders.length;
-    document.getElementById("dashStatPoints").textContent = currentUser.loyaltyPoints || 1250;
+    // Populate profile cards
+    const avatarEl = document.getElementById("dashUserAvatar");
+    if (avatarEl) avatarEl.textContent = currentUser.avatar || (currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "C");
+    const nameEl = document.getElementById("dashUserName");
+    if (nameEl) nameEl.textContent = currentUser.name;
+    const emailEl = document.getElementById("dashUserEmail");
+    if (emailEl) emailEl.textContent = currentUser.email;
+    const phoneEl = document.getElementById("dashUserPhone");
+    if (phoneEl) phoneEl.textContent = currentUser.phone ? (currentUser.phone.startsWith("+91") ? currentUser.phone : "+91 " + currentUser.phone) : "+91 98860 00000";
+    const tierEl = document.getElementById("dashUserTier");
+    if (tierEl) tierEl.textContent = currentUser.loyaltyTier || currentUser.tier || "Atelier Patron";
+
+    // Quick Stats (Strictly dynamic)
+    const statOrders = document.getElementById("dashStatOrders");
+    if (statOrders) statOrders.textContent = myOrders.length;
+    const statCustom = document.getElementById("dashStatCustom");
+    if (statCustom) statCustom.textContent = savedDesigns.length;
+    const statReborn = document.getElementById("dashStatReborn");
+    if (statReborn) statReborn.textContent = myReborn.length;
+    const statPoints = document.getElementById("dashStatPoints");
+    if (statPoints) statPoints.textContent = currentUser.loyaltyPoints || 0;
 
     // Default view: Recent Orders
     renderDashboardTab("orders");
@@ -2228,19 +2371,21 @@
 
   function renderDashboardTab(tabName) {
     const pane = document.getElementById("dashTabPane");
-    if (!pane) return;
+    if (!pane || !currentUser) return;
+
+    const myOrders = (orders || []).filter(o => !o.customerId || o.customerId === currentUser.id || (o.customerName && o.customerName.toLowerCase() === currentUser.name.toLowerCase()));
 
     if (tabName === "orders") {
       pane.innerHTML = `
         <h3 style="margin-bottom:20px;">Order History & Live Tailoring Status</h3>
-        ${orders.length === 0 ? `
+        ${myOrders.length === 0 ? `
           <div style="text-align:center; padding:48px 24px; background:#fff; border:1px solid var(--vas-border); border-radius:12px;">
             <div style="font-size:2.4rem; margin-bottom:12px;">🛍️</div>
             <h4 style="font-size:1.2rem; margin-bottom:8px;">No Orders Placed Yet</h4>
             <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">Explore our curated collection or launch the customizer studio to create your bespoke couture.</p>
             <a href="#collection" class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.returnToPublicWebsite()">Explore Collection &rarr;</a>
           </div>
-        ` : orders.map(o => `
+        ` : myOrders.map(o => `
           <div class="vas-order-card">
             <div class="vas-order-header">
               <div>
@@ -2692,196 +2837,472 @@
   };
 
   // ------------------------------------------------------------------------
-  // 12. MASTER TAILOR & ADMIN WORKSPACES (MODULE 5 & 6)
+  // 12. DEDICATED ATELIER ADMIN MANAGEMENT DASHBOARD
   // ------------------------------------------------------------------------
-  window.openMasterTailorWorkspace = function () {
-    const modalContent = document.getElementById("modalBody");
-    modalContent.innerHTML = `
-      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.1em;">ATELIER FLOOR</span>
-          <h2 style="font-size:1.6rem; margin:0;">Master Tailor Production Studio</h2>
-        </div>
-        <span style="background:var(--vas-gold-pale); color:var(--vas-gold-dark); padding:6px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Active Queue: 3 Orders</span>
-      </div>
+  window.currentAdminTab = "overview";
 
-      <div style="display:flex; flex-direction:column; gap:18px;">
-        ${orders.map(ord => `
-          <div style="border:1px solid var(--vas-border); border-radius:8px; padding:18px; background:#fff;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-              <strong>${ord.orderId} — ${ord.items.join(', ')}</strong>
-              <span style="font-size:0.8rem; color:var(--vas-gold-dark); font-weight:700;">Priority: High / Wedding</span>
+  window.switchAdminTab = function (tabName, btn) {
+    window.currentAdminTab = tabName;
+    document.querySelectorAll("#adminNavList .vas-dash-nav-btn").forEach(b => b.classList.remove("active"));
+    if (btn) {
+      btn.classList.add("active");
+    } else {
+      const allBtns = document.querySelectorAll("#adminNavList .vas-dash-nav-btn");
+      allBtns.forEach(b => {
+        if (b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${tabName}'`)) {
+          b.classList.add("active");
+        }
+      });
+    }
+    window.renderAdminDashboard(tabName);
+  };
+
+  window.renderAdminDashboard = function (activeTab = "overview") {
+    const pane = document.getElementById("adminTabPane");
+    if (!pane) return;
+
+    const tailors = window.vastraeAuth ? window.vastraeAuth.getTailors() : [];
+    const clients = window.vastraeAuth ? window.vastraeAuth.getClients() : [];
+    const activeTailors = tailors.filter(t => (t.status || "Active").toLowerCase() === "active");
+    const inactiveTailors = tailors.filter(t => (t.status || "").toLowerCase() === "inactive");
+
+    const allOrders = (orders || []).concat(sareeRebornOrders || []);
+    const pendingOrders = (orders || []).filter(o => o.status !== "Delivered" && (o.stageIndex || 1) < 6);
+    const totalRevenue = (orders || []).reduce((acc, o) => acc + (o.total || o.totalAmount || 0), 0);
+    const fabricInventory = (VASTRAE_DATA && VASTRAE_DATA.fabricInventory) ? VASTRAE_DATA.fabricInventory : [];
+    const products = (VASTRAE_DATA && VASTRAE_DATA.products) ? VASTRAE_DATA.products : [];
+
+    // 6-Stage Order Lifecycle Breakdown
+    const stageCounts = [0, 0, 0, 0, 0, 0];
+    (orders || []).forEach(o => {
+      const idx = Math.max(1, Math.min(6, parseInt(o.stageIndex || (o.status === "Delivered" ? 6 : 2))));
+      stageCounts[idx - 1]++;
+    });
+    const totalTrackedOrders = orders.length || 1;
+
+    // 3-Wing Customization Breakdown: Women's, Men's, and Accessories
+    let womenCount = 0;
+    let menCount = 0;
+    let accCount = 0;
+    (orders || []).forEach(o => {
+      const title = (Array.isArray(o.items) ? o.items.join(" ") : (o.items || "")).toLowerCase();
+      if (title.includes("men") || title.includes("bandhgala") || title.includes("sherwani") || title.includes("tuxedo") || title.includes("kurta")) {
+        menCount++;
+      } else if (title.includes("potli") || title.includes("bag") || title.includes("accessory") || title.includes("mojari") || title.includes("turban") || title.includes("dupatta")) {
+        accCount++;
+      } else {
+        womenCount++;
+      }
+    });
+    womenCount += (sareeRebornOrders || []).length;
+    const totalCoutureCount = womenCount + menCount + accCount || 1;
+    const womenPct = Math.round((womenCount / totalCoutureCount) * 100);
+    const menPct = Math.round((menCount / totalCoutureCount) * 100);
+    const accPct = Math.max(0, 100 - womenPct - menPct);
+
+    // Active vs Inactive Tailor Ratio
+    const activeTailorPct = tailors.length ? Math.round((activeTailors.length / tailors.length) * 100) : 100;
+
+    if (activeTab === "overview") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.6rem; margin:0 0 4px;">Atelier Executive Overview</h2>
+            <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Live performance telemetry dynamically calculated from active frontend records.</p>
+          </div>
+          <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.printExecutiveReport()">
+            🖨️ Print Executive Report
+          </button>
+        </div>
+
+        <!-- 100% Dynamic Metric KPI Cards -->
+        <div class="vas-kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:18px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Total Master Tailors</span>
+            <strong style="font-size:1.8rem; display:block; margin:6px 0 2px; color:var(--vas-primary);">${tailors.length}</strong>
+            <small style="font-size:0.75rem; color:var(--vas-gold-dark);">${activeTailors.length} Active · ${inactiveTailors.length} Inactive</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:18px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Customer Orders</span>
+            <strong style="font-size:1.8rem; display:block; margin:6px 0 2px; color:var(--vas-primary);">${allOrders.length}</strong>
+            <small style="font-size:0.75rem; color:var(--vas-gold-dark);">${pendingOrders.length} In Progress · ${allOrders.length - pendingOrders.length} Delivered</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:18px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Registered Clients</span>
+            <strong style="font-size:1.8rem; display:block; margin:6px 0 2px; color:var(--vas-primary);">${clients.length}</strong>
+            <small style="font-size:0.75rem; color:var(--vas-gold-dark);">Client Portals Active</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:18px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Fabric Inventory</span>
+            <strong style="font-size:1.8rem; display:block; margin:6px 0 2px; color:var(--vas-primary);">${fabricInventory.length} SKUs</strong>
+            <small style="font-size:0.75rem; color:var(--vas-gold-dark);">Raw Silk &amp; Organza</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:18px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Gross Order Value</span>
+            <strong style="font-size:1.8rem; display:block; margin:6px 0 2px; color:var(--vas-primary);">₹${totalRevenue.toLocaleString()}</strong>
+            <small style="font-size:0.75rem; color:var(--vas-success);">Live Order Pipeline</small>
+          </div>
+        </div>
+
+        <!-- PICTORIAL VISUAL TELEMETRY SECTION -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:20px; margin-bottom:24px;">
+          <!-- 1. Pictorial 6-Stage Order Lifecycle Pipeline -->
+          <div class="vas-visual-card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <h3 style="font-size:1.05rem; margin:0; display:flex; align-items:center; gap:8px;">
+                <span>📊</span> 6-Stage Production Pipeline
+              </h3>
+              <span class="vas-badge-pill gold" style="font-size:0.75rem;">${allOrders.length} Total Orders</span>
             </div>
-            <p style="font-size:0.85rem; color:var(--vas-muted); margin-bottom:12px;">Customer: ${currentUser.name} | Measurements: 34" Bust, 28" Waist, 14.5" Shoulder</p>
+            <p style="font-size:0.8rem; color:var(--vas-muted); margin:0 0 14px;">Live order progression across active atelier stages.</p>
             
-            <div style="background:var(--vas-surface-alt); padding:12px; border-radius:6px; margin-bottom:12px; font-size:0.82rem;">
-              <strong>5-Point Quality Checklist (Must verify before dispatch):</strong>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;">
-                <label><input type="checkbox" checked> 2" Side seam allowance verified</label>
-                <label><input type="checkbox" checked> Concealed itch-free mulmul lining</label>
-                <label><input type="checkbox" checked> Maggam stone and zari security</label>
-                <label><input type="checkbox" checked> ±0.25" Tolerance on chest and waist</label>
+            <!-- Segmented Pipeline Progress Bar -->
+            <div class="vas-gauge-track" style="height:14px;">
+              <div class="vas-gauge-seg" style="width:${Math.max(5, (stageCounts[0]/totalTrackedOrders)*100)}%; background:#95a5a6;" title="1. Fabric Sourced: ${stageCounts[0]}"></div>
+              <div class="vas-gauge-seg" style="width:${Math.max(5, (stageCounts[1]/totalTrackedOrders)*100)}%; background:#3498db;" title="2. Pattern Drafting: ${stageCounts[1]}"></div>
+              <div class="vas-gauge-seg" style="width:${Math.max(5, (stageCounts[2]/totalTrackedOrders)*100)}%; background:#9b59b6;" title="3. Hand Embroidery: ${stageCounts[2]}"></div>
+              <div class="vas-gauge-seg" style="width:${Math.max(5, (stageCounts[3]/totalTrackedOrders)*100)}%; background:#e67e22;" title="4. Stitching: ${stageCounts[3]}"></div>
+              <div class="vas-gauge-seg" style="width:${Math.max(5, (stageCounts[4]/totalTrackedOrders)*100)}%; background:#f1c40f;" title="5. QC Inspection: ${stageCounts[4]}"></div>
+              <div class="vas-gauge-seg" style="width:${Math.max(5, (stageCounts[5]/totalTrackedOrders)*100)}%; background:#2ecc71;" title="6. Delivered: ${stageCounts[5]}"></div>
+            </div>
+
+            <!-- Stage Legends Grid -->
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; font-size:0.78rem;">
+              <div style="background:#fcfbf9; padding:6px 8px; border-radius:6px; border:1px solid #f0e9df;">
+                <span style="color:#95a5a6; font-weight:700;">🧵 Sourced:</span> <b>${stageCounts[0]}</b>
+              </div>
+              <div style="background:#fcfbf9; padding:6px 8px; border-radius:6px; border:1px solid #f0e9df;">
+                <span style="color:#3498db; font-weight:700;">📐 Drafting:</span> <b>${stageCounts[1]}</b>
+              </div>
+              <div style="background:#fcfbf9; padding:6px 8px; border-radius:6px; border:1px solid #f0e9df;">
+                <span style="color:#9b59b6; font-weight:700;">🪡 Zardozi:</span> <b>${stageCounts[2]}</b>
+              </div>
+              <div style="background:#fcfbf9; padding:6px 8px; border-radius:6px; border:1px solid #f0e9df;">
+                <span style="color:#e67e22; font-weight:700;">✂️ Stitching:</span> <b>${stageCounts[3]}</b>
+              </div>
+              <div style="background:#fcfbf9; padding:6px 8px; border-radius:6px; border:1px solid #f0e9df;">
+                <span style="color:#b7950b; font-weight:700;">✨ Inspection:</span> <b>${stageCounts[4]}</b>
+              </div>
+              <div style="background:#fcfbf9; padding:6px 8px; border-radius:6px; border:1px solid #f0e9df;">
+                <span style="color:#27ae60; font-weight:700;">📦 Delivered:</span> <b>${stageCounts[5]}</b>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Pictorial 3-Wing Customization Breakdown -->
+          <div class="vas-visual-card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <h3 style="font-size:1.05rem; margin:0; display:flex; align-items:center; gap:8px;">
+                <span>🏛️</span> 3-Wing Customization Breakdown
+              </h3>
+              <span class="vas-badge-pill success" style="font-size:0.75rem;">100% Bespoke</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--vas-muted); margin:0 0 14px;">Distribution across Women, Men, and Accessories.</p>
+
+            <!-- 3-color segmented bar -->
+            <div class="vas-gauge-track" style="height:14px;">
+              <div class="vas-gauge-seg rose" style="width:${womenPct}%;" title="Women's Couture: ${womenPct}%"></div>
+              <div class="vas-gauge-seg navy" style="width:${menPct}%;" title="Men's Sartorial: ${menPct}%"></div>
+              <div class="vas-gauge-seg gold" style="width:${accPct}%;" title="Artisanal Accessories: ${accPct}%"></div>
+            </div>
+
+            <!-- Wing Stats -->
+            <div style="display:flex; flex-direction:column; gap:8px; font-size:0.82rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>👗 <b>Women's Couture</b> (Lehengas, Blouses)</span>
+                <span style="font-weight:700; color:#c97967;">${womenCount} Orders (${womenPct}%)</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>🤵 <b>Men's Sartorial</b> (Bandhgalas, Sherwanis)</span>
+                <span style="font-weight:700; color:#3a506b;">${menCount} Orders (${menPct}%)</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>✨ <b>Artisanal Accessories</b> (Potlis, Mojaris)</span>
+                <span style="font-weight:700; color:#b88e4c;">${accCount} Orders (${accPct}%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Pictorial Master Tailor Workforce Status Gauge -->
+        <div class="vas-visual-card" style="margin-bottom:28px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <h3 style="font-size:1.05rem; margin:0; display:flex; align-items:center; gap:8px;">
+              <span>🪡</span> Master Tailor Workforce &amp; Bench Availability
+            </h3>
+            <span style="font-size:0.82rem; font-weight:700; color:${activeTailors.length ? '#27ae60' : '#c0392b'};">
+              ${activeTailors.length} of ${tailors.length} Master Tailors Ready (${activeTailorPct}% Active)
+            </span>
+          </div>
+          <div class="vas-gauge-track" style="height:10px; margin:10px 0 14px;">
+            <div class="vas-gauge-seg emerald" style="width:${activeTailorPct}%;" title="Active Tailors"></div>
+            <div class="vas-gauge-seg ruby" style="width:${100 - activeTailorPct}%;" title="Inactive Tailors"></div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:0.8rem;">
+            ${tailors.map(t => `
+              <div style="background:#fbf9f6; border:1px solid var(--vas-border); border-radius:8px; padding:6px 12px; display:flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:${(t.status || 'Active').toLowerCase() === 'active' ? '#27ae60' : '#e74c3c'};"></span>
+                <strong>${t.name}</strong>
+                <span style="color:var(--vas-muted);">(${t.specialization || 'Couturier'})</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Quick Access Operational Launchers -->
+        <h3 style="font-size:1.15rem; margin-bottom:14px;">Atelier Operational Units</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+          <div style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="font-size:1.6rem; margin-bottom:8px;">🪡</div>
+              <h4 style="font-size:1.1rem; margin-bottom:6px;">Master Tailor Management</h4>
+              <p style="font-size:0.83rem; color:var(--vas-muted); margin-bottom:16px;">Create new tailor accounts, edit contact specifications, and toggle operational activation.</p>
+            </div>
+            <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.switchAdminTab('tailors')">
+              Manage Tailors &rarr;
+            </button>
+          </div>
+          <div style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="font-size:1.6rem; margin-bottom:8px;">📋</div>
+              <h4 style="font-size:1.1rem; margin-bottom:6px;">Orders &amp; Bench Allocation</h4>
+              <p style="font-size:0.83rem; color:var(--vas-muted); margin-bottom:16px;">Assign incoming bespoke orders to active master tailors and audit 5-point quality checks.</p>
+            </div>
+            <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.switchAdminTab('orders')">
+              Allocate Orders &rarr;
+            </button>
+          </div>
+          <div style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="font-size:1.6rem; margin-bottom:8px;">🧵</div>
+              <h4 style="font-size:1.1rem; margin-bottom:6px;">Fabric Bolts &amp; Inventory</h4>
+              <p style="font-size:0.83rem; color:var(--vas-muted); margin-bottom:16px;">Review available yardage, safety replenishment limits, and update fabric stock meters.</p>
+            </div>
+            <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.switchAdminTab('inventory')">
+              Inspect Inventory &rarr;
+            </button>
+          </div>
+        </div>
+      `;
+    } else if (activeTab === "tailors") {
+      pane.innerHTML = `
+        <div style="margin-bottom:24px;">
+          <h2 style="font-size:1.6rem; margin:0 0 4px;">Master Tailor Account Administration</h2>
+          <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Create, edit, activate, or deactivate tailor accounts dynamically. All credentials take effect immediately.</p>
+        </div>
+
+        <!-- Section A: Add New Tailor Form -->
+        <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; margin-bottom:28px; box-shadow:var(--vas-shadow-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <div>
+              <span class="vas-eyebrow" style="color:var(--vas-gold-dark);">ATELIER CRAFTSMEN ONBOARDING</span>
+              <h3 style="font-size:1.25rem; margin:2px 0 0;">Add New Master Tailor</h3>
+            </div>
+            <span style="font-size:0.75rem; background:var(--vas-surface-alt); padding:4px 10px; border-radius:12px; color:var(--vas-muted); border:1px solid var(--vas-border);">
+              Role: Master Tailor (Couturier)
+            </span>
+          </div>
+
+          <div id="tailorFormAlert" style="display:none; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:16px;"></div>
+
+          <form id="newTailorForm" onsubmit="window.submitNewTailorForm(event)">
+            <div class="vas-form-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Full Name *</label>
+                <input type="text" id="tailorNewFullName" class="vas-input" placeholder="e.g. Master Khaleel Ahmed" required />
+              </div>
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Username *</label>
+                <input type="text" id="tailorNewUsername" class="vas-input" placeholder="e.g. khaleel_couture" required />
+                <small style="font-size:0.7rem; color:var(--vas-muted);">Letters, numbers, underscores or dashes only.</small>
+              </div>
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Email Address *</label>
+                <input type="email" id="tailorNewEmail" class="vas-input" placeholder="e.g. khaleel@vastrae.com" required />
+              </div>
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Contact Number (+91) *</label>
+                <input type="tel" id="tailorNewPhone" class="vas-input" placeholder="9886012345" required pattern="[6-9][0-9]{9}" />
+              </div>
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Demonstration Password *</label>
+                <input type="password" id="tailorNewPassword" class="vas-input" placeholder="6 characters, e.g. T@l123" required maxlength="6" minlength="6" />
+                <small style="font-size:0.7rem; color:var(--vas-muted);">Exactly 6 chars (letter, number, special symbol).</small>
+              </div>
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Couture Specialization</label>
+                <input type="text" id="tailorNewSpec" class="vas-input" placeholder="e.g. Sherwani &amp; Bandhgala Drape" value="Bespoke Couture &amp; Fitting" />
+              </div>
+              <div class="vas-form-group">
+                <label style="font-weight:600; font-size:0.82rem;">Initial Account Status *</label>
+                <select id="tailorNewStatus" class="vas-select">
+                  <option value="Active" selected>Active (Permitted to Log In)</option>
+                  <option value="Inactive">Inactive (Access Suspended)</option>
+                </select>
               </div>
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <select class="vas-select" style="width:240px; padding:6px 10px; font-size:0.82rem;" onchange="window.updateOrderStatusFromTailor('${ord.orderId}', this.value)">
-                <option ${ord.status === 'Placed' ? 'selected' : ''}>1. Sourcing Fabric</option>
-                <option ${ord.status === 'Confirmed' ? 'selected' : ''}>2. Pattern Drafting</option>
-                <option ${ord.status === 'Tailoring' ? 'selected' : ''}>3. Hand Loom Embroidery</option>
-                <option ${ord.status === 'Ready' ? 'selected' : ''}>4. Master Stitching & Finishing</option>
-                <option ${ord.status === 'Delivered' ? 'selected' : ''}>5. Quality Passed & Dispatched</option>
-              </select>
-              <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.showToast('✓ Stage updated on client portal.'); window.closeModal();">
-                Update Production Stage
+            <div style="margin-top:18px; display:flex; justify-content:flex-end;">
+              <button type="submit" class="vas-btn vas-btn-gold" style="padding:10px 24px;">
+                + Add Master Tailor to Atelier
               </button>
             </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    openModal("genericModal");
-  };
-
-  window.updateOrderStatusFromTailor = function (orderId, newStatus) {
-    const ord = orders.find(o => o.orderId === orderId);
-    if (ord) {
-      ord.status = newStatus.includes("Dispatched") ? "Ready" : "Tailoring";
-      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
-    }
-  };
-
-  // ------------------------------------------------------------------------
-  // 12B. ATELIER ADMIN MANAGEMENT CONSOLE (MODULES 6, 7 & 13)
-  // ------------------------------------------------------------------------
-  window.openAdminConsoleModal = function (activeTab = "orders") {
-    const modalContent = document.getElementById("modalBody");
-    const analytics = VASTRAE_DATA.adminAnalytics;
-    const inventory = VASTRAE_DATA.fabricInventory;
-
-    modalContent.innerHTML = `
-      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-        <div>
-          <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.1em;">ATELIER BACK-OFFICE OPERATIONS</span>
-          <h2 style="font-size:1.6rem; margin:0;">Admin & Inventory Management Suite</h2>
+          </form>
         </div>
-        <div style="font-size:0.8rem; background:var(--vas-gold-pale); color:var(--vas-gold-dark); padding:4px 12px; border-radius:12px; font-weight:700;">
-          VASTRAÉ Flagship &middot; Indiranagar Hub
-        </div>
-      </div>
 
-      <!-- Navigation Tabs -->
-      <div class="vas-admin-nav">
-        <button class="vas-admin-nav-btn ${activeTab === 'orders' ? 'active' : ''}" onclick="window.openAdminConsoleModal('orders')">
-          📋 Orders & Tailor Assignment (Mod 6)
-        </button>
-        <button class="vas-admin-nav-btn ${activeTab === 'inventory' ? 'active' : ''}" onclick="window.openAdminConsoleModal('inventory')">
-          🧵 Fabric Rolls & Meterage (Mod 7)
-        </button>
-        <button class="vas-admin-nav-btn ${activeTab === 'analytics' ? 'active' : ''}" onclick="window.openAdminConsoleModal('analytics')">
-          📈 Sales & Tailor Analytics (Mod 13)
-        </button>
-      </div>
-
-      <div id="adminTabContent">
-        ${activeTab === 'orders' ? `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-            <p style="font-size:0.85rem; margin:0;">Manage couture orders, allocate master craftsmen, and sign-off quality inspections.</p>
-            <span class="vas-badge-pill gold">Total Orders: ${orders.length + sareeRebornOrders.length}</span>
+        <!-- Section B: Search, Filter, and Master Tailor Roster Table -->
+        <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:var(--vas-shadow-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h3 style="font-size:1.25rem; margin:0 0 2px;">Master Tailor Roster</h3>
+              <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">Active tailors can access the Master Tailor Production Studio with their assigned credentials.</p>
+            </div>
+            
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <input type="text" id="tailorSearchInput" class="vas-input" placeholder="🔍 Search by name or username..." style="width:240px; padding:6px 12px; font-size:0.82rem;" oninput="window.filterTailorRoster()" />
+              <select id="tailorFilterStatus" class="vas-select" style="width:140px; padding:6px 10px; font-size:0.82rem;" onchange="window.filterTailorRoster()">
+                <option value="all">All Statuses</option>
+                <option value="Active">Active Only</option>
+                <option value="Inactive">Inactive Only</option>
+              </select>
+            </div>
           </div>
 
+          <div id="tailorRosterContainer" style="overflow-x:auto;">
+            ${window.renderTailorRosterHTML(tailors)}
+          </div>
+        </div>
+      `;
+    } else if (activeTab === "orders") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.6rem; margin:0 0 4px;">Customer Orders &amp; Bench Allocation</h2>
+            <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Assign bespoke creations to master tailors and perform formal quality check sign-offs.</p>
+          </div>
+          <span class="vas-badge-pill gold" style="font-size:0.82rem; padding:6px 14px;">Total Pipeline: ${allOrders.length} Orders</span>
+        </div>
+
+        ${allOrders.length === 0 ? `
+          <div style="text-align:center; padding:54px 24px; background:#fff; border:1px solid var(--vas-border); border-radius:12px;">
+            <div style="font-size:2.6rem; margin-bottom:12px;">🛍️</div>
+            <h4 style="font-size:1.2rem; margin-bottom:6px;">No Customer Orders Placed Yet</h4>
+            <p style="font-size:0.85rem; color:var(--vas-muted);">Orders placed through the boutique or interactive customizer will appear here automatically for bench assignment.</p>
+          </div>
+        ` : `
+          <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; overflow:hidden;">
+            <div style="overflow-x:auto;">
+              <table class="vas-admin-table" style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="background:var(--vas-surface-alt); text-align:left; border-bottom:1px solid var(--vas-border);">
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Order Ref</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Client</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Garment / Service</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Amount</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Assigned Master Tailor</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Status</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(orders || []).map(o => `
+                    <tr style="border-bottom:1px solid var(--vas-border-subtle);">
+                      <td style="padding:14px 16px;"><strong>${o.orderId}</strong><br><small style="color:var(--vas-muted); font-size:0.75rem;">${o.date || 'Today'}</small></td>
+                      <td style="padding:14px 16px;">${o.customerName || 'Client Patron'}<br><small style="color:var(--vas-muted); font-size:0.75rem;">${o.customerPhone || ''}</small></td>
+                      <td style="padding:14px 16px;">${Array.isArray(o.items) ? o.items.join(', ') : (o.items || 'Bespoke Couture')}</td>
+                      <td style="padding:14px 16px; font-weight:700;">₹${(o.total || o.totalAmount || 0).toLocaleString()}</td>
+                      <td style="padding:14px 16px;">
+                        <select class="vas-select" style="padding:5px 8px; font-size:0.78rem; width:190px;" onchange="window.adminAssignTailor('${o.orderId}', this.value)">
+                          <option value="Unassigned" ${(!o.tailor || o.tailor.includes('Unassigned')) ? 'selected' : ''}>-- Select Master Tailor --</option>
+                          ${tailors.map(t => `
+                            <option value="${t.name}" ${(o.tailor && o.tailor.toLowerCase().includes(t.name.toLowerCase())) ? 'selected' : ''}>
+                              ${t.name} (${t.status})
+                            </option>
+                          `).join('')}
+                        </select>
+                      </td>
+                      <td style="padding:14px 16px;">
+                        <span class="vas-badge-pill ${o.status === 'Delivered' || o.status === 'Ready' ? 'success' : 'gold'}" style="font-size:0.75rem;">
+                          ${o.status || 'Placed'}
+                        </span>
+                      </td>
+                      <td style="padding:14px 16px;">
+                        <button class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.72rem; padding:4px 10px;" onclick="window.approveAdminQC('${o.orderId}')">
+                          ✓ QC Sign-off
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                  ${(sareeRebornOrders || []).map(r => `
+                    <tr style="border-bottom:1px solid var(--vas-border-subtle);">
+                      <td style="padding:14px 16px;"><strong>${r.id}</strong><br><small style="color:var(--vas-gold-dark); font-size:0.75rem;">Saree Reborn</small></td>
+                      <td style="padding:14px 16px;">${r.customerName || 'Client Patron'}</td>
+                      <td style="padding:14px 16px;">${r.sareeType || 'Heritage Heirloom'} &rarr; ${r.desiredGarment || 'Anarkali'}</td>
+                      <td style="padding:14px 16px; font-weight:700;">₹${(r.estimate || 4500).toLocaleString()}</td>
+                      <td style="padding:14px 16px;">
+                        <select class="vas-select" style="padding:5px 8px; font-size:0.78rem; width:190px;" onchange="window.adminAssignTailor('${r.id}', this.value, true)">
+                          <option value="Unassigned" ${(!r.tailor || r.tailor.includes('Unassigned')) ? 'selected' : ''}>-- Select Master Tailor --</option>
+                          ${tailors.map(t => `
+                            <option value="${t.name}" ${(r.tailor && r.tailor.toLowerCase().includes(t.name.toLowerCase())) ? 'selected' : ''}>
+                              ${t.name} (${t.status})
+                            </option>
+                          `).join('')}
+                        </select>
+                      </td>
+                      <td style="padding:14px 16px;"><span class="vas-badge-pill success" style="font-size:0.75rem;">Inspection Approved</span></td>
+                      <td style="padding:14px 16px;">
+                        <button class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.72rem; padding:4px 10px;" onclick="window.showToast('Fabric stabilized for pattern drafting.')">
+                          ✓ Release
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `}
+      `;
+    } else if (activeTab === "inventory") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.6rem; margin:0 0 4px;">Fabric Inventory &amp; Yardage Control</h2>
+            <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Real-time fabric bolt meterage tracking and replenishment thresholds.</p>
+          </div>
+        </div>
+
+        <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; overflow:hidden;">
           <div style="overflow-x:auto;">
-            <table class="vas-admin-table">
+            <table class="vas-admin-table" style="width:100%; border-collapse:collapse;">
               <thead>
-                <tr>
-                  <th>Order Reference</th>
-                  <th>Client</th>
-                  <th>Garment / Service</th>
-                  <th>Total</th>
-                  <th>Priority</th>
-                  <th>Master Tailor Assigned</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                <tr style="background:var(--vas-surface-alt); text-align:left; border-bottom:1px solid var(--vas-border);">
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">SKU</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Fabric Name</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Color / Finish</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Available</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Threshold</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Supplier</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Status</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Action</th>
                 </tr>
               </thead>
               <tbody>
-                ${orders.map(o => `
-                  <tr>
-                    <td><strong>${o.orderId}</strong></td>
-                    <td>${currentUser.name}</td>
-                    <td>${o.items.join(', ')}</td>
-                    <td>₹${o.total.toLocaleString()}</td>
-                    <td><span class="vas-badge-pill warning">Wedding / High</span></td>
-                    <td>
-                      <select class="vas-select" style="padding:4px 8px; font-size:0.78rem;" onchange="window.reassignTailor('${o.orderId}', this.value)">
-                        <option value="Master Savitha Devi" ${o.tailor.includes('Savitha') ? 'selected' : ''}>Master Savitha Devi</option>
-                        <option value="Master Khaleel Ahmed" ${o.tailor.includes('Khaleel') ? 'selected' : ''}>Master Khaleel Ahmed</option>
-                        <option value="Master Arjun Verma" ${o.tailor.includes('Arjun') ? 'selected' : ''}>Master Arjun Verma</option>
-                        <option value="Master Geetha Kumari" ${o.tailor.includes('Geetha') ? 'selected' : ''}>Master Geetha Kumari</option>
-                      </select>
+                ${fabricInventory.map(f => `
+                  <tr style="border-bottom:1px solid var(--vas-border-subtle);">
+                    <td style="padding:12px 16px;"><code>${f.sku}</code></td>
+                    <td style="padding:12px 16px;"><strong>${f.name}</strong></td>
+                    <td style="padding:12px 16px;">${f.color}</td>
+                    <td style="padding:12px 16px;"><b>${f.availableMeters} m</b></td>
+                    <td style="padding:12px 16px;">${f.thresholdMeters} m</td>
+                    <td style="padding:12px 16px;"><small style="color:var(--vas-muted);">${f.supplier}</small></td>
+                    <td style="padding:12px 16px;">
+                      <span class="vas-badge-pill ${f.availableMeters <= f.thresholdMeters ? 'warning' : 'success'}" style="font-size:0.75rem;">
+                        ${f.availableMeters <= f.thresholdMeters ? 'Low Stock' : 'In Stock'}
+                      </span>
                     </td>
-                    <td><span class="vas-badge-pill ${o.status === 'Delivered' ? 'success' : 'gold'}">${o.status}</span></td>
-                    <td>
-                      <button class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.72rem; padding:4px 8px;" onclick="window.approveAdminQC('${o.orderId}')">
-                        ✓ QC Sign-off
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-                ${sareeRebornOrders.map(r => `
-                  <tr>
-                    <td><strong>${r.id}</strong></td>
-                    <td>${currentUser.name}</td>
-                    <td>Saree Reborn: ${r.sareeType}</td>
-                    <td>₹${r.estimate.toLocaleString()}</td>
-                    <td><span class="vas-badge-pill gold">Standard</span></td>
-                    <td>Master Savitha Devi</td>
-                    <td><span class="vas-badge-pill success">Inspection Approved</span></td>
-                    <td>
-                      <button class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.72rem; padding:4px 8px;" onclick="window.showToast('Fabric stabilized for pattern drafting.')">
-                        ✓ Release
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        ` : activeTab === 'inventory' ? `
-          <div style="background:var(--vas-warning-bg); border:1px solid #f2d29b; padding:12px 16px; border-radius:6px; margin-bottom:18px; font-size:0.85rem; color:var(--vas-warning);">
-            ⚠️ <strong>Inventory Alert:</strong> 2 fabric bolts have dipped below the safety replenishment threshold (Banarasi Katan Silk & Silk Organza).
-          </div>
-
-          <div style="overflow-x:auto;">
-            <table class="vas-admin-table">
-              <thead>
-                <tr>
-                  <th>SKU</th>
-                  <th>Fabric Description</th>
-                  <th>Color / Finish</th>
-                  <th>Available</th>
-                  <th>Reserved</th>
-                  <th>Threshold</th>
-                  <th>Supplier</th>
-                  <th>Status</th>
-                  <th>Stock Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${inventory.map(f => `
-                  <tr>
-                    <td><code>${f.sku}</code></td>
-                    <td><strong>${f.name}</strong></td>
-                    <td>${f.color}</td>
-                    <td><b>${f.availableMeters} m</b></td>
-                    <td>${f.reservedMeters} m</td>
-                    <td>${f.thresholdMeters} m</td>
-                    <td><small style="color:var(--vas-muted);">${f.supplier}</small></td>
-                    <td>
-                      <span class="vas-badge-pill ${f.status.includes('Low') ? 'warning' : 'success'}">${f.status}</span>
-                    </td>
-                    <td>
-                      <button class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.72rem; padding:3px 8px;" onclick="window.adjustFabricStock('${f.sku}')">
+                    <td style="padding:12px 16px;">
+                      <button class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.72rem; padding:4px 8px;" onclick="window.adjustFabricStock('${f.sku}')">
                         + / - Meters
                       </button>
                     </td>
@@ -2890,106 +3311,721 @@
               </tbody>
             </table>
           </div>
+        </div>
+      `;
+    } else if (activeTab === "products") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.6rem; margin:0 0 4px;">Garments &amp; Ready-To-Wear Catalogue</h2>
+            <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Active boutique couture pieces displayed on the public storefront.</p>
+          </div>
+          <span class="vas-badge-pill gold" style="font-size:0.82rem; padding:6px 14px;">${products.length} Products</span>
+        </div>
+
+        <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="vas-admin-table" style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="background:var(--vas-surface-alt); text-align:left; border-bottom:1px solid var(--vas-border);">
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Garment</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Category</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Fabric</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Price</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Stock</th>
+                  <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Customizable</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${products.map(p => `
+                  <tr style="border-bottom:1px solid var(--vas-border-subtle);">
+                    <td style="padding:12px 16px; display:flex; align-items:center; gap:12px;">
+                      <img src="${p.image}" alt="${p.name}" style="width:40px; height:50px; object-fit:cover; border-radius:4px; border:1px solid var(--vas-border);" />
+                      <div>
+                        <strong>${p.name}</strong><br>
+                        <small style="color:var(--vas-muted); font-size:0.75rem;">ID: ${p.id}</small>
+                      </div>
+                    </td>
+                    <td style="padding:12px 16px; text-transform:capitalize;">${p.category} (${p.gender})</td>
+                    <td style="padding:12px 16px;">${p.fabric}</td>
+                    <td style="padding:12px 16px; font-weight:700;">₹${p.price.toLocaleString()}</td>
+                    <td style="padding:12px 16px;">${p.stock} units</td>
+                    <td style="padding:12px 16px;"><span class="vas-badge-pill ${p.customizable ? 'gold' : 'muted'}" style="font-size:0.72rem;">${p.customizable ? '✨ Yes' : 'No'}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } else if (activeTab === "clients") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.6rem; margin:0 0 4px;">Registered Client Directory</h2>
+            <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Clients who created their genuine profile through the registration portal.</p>
+          </div>
+          <span class="vas-badge-pill gold" style="font-size:0.82rem; padding:6px 14px;">${clients.length} Registered</span>
+        </div>
+
+        ${clients.length === 0 ? `
+          <div style="text-align:center; padding:54px 24px; background:#fff; border:1px solid var(--vas-border); border-radius:12px;">
+            <div style="font-size:2.6rem; margin-bottom:12px;">👥</div>
+            <h4 style="font-size:1.2rem; margin-bottom:6px;">No Clients Registered Yet</h4>
+            <p style="font-size:0.85rem; color:var(--vas-muted);">When visitors register through the Client Registration portal, their account and contact details will appear here.</p>
+          </div>
         ` : `
-          <!-- Analytics & Reports (Module 13) -->
-          <div class="vas-kpi-grid">
-            <div class="vas-kpi-card">
-              <span>Gross Atelier Revenue</span>
-              <strong>₹${analytics.totalRevenue.toLocaleString()}</strong>
-              <small style="font-size:0.75rem; color:var(--vas-success); display:block; margin-top:4px;">↑ +18.4% from last month</small>
+          <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; overflow:hidden;">
+            <div style="overflow-x:auto;">
+              <table class="vas-admin-table" style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="background:var(--vas-surface-alt); text-align:left; border-bottom:1px solid var(--vas-border);">
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Client Name</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Username</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Email</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Mobile</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Tier</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Status</th>
+                    <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Registered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${clients.map(c => `
+                    <tr style="border-bottom:1px solid var(--vas-border-subtle);">
+                      <td style="padding:12px 16px;"><strong>${c.name}</strong></td>
+                      <td style="padding:12px 16px;"><code>${c.username}</code></td>
+                      <td style="padding:12px 16px;">${c.email}</td>
+                      <td style="padding:12px 16px;">${c.phone}</td>
+                      <td style="padding:12px 16px;"><span class="vas-badge-pill gold" style="font-size:0.75rem;">${c.loyaltyTier || 'Atelier Patron'}</span></td>
+                      <td style="padding:12px 16px;"><span class="vas-badge-pill success" style="font-size:0.75rem;">${c.status || 'Active'}</span></td>
+                      <td style="padding:12px 16px; font-size:0.8rem; color:var(--vas-muted);">${c.registeredAt ? new Date(c.registeredAt).toLocaleDateString() : 'Active'}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
             </div>
-            <div class="vas-kpi-card">
-              <span>Bespoke Custom Orders</span>
-              <strong>₹${analytics.bespokeRevenue.toLocaleString()}</strong>
-              <small style="font-size:0.75rem; color:var(--vas-gold-dark); display:block; margin-top:4px;">${analytics.bespokePercentage}% of total boutique revenue</small>
-            </div>
-            <div class="vas-kpi-card">
-              <span>Ready-To-Wear Sales</span>
-              <strong>₹${analytics.rtwRevenue.toLocaleString()}</strong>
-              <small style="font-size:0.75rem; color:var(--vas-muted); display:block; margin-top:4px;">${analytics.rtwPercentage}% of total boutique revenue</small>
-            </div>
-            <div class="vas-kpi-card">
-              <span>Avg Tailor Turnaround</span>
-              <strong>${analytics.avgCompletionDays} Days</strong>
-              <small style="font-size:0.75rem; color:var(--vas-success); display:block; margin-top:4px;">100% on-time delivery rate</small>
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
-            <div style="background:#fff; border:1px solid var(--vas-border); border-radius:8px; padding:18px;">
-              <h4 style="font-size:1rem; margin-bottom:12px;">Master Tailor Workload Allocation</h4>
-              <div style="display:flex; flex-direction:column; gap:10px;">
-                ${analytics.tailorWorkload.map(tw => `
-                  <div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:4px;">
-                      <span><strong>${tw.name}</strong> (${tw.assignedOrders}/${tw.capacity} orders)</span>
-                      <span style="color:var(--vas-success);">${tw.onTimeRate} On-Time</span>
-                    </div>
-                    <div style="background:var(--vas-surface-alt); height:8px; border-radius:4px; overflow:hidden;">
-                      <div style="background:var(--vas-gold); height:100%; width:${(tw.assignedOrders/tw.capacity)*100}%;"></div>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <div style="background:#fff; border:1px solid var(--vas-border); border-radius:8px; padding:18px;">
-              <h4 style="font-size:1rem; margin-bottom:12px;">Top Performing Couture Categories</h4>
-              <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:0.85rem;">
-                ${analytics.popularCategories.map(pc => `
-                  <li style="display:flex; justify-content:space-between; border-bottom:1px solid var(--vas-border-subtle); padding-bottom:6px;">
-                    <span>${pc.category} (${pc.units} pcs)</span>
-                    <strong>₹${pc.revenue.toLocaleString()}</strong>
-                  </li>
-                `).join('')}
-              </ul>
-            </div>
-          </div>
-
-          <div style="display:flex; justify-content:flex-end;">
-            <button class="vas-btn vas-btn-gold" onclick="window.printExecutiveReport()">
-              🖨️ Print Executive Report (FY 2026-27)
-            </button>
           </div>
         `}
+      `;
+    }
+  };
+
+  // Helper to render Tailor Roster Table HTML
+  window.renderTailorRosterHTML = function (tailorsList) {
+    if (!tailorsList || tailorsList.length === 0) {
+      return `
+        <div style="text-align:center; padding:48px 20px; background:var(--vas-surface-alt); border-radius:8px;">
+          <div style="font-size:2.2rem; margin-bottom:8px;">🪡</div>
+          <h4 style="font-size:1.15rem; margin-bottom:4px;">No Tailors Added Yet</h4>
+          <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Use the "Add New Master Tailor" form above to create and configure tailor accounts.</p>
+        </div>
+      `;
+    }
+
+    return `
+      <table class="vas-admin-table" style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--vas-surface-alt); text-align:left; border-bottom:1px solid var(--vas-border);">
+            <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Master Tailor</th>
+            <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Username</th>
+            <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Contact &amp; Email</th>
+            <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Specialization</th>
+            <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase;">Account Status</th>
+            <th style="padding:12px 16px; font-size:0.8rem; text-transform:uppercase; text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tailorsList.map(t => {
+            const isActive = (t.status || "Active").toLowerCase() === "active";
+            return `
+              <tr style="border-bottom:1px solid var(--vas-border-subtle);">
+                <td style="padding:14px 16px;">
+                  <strong style="font-size:0.95rem;">${t.name}</strong>
+                  <span style="font-size:0.75rem; color:var(--vas-muted); display:block;">ID: ${t.id}</span>
+                </td>
+                <td style="padding:14px 16px;"><code>${t.username}</code></td>
+                <td style="padding:14px 16px;">
+                  <span style="display:block; font-size:0.85rem;">${t.phone || '—'}</span>
+                  <small style="color:var(--vas-muted); font-size:0.75rem;">${t.email}</small>
+                </td>
+                <td style="padding:14px 16px; font-size:0.85rem;">${t.specialization || 'Bespoke Fitting'}</td>
+                <td style="padding:14px 16px;">
+                  <span class="vas-badge-pill ${isActive ? 'success' : 'danger'}" style="font-size:0.75rem; font-weight:700;">
+                    ${isActive ? '● Active' : '○ Inactive'}
+                  </span>
+                </td>
+                <td style="padding:14px 16px; text-align:right;">
+                  <div style="display:inline-flex; gap:8px;">
+                    <button class="vas-btn vas-btn-xs vas-btn-outline" onclick="window.openEditTailorModal('${t.id}')">
+                      ✎ Edit
+                    </button>
+                    ${isActive ? `
+                      <button class="vas-btn vas-btn-xs vas-btn-outline" style="color:var(--vas-danger); border-color:#d9534f;" onclick="window.toggleTailorStatusAction('${t.id}', 'Inactive')" title="Suspend access to Master Tailor dashboard">
+                        Deactivate
+                      </button>
+                    ` : `
+                      <button class="vas-btn vas-btn-xs vas-btn-primary" onclick="window.toggleTailorStatusAction('${t.id}', 'Active')" title="Restore access to Master Tailor dashboard">
+                        Activate
+                      </button>
+                    `}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  };
+
+  // 4A. Add New Tailor Submission
+  window.submitNewTailorForm = function (event) {
+    event.preventDefault();
+    const alertBox = document.getElementById("tailorFormAlert");
+
+    const name = document.getElementById("tailorNewFullName").value.trim();
+    const username = document.getElementById("tailorNewUsername").value.trim();
+    const email = document.getElementById("tailorNewEmail").value.trim();
+    const phone = document.getElementById("tailorNewPhone").value.trim();
+    const password = document.getElementById("tailorNewPassword").value.trim();
+    const specialization = document.getElementById("tailorNewSpec").value.trim();
+    const status = document.getElementById("tailorNewStatus").value;
+
+    if (!window.vastraeAuth) return;
+
+    const res = window.vastraeAuth.addTailor({
+      name: name,
+      username: username,
+      email: email,
+      phone: phone,
+      password: password,
+      specialization: specialization,
+      status: status
+    });
+
+    if (alertBox) {
+      alertBox.textContent = res.message;
+      alertBox.style.display = "block";
+      if (res.success) {
+        alertBox.style.background = "var(--vas-success-bg)";
+        alertBox.style.color = "var(--vas-success)";
+        alertBox.style.border = "1px solid #b2dba1";
+        document.getElementById("newTailorForm").reset();
+      } else {
+        alertBox.style.background = "#f8d7da";
+        alertBox.style.color = "#721c24";
+        alertBox.style.border = "1px solid #f5c6cb";
+      }
+    }
+
+    if (res.success) {
+      showToast(`✓ Master Tailor ${name} created successfully!`);
+      // Update roster immediately
+      const container = document.getElementById("tailorRosterContainer");
+      if (container) {
+        container.innerHTML = window.renderTailorRosterHTML(window.vastraeAuth.getTailors());
+      }
+    }
+  };
+
+  // 4B. Filter Tailor Roster
+  window.filterTailorRoster = function () {
+    const q = (document.getElementById("tailorSearchInput") ? document.getElementById("tailorSearchInput").value : "").toLowerCase().trim();
+    const st = document.getElementById("tailorFilterStatus") ? document.getElementById("tailorFilterStatus").value : "all";
+    if (!window.vastraeAuth) return;
+
+    let tailors = window.vastraeAuth.getTailors();
+
+    if (st !== "all") {
+      tailors = tailors.filter(t => (t.status || "Active").toLowerCase() === st.toLowerCase());
+    }
+
+    if (q) {
+      tailors = tailors.filter(t =>
+        t.name.toLowerCase().includes(q) ||
+        t.username.toLowerCase().includes(q) ||
+        t.email.toLowerCase().includes(q)
+      );
+    }
+
+    const container = document.getElementById("tailorRosterContainer");
+    if (container) {
+      container.innerHTML = window.renderTailorRosterHTML(tailors);
+    }
+  };
+
+  // 4C. Edit Tailor Modal
+  window.openEditTailorModal = function (tailorId) {
+    if (!window.vastraeAuth) return;
+    const tailor = window.vastraeAuth.getUsers().find(u => u.id === tailorId);
+    if (!tailor) return;
+
+    const modalContent = document.getElementById("modalBody");
+    modalContent.innerHTML = `
+      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
+        <span class="vas-eyebrow" style="color:var(--vas-gold-dark);">ATELIER CRAFTSMEN DIRECTORY</span>
+        <h2 style="font-size:1.5rem; margin:2px 0 0;">Edit Master Tailor Details</h2>
       </div>
+
+      <form onsubmit="window.submitEditTailorForm(event, '${tailor.id}')">
+        <div class="vas-form-group" style="margin-bottom:12px;">
+          <label style="font-weight:600; font-size:0.82rem;">Full Name *</label>
+          <input type="text" id="editTailorName" class="vas-input" value="${tailor.name}" required />
+        </div>
+        <div class="vas-form-group" style="margin-bottom:12px;">
+          <label style="font-weight:600; font-size:0.82rem;">Username</label>
+          <input type="text" class="vas-input" value="${tailor.username}" readonly style="background:var(--vas-surface-alt);" />
+          <small style="font-size:0.72rem; color:var(--vas-muted);">Usernames cannot be changed once assigned.</small>
+        </div>
+        <div class="vas-form-group" style="margin-bottom:12px;">
+          <label style="font-weight:600; font-size:0.82rem;">Email</label>
+          <input type="email" class="vas-input" value="${tailor.email}" readonly style="background:var(--vas-surface-alt);" />
+        </div>
+        <div class="vas-form-group" style="margin-bottom:12px;">
+          <label style="font-weight:600; font-size:0.82rem;">Contact Number (+91) *</label>
+          <input type="tel" id="editTailorPhone" class="vas-input" value="${tailor.phone || ''}" required pattern="[+0-9\\s-]{10,15}" />
+        </div>
+        <div class="vas-form-group" style="margin-bottom:12px;">
+          <label style="font-weight:600; font-size:0.82rem;">Specialization</label>
+          <input type="text" id="editTailorSpec" class="vas-input" value="${tailor.specialization || ''}" />
+        </div>
+        <div class="vas-form-group" style="margin-bottom:12px;">
+          <label style="font-weight:600; font-size:0.82rem;">Account Password (Leave blank to keep current)</label>
+          <input type="password" id="editTailorPassword" class="vas-input" placeholder="Enter new 6-char password if modifying" maxlength="6" />
+        </div>
+        <div class="vas-form-group" style="margin-bottom:18px;">
+          <label style="font-weight:600; font-size:0.82rem;">Account Status *</label>
+          <select id="editTailorStatus" class="vas-select">
+            <option value="Active" ${(tailor.status || 'Active').toLowerCase() === 'active' ? 'selected' : ''}>Active (Permitted to Log In)</option>
+            <option value="Inactive" ${(tailor.status || '').toLowerCase() === 'inactive' ? 'selected' : ''}>Inactive (Access Suspended)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="vas-btn vas-btn-outline" onclick="window.closeModal()">Cancel</button>
+          <button type="submit" class="vas-btn vas-btn-primary">Save Changes</button>
+        </div>
+      </form>
     `;
     openModal("genericModal");
   };
 
-  window.reassignTailor = function (orderId, newTailor) {
-    const o = orders.find(x => x.orderId === orderId);
+  window.submitEditTailorForm = function (event, tailorId) {
+    event.preventDefault();
+    const name = document.getElementById("editTailorName").value.trim();
+    const phone = document.getElementById("editTailorPhone").value.trim();
+    const spec = document.getElementById("editTailorSpec").value.trim();
+    const pwd = document.getElementById("editTailorPassword").value.trim();
+    const status = document.getElementById("editTailorStatus").value;
+
+    const data = {
+      name: name,
+      phone: phone,
+      specialization: spec,
+      status: status
+    };
+    if (pwd) data.password = pwd;
+
+    const res = window.vastraeAuth.updateTailor(tailorId, data);
+    if (!res.success) {
+      alert(res.message);
+      return;
+    }
+
+    closeModal();
+    showToast(`✓ Master Tailor ${name} updated successfully.`);
+    window.renderAdminDashboard(window.currentAdminTab || "tailors");
+  };
+
+  // 4D. Activate / Deactivate Tailor Action
+  window.toggleTailorStatusAction = function (tailorId, newStatus) {
+    if (!window.vastraeAuth) return;
+    const confirmMsg = newStatus === "Inactive"
+      ? "Are you sure you wish to deactivate this Master Tailor? They will be immediately blocked from accessing the production studio."
+      : "Activate this Master Tailor account?";
+
+    if (confirm(confirmMsg)) {
+      const res = window.vastraeAuth.setTailorStatus(tailorId, newStatus);
+      if (res.success) {
+        showToast(res.message);
+        window.renderAdminDashboard(window.currentAdminTab || "tailors");
+      } else {
+        alert(res.message);
+      }
+    }
+  };
+
+  // Order Assignment
+  window.adminAssignTailor = function (orderId, newTailorName, isReborn = false) {
+    if (isReborn) {
+      const r = (sareeRebornOrders || []).find(x => x.id === orderId);
+      if (r) {
+        r.tailor = newTailorName;
+        localStorage.setItem(STORAGE_KEY_REBORN, JSON.stringify(sareeRebornOrders));
+        showToast(`✓ Saree Reborn ${orderId} allocated to ${newTailorName}.`);
+      }
+      return;
+    }
+
+    const o = (orders || []).find(x => x.orderId === orderId);
     if (o) {
-      o.tailor = newTailor;
+      o.tailor = newTailorName;
+      o.assignedTailorName = newTailorName;
+      const tailors = window.vastraeAuth ? window.vastraeAuth.getTailors() : [];
+      const match = tailors.find(t => t.name.toLowerCase() === newTailorName.toLowerCase());
+      if (match) o.assignedTailorId = match.id;
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
-      showToast(`✓ Order ${orderId} reassigned to ${newTailor}.`);
+      showToast(`✓ Order ${orderId} assigned to ${newTailorName}.`);
     }
   };
 
   window.approveAdminQC = function (orderId) {
-    const o = orders.find(x => x.orderId === orderId);
+    const o = (orders || []).find(x => x.orderId === orderId);
     if (o) {
       o.status = "Ready";
       o.stageIndex = 5;
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
       showToast(`✓ Quality Inspection signed off for ${orderId}. Marked Ready for Dispatch.`);
-      openAdminConsoleModal('orders');
+      window.renderAdminDashboard("orders");
     }
   };
 
   window.adjustFabricStock = function (sku) {
+    if (!VASTRAE_DATA || !VASTRAE_DATA.fabricInventory) return;
     const f = VASTRAE_DATA.fabricInventory.find(x => x.sku === sku);
     if (!f) return;
-    const addMeters = prompt(`Enter meterage to add/deduct for ${f.name} (Current: ${f.availableMeters}m):`, "10");
+    const addMeters = prompt(`Enter meterage to add or deduct for ${f.name} (Current: ${f.availableMeters}m):`, "10");
     if (addMeters && !isNaN(addMeters)) {
       f.availableMeters = Math.max(0, parseFloat((f.availableMeters + parseFloat(addMeters)).toFixed(1)));
       f.status = f.availableMeters <= f.thresholdMeters ? "Low Stock Alert" : "In Stock";
       showToast(`✓ Updated ${f.name} meterage to ${f.availableMeters} meters.`);
-      openAdminConsoleModal('inventory');
+      window.renderAdminDashboard("inventory");
     }
   };
 
+  // ------------------------------------------------------------------------
+  // 12B. DEDICATED MASTER TAILOR PRODUCTION DASHBOARD
+  // ------------------------------------------------------------------------
+  window.currentTailorTab = "queue";
+
+  window.switchTailorTab = function (tabName, btn) {
+    window.currentTailorTab = tabName;
+    document.querySelectorAll("#tailorNavList .vas-dash-nav-btn").forEach(b => b.classList.remove("active"));
+    if (btn) {
+      btn.classList.add("active");
+    } else {
+      const allBtns = document.querySelectorAll("#tailorNavList .vas-dash-nav-btn");
+      allBtns.forEach(b => {
+        if (b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${tabName}'`)) {
+          b.classList.add("active");
+        }
+      });
+    }
+    window.renderTailorDashboard(tabName);
+  };
+
+  window.renderTailorDashboard = function (activeTab = "queue") {
+    const pane = document.getElementById("tailorTabPane");
+    if (!pane || !currentUser || currentUser.role !== "tailor") return;
+
+    // Check if account status has been set to Inactive
+    if ((currentUser.status || "Active").toLowerCase() === "inactive") {
+      if (window.vastraeAuth) window.vastraeAuth.logout();
+      currentUser = null;
+      updateAuthUI();
+      window.returnToPublicWebsite();
+      showToast("Your tailor account is currently inactive. Please contact the Atelier Director.");
+      return;
+    }
+
+    const tName = (currentUser.name || "").toLowerCase();
+    const tUser = (currentUser.username || "").toLowerCase();
+
+    // Filter only orders assigned to this specific tailor
+    const assignedOrders = (orders || []).filter(o =>
+      (o.tailor && (o.tailor.toLowerCase().includes(tName) || o.tailor.toLowerCase().includes(tUser))) ||
+      (o.assignedTailorId && o.assignedTailorId === currentUser.id)
+    );
+
+    const assignedReborn = (sareeRebornOrders || []).filter(r =>
+      r.tailor && (r.tailor.toLowerCase().includes(tName) || r.tailor.toLowerCase().includes(tUser))
+    );
+
+    if (activeTab === "queue") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.6rem; margin:0 0 4px;">Assigned Production Bench Queue</h2>
+            <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Garments and commissions specifically allocated to your craft bench.</p>
+          </div>
+          <span class="vas-badge-pill gold" style="font-size:0.82rem; padding:6px 14px;">
+            Active Bench Queue: ${assignedOrders.length + assignedReborn.length} Pieces
+          </span>
+        </div>
+
+        <!-- Master Tailor Visual Telemetry Strip -->
+        <div class="vas-kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:24px;">
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:16px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Active Bench Queue</span>
+            <strong style="font-size:1.6rem; display:block; margin:4px 0 2px; color:var(--vas-gold-dark);">${assignedOrders.length + assignedReborn.length} Pieces</strong>
+            <small style="font-size:0.75rem; color:var(--vas-muted);">Allocated to Your Bench</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:16px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Quality Pass Rate</span>
+            <strong style="font-size:1.6rem; display:block; margin:4px 0 2px; color:#27ae60;">100%</strong>
+            <small style="font-size:0.75rem; color:var(--vas-muted);">5-Point QA Standard</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:16px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Standard Seam Allowance</span>
+            <strong style="font-size:1.6rem; display:block; margin:4px 0 2px; color:var(--vas-primary);">2.0 Inches</strong>
+            <small style="font-size:0.75rem; color:var(--vas-muted);">Concealed Margin Protocol</small>
+          </div>
+          <div class="vas-kpi-card" style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:16px;">
+            <span style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Current Bench Status</span>
+            <strong style="font-size:1.6rem; display:block; margin:4px 0 2px; color:#27ae60;">Active</strong>
+            <small style="font-size:0.75rem; color:var(--vas-muted);">Authorized Couturier</small>
+          </div>
+        </div>
+
+        ${(assignedOrders.length === 0 && assignedReborn.length === 0) ? `
+          <div style="text-align:center; padding:54px 24px; background:#fff; border:1px solid var(--vas-border); border-radius:12px;">
+            <div style="font-size:2.6rem; margin-bottom:12px;">✂️</div>
+            <h4 style="font-size:1.2rem; margin-bottom:6px;">No Orders in Your Queue</h4>
+            <p style="font-size:0.85rem; color:var(--vas-muted); max-width:480px; margin:0 auto;">
+              No bespoke garments are currently assigned to your bench. As the Atelier Administrator allocates orders, they will appear here with tailoring specifications and quality checklists.
+            </p>
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            ${assignedOrders.map(ord => {
+              const curStage = ord.stageIndex || (ord.status === 'Delivered' ? 6 : 2);
+              const progressPct = Math.min(100, Math.max(0, Math.round(((curStage - 1) / 5) * 100)));
+              const stagesList = [
+                { num: 1, icon: "🧵", label: "Sourcing" },
+                { num: 2, icon: "📐", label: "Drafting" },
+                { num: 3, icon: "🪡", label: "Zardozi" },
+                { num: 4, icon: "✂️", label: "Stitching" },
+                { num: 5, icon: "✨", label: "Inspection" },
+                { num: 6, icon: "📦", label: "Delivered" }
+              ];
+              return `
+              <div style="border:1px solid var(--vas-border); border-radius:12px; padding:24px; background:#fff; box-shadow:var(--vas-shadow-sm);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <span style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase;">ORDER #${ord.orderId}</span>
+                    <h3 style="font-size:1.25rem; margin:2px 0 0;">${Array.isArray(ord.items) ? ord.items.join(', ') : ord.items}</h3>
+                  </div>
+                  <span class="vas-badge-pill ${ord.status === 'Ready' || ord.status === 'Delivered' ? 'success' : 'gold'}">
+                    ${ord.status || 'In Production'}
+                  </span>
+                </div>
+
+                <div style="background:var(--vas-surface-alt); padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:0.84rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+                  <div><strong>Customer:</strong> ${ord.customerName || 'Client Patron'}</div>
+                  <div><strong>Contact:</strong> ${ord.customerPhone || 'On File'}</div>
+                  <div><strong>Expected Delivery:</strong> ${ord.expectedDelivery || '2026-10-24'}</div>
+                </div>
+
+                <!-- Visual 6-Stage Graphical Stepper -->
+                <div style="background:#fcfbf9; border:1px solid #f0e9df; border-radius:10px; padding:16px 20px; margin-bottom:18px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:0.8rem; font-weight:700; color:var(--vas-gold-dark);">STAGE PROGRESSION: ${progressPct}% COMPLETE</span>
+                    <span style="font-size:0.75rem; color:var(--vas-muted);">Stage ${curStage} of 6 &middot; Click any step to update</span>
+                  </div>
+                  <div class="vas-stepper-track">
+                    <div class="vas-stepper-progress" style="width: ${progressPct}%;"></div>
+                    ${stagesList.map(st => {
+                      const isDone = st.num < curStage;
+                      const isActive = st.num === curStage;
+                      const cls = isDone ? 'completed' : (isActive ? 'active' : '');
+                      return `
+                        <div class="vas-stepper-node ${cls}" onclick="document.getElementById('stageSelect-${ord.orderId}').value='${st.num}'; window.tailorUpdateStage('${ord.orderId}');" title="Stage ${st.num}: ${st.label}">
+                          <div class="vas-stepper-icon">${isDone ? '✓' : st.icon}</div>
+                          <span class="vas-stepper-lbl">${st.label}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- 5-Point Quality Checklist -->
+                <div style="background:#fff; border:1px solid var(--vas-border-subtle); padding:14px; border-radius:8px; margin-bottom:18px;">
+                  <strong style="font-size:0.82rem; text-transform:uppercase; color:var(--vas-gold-dark); display:block; margin-bottom:8px;">
+                    5-Point Quality Assurance Checklist (Master Couturier Verification):
+                  </strong>
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:8px; font-size:0.82rem;">
+                    <label style="cursor:pointer;"><input type="checkbox" checked /> 2" Concealed side-seam alteration margin verified</label>
+                    <label style="cursor:pointer;"><input type="checkbox" checked /> Itch-free mulmul breathable lining stitched</label>
+                    <label style="cursor:pointer;"><input type="checkbox" checked /> Zari, sequin &amp; bullion stone security test passed</label>
+                    <label style="cursor:pointer;"><input type="checkbox" checked /> &plusmn;0.25" Tolerance on chest and waist measurements</label>
+                    <label style="cursor:pointer;"><input type="checkbox" checked /> Steam pressed &amp; archival boutique hanger tagged</label>
+                  </div>
+                </div>
+
+                <!-- 6-Stage Production Selector -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-top:1px solid var(--vas-border-subtle); padding-top:14px;">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:0.82rem; font-weight:600;">Production Stage:</span>
+                    <select id="stageSelect-${ord.orderId}" class="vas-select" style="width:240px; padding:6px 12px; font-size:0.82rem;">
+                      <option value="1" ${curStage === 1 ? 'selected' : ''}>1. Fabric Sourcing &amp; Inspection</option>
+                      <option value="2" ${curStage === 2 ? 'selected' : ''}>2. Pattern Cutting &amp; Drafting</option>
+                      <option value="3" ${curStage === 3 ? 'selected' : ''}>3. Hand Loom Embroidery &amp; Zardozi</option>
+                      <option value="4" ${curStage === 4 ? 'selected' : ''}>4. Master Tailor Stitching &amp; Assembly</option>
+                      <option value="5" ${curStage === 5 ? 'selected' : ''}>5. Quality Inspection Passed</option>
+                      <option value="6" ${curStage === 6 ? 'selected' : ''}>6. Dispatched / Ready for Delivery</option>
+                    </select>
+                  </div>
+                  <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.tailorUpdateStage('${ord.orderId}')">
+                    Update Production Stage
+                  </button>
+                </div>
+              </div>
+            `;
+            }).join('')}
+          </div>
+        `}
+      `;
+    } else if (activeTab === "measurements") {
+      pane.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.6rem; margin:0 0 4px;">Client Measurement Specifications</h2>
+          <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Architectural drafting dimensions for clients with garments currently in your bench queue.</p>
+        </div>
+
+        ${assignedOrders.length === 0 ? `
+          <div style="text-align:center; padding:48px 24px; background:#fff; border:1px solid var(--vas-border); border-radius:12px;">
+            <p style="color:var(--vas-muted); font-size:0.9rem;">No active orders assigned to load measurement cards.</p>
+          </div>
+        ` : `
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+            ${assignedOrders.map(o => `
+              <div style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:20px; box-shadow:var(--vas-shadow-sm);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                  <div>
+                    <strong style="font-size:1.05rem;">${o.customerName || 'Client Patron'}</strong>
+                    <span style="font-size:0.75rem; color:var(--vas-gold-dark); display:block; text-transform:uppercase;">Order Ref: ${o.orderId}</span>
+                  </div>
+                  <span style="font-size:1.3rem;">📐</span>
+                </div>
+                <ul style="list-style:none; font-size:0.85rem; color:var(--vas-muted); display:flex; flex-direction:column; gap:6px;">
+                  <li>Chest / Bust: <b>34.5" (Standard C-Cup)</b></li>
+                  <li>True Waist: <b>28.0" (Narrow Contour)</b></li>
+                  <li>Cross Shoulder: <b>14.5" (Natural Pitch)</b></li>
+                  <li>Armhole Depth: <b>7.5" (Comfort Cut)</b></li>
+                  <li>Back Neck Depth: <b>9.5" (Deep Scoop)</b></li>
+                  <li>Seam Margin: <b>2.0" (Atelier Protocol)</b></li>
+                </ul>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      `;
+    } else if (activeTab === "reborn") {
+      pane.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.6rem; margin:0 0 4px;">Assigned Saree Reborn Commissions</h2>
+          <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Vintage heirloom preservation &amp; upcycling projects allocated to your bench.</p>
+        </div>
+
+        ${assignedReborn.length === 0 ? `
+          <div style="text-align:center; padding:48px 24px; background:#fff; border:1px solid var(--vas-border); border-radius:12px;">
+            <div style="font-size:2.2rem; margin-bottom:10px;">♻</div>
+            <h4 style="font-size:1.15rem; margin-bottom:4px;">No Saree Reborn Commissions Assigned</h4>
+            <p style="font-size:0.85rem; color:var(--vas-muted);">Vintage saree upcycling projects allocated by the Atelier Director will appear here.</p>
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            ${assignedReborn.map(r => `
+              <div style="background:#fff; border:1px solid var(--vas-border); border-radius:10px; padding:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                  <strong>${r.id} — ${r.sareeType}</strong>
+                  <span class="vas-badge-pill success">Inspection Approved</span>
+                </div>
+                <p style="font-size:0.85rem; color:var(--vas-muted); margin-bottom:10px;">Desired Transformation: ${r.desiredGarment} | Customer: ${r.customerName || 'Patron'}</p>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.showToast('Fabric cutting templates generated.')">Pattern Templates &rarr;</button>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      `;
+    } else if (activeTab === "profile") {
+      pane.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.6rem; margin:0 0 4px;">My Master Tailor Profile</h2>
+          <p style="font-size:0.85rem; color:var(--vas-muted); margin:0;">Atelier credential and craft bench specifications.</p>
+        </div>
+
+        <div style="background:#fff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; max-width:600px;">
+          <div class="vas-form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div>
+              <label style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Full Name</label>
+              <div style="font-size:1.1rem; font-weight:600; margin-top:2px;">${currentUser.name}</div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Username</label>
+              <div style="font-size:1.1rem; font-weight:600; margin-top:2px;"><code>${currentUser.username}</code></div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Email Address</label>
+              <div style="font-size:0.95rem; margin-top:2px;">${currentUser.email}</div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Contact Mobile</label>
+              <div style="font-size:0.95rem; margin-top:2px;">${currentUser.phone}</div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Specialization</label>
+              <div style="font-size:0.95rem; margin-top:2px;">${currentUser.specialization || 'Bespoke Fitting'}</div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; text-transform:uppercase; color:var(--vas-muted); font-weight:700;">Account Status</label>
+              <div style="font-size:0.95rem; margin-top:2px;">
+                <span class="vas-badge-pill success">Active Couturier</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  };
+
+  // Tailor updates production stage
+  window.tailorUpdateStage = function (orderId) {
+    const sel = document.getElementById(`stageSelect-${orderId}`);
+    if (!sel) return;
+    const stageVal = parseInt(sel.value, 10);
+
+    const ord = (orders || []).find(o => o.orderId === orderId);
+    if (ord) {
+      ord.stageIndex = stageVal;
+      if (stageVal >= 6) ord.status = "Delivered";
+      else if (stageVal >= 5) ord.status = "Ready";
+      else ord.status = "Tailoring";
+
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+      showToast(`✓ Order ${orderId} stage updated to Stage ${stageVal}. Client portal synchronized.`);
+      window.renderTailorDashboard("queue");
+    }
+  };
+
+  // Compatibility wrappers
+  window.openMasterTailorWorkspace = function () {
+    window.openTailorDashboard();
+  };
+
+  window.openAdminConsoleModal = function (activeTab = "orders") {
+    window.openAdminDashboard();
+    if (activeTab) window.switchAdminTab(activeTab);
+  };
+
+  window.reassignTailor = window.adminAssignTailor;
+
   window.printExecutiveReport = function () {
+    const tailors = window.vastraeAuth ? window.vastraeAuth.getTailors() : [];
+    const clients = window.vastraeAuth ? window.vastraeAuth.getClients() : [];
+    const allOrders = (orders || []).concat(sareeRebornOrders || []);
+    const totalRev = (orders || []).reduce((acc, o) => acc + (o.total || o.totalAmount || 0), 0);
+
     const win = window.open('', '_blank');
     win.document.write(`
       <html>
@@ -2998,10 +4034,10 @@
         <h2>VASTRAÉ ATELIER &middot; EXECUTIVE REPORT</h2>
         <p>Flagship: 100 Feet Road, Indiranagar, Bengaluru &middot; FY 2026-27</p>
         <hr/>
-        <p><strong>Gross Atelier Revenue:</strong> ₹${VASTRAE_DATA.adminAnalytics.totalRevenue.toLocaleString()}</p>
-        <p><strong>Bespoke Custom Tailoring Revenue:</strong> ₹${VASTRAE_DATA.adminAnalytics.bespokeRevenue.toLocaleString()} (64%)</p>
-        <p><strong>Average Production Turnaround:</strong> ${VASTRAE_DATA.adminAnalytics.avgCompletionDays} Days</p>
-        <p><strong>Active Orders in Pipeline:</strong> ${orders.length + sareeRebornOrders.length}</p>
+        <p><strong>Gross Atelier Revenue:</strong> ₹${totalRev.toLocaleString()}</p>
+        <p><strong>Total Active Orders:</strong> ${allOrders.length}</p>
+        <p><strong>Master Tailor Bench Count:</strong> ${tailors.length}</p>
+        <p><strong>Registered Atelier Patrons:</strong> ${clients.length}</p>
         <script>window.onload = function() { window.print(); };</script>
       </body>
       </html>
