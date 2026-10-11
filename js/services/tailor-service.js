@@ -12,6 +12,7 @@
     getAssignedTasks: function (tailorId) {
       let orders = [];
       let sareeRequests = [];
+      let ownFabricRequests = [];
 
       if (window.vastraeOrderService) {
         orders = window.vastraeOrderService.getTailorOrders(tailorId);
@@ -19,14 +20,18 @@
       if (window.vastraeSareeRebornService) {
         sareeRequests = window.vastraeSareeRebornService.getTailorRequests(tailorId);
       }
+      if (window.vastraeOwnFabricService) {
+        ownFabricRequests = window.vastraeOwnFabricService.getTailorRequests(tailorId);
+      }
 
       return {
         orders: orders,
         sareeRequests: sareeRequests,
-        totalAssigned: orders.length + sareeRequests.length,
-        inProgress: orders.filter((o) => o.currentStage > 1 && o.currentStage < 5).length,
-        qualityCheck: orders.filter((o) => o.currentStage === 5).length,
-        completed: orders.filter((o) => o.currentStage === 6).length
+        ownFabricRequests: ownFabricRequests,
+        totalAssigned: orders.length + sareeRequests.length + ownFabricRequests.length,
+        inProgress: orders.filter((o) => o.currentStage > 1 && o.currentStage < 5).length + ownFabricRequests.filter(r => r.currentStage === 9 && r.status.includes("Stitching")).length,
+        qualityCheck: orders.filter((o) => o.currentStage === 5).length + ownFabricRequests.filter(r => r.status.includes("Quality")).length,
+        completed: orders.filter((o) => o.currentStage === 6).length + ownFabricRequests.filter(r => r.status.includes("Dispatched") || r.status.includes("Completed")).length
       };
     },
 

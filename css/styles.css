@@ -8,22 +8,6 @@
    1. COLOR TOKENS & TYPOGRAPHY SYSTEM (PREMIUM LIGHT PALETTE)
    -------------------------------------------------------------------------- */
 :root {
-  /* Atelier Luxury Fashion Palette */
-  --vas-ivory: #fdfbf9;
-  --vas-ivory-soft: #f8f4ee;
-  --vas-champagne: #dfc7a7;
-  --vas-champagne-light: #f5ece1;
-  --vas-champagne-dark: #b8976f;
-  --vas-rose: #d89a8c;
-  --vas-rose-light: #ebd0c8;
-  --vas-rose-dark: #b87a6d;
-  --vas-peach: #f2baa8;
-  --vas-taupe: #8a7b70;
-  --vas-taupe-light: #b0a398;
-  --vas-taupe-dark: #5e5046;
-  --vas-charcoal: #221a18;
-  --vas-charcoal-deep: #161211;
-
   /* AI Virtual Fashion Studio Palette (Blush Pink, Lavender, Cream, Muted Mauve) */
   --vas-blush-pink: #f8e8ec;
   --vas-blush-pink-light: #fdf5f7;
@@ -40,6 +24,28 @@
   --vas-btn-gradient-tryon: linear-gradient(135deg, #7d536a 0%, #a26c88 45%, #d89a8c 100%);
   --vas-btn-gradient-tryon-hover: linear-gradient(135deg, #633f52 0%, #8c5773 45%, #c88778 100%);
 
+  /* Vastraé Core Atelier Brand Colors */
+  --vas-brand-cream: #FCF0DA;
+  --vas-brand-sage: #AEAC78;
+  --vas-brand-gold: #F2C46A;
+  --vas-brand-dark: #4C4541;
+
+  /* Atelier Luxury Fashion Palette */
+  --vas-ivory: #fdfbf9;
+  --vas-ivory-soft: #f8f4ee;
+  --vas-champagne: #dfc7a7;
+  --vas-champagne-light: #f5ece1;
+  --vas-champagne-dark: #b8976f;
+  --vas-rose: #d89a8c;
+  --vas-rose-light: #ebd0c8;
+  --vas-rose-dark: #b87a6d;
+  --vas-peach: #f2baa8;
+  --vas-taupe: #8a7b70;
+  --vas-taupe-light: #b0a398;
+  --vas-taupe-dark: #5e5046;
+  --vas-charcoal: #221a18;
+  --vas-charcoal-deep: #161211;
+
   /* Atelier Light Surfaces */
   --vas-bg: #fdfbf9;
   --vas-surface: #ffffff;
@@ -53,13 +59,13 @@
   --vas-ink-light: #3e332d;
   --vas-muted: #726458;
   --vas-muted-light: #998a7e;
-  
+
   /* Brand Luxury Accents */
   --vas-gold: #c79f64;
   --vas-gold-light: #e5cc9f;
   --vas-gold-pale: #faf4e8;
   --vas-gold-dark: #9e773a;
-  
+
   /* Subtle Status Colors */
   --vas-success: #337a4b;
   --vas-success-bg: #eef7f1;
@@ -90,7 +96,9 @@
 /* --------------------------------------------------------------------------
    2. GLOBAL RESET & BASE STYLES
    -------------------------------------------------------------------------- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -114,7 +122,12 @@ body.modal-open {
   overflow: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--vas-font-serif);
   color: var(--vas-ink);
   font-weight: 600;
@@ -141,7 +154,9 @@ button {
   transition: var(--vas-transition);
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--vas-ink);
@@ -258,6 +273,21 @@ img {
 .vas-btn-sm {
   padding: 8px 16px;
   font-size: 0.78rem;
+}
+
+.vas-btn-dark {
+  background: #171412 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.vas-btn-dark:hover {
+  background: #2a241f !important;
+  color: var(--vas-champagne, #f2c46a) !important;
+  border-color: #d4af37 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 /* --------------------------------------------------------------------------
@@ -400,8 +430,11 @@ img {
 .vas-btn-nav-login {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
-  padding: 10px 22px;
+  height: 42px;
+  padding: 0 22px;
+  box-sizing: border-box;
   border-radius: var(--vas-radius-pill);
   background: rgba(216, 154, 140, 0.32);
   border: 1px solid rgba(242, 186, 168, 0.45);
@@ -465,6 +498,7 @@ img {
     opacity: 0;
     transform: translateY(10px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -624,14 +658,12 @@ img {
   position: absolute;
   inset: 0;
   z-index: 3;
-  background: linear-gradient(
-    90deg,
-    rgba(18, 14, 13, 0.90) 0%,
-    rgba(22, 17, 16, 0.76) 34%,
-    rgba(26, 20, 19, 0.44) 58%,
-    rgba(26, 20, 19, 0.12) 80%,
-    rgba(26, 20, 19, 0.04) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(18, 14, 13, 0.90) 0%,
+      rgba(22, 17, 16, 0.76) 34%,
+      rgba(26, 20, 19, 0.44) 58%,
+      rgba(26, 20, 19, 0.12) 80%,
+      rgba(26, 20, 19, 0.04) 100%);
   pointer-events: none;
 }
 
@@ -639,12 +671,10 @@ img {
   position: absolute;
   inset: 0;
   z-index: 3;
-  background: radial-gradient(
-    ellipse at 78% 48%,
-    rgba(0, 0, 0, 0) 42%,
-    rgba(20, 15, 14, 0.35) 82%,
-    rgba(16, 12, 11, 0.72) 100%
-  );
+  background: radial-gradient(ellipse at 78% 48%,
+      rgba(0, 0, 0, 0) 42%,
+      rgba(20, 15, 14, 0.35) 82%,
+      rgba(16, 12, 11, 0.72) 100%);
   pointer-events: none;
 }
 
@@ -669,6 +699,7 @@ img {
     opacity: 0;
     transform: translateY(24px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -846,6 +877,7 @@ img {
     opacity: 1;
     transform: translateY(0);
   }
+
   100% {
     opacity: 0;
     transform: translateY(10px);
@@ -1332,6 +1364,7 @@ img {
   margin-bottom: 14px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1361,6 +1394,12 @@ img {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+.vas-product-actions .vas-btn-custom-loom,
+.vas-product-actions .vas-btn-gold {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 /* --------------------------------------------------------------------------
@@ -1853,7 +1892,9 @@ img {
   color: var(--vas-ink);
 }
 
-.vas-input, .vas-select, .vas-textarea {
+.vas-input,
+.vas-select,
+.vas-textarea {
   width: 100%;
   padding: 13px 20px;
   border: 1px solid rgba(216, 154, 140, 0.42);
@@ -1873,7 +1914,9 @@ img {
   resize: vertical;
 }
 
-.vas-input:focus, .vas-select:focus, .vas-textarea:focus {
+.vas-input:focus,
+.vas-select:focus,
+.vas-textarea:focus {
   border-color: var(--vas-rose);
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 0 0 3.5px rgba(216, 154, 140, 0.28);
@@ -2262,33 +2305,6 @@ img {
   color: var(--vas-ink);
 }
 
-.vas-field-error {
-  color: var(--vas-danger);
-  font-size: 0.76rem;
-  font-weight: 500;
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
-.vas-text-link {
-  color: var(--vas-rose-dark);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.vas-text-link:hover {
-  color: var(--vas-gold-dark);
-}
-
-.vas-auth-switch-text {
-  font-size: 0.88rem;
-  color: var(--vas-muted);
-  text-align: center;
-}
-
 /* --------------------------------------------------------------------------
    12. CUSTOMER WORKSPACE / DASHBOARD
    -------------------------------------------------------------------------- */
@@ -2430,12 +2446,35 @@ img {
   text-transform: uppercase;
 }
 
-.vas-status-placed { background: #e0f2fe; color: #0369a1; }
-.vas-status-confirmed { background: #fef3c7; color: #b45309; }
-.vas-status-tailoring { background: #f3e8ff; color: #7e22ce; }
-.vas-status-ready { background: #dcfce7; color: #15803d; }
-.vas-status-shipped { background: #ffedd5; color: #c2410c; }
-.vas-status-delivered { background: #d1fae5; color: #047857; }
+.vas-status-placed {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.vas-status-confirmed {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.vas-status-tailoring {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.vas-status-ready {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.vas-status-shipped {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.vas-status-delivered {
+  background: #d1fae5;
+  color: #047857;
+}
 
 /* 6 Production Stages (Master Tailor Tracker) */
 .vas-stages-tracker {
@@ -2711,8 +2750,15 @@ img {
 }
 
 @keyframes vasToastIn {
-  from { transform: translateY(16px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Formal Tax Invoice Printable View */
@@ -2726,8 +2772,15 @@ img {
 }
 
 @media print {
-  body * { visibility: hidden; }
-  .vas-invoice-container, .vas-invoice-container * { visibility: visible; }
+  body * {
+    visibility: hidden;
+  }
+
+  .vas-invoice-container,
+  .vas-invoice-container * {
+    visibility: visible;
+  }
+
   .vas-invoice-container {
     position: absolute;
     top: 0;
@@ -2969,6 +3022,7 @@ img {
    17. RESPONSIVE BREAKPOINTS (NO HORIZONTAL OVERFLOW)
    -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
+
   .vas-hero-grid,
   .vas-about-grid,
   .vas-studio-grid,
@@ -3077,20 +3131,19 @@ img {
 /* Service Locking & Sanctuary Gate */
 .vas-service-lock-card {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  text-align: left;
-  padding: 14px 22px;
-  background: linear-gradient(135deg, rgba(254, 250, 246, 0.98) 0%, rgba(246, 238, 240, 0.96) 100%);
-  border: 1px solid var(--vas-lavender-border, rgba(162, 108, 126, 0.25));
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(71, 33, 47, 0.05);
-  margin-bottom: 22px;
-  gap: 16px;
-  flex-wrap: wrap;
+  text-align: center;
+  padding: 36px 28px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--vas-border);
+  border-radius: var(--vas-radius);
+  box-shadow: 0 12px 36px rgba(42, 33, 28, 0.08);
+  margin-bottom: 28px;
   position: relative;
-  z-index: 5;
+  z-index: 10;
 }
 
 .vas-lock-badge {
@@ -3099,14 +3152,13 @@ img {
   gap: 6px;
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--vas-gold-dark);
-  background: rgba(184, 142, 76, 0.14);
+  background: rgba(184, 142, 76, 0.12);
   padding: 4px 12px;
   border-radius: var(--vas-radius-pill);
-  margin-bottom: 0;
-  white-space: nowrap;
+  margin-bottom: 8px;
 }
 
 .vas-service-content-locked {
@@ -3118,14 +3170,14 @@ img {
   transition: opacity 0.35s ease, filter 0.35s ease;
 }
 
-.vas-nav-menu > div {
+.vas-nav-menu>div {
   display: flex;
   align-items: center;
   gap: 36px;
 }
 
 @media (max-width: 992px) {
-  .vas-nav-menu > div {
+  .vas-nav-menu>div {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
@@ -3487,9 +3539,11 @@ img {
   .vas-pdp-thumbs-row {
     grid-template-columns: repeat(3, 1fr);
   }
+
   .vas-studio-angle-bar {
     border-radius: 12px;
   }
+
   .vas-studio-angle-btn {
     flex: 1 1 45%;
     border-radius: 8px;
@@ -3638,8 +3692,17 @@ img {
 }
 
 @keyframes vasPulseSoft {
-  0%, 100% { opacity: 0.95; transform: translateX(-50%) translateY(0); }
-  50% { opacity: 0.8; transform: translateX(-50%) translateY(-2px); }
+
+  0%,
+  100% {
+    opacity: 0.95;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(-2px);
+  }
 }
 
 /* Turntable Side Navigation Arrows */
@@ -3673,8 +3736,13 @@ img {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
 }
 
-.vas-360-nav-arrow.prev { left: 12px; }
-.vas-360-nav-arrow.next { right: 12px; }
+.vas-360-nav-arrow.prev {
+  left: 12px;
+}
+
+.vas-360-nav-arrow.next {
+  right: 12px;
+}
 
 /* 360 Toolbar Row (Auto-Spin, Zoom, Scrub) */
 .vas-360-toolbar {
@@ -3790,6 +3858,1020 @@ img {
   border-color: var(--vas-gold-dark);
   box-shadow: 0 0 0 2px rgba(184, 142, 76, 0.35);
 }
+
+
+/* --------------------------------------------------------------------------
+   16. DASHBOARD TOPBAR & PICTORIAL STATS
+   -------------------------------------------------------------------------- */
+.vas-dash-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 28px;
+  padding: 24px 32px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--vas-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.vas-visual-card {
+  background: #ffffff;
+  border: 1px solid var(--vas-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--vas-shadow-sm);
+  margin-bottom: 24px;
+}
+
+.vas-gauge-track {
+  width: 100%;
+  height: 12px;
+  background: #ede7dc;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  margin: 12px 0 16px;
+}
+
+.vas-gauge-seg {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.vas-gauge-seg.gold {
+  background: linear-gradient(90deg, #d4af37, #b88e4c);
+}
+
+.vas-gauge-seg.rose {
+  background: linear-gradient(90deg, #dfa393, #c97967);
+}
+
+.vas-gauge-seg.navy {
+  background: linear-gradient(90deg, #3a506b, #1c2541);
+}
+
+.vas-gauge-seg.emerald {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+.vas-gauge-seg.ruby {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+/* 6-Stage Visual Stepper */
+.vas-stepper-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin: 20px 0 12px;
+  padding: 0 8px;
+}
+
+.vas-stepper-track::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background: #e6dfd5;
+  z-index: 1;
+}
+
+.vas-stepper-progress {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, #27ae60, #d4af37);
+  z-index: 2;
+  transition: width 0.4s ease;
+}
+
+.vas-stepper-node {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.vas-stepper-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #d4c8b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vas-muted);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+}
+
+.vas-stepper-node.completed .vas-stepper-icon {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #ffffff;
+}
+
+.vas-stepper-node.active .vas-stepper-icon {
+  background: #b88e4c;
+  border-color: #b88e4c;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(184, 142, 76, 0.25);
+  transform: scale(1.12);
+}
+
+.vas-stepper-lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--vas-muted);
+  margin-top: 6px;
+  max-width: 80px;
+  line-height: 1.25;
+}
+
+.vas-stepper-node.active .vas-stepper-lbl {
+  color: var(--vas-gold-dark);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   ROLE-BASED DASHBOARD ACCESS CONTROL & ISOLATION
+   Hides public website & navbar when Admin or Tailor is logged in
+   ========================================================================== */
+body.vas-role-admin #topHeader,
+body.vas-role-tailor #topHeader,
+body.vas-role-customer #topHeader,
+body.vas-role-admin #publicWebsiteView,
+body.vas-role-tailor #publicWebsiteView,
+body.vas-role-customer #publicWebsiteView,
+body.vas-role-admin #customerDashboardView,
+body.vas-role-tailor #customerDashboardView {
+  display: none !important;
+}
+
+body.vas-role-admin #adminDashboardView {
+  display: flex !important;
+}
+
+body.vas-role-tailor #tailorDashboardView {
+  display: flex !important;
+}
+
+body.vas-role-customer #customerDashboardView {
+  display: flex !important;
+}
+
+body.vas-role-admin #tailorDashboardView,
+body.vas-role-tailor #adminDashboardView,
+body.vas-role-customer #adminDashboardView,
+body.vas-role-customer #tailorDashboardView {
+  display: none !important;
+}
+
+/* ==========================================================================
+   ENHANCED NAVBAR ALIGNMENT & BADGES
+   ========================================================================== */
+.vas-icon-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  flex-shrink: 0;
+  padding: 0;
+}
+.vas-icon-btn:hover {
+  background: rgba(216, 154, 140, 0.35);
+  border-color: var(--vas-rose);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+.vas-pill-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #d89a8c, #c58273);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #1a1412;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+/* Navigation bar layout & alignment */
+.vas-nav-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: 100% !important;
+}
+
+.vas-nav-menu {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+}
+
+/* Visitor nav links & actions before login */
+#unauthNavLinks {
+  display: flex !important;
+  align-items: center !important;
+  gap: 32px !important;
+  height: 100% !important;
+}
+
+#unauthNavActions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: 100% !important;
+}
+
+/* Member links & actions strictly hidden before login */
+#authNavLinks {
+  display: none !important;
+  align-items: center !important;
+  gap: 28px !important;
+  height: 100% !important;
+}
+
+#authNavActions {
+  display: none !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: 100% !important;
+}
+
+/* Clean authentication state switching */
+body.vas-logged-in #unauthNavLinks,
+body.vas-logged-in #unauthNavActions {
+  display: none !important;
+}
+
+body.vas-logged-in #authNavLinks {
+  display: flex !important;
+}
+
+body.vas-logged-in #authNavActions {
+  display: flex !important;
+}
+
+.vas-nav-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  padding: 0 4px !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.03em !important;
+  position: relative !important;
+  text-decoration: none !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  transition: color 0.25s ease !important;
+  white-space: nowrap !important;
+}
+
+.vas-nav-link:hover {
+  color: var(--vas-peach) !important;
+}
+
+.vas-nav-link.active {
+  color: #ffffff !important;
+}
+
+.vas-nav-link::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 22px !important;
+  left: 0 !important;
+  width: 0% !important;
+  height: 2px !important;
+  background: var(--vas-rose) !important;
+  border-radius: 2px !important;
+  transition: width 0.25s ease !important;
+}
+
+.vas-nav-link.active::after {
+  width: 100% !important;
+}
+
+/* ==========================================================================
+   REFERENCE-IMAGE LUXURY DASHBOARDS (ADMIN, TAILOR, CUSTOMER)
+   ========================================================================== */
+.vas-dashboard-view {
+  background: #fbf8f2 !important;
+  min-height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.vas-dash-shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: #fbf8f2;
+}
+
+/* Left Dark Obsidian Sidebar */
+.vas-dash-sidebar-ref {
+  width: 260px;
+  min-width: 260px;
+  background: #171412;
+  border-right: 1px solid rgba(212, 175, 55, 0.16);
+  padding: 24px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 10;
+}
+.vas-dash-sidebar-brand {
+  padding: 0 10px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 20px;
+}
+.vas-dash-brand-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+  display: block;
+}
+.vas-dash-brand-sub {
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  color: var(--vas-champagne, #dfc7a7);
+  text-transform: uppercase;
+  font-weight: 600;
+  display: block;
+  margin-top: 2px;
+}
+.vas-dash-nav-ref {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+.vas-dash-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+.vas-dash-nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+.vas-dash-nav-item.active {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.05) 100%);
+  border-left: 3px solid #d4af37;
+  color: #ffffff;
+  font-weight: 600;
+}
+.vas-dash-nav-item span.icon {
+  margin-right: 10px;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+.vas-dash-nav-badge {
+  background: #b88628;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.vas-dash-sidebar-footer {
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.vas-dash-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vas-dash-avatar-sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f4ebdc;
+  border: 1.5px solid #d4af37;
+  color: #8a6d3b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.vas-dash-user-meta strong {
+  display: block;
+  font-size: 0.82rem;
+  color: #ffffff;
+}
+.vas-dash-user-meta small {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+.vas-dash-logout-btn {
+  background: transparent;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.vas-dash-logout-btn:hover {
+  background: rgba(231, 76, 60, 0.15);
+}
+
+/* Right Main Luxury Canvas */
+.vas-dash-canvas-ref {
+  flex: 1;
+  padding: 28px 36px 50px;
+  background: #fbf8f2;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Topbar in Canvas */
+.vas-dash-topbar-ref {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.vas-dash-greeting h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.65rem;
+  margin: 0;
+  color: #1a1412;
+}
+.vas-dash-greeting p {
+  margin: 3px 0 0;
+  font-size: 0.84rem;
+  color: #7d7269;
+}
+.vas-dash-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.vas-dash-search-box {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 7px 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+.vas-dash-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.82rem;
+  margin-left: 8px;
+  width: 170px;
+}
+.vas-dash-top-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #1a1412;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+.vas-dash-signout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #b33939;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vas-dash-signout-btn:hover {
+  background: #962828;
+  transform: translateY(-1px);
+}
+
+/* 5 KPI Metric Cards Grid */
+.vas-dash-kpi-row-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.vas-dash-kpi-box {
+  background: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.vas-dash-kpi-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #7d7269;
+  font-weight: 500;
+}
+.vas-dash-kpi-ico {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+.vas-dash-kpi-number {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #1a1412;
+  margin: 6px 0 2px;
+}
+.vas-dash-kpi-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #27ae60;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* 2-Column Dashboard Main Layout */
+.vas-dash-main-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.vas-dash-panel {
+  background: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px;
+}
+.vas-dash-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.vas-dash-panel-head h3 {
+  font-size: 1.05rem;
+  margin: 0;
+  color: #1a1412;
+  font-weight: 600;
+}
+.vas-dash-link-action {
+  font-size: 0.78rem;
+  color: var(--vas-gold-dark, #a07828);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.vas-dash-link-action:hover {
+  text-decoration: underline;
+}
+
+/* Reference Modern Table */
+.vas-dash-modern-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.vas-dash-modern-table th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: #8c8278;
+  letter-spacing: 0.05em;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0eae1;
+  text-align: left;
+}
+.vas-dash-modern-table td {
+  padding: 12px 12px;
+  font-size: 0.84rem;
+  color: #2b221d;
+  border-bottom: 1px solid #f6f1ea;
+  vertical-align: middle;
+}
+.vas-dash-modern-table tr:hover {
+  background: #faf6f0;
+}
+
+/* Status Pills */
+.vas-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.vas-status-pill.active,
+.vas-status-pill.delivered {
+  background: rgba(39, 174, 96, 0.12);
+  color: #27ae60;
+}
+.vas-status-pill.processing,
+.vas-status-pill.pending {
+  background: rgba(243, 156, 18, 0.14);
+  color: #d68910;
+}
+.vas-status-pill.shipped {
+  background: rgba(41, 128, 185, 0.14);
+  color: #2980b9;
+}
+.vas-status-pill.in-progress {
+  background: rgba(142, 68, 173, 0.14);
+  color: #8e44ad;
+}
+.vas-status-pill.inactive {
+  background: rgba(127, 140, 141, 0.14);
+  color: #7f8c8d;
+}
+
+/* Quick Action Buttons Grid */
+.vas-dash-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.vas-dash-quick-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fdfbf7;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #3d312a;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.vas-dash-quick-btn:hover {
+  background: #f4ebdc;
+  border-color: #d4af37;
+  transform: translateY(-1px);
+}
+
+/* Activity Feed */
+.vas-dash-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.vas-dash-activity-item {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+.vas-dash-activity-ico {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.14);
+  color: #93681e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+.vas-dash-activity-meta strong {
+  display: block;
+  color: #1a1412;
+  font-size: 0.82rem;
+}
+.vas-dash-activity-meta span {
+  color: #8c8278;
+  font-size: 0.72rem;
+}
+
+/* Boutique Promo Banner */
+.vas-dash-banner-box {
+  background: linear-gradient(135deg, #1f1a17 0%, #2e2621 100%);
+  border-radius: 12px;
+  padding: 24px 28px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+.vas-dash-banner-box h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  margin: 0 0 4px;
+  color: #ffffff;
+}
+.vas-dash-banner-box p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 1024px) {
+  .vas-dash-kpi-row-5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .vas-dash-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .vas-dash-shell {
+    flex-direction: column;
+  }
+  .vas-dash-sidebar-ref {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .vas-dash-kpi-row-5 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .vas-dash-canvas-ref {
+    padding: 20px 16px;
+  }
+}
+
+
+/* ==========================================================================
+   VASTRAÉ LUXURY EMPTY STATES & BRAND-ALIGNED DASHBOARD COMPONENTS
+   Brand Palette: #FCF0DA, #AEAC78, #F2C46A, #4C4541
+   ========================================================================== */
+.vas-empty-state-luxury {
+  text-align: center;
+  padding: 56px 24px;
+  background: #ffffff;
+  border: 1px solid var(--vas-border, #e7dfd3);
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(76, 69, 65, 0.04);
+  max-width: 680px;
+  margin: 20px auto;
+}
+.vas-empty-state-icon {
+  font-size: 2.8rem;
+  margin-bottom: 14px;
+  display: inline-block;
+  opacity: 0.9;
+}
+.vas-empty-state-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--vas-brand-dark, #4C4541);
+  margin-bottom: 8px;
+}
+.vas-empty-state-desc {
+  font-size: 0.88rem;
+  color: var(--vas-muted, #726458);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 20px;
+}
+.vas-brand-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.vas-brand-badge-gold {
+  background: rgba(242, 196, 106, 0.2);
+  color: #8f6e24;
+  border: 1px solid rgba(242, 196, 106, 0.4);
+}
+.vas-brand-badge-sage {
+  background: rgba(174, 172, 120, 0.2);
+  color: #555431;
+  border: 1px solid rgba(174, 172, 120, 0.4);
+}
+.vas-brand-badge-dark {
+  background: var(--vas-brand-dark, #4C4541);
+  color: #FCF0DA;
+}
+
+
+/* ==========================================================================
+   OWN FABRIC — 9-STAGE PHYSICAL INSPECTION WORKFLOW STYLING
+   ========================================================================== */
+.vas-of-stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 24px 0 20px;
+  padding: 10px 0 16px;
+  overflow-x: auto;
+}
+.vas-of-stepper::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: #e7dfd3;
+  z-index: 1;
+}
+.vas-of-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  min-width: 96px;
+  background: transparent;
+  padding: 0 4px;
+}
+.vas-of-step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #e7dfd3;
+  color: #7d7269;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.vas-of-step.completed .vas-of-step-circle {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #ffffff;
+}
+.vas-of-step.active .vas-of-step-circle {
+  background: #d4af37;
+  border-color: #b88628;
+  color: #1a1412;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25);
+}
+.vas-of-step.warning .vas-of-step-circle {
+  background: #e67e22;
+  border-color: #d35400;
+  color: #ffffff;
+}
+.vas-of-step.danger .vas-of-step-circle {
+  background: #e74c3c;
+  border-color: #c0392b;
+  color: #ffffff;
+}
+.vas-of-step-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #7d7269;
+  line-height: 1.25;
+  display: block;
+}
+.vas-of-step.active .vas-of-step-title {
+  color: #1a1412;
+  font-weight: 700;
+}
+.vas-of-notice-gold {
+  background: #fffcf4;
+  border: 1px solid #f2c46a;
+  border-left: 4px solid #b88628;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 0.85rem;
+  color: #4c4541;
+}
+.vas-of-notice-danger {
+  background: #fdf5f4;
+  border: 1px solid #f5b7b1;
+  border-left: 4px solid #e74c3c;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 0.85rem;
+  color: #78261e;
+}
+.vas-of-notice-success {
+  background: #f2f9f4;
+  border: 1px solid #a9dfbf;
+  border-left: 4px solid #27ae60;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 0.85rem;
+  color: #195b34;
+}
+
+.vas-field-error {
+  color: var(--vas-danger);
+  font-size: 0.76rem;
+  font-weight: 500;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.vas-text-link {
+  color: var(--vas-rose-dark);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.vas-text-link:hover {
+  color: var(--vas-gold-dark);
+}
+
+.vas-auth-switch-text {
+  font-size: 0.88rem;
+  color: var(--vas-muted);
+  text-align: center;
+}
+
 
 /* ==========================================================================
    VASTRAÉ ATELIER — AI VIRTUAL TRY-ON & DIGITAL FASHION STUDIO
@@ -4305,6 +5387,7 @@ img {
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -5884,4 +6967,3 @@ img {
   padding-top: 20px;
   border-top: 1px solid rgba(197, 160, 89, 0.2);
 }
-

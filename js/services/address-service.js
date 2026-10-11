@@ -10,38 +10,9 @@
   const STORAGE_KEY = "vastrae_addresses";
 
   const vastraeAddressService = {
-    // Default sample addresses for demo user
+    // Saved addresses: strictly empty by default
     getInitialAddresses: function (userId) {
-      return [
-        {
-          id: "ADDR-101",
-          userId: userId || "USR-101",
-          fullName: "Ananya Sharma",
-          phone: "+91 98860 12345",
-          building: "Villa 42, Palm Meadows",
-          street: "100 Feet Road",
-          area: "Indiranagar",
-          city: "Bengaluru",
-          state: "Karnataka",
-          pinCode: "560038",
-          type: "Home",
-          isDefault: true
-        },
-        {
-          id: "ADDR-102",
-          userId: userId || "USR-101",
-          fullName: "Ananya Sharma (Atelier Work)",
-          phone: "+91 98860 12345",
-          building: "Level 8, Prestige Trade Tower",
-          street: "Palace Road",
-          area: "Vasanth Nagar",
-          city: "Bengaluru",
-          state: "Karnataka",
-          pinCode: "560001",
-          type: "Work",
-          isDefault: false
-        }
-      ];
+      return [];
     },
 
     getUserStorageKey: function (userId) {
@@ -51,15 +22,30 @@
     },
 
     getAddresses: function (userId) {
-      if (!window.vastraeStorage) return this.getInitialAddresses(userId);
       const key = this.getUserStorageKey(userId);
-      const stored = window.vastraeStorage.get(key, null);
-      if (!stored) {
-        const initial = this.getInitialAddresses(userId);
-        window.vastraeStorage.set(key, initial);
-        return initial;
+      let stored = null;
+      if (window.vastraeStorage) {
+        stored = window.vastraeStorage.get(key, null);
+      } else {
+        try { stored = JSON.parse(localStorage.getItem(key)); } catch (e) { stored = null; }
       }
-      return stored;
+
+      if (!stored || !Array.isArray(stored)) {
+        return [];
+      }
+
+      // Purge fake demo addresses
+      const cleaned = stored.filter(function (a) {
+        return a.id !== "ADDR-101" && a.id !== "ADDR-102" &&
+               (a.fullName || "").indexOf("Ananya") === -1;
+      });
+
+      if (cleaned.length !== stored.length) {
+        if (window.vastraeStorage) window.vastraeStorage.set(key, cleaned);
+        try { localStorage.setItem(key, JSON.stringify(cleaned)); } catch (e) {}
+      }
+
+      return cleaned;
     },
 
     saveAddress: function (userId, addressData) {

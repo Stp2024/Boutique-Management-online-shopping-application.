@@ -20,39 +20,41 @@
     STATUSES: STATUSES,
 
     getInitialConsultations: function () {
-      return [
-        {
-          id: "VST-CON-1001",
-          userId: "USR-101",
-          customerName: "Ananya Sharma",
-          customerPhone: "+91 98860 12345",
-          customerEmail: "ananya@example.com",
-          stylistName: "Meenakshi Sundaram (Head Couturier)",
-          date: "2026-10-12",
-          slot: "03:00 PM – 03:45 PM (Afternoon)",
-          purpose: "Bridal Trousseau Blouse & Lehenga Embroidery Styling",
-          meetLink: "https://meet.google.com/vas-couture-101",
-          status: STATUSES.CONFIRMED,
-          createdAt: new Date().toISOString()
-        }
-      ];
+      return [];
     },
 
     getConsultations: function () {
-      if (!window.vastraeStorage) return this.getInitialConsultations();
-      const stored = window.vastraeStorage.get(STORAGE_KEY, null);
-      if (!stored) {
-        const initial = this.getInitialConsultations();
-        window.vastraeStorage.set(STORAGE_KEY, initial);
-        return initial;
+      let stored = null;
+      if (window.vastraeStorage) {
+        stored = window.vastraeStorage.get(STORAGE_KEY, null);
+      } else {
+        try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { stored = null; }
       }
-      return stored;
+
+      if (!stored || !Array.isArray(stored)) {
+        return [];
+      }
+
+      // Purge fake demo consultation
+      const cleaned = stored.filter(function (c) {
+        return c.id !== "VST-CON-1001" && (c.customerName || "").indexOf("Ananya") === -1;
+      });
+
+      if (cleaned.length !== stored.length) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
+      }
+
+      return cleaned;
     },
 
-    getCustomerConsultations: function (userId) {
+    getCustomerConsultations: function (userId, customerName) {
       const all = this.getConsultations();
-      if (!userId) return all;
-      return all.filter((c) => c.userId === userId || c.customerName === userId);
+      if (!userId && !customerName) return [];
+      return all.filter(function (c) {
+        return (userId && c.userId === userId) ||
+               (customerName && (c.customerName || "").toLowerCase() === customerName.toLowerCase());
+      });
     },
 
     createConsultation: function (data) {

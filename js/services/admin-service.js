@@ -54,7 +54,7 @@
       return { valid: true, coupon: found, discount: discount, message: `Coupon ${found.code} applied! ₹${discount.toLocaleString()} saved.` };
     },
 
-    // Calculate Real-Time Store Analytics Metrics
+    // Calculate Real-Time Store Analytics Metrics (100% Dynamic from actual frontend data)
     getAnalyticsSummary: function () {
       let orders = [];
       let sareeRequests = [];
@@ -64,18 +64,23 @@
       if (window.vastraeSareeRebornService) sareeRequests = window.vastraeSareeRebornService.getAllRequests();
       if (window.vastraeAuth) users = window.vastraeAuth.getUsers();
 
-      const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0) + 1482450; // Add legacy baseline
-      const totalOrdersCount = orders.length + 142;
-      const pendingOrdersCount = orders.filter((o) => o.currentStage < 6).length;
+      const tailors = users.filter((u) => u.role === "tailor");
+      const activeTailors = tailors.filter((t) => (t.status || "Active").toLowerCase() === "active");
+      const inactiveTailors = tailors.filter((t) => (t.status || "").toLowerCase() === "inactive");
+
+      const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || o.total || 0), 0);
+      const totalOrdersCount = orders.length + sareeRequests.length;
+      const pendingOrdersCount = orders.filter((o) => (o.currentStage || 1) < 6 && (o.status !== "Delivered")).length;
       const activeCustomersCount = users.filter((u) => u.role === "customer").length;
-      const activeTailorsCount = users.filter((u) => u.role === "tailor").length;
 
       return {
         totalRevenue: totalRevenue,
         totalOrders: totalOrdersCount,
         pendingOrders: pendingOrdersCount,
         activeCustomers: activeCustomersCount,
-        activeTailors: activeTailorsCount,
+        totalTailors: tailors.length,
+        activeTailors: activeTailors.length,
+        inactiveTailors: inactiveTailors.length,
         sareeRequestsCount: sareeRequests.length
       };
     }

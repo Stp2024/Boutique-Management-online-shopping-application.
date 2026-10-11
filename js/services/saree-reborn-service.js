@@ -24,57 +24,55 @@
   const vastraeSareeRebornService = {
     STATUSES: STATUSES,
 
-    // Initial demo dataset for Saree Reborn
+    // Saree Reborn commissions: strictly empty by default
     getInitialData: function () {
-      return [
-        {
-          id: "VST-SR-1001",
-          userId: "USR-101",
-          customerName: "Ananya Sharma",
-          customerPhone: "+91 98860 12345",
-          customerEmail: "ananya@example.com",
-          sareeType: "Vintage 1984 Kanjeevaram Pure Zari Silk Saree",
-          sareeAge: "40+ Years (Maternal Heirloom)",
-          desiredGarment: "Lehenga & Custom Blouse Set",
-          designRequirements: "Convert 5.5m body drape into 16-kali kalidaar lehenga skirt with gold zari border hem. Use pallu for royal sweetheart padded blouse.",
-          sareeImage: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85",
-          pickupAddress: "No. 42, 100 Feet Road, Indiranagar, Bengaluru, KA - 560038",
-          pickupDate: "2026-10-10",
-          pickupSlot: "Morning (10 AM - 1 PM)",
-          status: STATUSES.INSPECTION,
-          progressPercent: 35,
-          adminNotes: "Physical fabric inspection complete. Pure silk warp 100% intact with minor selvage fraying. Approved for Kanjeevaram Kalidaar reconstruction.",
-          assignedTailorId: "TAIL-101",
-          assignedTailorName: "Master Savitha Devi",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ];
+      return [];
     },
 
     // Retrieve all Saree Reborn requests
     getAllRequests: function () {
-      if (!window.vastraeStorage) return [];
-      const stored = window.vastraeStorage.get(STORAGE_KEY, null);
-      if (!stored) {
-        const initial = this.getInitialData();
-        window.vastraeStorage.set(STORAGE_KEY, initial);
-        return initial;
+      let stored = null;
+      if (window.vastraeStorage) {
+        stored = window.vastraeStorage.get(STORAGE_KEY, null);
+      } else {
+        try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { stored = null; }
       }
-      return stored;
+
+      if (!stored || !Array.isArray(stored)) {
+        return [];
+      }
+
+      // Purge fake demo request
+      const cleaned = stored.filter(function (r) {
+        return r.id !== "VST-SR-1001" && (r.customerName || "").indexOf("Ananya") === -1;
+      });
+
+      if (cleaned.length !== stored.length) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
+      }
+
+      return cleaned;
     },
 
     // Get requests for a specific customer
-    getCustomerRequests: function (userId) {
+    getCustomerRequests: function (userId, customerName) {
       const all = this.getAllRequests();
-      if (!userId) return all;
-      return all.filter((req) => req.userId === userId || req.customerName === userId);
+      if (!userId && !customerName) return [];
+      return all.filter(function (req) {
+        return (userId && req.userId === userId) ||
+               (customerName && (req.customerName || "").toLowerCase() === customerName.toLowerCase());
+      });
     },
 
     // Get requests assigned to a tailor
-    getTailorRequests: function (tailorId) {
+    getTailorRequests: function (tailorId, tailorName) {
       const all = this.getAllRequests();
-      return all.filter((req) => req.assignedTailorId === tailorId);
+      if (!tailorId && !tailorName) return [];
+      return all.filter(function (r) {
+        return (tailorId && r.assignedTailorId === tailorId) ||
+               (tailorName && (r.assignedTailorName || "").toLowerCase() === tailorName.toLowerCase());
+      });
     },
 
     // Create a new Saree Reborn request
