@@ -76,38 +76,47 @@ operations management (Customer, Master Tailor, Admin).
 
 3. TECHNICAL ARCHITECTURE
 --------------------------------------------------------------------------------
-- Modular Component System: Single Page Application (SPA) architecture loading 
-  29 modular HTML components on-demand (js/section-loader.js & js/sections.js).
-- Design System & Aesthetics (css/styles.css): Premium luxury dark & gold theme, 
-  glassmorphic cards, smooth micro-interactions, responsive grid layouts, and 
-  custom typography (Playfair Display & DM Sans).
-- State Management (js/app.js, js/products.js, js/features.js): Dynamic cart & 
-  wishlist management, measurement profile persistence, custom order 
-  configuration engine, and local storage sync.
+- Unified SPA Architecture: High-performance Single Page Application (Index.html)
+  with dedicated multi-page views (Home, About Us, Collection, Services, Contact Us),
+  role-based authenticated workspaces, and modal drawers.
+- Design System & Aesthetics (css/styles.css): Master Atelier design system,
+  luxurious warm-light aesthetics, responsive grids, and Google Fonts typography
+  (Playfair Display & Plus Jakarta Sans).
+- State Management & Services: Modular service architecture (js/services/) with
+  centralized data persistence, dynamic cart, wishlist, and session management,
+  driven by the master controller (js/app.js) and product catalogue (js/data.js).
 
 
 4. DIRECTORY & FILE STRUCTURE
 --------------------------------------------------------------------------------
-project vinuthnew/
-├── Index.html                  # Main SPA Shell with container mounts & script bindings
+boutique-project/
+├── Index.html                  # Main Application Shell (Pages, Modals & Workspaces)
+├── hero_boutique_bg.jpg        # Atelier Hero Cinematic Poster
 ├── css/
-│   └── styles.css              # Consolidated Design System (Glassmorphism, Animations, Themes)
-├── js/
-│   ├── app.js                  # Main Application Logic, Cart & State Management
-│   ├── products.js             # Comprehensive Product Data Catalog
-│   ├── catalogue.js            # Storefront Filtering, Pagination & Sorting Logic
-│   ├── features.js             # Custom Bespoke Studio, Own Fabric & Fitting Logic
-│   ├── traditional.js          # Pavilion-specific Interactions
-│   ├── genz.js                 # Gen-Z & Trend Finder Assistant
-│   ├── sections.js             # Section registry & configuration
-│   └── section-loader.js       # Asynchronous HTML Section Loader Engine
-└── sections/                   # 29 Dynamic Modular HTML Components
-    ├── auth/                   # Registration & Role-based Login
-    ├── shop/ & catalogue/      # Shopping Storefront & Wardrobe Builder
-    ├── custom/ & own-fabric/   # Bespoke Studio & Fabric Upload Engine
-    ├── measurements/ & tryon/  # Sizing Profiles & AI Virtual Try-On
-    ├── tailor-workspace/       # Master Tailor Production Dashboard
-    ├── admin-workspace/        # Store Admin Management Studio
-    └── tracking/ & services/   # Order Tracker & Atelier Services
+│   └── styles.css              # Master Design System (Atelier Light Luxury & Typography)
+├── images/
+│   └── products/               # Curated High-Definition Product Photography
+│       ├── accessories/        # Artisanal Potlis & Accents
+│       ├── kids/               # Boys Sherwanis & Girls Frocks
+│       ├── men/                # Suits, Sherwanis, Kurtas & Waistcoats
+│       └── women/              # Sarees, Lehengas, Suits & Cholis
+└── js/
+    ├── app.js                  # Master Application Controller & Navigation Routing
+    ├── data.js                 # Complete Boutique Product Catalogue & Specifications
+    └── services/               # Modular Application Services
+        ├── accessory-service.js     # Atelier Accessories & Pairing Service
+        ├── address-service.js       # Customer Delivery Address Management
+        ├── admin-service.js         # Operations, Inventory & Coupon Engine
+        ├── auth.js                  # Multi-Role Authentication & Session Storage
+        ├── cart-service.js          # Shopping Bag & Checkout State
+        ├── consultation-service.js  # Stylist Video Session Bookings
+        ├── measurement-service.js   # 22-Point Biometric Family Profiles
+        ├── notification-service.js  # Real-Time Atelier Notifications
+        ├── order-service.js         # Order Lifecycle & Tracking Logic
+        ├── products-service.js      # Filter, Sort & Search Engine
+        ├── saree-reborn-service.js  # Upcycling Commission Workflow
+        ├── storage.js               # LocalStorage Sync & Key Abstraction
+        ├── tailor-service.js        # Tailor Workbench & Stage Updater
+        └── validation.js            # Input & Measurement Validation Rules
 
 ================================================================================

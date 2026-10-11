@@ -2283,7 +2283,85 @@ const VASTRAE_DATA = {
         "revenue": 165576
       }
     ]
-  }
+  },
+  "customizationOptions": {
+    "women": {
+      "categories": ["Blouse", "Lehenga Choli", "Anarkali Suit", "Straight Kurti Set", "Pre-Stitched Saree Drape"],
+      "necklines": ["Sweetheart Cut", "Royal Paan Neck", "Jewel Neck", "Queen Anne Arch", "Scoop Deep Arch", "Mandarin Collar V-Slit"],
+      "backNecklines": [
+        "Deep U-Arch with Latkans & Silk Dori",
+        "Teardrop Cutout with Gold Zari Border",
+        "High Sheer Illusion Keyhole with Pearl Buttons",
+        "Temple Window Cut with Coin Lace Edge",
+        "Criss-Cross Silk Tie-Up Dori",
+        "Modest High Back with Gold Button Spine"
+      ],
+      "sleeves": ["Elbow Length (Signature)", "Sleeveless Minimal", "Cap Sleeves with Scallop Edge", "Full Length Churidar Sleeves", "Bell Sleeves with Organza Flare"],
+      "lengths": ["Crop / Waist Length (14-15 in)", "Empire Standard (16-17 in)", "Long Peplum Length (22-24 in)", "Floor-Sweeping Anarkali (52-54 in)"],
+      "fabrics": ["Pure Kanjeevaram Raw Silk", "Banarasi Katan Brocade", "Organza Tissue with Zari Weave", "Pure Velvet with Zardozi Base", "Chanderi Silk with Golden Bootis"],
+      "colors": [
+        { "name": "Royal Crimson", "hex": "#7a0c1a" },
+        { "name": "Emerald Forest", "hex": "#0c3b2e" },
+        { "name": "Peacock Sapphire", "hex": "#0b2545" },
+        { "name": "Temple Marigold Gold", "hex": "#c98200" },
+        { "name": "Rani Gulabi Pink", "hex": "#a81d58" },
+        { "name": "Ivory Pearl Brocade", "hex": "#e8dcbe" }
+      ],
+      "embroidery": ["Authentic Zardozi Bullion Wire", "Peacock Maggam Aari Needlework", "Fine Gota Patti Applique", "Kundan & Basra Pearl Inlay", "Minimal Hand-Piped Silk Cord"],
+      "dupattaStyles": [
+        "Pleated Shoulder Pallu Drape",
+        "Open Free-Falling Seedha Pallu",
+        "Gujarati Front Drape with Waist Tuck",
+        "Scalloped Dupatta Across Both Wrists",
+        "Double Dupatta (1 Crown Veil + 1 Chest Drape)",
+        "Cascading Diagonal Cowl Drape"
+      ],
+      "fits": ["Tailored Form Fit (Zero Ease)", "Comfort Royal Fit (+1 in Seam Allowance)", "Structured Corset Bodice"]
+    },
+    "men": {
+      "categories": ["Sherwani", "Bandhgala Suit", "Kurta Bundi Set", "Nehru Jacket", "Pathani Suit"],
+      "styles": ["Royal Heritage Achkan", "Contemporary Asymmetric Cut", "Classic Regal Straight Cut"],
+      "collars": ["Mandarin High Collar", "Nehru Stand Collar", "Bandhgala Structured Collar"],
+      "sleeves": ["Full Churidar Sleeves", "Classic Tailored Cuff", "Straight Formal Cut"],
+      "fabrics": ["Raw Tussar Silk", "Banarasi Jacquard Weave", "Handloom Matka Silk", "Italian Wool Silk Blend"],
+      "colors": [
+        { "name": "Royal Crimson", "hex": "#7a0c1a" },
+        { "name": "Emerald Forest", "hex": "#0c3b2e" },
+        { "name": "Midnight Onyx", "hex": "#111111" },
+        { "name": "Imperial Ivory", "hex": "#e8dcbe" }
+      ],
+      "embroidery": ["Subtle Tone-on-Tone Threadwork", "Rich Zardozi Collar & Pocket Motif", "Minimal Self-Textured Jacquard"],
+      "fits": ["Bespoke Slim Fit", "Classic Regal Fit"]
+    },
+    "kids": {
+      "girl": {
+        "categories": ["Festive Pattu Pavada", "Mini Anarkali Frock", "Lehenga Set"],
+        "necklines": ["Classic Round Neck", "Sweetheart Neck", "Boat Neck"],
+        "fabrics": ["Soft Handloom Silk", "Organza Brocade", "Cotton Silk"],
+        "colors": [
+          { "name": "Rani Pink", "hex": "#a81d58" },
+          { "name": "Golden Yellow", "hex": "#c98200" }
+        ],
+        "embroidery": ["Soft Gold Border Lace", "Gota Patti Motifs"]
+      },
+      "boy": {
+        "categories": ["Kurta Dhoti Set", "Mini Sherwani", "Nehru Jacket Set"],
+        "necklines": ["Mandarin Collar", "Round Neck"],
+        "fabrics": ["Cotton Silk", "Brocade Silk"],
+        "colors": [
+          { "name": "Ivory", "hex": "#e8dcbe" },
+          { "name": "Emerald", "hex": "#0c3b2e" }
+        ],
+        "embroidery": ["Self Thread Border", "Minimal Zari"]
+      }
+    }
+  },
+  "virtualModels": [
+    { "id": "MOD-01", "name": "Meera (5'7\")", "tone": "Warm Dusky", "image": "images/products/women/kanjeevaram-silk-saree-front.jpg" },
+    { "id": "MOD-02", "name": "Aanya (5'5\")", "tone": "Olive Golden", "image": "images/products/women/emerald-pakistani-suit-front.jpg" },
+    { "id": "MOD-03", "name": "Rhea (5'9\")", "tone": "Fair Porcelain", "image": "images/products/women/royal-blue-lehenga-front.jpg" },
+    { "id": "MOD-04", "name": "Tara (5'6\")", "tone": "Wheatish Warm", "image": "images/products/women/ivory-anarkali-suit-front.jpg" }
+  ]
 };
 
 if (typeof window !== "undefined") {

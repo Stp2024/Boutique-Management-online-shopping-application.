@@ -1,0 +1,62 @@
+    </div>
+
+    <!-- ======================================================================
+         PART 8: ADMIN DASHBOARD VIEW (MANAGEMENT STUDIO)
+         ====================================================================== -->
+    <div class="vas-dashboard-view" id="adminDashboardView" style="display:none;">
+      <div class="vas-container">
+        <!-- Admin Dashboard Top Header Bar (Elevated card, visible below navbar) -->
+        <div class="vas-dash-topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding:22px 28px; background:#ffffff; border-radius:12px; border:1px solid var(--vas-border); box-shadow:var(--vas-shadow-sm); flex-wrap:wrap; gap:16px;">
+          <div>
+            <span class="vas-eyebrow" style="color:var(--vas-gold-dark); letter-spacing:0.12em;">VASTRAÉ ATELIER &middot; BACK-OFFICE DIRECTORY</span>
+            <h1 style="font-size:1.85rem; margin:4px 0 0; color:var(--vas-ink);">Admin Management Console</h1>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button class="vas-btn vas-btn-outline vas-btn-sm" style="font-weight:600; padding:8px 18px;" onclick="window.returnToPublicWebsite()">
+              ← Return to Boutique
+            </button>
+            <button class="vas-btn vas-btn-sm" style="background:#b33939; color:#fff; border:none; font-weight:600; padding:8px 18px; border-radius:6px; cursor:pointer;" onclick="window.handleLogout()">
+              ⎋ Sign Out
+            </button>
+          </div>
+        </div>
+
+        <div class="vas-dashboard-layout">
+          <!-- Sidebar Nav & Admin Profile -->
+          <aside class="vas-dashboard-sidebar">
+            <div class="vas-profile-card-mini">
+              <div class="vas-avatar-circle" id="adminAvatar" style="background:#f4ebdc; color:#8a6d3b; border-color:#d4af37;">🛡️</div>
+              <h3 id="adminNameDisplay" style="font-size:1.15rem; margin-bottom:2px;">Atelier Administrator</h3>
+              <span style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase;">Store Director &middot; Full Back-Office</span>
+              <p style="font-size:0.8rem; color:var(--vas-muted); margin:4px 0 0;">admin@vastrae.com</p>
+            </div>
+
+            <nav class="vas-dash-nav" id="adminNavList">
+              <button class="vas-dash-nav-btn active" onclick="window.switchAdminTab('overview', this)">
+                ▣ Overview &amp; Live Statistics
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('tailors', this)">
+                🪡 Manage Tailors
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('orders', this)">
+                📋 Customer Orders &amp; Assignment
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('inventory', this)">
+                🧵 Fabric Inventory
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('products', this)">
+                ◇ Products &amp; Catalogue
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('clients', this)">
+                👥 Registered Clients
+              </button>
+            </nav>
+          </aside>
+
+          <!-- Main Admin Pane -->
+          <main class="vas-dash-content" id="adminContentPane">
+            <!-- Dynamic Tab Content Rendered by js/app.js -->
+            <div id="adminTabPane"></div>
+          </main>
+        </div>
+      </div>

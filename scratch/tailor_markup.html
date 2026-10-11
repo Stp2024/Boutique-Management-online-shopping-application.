@@ -1,0 +1,125 @@
+    </div>
+
+    <!-- ======================================================================
+         PART 9: TAILOR DASHBOARD VIEW (MASTER TAILOR PRODUCTION STUDIO)
+         ====================================================================== -->
+    <div class="vas-dashboard-view" id="tailorDashboardView" style="display:none;">
+      <div class="vas-container">
+        <!-- Tailor Dashboard Top Header Bar (Elevated card, visible below navbar) -->
+        <div class="vas-dash-topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding:22px 28px; background:#ffffff; border-radius:12px; border:1px solid var(--vas-border); box-shadow:var(--vas-shadow-sm); flex-wrap:wrap; gap:16px;">
+          <div>
+            <span class="vas-eyebrow" style="color:var(--vas-gold-dark); letter-spacing:0.12em;">VASTRAÉ ATELIER &middot; CRAFT WORKBENCH</span>
+            <h1 style="font-size:1.85rem; margin:4px 0 0; color:var(--vas-ink);">Master Tailor Production Studio</h1>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button class="vas-btn vas-btn-outline vas-btn-sm" style="font-weight:600; padding:8px 18px;" onclick="window.returnToPublicWebsite()">
+              ← Return to Boutique
+            </button>
+            <button class="vas-btn vas-btn-sm" style="background:#b33939; color:#fff; border:none; font-weight:600; padding:8px 18px; border-radius:6px; cursor:pointer;" onclick="window.handleLogout()">
+              ⎋ Sign Out
+            </button>
+          </div>
+        </div>
+
+        <div class="vas-dashboard-layout">
+          <!-- Sidebar Nav & Tailor Profile -->
+          <aside class="vas-dashboard-sidebar">
+            <div class="vas-profile-card-mini">
+              <div class="vas-avatar-circle" id="tailorAvatar" style="background:#efe7dd; color:#6b4423; border-color:#c5a059;">🪡</div>
+              <h3 id="tailorNameDisplay" style="font-size:1.15rem; margin-bottom:2px;">Master Tailor</h3>
+              <span id="tailorStatusBadge" style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase;">Master Couturier &middot; Active</span>
+              <p id="tailorEmailDisplay" style="font-size:0.8rem; color:var(--vas-muted); margin:4px 0 0;">tailor@vastrae.com</p>
+              <p id="tailorPhoneDisplay" style="font-size:0.8rem; color:var(--vas-muted); margin:0;">+91 98860 00000</p>
+            </div>
+
+            <nav class="vas-dash-nav" id="tailorNavList">
+              <button class="vas-dash-nav-btn active" onclick="window.switchTailorTab('queue', this)">
+                ✂ Production Queue &amp; Orders
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchTailorTab('measurements', this)">
+                📏 Client Measurement Sheets
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchTailorTab('reborn', this)">
+                ♻ Saree Reborn Commissions
+              </button>
+              <button class="vas-dash-nav-btn" onclick="window.switchTailorTab('profile', this)">
+                ◉ My Tailor Profile
+              </button>
+            </nav>
+          </aside>
+
+          <!-- Main Tailor Pane -->
+          <main class="vas-dash-content" id="tailorContentPane">
+            <!-- Dynamic Tab Content Rendered by js/app.js -->
+            <div id="tailorTabPane"></div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End #vastraeApp -->
+
+  <!-- ======================================================================
+       AUTHENTICATION MODAL (PART 5 - EXACT VALIDATION)
+       ====================================================================== -->
+  <div class="vas-modal" id="authModal">
+    <div class="vas-modal-card vas-auth-modal">
+      <button class="vas-modal-close" onclick="window.closeModal()">&times;</button>
+
+      <div style="text-align:center; margin-bottom:20px;">
+        <span class="vas-eyebrow">VASTRAÉ ATELIER ACCESS</span>
+        <h2 style="font-size:1.6rem; margin:4px 0;">Sign In to VASTRAÉ</h2>
+      </div>
+
+      <div class="vas-auth-tabs">
+        <button class="vas-auth-tab-btn active" id="tabLoginBtn" onclick="window.switchAuthTab('login')">Sign In</button>
+        <button class="vas-auth-tab-btn" id="tabRegisterBtn" onclick="window.switchAuthTab('register')">Register Profile</button>
+      </div>
+
+      <!-- Error Message Box -->
+      <div id="authErrorMsg" style="display:none; background:var(--vas-danger-bg); color:var(--vas-danger); padding:10px 14px; border-radius:6px; font-size:0.82rem; margin-bottom:14px;"></div>
+
+      <!-- Login Form Container -->
+      <div id="loginFormContainer">
+        <form onsubmit="window.handleLoginSubmit(event)">
+          <div class="vas-form-group">
+            <label>Username or Email Address</label>
+            <input type="text" id="loginUser" class="vas-input" placeholder="Enter your username or email" required />
+          </div>
+          <div class="vas-form-group">
+            <label>Password</label>
+            <input type="password" id="loginPass" class="vas-input" placeholder="Enter your 6-character password" required />
+          </div>
+          <button type="submit" class="vas-btn vas-btn-rose" style="width:100%;">
+            Sign In &rarr;
+          </button>
+        </form>
+      </div>
+
+      <!-- Register Form Container (Strict Validation Enforced) -->
+      <div id="registerFormContainer" style="display:none;">
+        <form onsubmit="window.handleRegisterSubmit(event)">
+          <div class="vas-form-group">
+            <label>Username (Text Only *):</label>
+            <input type="text" id="regUsername" class="vas-input" placeholder="e.g. PriyaK" required />
+            <small style="font-size:0.72rem; color:var(--vas-muted);">Accepts alphabetical characters only (no numbers).</small>
+          </div>
+
+          <div class="vas-form-group">
+            <label>Full Name *</label>
+            <input type="text" id="regFullName" class="vas-input" placeholder="e.g. Priya Kumar" required />
+          </div>
+
+          <div class="vas-form-group">
+            <label>Email Address *</label>
+            <input type="email" id="regEmail" class="vas-input" placeholder="priya@example.com" required />
+          </div>
+
+          <!-- Phone with Fixed +91 Display -->
+          <div class="vas-form-group">
+            <label>Mobile Number (+91 Fixed Prefix) *</label>
+            <div class="vas-phone-group">
+              <span class="vas-phone-prefix">+91</span>
+              <input type="tel" id="regPhone" class="vas-phone-input" placeholder="Enter 10-digit mobile" maxlength="10" required />
+            </div>
+            <small style="font-size:0.72rem; color:var(--vas-muted);">Customer enters only the 10-digit mobile number.</small>

@@ -37,9 +37,13 @@
           <a href="#home" class="vas-brand" onclick="window.navigateToPage('home', event)">
             <div class="vas-brand-emblem" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 6C24 6 28 16 32 24C34 28 35 34 31 38C28 41 24 42 24 42C24 42 20 41 17 38C13 34 14 28 16 24C20 16 24 6 24 6Z" stroke="#dfc7a7" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M24 20C24 20 18 24 13 28C8.5 31.5 6 36 9 39C12 42 18 40.5 24 37C30 40.5 36 42 39 39C42 36 39.5 31.5 35 28C30 24 24 20 24 20Z" stroke="#d89a8c" stroke-width="1.8" stroke-linejoin="round"/>
-                <circle cx="24" cy="27" r="2.4" fill="#f2baa8"/>
+                <path
+                  d="M24 6C24 6 28 16 32 24C34 28 35 34 31 38C28 41 24 42 24 42C24 42 20 41 17 38C13 34 14 28 16 24C20 16 24 6 24 6Z"
+                  stroke="#dfc7a7" stroke-width="1.8" stroke-linejoin="round" />
+                <path
+                  d="M24 20C24 20 18 24 13 28C8.5 31.5 6 36 9 39C12 42 18 40.5 24 37C30 40.5 36 42 39 39C42 36 39.5 31.5 35 28C30 24 24 20 24 20Z"
+                  stroke="#d89a8c" stroke-width="1.8" stroke-linejoin="round" />
+                <circle cx="24" cy="27" r="2.4" fill="#f2baa8" />
               </svg>
             </div>
             <div class="vas-brand-text">
@@ -49,8 +53,7 @@
           </a>
 
           <!-- Mobile Hamburger -->
-          <button class="vas-mobile-toggle"
-            onclick="document.querySelector('.vas-nav-menu').classList.toggle('open')"
+          <button class="vas-mobile-toggle" onclick="document.querySelector('.vas-nav-menu').classList.toggle('open')"
             aria-label="Toggle navigation">
             ☰
           </button>
@@ -59,61 +62,61 @@
           <nav class="vas-nav-menu" id="vasNavMenu">
             <!-- Unauthenticated Visitor Navigation: Home | About Us | Collection | Services | Contact Us -->
             <div id="unauthNavLinks" style="display:flex; align-items:center; gap:inherit;">
-              <a href="#home" class="vas-nav-link active" data-page="home" onclick="window.navigateToPage('home', event)">Home</a>
-              <a href="#about" class="vas-nav-link" data-page="about" onclick="window.navigateToPage('about', event)">About Us</a>
-              <a href="#collection" class="vas-nav-link" data-page="collection" onclick="window.navigateToPage('collection', event)">Collection</a>
-              <a href="#services" class="vas-nav-link" data-page="services" onclick="window.navigateToPage('services', event)">Services</a>
-              <a href="#contact" class="vas-nav-link" data-page="contact" onclick="window.navigateToPage('contact', event)">Contact Us</a>
+              <a href="#home" class="vas-nav-link active" data-page="home"
+                onclick="window.navigateToPage('home', event)">Home</a>
+              <a href="#about" class="vas-nav-link" data-page="about"
+                onclick="window.navigateToPage('about', event)">About Us</a>
+              <a href="#collection" class="vas-nav-link" data-page="collection"
+                onclick="window.navigateToPage('collection', event)">Collection</a>
+              <a href="#services" class="vas-nav-link" data-page="services"
+                onclick="window.navigateToPage('services', event)">Services</a>
+              <a href="#contact" class="vas-nav-link" data-page="contact"
+                onclick="window.navigateToPage('contact', event)">Contact Us</a>
             </div>
 
             <!-- Authenticated Member Navigation (Clean & Organized: Direct Boutique Services Access) -->
             <div id="authNavLinks" style="display:none; align-items:center; gap:inherit;">
-              <a href="#home" class="vas-nav-link active" data-page="home" onclick="window.navigateToPage('home', event)">Home</a>
-              <a href="#collection" class="vas-nav-link" data-page="collection" onclick="window.navigateToPage('collection', event)">Collection</a>
-              <a href="#customize" class="vas-nav-link" data-page="services" onclick="window.navigateToSection('customize', event)">Customize Your Way</a>
-              <a href="#virtualTryOn" class="vas-nav-link" data-page="services" onclick="window.navigateToSection('virtualTryOn', event)">AI Try-On</a>
-              <a href="#sareeReborn" class="vas-nav-link" data-page="services" onclick="window.navigateToSection('sareeReborn', event)">Saree Reborn</a>
-              <a href="#contact" class="vas-nav-link" data-page="contact" onclick="window.navigateToPage('contact', event)">Contact Us</a>
+              <a href="#home" class="vas-nav-link active" data-page="home"
+                onclick="window.navigateToPage('home', event)">Home</a>
+              <a href="#collection" class="vas-nav-link" data-page="collection"
+                onclick="window.navigateToPage('collection', event)">Collection</a>
+              <a href="#customize" class="vas-nav-link" data-page="customize"
+                onclick="window.navigateToSection('customize', event)">Customize Your Way</a>
+              <a href="#virtualTryOn" class="vas-nav-link" data-page="virtualTryOn"
+                onclick="window.navigateToSection('virtualTryOn', event)">AI Try-On</a>
+              <a href="#sareeReborn" class="vas-nav-link" data-page="sareeReborn"
+                onclick="window.navigateToSection('sareeReborn', event)">Saree Reborn</a>
+              <a href="#contact" class="vas-nav-link" data-page="contact"
+                onclick="window.navigateToPage('contact', event)">Contact Us</a>
             </div>
           </nav>
 
           <!-- Navigation Actions -->
-          <div class="vas-nav-actions" id="vasNavActions">
-            <!-- Unauthenticated Visitor State: ONLY VASTRAE Logo + Links + Login/Register button -->
-            <div id="unauthNavActions" style="display: flex; align-items: center;">
-              <button class="vas-btn-nav-login" onclick="window.openAuthModal('login')">
-                <span class="vas-nav-user-icon">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-                  </svg>
-                </span>
-                <span>Login / Register</span>
-              </button>
-            </div>
-
-            <!-- Authenticated Customer State: Revealed only after login -->
-            <div id="authNavActions" style="display: none; align-items: center; gap: 10px;">
-              <button class="vas-icon-btn vas-icon-glass" onclick="window.openNotificationsModal()" title="Activity & Notifications">
-                🔔
-                <span class="vas-pill-badge" id="navNotifCount" style="display:none;">0</span>
-              </button>
-              <button class="vas-icon-btn vas-icon-glass" onclick="window.openCustomerDashboard()" title="Wishlist & Moodboards">
-                ♡
-                <span class="vas-pill-badge" id="navWishCount" style="display:none;">0</span>
-              </button>
-              <button class="vas-icon-btn vas-icon-glass" onclick="window.openCartDrawer()" title="Shopping Bag">
-                🛍️
-                <span class="vas-pill-badge" id="navCartCount" style="display:none;">0</span>
-              </button>
-              <button class="vas-btn-nav-login" id="navAuthBtn" onclick="window.openCustomerDashboard()" title="Customer Workspace">
-                <span class="vas-nav-user-icon">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-                  </svg>
-                </span>
-                <span id="navAuthName">Profile</span>
-              </button>
-            </div>
+          <div class="vas-nav-actions" id="vasNavActions" style="display: flex; align-items: center; gap: 10px;">
+            <button class="vas-icon-btn vas-icon-glass" id="navNotifBtn" onclick="window.handleNavNotificationClick()"
+              title="Activity & Notifications">
+              🔔
+              <span class="vas-pill-badge" id="navNotifCount" style="display:none;">0</span>
+            </button>
+            <button class="vas-icon-btn vas-icon-glass" id="navWishBtn" onclick="window.handleNavWishlistClick()"
+              title="Wishlist & Moodboards">
+              ♡
+              <span class="vas-pill-badge" id="navWishCount" style="display:none;">0</span>
+            </button>
+            <button class="vas-icon-btn vas-icon-glass" id="navCartBtn" onclick="window.handleNavCartClick()" title="Shopping Bag">
+              🛍️
+              <span class="vas-pill-badge" id="navCartCount" style="display:none;">0</span>
+            </button>
+            <button class="vas-btn-nav-login" id="navAuthBtn" onclick="window.handleNavAuthClick()"
+              title="Account Workspace">
+              <span class="vas-nav-user-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                </svg>
+              </span>
+              <span id="navAuthName">Login / Register</span>
+            </button>
           </div>
         </div>
       </div>
@@ -135,9 +138,14 @@
           <!-- Background Media Layer: Video with High-Quality Fallback Poster Image -->
           <div class="vas-hero-media">
             <div class="vas-hero-fallback-bg" style="background-image: url('hero_boutique_bg.jpg');"></div>
-            <video class="vas-hero-video" id="vasHeroVideo" autoplay muted loop playsinline poster="hero_boutique_bg.jpg">
-              <source src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-an-atelier-trying-on-dresses-41136-large.mp4" type="video/mp4" />
-              <source src="https://cdn.coverr.co/videos/coverr-fashion-model-wearing-an-outfit-in-a-studio-5628/1080p.mp4" type="video/mp4" />
+            <video class="vas-hero-video" id="vasHeroVideo" autoplay muted loop playsinline
+              poster="hero_boutique_bg.jpg">
+              <source
+                src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-an-atelier-trying-on-dresses-41136-large.mp4"
+                type="video/mp4" />
+              <source
+                src="https://cdn.coverr.co/videos/coverr-fashion-model-wearing-an-outfit-in-a-studio-5628/1080p.mp4"
+                type="video/mp4" />
             </video>
             <!-- Dual Readability Overlays -->
             <div class="vas-hero-overlay-dark"></div>
@@ -160,7 +168,8 @@
 
               <!-- Short Description -->
               <p class="vas-hero-desc">
-                Discover VASTRAÉ &mdash; made-to-measure tailoring, personalized outfit design and thoughtful Saree Reborn craftsmanship.
+                Discover VASTRAÉ &mdash; made-to-measure tailoring, personalized outfit design and thoughtful Saree
+                Reborn craftsmanship.
               </p>
 
               <!-- Buttons: CUSTOMIZE YOUR WAY → and EXPLORE COLLECTION → -->
@@ -169,14 +178,16 @@
                   <span>CUSTOMIZE YOUR WAY</span>
                   <span class="vas-btn-arrow">&rarr;</span>
                 </a>
-                <a href="#collection" class="vas-hero-btn-secondary" onclick="window.navigateToPage('collection', event)">
+                <a href="#collection" class="vas-hero-btn-secondary"
+                  onclick="window.navigateToPage('collection', event)">
                   <span>EXPLORE COLLECTION</span>
                   <span class="vas-btn-arrow">&rarr;</span>
                 </a>
               </div>
 
               <!-- Scroll Indicator -->
-              <div class="vas-hero-scroll" onclick="window.navigateToPage('about', event)" style="cursor: pointer;" title="Explore About Us">
+              <div class="vas-hero-scroll" onclick="window.navigateToPage('about', event)" style="cursor: pointer;"
+                title="Explore About Us">
                 <div class="vas-scroll-mouse">
                   <span class="vas-scroll-wheel"></span>
                 </div>
@@ -225,27 +236,33 @@
               <div class="vas-highlight-card">
                 <div class="vas-highlight-icon">🪡</div>
                 <h3>Bespoke Custom Tailoring</h3>
-                <p>Precision biometric patterns cut individually from scratch. Premium mulmul lining with generous 2-inch side seam alteration allowance.</p>
+                <p>Precision biometric patterns cut individually from scratch. Premium mulmul lining with generous
+                  2-inch side seam alteration allowance.</p>
                 <div style="margin-top:20px;">
-                  <a href="#services" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToPage('services', event)">Explore Services &rarr;</a>
+                  <a href="#services" class="vas-btn vas-btn-sm vas-btn-rose"
+                    onclick="window.navigateToPage('services', event)">Explore Services &rarr;</a>
                 </div>
               </div>
 
               <div class="vas-highlight-card">
                 <div class="vas-highlight-icon">🪞</div>
                 <h3>Interactive 3D Studio</h3>
-                <p>Personalize silhouettes, necklines, pure handloom silks, and artisan embroidery in real time with our live visualizer and AI try-on.</p>
+                <p>Personalize silhouettes, necklines, pure handloom silks, and artisan embroidery in real time with our
+                  live visualizer and AI try-on.</p>
                 <div style="margin-top:20px;">
-                  <a href="#customize" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('customize', event)">Customize Your Look &rarr;</a>
+                  <a href="#customize" class="vas-btn vas-btn-sm vas-btn-rose"
+                    onclick="window.navigateToSection('customize', event)">Customize Your Look &rarr;</a>
                 </div>
               </div>
 
               <div class="vas-highlight-card">
                 <div class="vas-highlight-icon">♻️</div>
                 <h3>Saree Reborn Heritage</h3>
-                <p>Reincarnate cherished vintage Kanjeevarams and Banarasis into contemporary bridal blouses, flared lehengas, and luxury potli bags.</p>
+                <p>Reincarnate cherished vintage Kanjeevarams and Banarasis into contemporary bridal blouses, flared
+                  lehengas, and luxury potli bags.</p>
                 <div style="margin-top:20px;">
-                  <a href="#sareeReborn" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('sareeReborn', event)">Reborn Studio &rarr;</a>
+                  <a href="#sareeReborn" class="vas-btn vas-btn-sm vas-btn-rose"
+                    onclick="window.navigateToSection('sareeReborn', event)">Reborn Studio &rarr;</a>
                 </div>
               </div>
             </div>
@@ -264,34 +281,54 @@
                   Experience Haute Couture on <em>100 Feet Road, Indiranagar</em>
                 </h2>
                 <p style="font-size:0.95rem; line-height:1.7; margin-bottom:24px; color:var(--vas-muted);">
-                  Step into our private fitting suites for high-touch fabric selection, calico muslin draping trials, or to drop off your vintage heirloom silk. Enjoy complimentary South Indian filter coffee while our master couturiers draft your personal profile.
+                  Step into our private fitting suites for high-touch fabric selection, calico muslin draping trials, or
+                  to drop off your vintage heirloom silk. Enjoy complimentary South Indian filter coffee while our
+                  master couturiers draft your personal profile.
                 </p>
                 <div style="display:flex; gap:14px; flex-wrap:wrap;">
                   <button class="vas-btn vas-btn-rose" onclick="window.openConsultationModal()">
                     📅 Book Private Fitting Appointment
                   </button>
-                  <a href="#ownFabric" class="vas-btn vas-btn-outline" onclick="window.navigateToSection('ownFabric', event)">
+                  <a href="#ownFabric" class="vas-btn vas-btn-outline"
+                    onclick="window.navigateToSection('ownFabric', event)">
                     📦 Schedule Fabric Pickup
                   </a>
                 </div>
               </div>
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                <div style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
-                  <span style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">100%</span>
-                  <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">In-House Artisans</span>
+                <div
+                  style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
+                  <span
+                    style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">100%</span>
+                  <span
+                    style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">In-House
+                    Artisans</span>
                 </div>
-                <div style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
-                  <span style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">22</span>
-                  <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">Biometric Points</span>
+                <div
+                  style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
+                  <span
+                    style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">22</span>
+                  <span
+                    style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">Biometric
+                    Points</span>
                 </div>
-                <div style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
-                  <span style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">2 Inch</span>
-                  <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">Seam Margin</span>
+                <div
+                  style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
+                  <span
+                    style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">2
+                    Inch</span>
+                  <span
+                    style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">Seam
+                    Margin</span>
                 </div>
-                <div style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
-                  <span style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">0</span>
-                  <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">Mass Production</span>
+                <div
+                  style="background:rgba(255,255,255,0.7); border:1px solid rgba(223,199,167,0.5); padding:20px; border-radius:var(--vas-radius); text-align:center;">
+                  <span
+                    style="font-family:var(--vas-font-serif); font-size:1.8rem; font-weight:700; color:var(--vas-ink); display:block;">0</span>
+                  <span
+                    style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--vas-muted); font-weight:600;">Mass
+                    Production</span>
                 </div>
               </div>
             </div>
@@ -307,7 +344,8 @@
               <span class="vas-eyebrow">CLIENT REVIEWS</span>
               <h2 class="vas-title">Patron Stories &amp; <em>Couture Experiences</em></h2>
               <p class="vas-subtitle">
-                Authentic words from brides, grooms, and fashion patrons across Bengaluru who trust VASTRAÉ with their most cherished occasions.
+                Authentic words from brides, grooms, and fashion patrons across Bengaluru who trust VASTRAÉ with their
+                most cherished occasions.
               </p>
             </div>
 
@@ -315,7 +353,9 @@
               <div class="vas-review-card vas-glass-card">
                 <div class="vas-review-stars">★★★★★</div>
                 <p class="vas-review-text">
-                  "For my wedding at Palace Grounds, VASTRAÉ turned my grandmother's 45-year-old Kanjeevaram into a spectacular contemporary lehenga. The respect they showed to the antique zari and the fit on the first trial was unbelievable."
+                  "For my wedding at Palace Grounds, VASTRAÉ turned my grandmother's 45-year-old Kanjeevaram into a
+                  spectacular contemporary lehenga. The respect they showed to the antique zari and the fit on the first
+                  trial was unbelievable."
                 </p>
                 <div class="vas-reviewer">
                   <div class="vas-reviewer-avatar">AS</div>
@@ -329,7 +369,8 @@
               <div class="vas-review-card vas-glass-card">
                 <div class="vas-review-stars">★★★★★</div>
                 <p class="vas-review-text">
-                  "The 22-point measurement system is genuine Savile Row caliber. I ordered a midnight velvet bandhgala for our corporate awards gala. No bunching, no tightness around the shoulders—felt like second skin."
+                  "The 22-point measurement system is genuine Savile Row caliber. I ordered a midnight velvet bandhgala
+                  for our corporate awards gala. No bunching, no tightness around the shoulders—felt like second skin."
                 </p>
                 <div class="vas-reviewer">
                   <div class="vas-reviewer-avatar">RK</div>
@@ -343,7 +384,9 @@
               <div class="vas-review-card vas-glass-card">
                 <div class="vas-review-stars">★★★★★</div>
                 <p class="vas-review-text">
-                  "Their doorstep fabric pickup in Indiranagar was seamless. The master tailor brought fabric swatches, recorded my blouse measurements, and delivered the finished maggam-embroidered blouse in just 48 hours."
+                  "Their doorstep fabric pickup in Indiranagar was seamless. The master tailor brought fabric swatches,
+                  recorded my blouse measurements, and delivered the finished maggam-embroidered blouse in just 48
+                  hours."
                 </p>
                 <div class="vas-reviewer">
                   <div class="vas-reviewer-avatar">PV</div>
@@ -365,99 +408,25 @@
         <!-- Section 1: Editorial Page Banner -->
         <div class="vas-page-banner">
           <div class="vas-container">
-            <span class="vas-eyebrow">ABOUT VASTRAÉ HAUTE ATELIER</span>
-            <h1 class="vas-title">A Single Dedicated Boutique with a <em>Timeless Heritage</em></h1>
+            <span class="vas-eyebrow">ABOUT VASTRAÉ ATELIER</span>
+            <h1 class="vas-title">A Single Boutique with a <em>Long Memory</em></h1>
             <p class="vas-subtitle">
-              Located at No. 42, 100 Feet Road, Indiranagar, Bengaluru. A standalone luxury couture house crafting bespoke made-to-measure masterpieces for Women, Men, and Artisanal Accessories under one roof.
+              Located on 100 Feet Road, Indiranagar, Bengaluru. We reject mass-production sizing in favor of
+              generational artisan craft and individualized fit.
             </p>
           </div>
         </div>
 
-        <!-- Section 2: Flagship Boutique Showroom Showcase (Men, Women, Accessories) -->
-        <section class="vas-section" style="padding-bottom: 20px;">
-          <div class="vas-container">
-            <div style="background:#fff; border:1px solid var(--vas-border); border-radius:18px; overflow:hidden; box-shadow:var(--vas-shadow-md); margin-bottom:40px;">
-              <!-- Editorial Header -->
-              <div style="padding:32px 36px 24px; background:linear-gradient(135deg, #fdfbf7 0%, #f6f0e6 100%); border-bottom:1px solid var(--vas-border);">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
-                  <div>
-                    <span class="vas-eyebrow" style="color:var(--vas-gold-dark); letter-spacing:0.12em;">FLAGSHIP ATELIER SALON FLOOR &middot; 100 FEET ROAD, INDIRANAGAR</span>
-                    <h2 style="font-family:var(--vas-font-serif); font-size:2.2rem; margin:6px 0 10px; color:var(--vas-ink);">
-                      The 3 Customization Wings of <em>VASTRAÉ Boutique</em>
-                    </h2>
-                    <p style="font-size:0.95rem; color:var(--vas-muted); max-width:850px; margin:0; line-height:1.6;">
-                      Inside our flagship salon floor: <strong>Women's Couture</strong> customization on the left, <strong>Men's Sartorial</strong> bespoke suits on the right, and handcrafted <strong>Artisanal Accessories</strong> displayed in our central vitrine.
-                    </p>
-                  </div>
-                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <span class="vas-badge-pill gold" style="font-size:0.78rem; padding:6px 14px;">👗 Women's Couture</span>
-                    <span class="vas-badge-pill gold" style="font-size:0.78rem; padding:6px 14px;">🤵 Men's Sartorial</span>
-                    <span class="vas-badge-pill gold" style="font-size:0.78rem; padding:6px 14px;">✨ Artisanal Accessories</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Full High-Resolution 16:9 Boutique Interior Showcase (Uncropped) -->
-              <div style="position:relative; width:100%; aspect-ratio:16/9; max-height:640px; overflow:hidden; background:#1a1410;">
-                <img
-                  src="images/products/vastrae-boutique-men-women-accessories.jpg"
-                  alt="VASTRAÉ Flagship Boutique Showroom with Men, Women, and Accessories Customization Wings"
-                  style="width:100%; height:100%; object-fit:contain; display:block;" />
-              </div>
-
-              <!-- 3 Customization Wings Feature Cards -->
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:24px; padding:32px; background:#ffffff;">
-                <div style="background:#fffcfb; padding:22px; border-radius:12px; border:1px solid #f6ebe7; border-left:4px solid #dfa393;">
-                  <span style="font-size:1.8rem; display:block; margin-bottom:8px;">👗</span>
-                  <h3 style="font-size:1.2rem; margin-bottom:6px; font-family:var(--vas-font-serif); color:#4a2b25;">Bespoke Women's Couture</h3>
-                  <p style="font-size:0.85rem; color:var(--vas-muted); line-height:1.55; margin:0 0 14px;">
-                    Bridal maggam blouses, Pakistani straight suits, Banarasi lehengas, and silk organza dupattas customized with 22 anatomical body measurements and 2-inch alteration seams.
-                  </p>
-                  <a href="#services" class="vas-btn vas-btn-sm vas-btn-rose" style="font-size:0.78rem; padding:6px 14px;" onclick="window.navigateToSection('customize', event)">
-                    Customize Women's Look &rarr;
-                  </a>
-                </div>
-                <div style="background:#f9fbfe; padding:22px; border-radius:12px; border:1px solid #e5eef7; border-left:4px solid #3a506b;">
-                  <span style="font-size:1.8rem; display:block; margin-bottom:8px;">🤵</span>
-                  <h3 style="font-size:1.2rem; margin-bottom:6px; font-family:var(--vas-font-serif); color:#1c2541;">Tailored Men's Sartorial</h3>
-                  <p style="font-size:0.85rem; color:var(--vas-muted); line-height:1.55; margin:0 0 14px;">
-                    Regal Bandhgala 3-piece suits, wedding sherwanis, Jodhpuri trousers, and breathable hand-tailored linen kurtas crafted by generational master cutters.
-                  </p>
-                  <a href="#services" class="vas-btn vas-btn-sm vas-btn-outline" style="font-size:0.78rem; padding:6px 14px; border-color:#3a506b; color:#3a506b;" onclick="window.navigateToSection('customize', event)">
-                    Customize Men's Suit &rarr;
-                  </a>
-                </div>
-                <div style="background:#fdfbf7; padding:22px; border-radius:12px; border:1px solid #f4ede1; border-left:4px solid var(--vas-gold);">
-                  <span style="font-size:1.8rem; display:block; margin-bottom:8px;">✨</span>
-                  <h3 style="font-size:1.2rem; margin-bottom:6px; font-family:var(--vas-font-serif); color:#543d28;">Custom Artisanal Accessories</h3>
-                  <p style="font-size:0.85rem; color:var(--vas-muted); line-height:1.55; margin:0 0 14px;">
-                    Hand-embroidered zardozi potli bags, pure zari borders, velvet pocket squares, matching turban safa drapes, and bespoke bridal mojaris personalized to your outfit.
-                  </p>
-                  <a href="#collection" class="vas-btn vas-btn-sm vas-btn-gold" style="font-size:0.78rem; padding:6px 14px;" onclick="window.navigateToPage('collection', event)">
-                    Explore Accessories &rarr;
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Section 3: Heritage Story & Atelier Dual Workshop Gallery -->
-        <section class="vas-section" id="about" style="padding-top: 10px;">
+        <!-- Section 2: Heritage Story & Dual Photo Gallery -->
+        <section class="vas-section" id="about">
           <div class="vas-container">
             <div class="vas-about-grid">
               <div class="vas-about-media">
                 <div class="vas-about-media-col">
-                  <img
-                    src="images/products/vastrae-boutique-flagship.jpg"
-                    alt="VASTRAÉ Flagship Boutique Interior Indiranagar"
-                    style="border-radius:12px; box-shadow:var(--vas-shadow-sm); width:100%; height:320px; object-fit:cover;" />
+                  <img src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Master Tailor at work" />
                 </div>
                 <div class="vas-about-media-col" style="margin-top: 32px;">
-                  <img
-                    src="images/products/vastrae-atelier-craft.jpg"
-                    alt="VASTRAÉ Master Tailor Workstation and Zardozi Loom"
-                    style="border-radius:12px; box-shadow:var(--vas-shadow-sm); width:100%; height:320px; object-fit:cover;" />
+                  <img src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Handloom silk fabrics" />
                 </div>
               </div>
 
@@ -465,22 +434,26 @@
                 <span class="vas-eyebrow">OUR ATELIER PHILOSOPHY</span>
                 <h2 class="vas-title">Crafting clothes that <em>remember you.</em></h2>
                 <blockquote>
-                  &ldquo;A garment should remember the body it was made for. We don't believe in standard mass-production sizes.&rdquo;
+                  &ldquo;A garment should remember the body it was made for. We don't believe in standard
+                  mass-production sizes.&rdquo;
                 </blockquote>
                 <p>
-                  Located on 100 Feet Road, Indiranagar, Bengaluru, <strong>VASTRAÉ</strong> is a single dedicated boutique atelier. We reject factory conveyor belts and open marketplace aggregators. Every garment ordered is drafted on individual paper patterns, hand-cut, and meticulously finished under one roof by generational Karnataka artisans.
+                  Located on 100 Feet Road, Indiranagar, Bengaluru, <strong>VASTRAÉ</strong> is a single dedicated
+                  boutique. We are not an open marketplace or multi-vendor aggregator. Every garment ordered is drafted,
+                  cut, and stitched under one roof by generational Karnataka artisans.
                 </p>
                 <p>
-                  Whether customizing bespoke bridal attire for women, tailored Bandhgalas for men, matching artisanal accessories, or commissioning our circular <em>Saree Reborn</em> heirloom upcycling service, you experience authentic couture integrity.
+                  From custom bridal maggam blouses and hand-tailored linen suits to our acclaimed Saree Reborn
+                  waste-to-best upcycling initiative, we blend traditional loom craftsmanship with modern digital ease.
                 </p>
 
                 <ul class="vas-pillars-list">
-                  <li>Bespoke Women's Custom Stitching</li>
-                  <li>Hand-Tailored Men's Sartorial Suits</li>
-                  <li>Custom Artisanal Accessories &amp; Potlis</li>
-                  <li>Own-Fabric Doorstep Pickup in Bengaluru</li>
-                  <li>Saree Reborn Circular Heirloom Upcycling</li>
-                  <li>Biometric Family Measurement Profiles</li>
+                  <li>Bespoke Custom Stitching</li>
+                  <li>Own-Fabric Doorstep Pickup</li>
+                  <li>Saree Reborn (Waste-to-Best)</li>
+                  <li>Personalized Outfit Design</li>
+                  <li>Biometric Family Profiles</li>
+                  <li>Artisanal Accessories</li>
                 </ul>
               </div>
             </div>
@@ -494,7 +467,8 @@
               <span class="vas-eyebrow">HOW WE WORK</span>
               <h2 class="vas-title">Six Tenets of <em>Pure Craftsmanship</em></h2>
               <p class="vas-subtitle">
-                Every bespoke piece that leaves our Indiranagar workshop adheres to our uncompromising standards of handloom purity and precision fit.
+                Every bespoke piece that leaves our Indiranagar workshop adheres to our uncompromising standards of
+                handloom purity and precision fit.
               </p>
             </div>
 
@@ -502,37 +476,43 @@
               <div class="vas-pillar-card">
                 <div class="vas-pillar-icon">📐</div>
                 <h3>Individual Paper Patterns</h3>
-                <p>Never standardized S/M/L templates. Each garment has its own hand-drawn paper pattern drafted around 22 biometric landmarks.</p>
+                <p>Never standardized S/M/L templates. Each garment has its own hand-drawn paper pattern drafted around
+                  22 biometric landmarks.</p>
               </div>
 
               <div class="vas-pillar-card">
                 <div class="vas-pillar-icon">🧵</div>
                 <h3>Pure Mulberry &amp; Handloom Silks</h3>
-                <p>Sourced directly from generational Karnataka and Kanchipuram looms with certified pure zari and breathable mulmul cotton linings.</p>
+                <p>Sourced directly from generational Karnataka and Kanchipuram looms with certified pure zari and
+                  breathable mulmul cotton linings.</p>
               </div>
 
               <div class="vas-pillar-card">
                 <div class="vas-pillar-icon">✨</div>
                 <h3>Master Hand Embroiderers</h3>
-                <p>Authentic maggam stone needlework, metallic zardozi, and resham thread embroidery crafted by generational atelier masters.</p>
+                <p>Authentic maggam stone needlework, metallic zardozi, and resham thread embroidery crafted by
+                  generational atelier masters.</p>
               </div>
 
               <div class="vas-pillar-card">
                 <div class="vas-pillar-icon">♻️</div>
                 <h3>Saree Reborn Circular Studio</h3>
-                <p>Zero-waste repurposing of family heirloom sarees under strict physical loom inspection to preserve fragile vintage zari.</p>
+                <p>Zero-waste repurposing of family heirloom sarees under strict physical loom inspection to preserve
+                  fragile vintage zari.</p>
               </div>
 
               <div class="vas-pillar-card">
                 <div class="vas-pillar-icon">🪞</div>
                 <h3>Calico Muslin Drape Trials</h3>
-                <p>Before cutting valuable silks, we offer pre-fitting calico muslin trials to guarantee posture balance and armhole drape.</p>
+                <p>Before cutting valuable silks, we offer pre-fitting calico muslin trials to guarantee posture balance
+                  and armhole drape.</p>
               </div>
 
               <div class="vas-pillar-card">
                 <div class="vas-pillar-icon">🛡️</div>
                 <h3>Lifetime Alteration Margin</h3>
-                <p>Every blouse, suit, and lehenga includes a generous 2-inch side seam margin so your cherished attire adapts with you across decades.</p>
+                <p>Every blouse, suit, and lehenga includes a generous 2-inch side seam margin so your cherished attire
+                  adapts with you across decades.</p>
               </div>
             </div>
           </div>
@@ -551,33 +531,30 @@
 
             <div class="vas-artisans-grid">
               <div class="vas-artisan-card">
-                <img
-                  src="images/products/women/emerald-pakistani-suit-front.jpg"
-                  alt="Master Savitha"
+                <img src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Master Savitha"
                   class="vas-artisan-avatar" />
                 <h3>Master Savitha Rao</h3>
                 <span class="vas-artisan-role">Chief Couturier &amp; Pattern Master</span>
-                <p>28 years drafting bespoke paper patterns for South Indian bridal cholis and Western sartorial cuts with zero fit errors.</p>
+                <p>28 years drafting bespoke paper patterns for South Indian bridal cholis and Western sartorial cuts
+                  with zero fit errors.</p>
               </div>
 
               <div class="vas-artisan-card">
-                <img
-                  src="images/products/women/emerald-pakistani-suit-front.jpg"
-                  alt="Ustad Raheem"
+                <img src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Ustad Raheem"
                   class="vas-artisan-avatar" />
                 <h3>Ustad Raheem Khan</h3>
                 <span class="vas-artisan-role">Head of Maggam &amp; Zardozi Loom</span>
-                <p>Third-generation embroidery artisan specializing in antique gold wire zardozi, Basra pearl seed stitching, and dabka work.</p>
+                <p>Third-generation embroidery artisan specializing in antique gold wire zardozi, Basra pearl seed
+                  stitching, and dabka work.</p>
               </div>
 
               <div class="vas-artisan-card">
-                <img
-                  src="images/products/women/emerald-pakistani-suit-front.jpg"
-                  alt="Devraj M."
+                <img src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Devraj M."
                   class="vas-artisan-avatar" />
                 <h3>Devraj Mallikarjun</h3>
                 <span class="vas-artisan-role">Silk Sourcing &amp; Loom Curator</span>
-                <p>Partners directly with handloom weaver cooperatives across Karnataka and Tamil Nadu to certify 100% pure silk and tested zari.</p>
+                <p>Partners directly with handloom weaver cooperatives across Karnataka and Tamil Nadu to certify 100%
+                  pure silk and tested zari.</p>
               </div>
             </div>
 
@@ -589,7 +566,9 @@
                   The VASTRAÉ 100% Handloom Certification Pledge
                 </h3>
                 <p style="font-size:0.92rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  We pledge that every fabric in our atelier is verified for yarn tensile strength and authenticity. We never substitute synthetic blends for requested pure silks, and all vintage Saree Reborn heirlooms are handled with white-glove archival reverence.
+                  We pledge that every fabric in our atelier is verified for yarn tensile strength and authenticity. We
+                  never substitute synthetic blends for requested pure silks, and all vintage Saree Reborn heirlooms are
+                  handled with white-glove archival reverence.
                 </p>
               </div>
             </div>
@@ -605,7 +584,8 @@
               <span class="vas-eyebrow">PATRON PRIVILEGES</span>
               <h2 class="vas-title">Lifetime Fit &amp; <em>Archival Care</em></h2>
               <p class="vas-subtitle">
-                A bespoke relationship doesn't end when you leave our flagship salon. Every handcrafted commission carries our lifelong maison guarantee.
+                A bespoke relationship doesn't end when you leave our flagship salon. Every handcrafted commission
+                carries our lifelong maison guarantee.
               </p>
             </div>
 
@@ -613,19 +593,22 @@
               <div class="vas-guarantee-card vas-glass-card">
                 <div class="vas-guarantee-icon">✂️</div>
                 <h3>Complimentary Seasonal Alterations</h3>
-                <p>Bodies change over time. Every garment tailored at VASTRAÉ includes generous 2-inch internal seam allowances and complimentary resizing adjustments for life.</p>
+                <p>Bodies change over time. Every garment tailored at VASTRAÉ includes generous 2-inch internal seam
+                  allowances and complimentary resizing adjustments for life.</p>
               </div>
 
               <div class="vas-guarantee-card vas-glass-card">
                 <div class="vas-guarantee-icon">🧵</div>
                 <h3>Zari &amp; Threadwork Revival</h3>
-                <p>If delicate metallic threadwork or Basra pearls loosen after festive wear, bring the piece back to our Indiranagar workshop for complimentary restoration.</p>
+                <p>If delicate metallic threadwork or Basra pearls loosen after festive wear, bring the piece back to
+                  our Indiranagar workshop for complimentary restoration.</p>
               </div>
 
               <div class="vas-guarantee-card vas-glass-card">
                 <div class="vas-guarantee-icon">📜</div>
                 <h3>Archival Pattern Record</h3>
-                <p>Your 22-point body measurements and personal paper draft are permanently cataloged in our vault, allowing you to order custom pieces from anywhere in the world.</p>
+                <p>Your 22-point body measurements and personal paper draft are permanently cataloged in our vault,
+                  allowing you to order custom pieces from anywhere in the world.</p>
               </div>
             </div>
           </div>
@@ -642,7 +625,8 @@
             <span class="vas-eyebrow">CURATED CREATIONS</span>
             <h1 class="vas-title">The Atelier <em>Collection</em></h1>
             <p class="vas-subtitle">
-              Ready-to-wear and made-to-order couture for Women, Men, and Kids. Hand-finished with pure silks, breathable linens, and artisanal embroidery.
+              Ready-to-wear and made-to-order couture for Women, Men, and Kids. Hand-finished with pure silks,
+              breathable linens, and artisanal embroidery.
             </p>
           </div>
         </div>
@@ -679,7 +663,8 @@
               <span class="vas-eyebrow">INSTAGRAM &amp; PINTEREST TRENDING</span>
               <h2 class="vas-title">The Runway <em>Spotlight Drops</em></h2>
               <p class="vas-subtitle">
-                Modern Pakistani 3-piece lawn suits, stylish linen kurta pajamas, and wearable semi-formal outfits trending across fashion pages.
+                Modern Pakistani 3-piece lawn suits, stylish linen kurta pajamas, and wearable semi-formal outfits
+                trending across fashion pages.
               </p>
             </div>
 
@@ -687,22 +672,25 @@
               <!-- Spotlight 1: Modern Pakistani Lawn Suit -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                  <img src="images/products/women/emerald-pakistani-suit-front.jpg"
                     alt="Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit" />
                   <span class="vas-badge-tag">Trending on Instagram</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Modern Pakistani Lawn &middot; 3-Piece Suit</span>
                   <h3 class="vas-product-name">Sage Whisper Schiffli Embroidered 3-Piece Lawn Suit</h3>
-                  <p class="vas-product-desc">Breathable Pima lawn straight kurta with intricate schiffli laser-cut lace daman, resham neckline embroidery, matching straight cigarette pants, and printed silk-voile dupatta.</p>
+                  <p class="vas-product-desc">Breathable Pima lawn straight kurta with intricate schiffli laser-cut lace
+                    daman, resham neckline embroidery, matching straight cigarette pants, and printed silk-voile
+                    dupatta.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹4,899</span>
                     <span class="vas-price-old">₹6,500</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('W-SAR-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('W-SAR-01')">✨ Customize</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('W-SAR-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-gold"
+                      onclick="window.startCustomizeFromProduct('W-SAR-01')">✨ Customize</button>
                   </div>
                 </div>
               </article>
@@ -710,22 +698,23 @@
               <!-- Spotlight 2: Men's Pure Linen Kurta Pajama -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="images/products/men/royal-blue-suit-front.jpg"
-                    alt="Modern Ivory Pure Linen Kurta Pajama" />
+                  <img src="images/products/men/royal-blue-suit-front.jpg" alt="Modern Ivory Pure Linen Kurta Pajama" />
                   <span class="vas-badge-tag">Essential Sartorial</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Men's Sartorial &middot; Pure Irish Linen</span>
                   <h3 class="vas-product-name">Modern Ivory Pure Linen Kurta Pajama</h3>
-                  <p class="vas-product-desc">Crisp breathable 100% pure Irish linen kurta with concealed placket, tailored mandarin collar, discreet side seam pockets, and matching straight-cut linen pajama.</p>
+                  <p class="vas-product-desc">Crisp breathable 100% pure Irish linen kurta with concealed placket,
+                    tailored mandarin collar, discreet side seam pockets, and matching straight-cut linen pajama.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹4,499</span>
                     <span class="vas-price-old">₹6,000</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('M-BG-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('M-BG-01')">✨ Customize</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('M-BG-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-gold"
+                      onclick="window.startCustomizeFromProduct('M-BG-01')">✨ Customize</button>
                   </div>
                 </div>
               </article>
@@ -733,22 +722,24 @@
               <!-- Spotlight 3: Blush Peach Tiered Festive Suit -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="images/products/women/mint-organza-saree-front.jpg"
+                  <img src="images/products/women/mint-organza-saree-front.jpg"
                     alt="Blush Peach Scalloped Tiered Festive Suit" />
                   <span class="vas-badge-tag">High-Summer Edit</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Festive Occasion &middot; Silk Organza</span>
                   <h3 class="vas-product-name">Blush Peach Scalloped Tiered Festive Suit</h3>
-                  <p class="vas-product-desc">A-line pastel peach kurta layered with scalloped embroidered borders, resham floral bootis, and breathable cotton-silk lining with straight trousers.</p>
+                  <p class="vas-product-desc">A-line pastel peach kurta layered with scalloped embroidered borders,
+                    resham floral bootis, and breathable cotton-silk lining with straight trousers.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹6,299</span>
                     <span class="vas-price-old">₹8,200</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('W-DR-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('W-DR-01')">✨ Customize</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('W-DR-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-gold"
+                      onclick="window.startCustomizeFromProduct('W-DR-01')">✨ Customize</button>
                   </div>
                 </div>
               </article>
@@ -756,22 +747,24 @@
               <!-- Spotlight 4: Ivory Pearl Chikankari & Schiffli Kurta Set -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
+                  <img src="images/products/women/emerald-pakistani-suit-front.jpg"
                     alt="Ivory Pearl Chikankari & Schiffli Kurta Set" />
                   <span class="vas-badge-tag">Semi-Formal Elegant</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Pure Cotton Cambric &middot; Schiffli Lace</span>
                   <h3 class="vas-product-name">Ivory Pearl Chikankari &amp; Schiffli Kurta Set</h3>
-                  <p class="vas-product-desc">Tone-on-tone Lucknowi chikankari floral jaal kurta with organza schiffli hem border, matching straight cigarette trousers, and featherlight kota doria dupatta.</p>
+                  <p class="vas-product-desc">Tone-on-tone Lucknowi chikankari floral jaal kurta with organza schiffli
+                    hem border, matching straight cigarette trousers, and featherlight kota doria dupatta.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹5,999</span>
                     <span class="vas-price-old">₹7,800</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('W-KT-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('W-KT-01')">✨ Customize</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('W-KT-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-gold"
+                      onclick="window.startCustomizeFromProduct('W-KT-01')">✨ Customize</button>
                   </div>
                 </div>
               </article>
@@ -779,22 +772,24 @@
               <!-- Spotlight 5: Slate Grey Structured Linen-Blend Waistcoat Set -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media" style="aspect-ratio:3/4;">
-                  <img
-                    src="images/products/men/black-sherwani-gold-front.jpg"
+                  <img src="images/products/men/black-sherwani-gold-front.jpg"
                     alt="Slate Grey Structured Linen-Blend Waistcoat Set" />
                   <span class="vas-badge-tag">Semi-Formal Sartorial</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Men's Sartorial &middot; Linen-Wool Blend</span>
                   <h3 class="vas-product-name">Slate Grey Structured Linen-Blend Waistcoat Set</h3>
-                  <p class="vas-product-desc">Tailored structured linen-blend waistcoat with micro threadwork, bespoke welt pockets, and brass crest buttons, worn over a tailored straight kurta.</p>
+                  <p class="vas-product-desc">Tailored structured linen-blend waistcoat with micro threadwork, bespoke
+                    welt pockets, and brass crest buttons, worn over a tailored straight kurta.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹7,499</span>
                     <span class="vas-price-old">₹9,800</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('M-BG-02')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.startCustomizeFromProduct('M-BG-02')">✨ Customize</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('M-BG-02')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-gold"
+                      onclick="window.startCustomizeFromProduct('M-BG-02')">✨ Customize</button>
                   </div>
                 </div>
               </article>
@@ -809,7 +804,8 @@
               <span class="vas-eyebrow">ARTISANAL FINISHING &middot; 6 LUXURY ACCESSORIES</span>
               <h2 class="vas-title">Boutique <em>Accessories Vault</em></h2>
               <p class="vas-subtitle">
-                A curated, limited capsule of handcrafted jewellery, temple kamarbandhs, silk stoles, zardozi potlis, and embroidered juttis.
+                A curated, limited capsule of handcrafted jewellery, temple kamarbandhs, silk stoles, zardozi potlis,
+                and embroidered juttis.
               </p>
             </div>
 
@@ -817,22 +813,23 @@
               <!-- 1. Jadau Choker -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
-                  <img
-                    src="images/products/accessories/bridal-potli-front.jpg"
-                    alt="Pearl Choker" />
+                  <img src="images/products/accessories/bridal-potli-front.jpg" alt="Pearl Choker" />
                   <span class="vas-badge-tag">22K Gold Plated</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Silver Alloy &amp; Basra Pearls</span>
                   <h3 class="vas-product-name">Basra Pearl &amp; Polki Jadau Choker Set</h3>
-                  <p class="vas-product-desc">Antique gold dip with freshwater pearls and uncut polki stones. Includes matching jhumkas.</p>
+                  <p class="vas-product-desc">Antique gold dip with freshwater pearls and uncut polki stones. Includes
+                    matching jhumkas.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹4,899</span>
                     <span class="vas-price-old">₹6,500</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-JW-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-JW-01')">+ Add to Bag</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('A-JW-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-JW-01')">+ Add to
+                      Bag</button>
                   </div>
                 </div>
               </article>
@@ -840,22 +837,23 @@
               <!-- 2. Potli Bag -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
-                  <img
-                    src="images/products/accessories/bridal-potli-front.jpg"
-                    alt="Bridal Potli" />
+                  <img src="images/products/accessories/bridal-potli-front.jpg" alt="Bridal Potli" />
                   <span class="vas-badge-tag">Atelier Handcrafted</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Plush Micro-Velvet</span>
                   <h3 class="vas-product-name">Heirloom Zardozi Velvet Bridal Potli</h3>
-                  <p class="vas-product-desc">Real zari wire floral embroidery with basra pearl tassels and silk cord drawstring.</p>
+                  <p class="vas-product-desc">Real zari wire floral embroidery with basra pearl tassels and silk cord
+                    drawstring.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹2,299</span>
                     <span class="vas-price-old">₹3,200</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-BG-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-BG-01')">+ Add to Bag</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('A-BG-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-BG-01')">+ Add to
+                      Bag</button>
                   </div>
                 </div>
               </article>
@@ -863,22 +861,23 @@
               <!-- 3. Juttis -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
-                  <img
-                    src="images/products/women/maroon-maggam-blouse-front.jpg"
-                    alt="Raw Silk Juttis" />
+                  <img src="images/products/women/maroon-maggam-blouse-front.jpg" alt="Raw Silk Juttis" />
                   <span class="vas-badge-tag">Memory Foam Sole</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Pure Leather &amp; Raw Silk</span>
                   <h3 class="vas-product-name">Embroidered Silk Festive Juttis</h3>
-                  <p class="vas-product-desc">Genuine leather sole with double memory-foam cushioning and hand-stitched dabka embroidery.</p>
+                  <p class="vas-product-desc">Genuine leather sole with double memory-foam cushioning and hand-stitched
+                    dabka embroidery.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹2,699</span>
                     <span class="vas-price-old">₹3,500</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-FT-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-FT-01')">+ Add to Bag</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('A-FT-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-FT-01')">+ Add to
+                      Bag</button>
                   </div>
                 </div>
               </article>
@@ -886,22 +885,23 @@
               <!-- 4. Maang Tikka & Passa -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
-                  <img
-                    src="images/products/accessories/bridal-potli-front.jpg"
-                    alt="Maang Tikka and Passa" />
+                  <img src="images/products/accessories/bridal-potli-front.jpg" alt="Maang Tikka and Passa" />
                   <span class="vas-badge-tag">Bridal Signature</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Brass Alloy &amp; Kundan Pavé</span>
                   <h3 class="vas-product-name">Kundan &amp; Pearl Tikka &amp; Passa Set</h3>
-                  <p class="vas-product-desc">22K micro-gold dipped crescent chand motifs, uncut kundan stones, and cascading Basra pearl drops with matching side passa.</p>
+                  <p class="vas-product-desc">22K micro-gold dipped crescent chand motifs, uncut kundan stones, and
+                    cascading Basra pearl drops with matching side passa.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹2,899</span>
                     <span class="vas-price-old">₹3,800</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-JW-02')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-JW-02')">+ Add to Bag</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('A-JW-02')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-JW-02')">+ Add to
+                      Bag</button>
                   </div>
                 </div>
               </article>
@@ -909,22 +909,23 @@
               <!-- 5. Kamarbandh Waistbelt -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
-                  <img
-                    src="images/products/women/crimson-banarasi-saree-front.jpg"
-                    alt="Temple Waistbelt" />
+                  <img src="images/products/women/crimson-banarasi-saree-front.jpg" alt="Temple Waistbelt" />
                   <span class="vas-badge-tag">Heritage Temple Craft</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">Antique Matte Gold</span>
                   <h3 class="vas-product-name">Temple Heritage Coin Kamarbandh</h3>
-                  <p class="vas-product-desc">Traditional South Indian heirloom waistbelt embossed with sacred coin motifs and micro ghungroos. Adjustable link chain.</p>
+                  <p class="vas-product-desc">Traditional South Indian heirloom waistbelt embossed with sacred coin
+                    motifs and micro ghungroos. Adjustable link chain.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹3,499</span>
                     <span class="vas-price-old">₹4,600</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-WB-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-WB-01')">+ Add to Bag</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('A-WB-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-WB-01')">+ Add to
+                      Bag</button>
                   </div>
                 </div>
               </article>
@@ -932,22 +933,23 @@
               <!-- 6. Silk Organza Stole -->
               <article class="vas-product-card vas-glass-card">
                 <div class="vas-product-media">
-                  <img
-                    src="images/products/women/lavender-chiffon-dupatta-front.jpg"
-                    alt="Organza Stole" />
+                  <img src="images/products/women/lavender-chiffon-dupatta-front.jpg" alt="Organza Stole" />
                   <span class="vas-badge-tag">Handloom Silk Organza</span>
                 </div>
                 <div class="vas-product-body">
                   <span class="vas-product-cat">100% Pure Mulberry Silk</span>
                   <h3 class="vas-product-name">Pure Silk Organza Floral Zari Stole</h3>
-                  <p class="vas-product-desc">Featherlight sheer mulberry silk organza stole with hand-scalloped resham embroidery and woven tissue zari border. 2.5 meters length.</p>
+                  <p class="vas-product-desc">Featherlight sheer mulberry silk organza stole with hand-scalloped resham
+                    embroidery and woven tissue zari border. 2.5 meters length.</p>
                   <div class="vas-product-price-row">
                     <span class="vas-price-current">₹3,199</span>
                     <span class="vas-price-old">₹4,200</span>
                   </div>
                   <div class="vas-product-actions">
-                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openProductDetailModal('A-ST-01')">Quick View</button>
-                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-ST-01')">+ Add to Bag</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline"
+                      onclick="window.openProductDetailModal('A-ST-01')">Quick View</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-primary" onclick="window.addToCart('A-ST-01')">+ Add to
+                      Bag</button>
                   </div>
                 </div>
               </article>
@@ -970,19 +972,22 @@
               <div class="vas-guarantee-card">
                 <div class="vas-guarantee-icon">📜</div>
                 <h3>100% Certified Handloom Weave</h3>
-                <p>Authentic yarn certification tag attached to every pure silk and linen order. Pure zari borders tested for precious metal content.</p>
+                <p>Authentic yarn certification tag attached to every pure silk and linen order. Pure zari borders
+                  tested for precious metal content.</p>
               </div>
 
               <div class="vas-guarantee-card">
                 <div class="vas-guarantee-icon">🪡</div>
                 <h3>2-Inch In-Built Seam Allowance</h3>
-                <p>Never worry about future changes in fit. All blouses and ethnic suits carry generous inside seam allowances for easy release.</p>
+                <p>Never worry about future changes in fit. All blouses and ethnic suits carry generous inside seam
+                  allowances for easy release.</p>
               </div>
 
               <div class="vas-guarantee-card">
                 <div class="vas-guarantee-icon">📦</div>
                 <h3>White-Glove Casket Delivery</h3>
-                <p>Delivered inside an aromatic cedarwood box with breathable cotton garment bag, moisture protection, and lavender care sachets.</p>
+                <p>Delivered inside an aromatic cedarwood box with breathable cotton garment bag, moisture protection,
+                  and lavender care sachets.</p>
               </div>
             </div>
           </div>
@@ -999,7 +1004,8 @@
             <span class="vas-eyebrow">WHAT WE PROVIDE</span>
             <h1 class="vas-title">Three Signature <em>Boutique Services</em></h1>
             <p class="vas-subtitle">
-              Haute couture craftsmanship personalized around your unique silhouette, heirloom fabrics, and event timeline.
+              Haute couture craftsmanship personalized around your unique silhouette, heirloom fabrics, and event
+              timeline.
             </p>
           </div>
         </div>
@@ -1011,15 +1017,14 @@
               <!-- 1. Bespoke Custom Stitching -->
               <article class="vas-service-card vas-glass-card">
                 <div class="vas-service-media">
-                  <img
-                    src="images/products/women/emerald-pakistani-suit-front.jpg"
-                    alt="Custom Stitching" />
+                  <img src="images/products/women/emerald-pakistani-suit-front.jpg" alt="Custom Stitching" />
                   <div class="vas-service-icon-badge">🪡</div>
                 </div>
                 <div class="vas-service-body">
                   <h3>Bespoke Custom Stitching</h3>
                   <span class="vas-service-subtitle">Precision Biometric Pattern Cut</span>
-                  <p>Individualized paper pattern drafted from scratch based on 22 body measurements. Includes mulmul lining and 2-inch side seam alteration allowance.</p>
+                  <p>Individualized paper pattern drafted from scratch based on 22 body measurements. Includes mulmul
+                    lining and 2-inch side seam alteration allowance.</p>
                   <div class="vas-service-inclusions">
                     <strong>What's Included:</strong>
                     <ul>
@@ -1030,7 +1035,8 @@
                   </div>
                   <div class="vas-service-footer">
                     <div class="vas-service-price">From <strong>₹1,800</strong></div>
-                    <a href="#customize" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('customize', event)">Start Customizing &rarr;</a>
+                    <a href="#customize" class="vas-btn vas-btn-sm vas-btn-rose"
+                      onclick="window.navigateToSection('customize', event)">Start Customizing &rarr;</a>
                   </div>
                 </div>
               </article>
@@ -1038,15 +1044,14 @@
               <!-- 2. Custom Outfit Design -->
               <article class="vas-service-card vas-glass-card">
                 <div class="vas-service-media">
-                  <img
-                    src="images/products/women/crimson-banarasi-saree-front.jpg"
-                    alt="Outfit Design" />
+                  <img src="images/products/women/crimson-banarasi-saree-front.jpg" alt="Outfit Design" />
                   <div class="vas-service-icon-badge">✨</div>
                 </div>
                 <div class="vas-service-body">
                   <h3>Custom Outfit Design</h3>
                   <span class="vas-service-subtitle">Bespoke Bridal &amp; Gala Ensembles</span>
-                  <p>From initial moodboard sketches to loom execution. Handcrafted authentic maggam stone work, certified metallic zardozi, and resham embroidery.</p>
+                  <p>From initial moodboard sketches to loom execution. Handcrafted authentic maggam stone work,
+                    certified metallic zardozi, and resham embroidery.</p>
                   <div class="vas-service-inclusions">
                     <strong>What's Included:</strong>
                     <ul>
@@ -1057,7 +1062,8 @@
                   </div>
                   <div class="vas-service-footer">
                     <div class="vas-service-price">From <strong>₹4,500</strong></div>
-                    <button class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openConsultationModal()">Consult Stylist &rarr;</button>
+                    <button class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openConsultationModal()">Consult
+                      Stylist &rarr;</button>
                   </div>
                 </div>
               </article>
@@ -1065,15 +1071,14 @@
               <!-- 3. Saree Reborn & Upcycling -->
               <article class="vas-service-card vas-glass-card">
                 <div class="vas-service-media">
-                  <img
-                    src="images/products/women/royal-blue-lehenga-front.jpg"
-                    alt="Saree Reborn" />
+                  <img src="images/products/women/royal-blue-lehenga-front.jpg" alt="Saree Reborn" />
                   <div class="vas-service-icon-badge">♻️</div>
                 </div>
                 <div class="vas-service-body">
                   <h3>Saree Reborn &amp; Upcycling</h3>
                   <span class="vas-service-subtitle">Vintage Heirloom Transformation</span>
-                  <p>Convert mom’s vintage Kanjeevaram into a chic designer blouse, flared lehenga choli, or luxury potli under strict physical master inspection.</p>
+                  <p>Convert mom’s vintage Kanjeevaram into a chic designer blouse, flared lehenga choli, or luxury
+                    potli under strict physical master inspection.</p>
                   <div class="vas-service-inclusions">
                     <strong>What's Included:</strong>
                     <ul>
@@ -1084,7 +1089,8 @@
                   </div>
                   <div class="vas-service-footer">
                     <div class="vas-service-price">From <strong>₹2,200</strong></div>
-                    <a href="#sareeReborn" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('sareeReborn', event)">Reborn Studio &rarr;</a>
+                    <a href="#sareeReborn" class="vas-btn vas-btn-sm vas-btn-rose"
+                      onclick="window.navigateToSection('sareeReborn', event)">Reborn Studio &rarr;</a>
                   </div>
                 </div>
               </article>
@@ -1099,16 +1105,20 @@
               <span class="vas-eyebrow">INTERACTIVE ATELIER STUDIO</span>
               <h2 class="vas-title">Customize <em>Your Way</em></h2>
               <p class="vas-subtitle">
-                Choose your category, neckline, sleeve, fabric, and hand embroidery. Experience our live visualizer and AI Virtual Try-On.
+                Choose your category, neckline, sleeve, fabric, and hand embroidery. Experience our live visualizer and
+                AI Virtual Try-On.
               </p>
             </div>
 
             <!-- Sanctuary Lock Overlay for Unauthenticated Visitors -->
             <div id="studioAuthLockOverlay" class="vas-service-lock-card">
               <div class="vas-lock-badge">🔒 PRIVATE BESPOKE ATELIER</div>
-              <h3 style="font-family:var(--vas-font-serif); font-size:1.6rem; margin:10px 0 8px;">Exclusive to Registered Patrons</h3>
-              <p style="color:var(--vas-muted); font-size:0.92rem; line-height:1.6; max-width:540px; margin:0 auto 18px;">
-                Customizing silhouettes, necklines, pure handloom fabrics, AI Virtual Try-On, and bespoke tailor commissioning is reserved for VASTRAÉ members. Please sign in or register to unlock full studio access.
+              <h3 style="font-family:var(--vas-font-serif); font-size:1.6rem; margin:10px 0 8px;">Exclusive to
+                Registered Patrons</h3>
+              <p
+                style="color:var(--vas-muted); font-size:0.92rem; line-height:1.6; max-width:540px; margin:0 auto 18px;">
+                Customizing silhouettes, necklines, pure handloom fabrics, AI Virtual Try-On, and bespoke tailor
+                commissioning is reserved for VASTRAÉ members. Please sign in or register to unlock full studio access.
               </p>
               <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <button class="vas-btn vas-btn-gold" onclick="window.openAuthModal('login')">
@@ -1130,7 +1140,8 @@
                 <button type="button" class="vas-gender-btn" data-gender="men" onclick="window.setCustomGender('men')">
                   👨 Men's Sartorial
                 </button>
-                <button type="button" class="vas-gender-btn" data-gender="kids" onclick="window.setCustomGender('kids')">
+                <button type="button" class="vas-gender-btn" data-gender="kids"
+                  onclick="window.setCustomGender('kids')">
                   👧 Junior &amp; Kids
                 </button>
               </div>
@@ -1145,26 +1156,30 @@
                 <div class="vas-studio-preview">
                   <!-- Visual Detail Zoom Studio Selector (Single Master Image) -->
                   <div class="vas-studio-angle-bar" id="studioAngleBar">
-                    <button type="button" class="vas-studio-angle-btn active" data-angle="front" onclick="window.setStudioAngle('front', this)">
+                    <button type="button" class="vas-studio-angle-btn active" data-angle="front"
+                      onclick="window.setStudioAngle('front', this)">
                       <span>👗 Full Dress</span>
                     </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="detail" onclick="window.setStudioAngle('detail', this)">
+                    <button type="button" class="vas-studio-angle-btn" data-angle="detail"
+                      onclick="window.setStudioAngle('detail', this)">
                       <span>🔍 Embroidery Zoom</span>
                     </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="upper" onclick="window.setStudioAngle('upper', this)">
+                    <button type="button" class="vas-studio-angle-btn" data-angle="upper"
+                      onclick="window.setStudioAngle('upper', this)">
                       <span>👚 Blouse / Kurta</span>
                     </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="sleeves" onclick="window.setStudioAngle('sleeves', this)">
+                    <button type="button" class="vas-studio-angle-btn" data-angle="sleeves"
+                      onclick="window.setStudioAngle('sleeves', this)">
                       <span>🪡 Sleeves Detail</span>
                     </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="neckline" onclick="window.setStudioAngle('neckline', this)">
+                    <button type="button" class="vas-studio-angle-btn" data-angle="neckline"
+                      onclick="window.setStudioAngle('neckline', this)">
                       <span>✨ Neckline &amp; Collar</span>
                     </button>
                   </div>
 
                   <div class="vas-preview-display" id="studioPreviewDisplay">
-                    <img id="studioPreviewImg"
-                      src="images/products/women/emerald-pakistani-suit-front.jpg"
+                    <img id="studioPreviewImg" src="images/products/women/emerald-pakistani-suit-front.jpg"
                       alt="Customized Look" />
                     <div class="vas-preview-overlay-tags" id="studioPreviewTags">
                       <!-- Updated live -->
@@ -1180,7 +1195,8 @@
 
                     <!-- Choose Virtual Model -->
                     <div style="margin-bottom:14px;">
-                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:6px;">Choose Virtual Model:</label>
+                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:6px;">Choose
+                        Virtual Model:</label>
                       <div id="virtualModelSelect" style="display:flex; gap:10px; justify-content:space-between;">
                         <!-- Injected from data.js -->
                       </div>
@@ -1188,14 +1204,16 @@
 
                     <!-- Upload Customer Photo -->
                     <div style="margin-bottom:14px;">
-                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:4px;">Or Upload Your Own Photo:</label>
+                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:4px;">Or Upload
+                        Your Own Photo:</label>
                       <input type="file" accept="image/*" class="vas-input" style="padding:6px; font-size:0.78rem;"
                         onchange="window.handleCustomerPhotoUpload(event)" />
                     </div>
 
                     <!-- Privacy Message -->
                     <div class="vas-privacy-note">
-                      🔒 <em>Client Privacy Guarantee:</em> Photos are processed client-side for virtual draping and never stored publicly.
+                      🔒 <em>Client Privacy Guarantee:</em> Photos are processed client-side for virtual draping and
+                      never stored publicly.
                     </div>
                   </div>
 
@@ -1244,7 +1262,8 @@
               <span class="vas-eyebrow">CIRCULAR HAUTE COUTURE</span>
               <h2 class="vas-title">Saree Reborn &middot; <em>Waste-to-Best</em></h2>
               <p class="vas-subtitle">
-                Don't leave mother’s or grandmother’s heritage sarees folded away in wardrobes. Reincarnate heirloom silks into modern blouses, lehengas, and festive potlis.
+                Don't leave mother’s or grandmother’s heritage sarees folded away in wardrobes. Reincarnate heirloom
+                silks into modern blouses, lehengas, and festive potlis.
               </p>
             </div>
 
@@ -1288,7 +1307,10 @@
               <div class="vas-inspection-alert-text">
                 <strong>Mandatory Master Tailor Physical Inspection Policy:</strong>
                 <p>
-                  Our shipping delivery team cannot judge fabric tensile strength. Every vintage saree must be inspected physically on our Indiranagar drafting loom. If the fabric is determined to be <em>Not Usable</em> due to brittle silk age, we inform you immediately and safely return the saree (customer pays applicable return shipping charges of ₹180).
+                  Our shipping delivery team cannot judge fabric tensile strength. Every vintage saree must be inspected
+                  physically on our Indiranagar drafting loom. If the fabric is determined to be <em>Not Usable</em> due
+                  to brittle silk age, we inform you immediately and safely return the saree (customer pays applicable
+                  return shipping charges of ₹180).
                 </p>
               </div>
             </div>
@@ -1296,13 +1318,17 @@
             <!-- Saree Reborn Member Lock Card -->
             <div id="rebornAuthLockOverlay" class="vas-service-lock-card">
               <div class="vas-lock-badge">🔒 SAREE REBORN SANCTUARY</div>
-              <h4 style="font-family:var(--vas-font-serif); font-size:1.4rem; margin:8px 0 6px;">Sign In to Commission Upcycling</h4>
+              <h4 style="font-family:var(--vas-font-serif); font-size:1.4rem; margin:8px 0 6px;">Sign In to Commission
+                Upcycling</h4>
               <p style="color:var(--vas-muted); font-size:0.9rem; margin:0 auto 16px; max-width:480px;">
-                Physical loom inspection and vintage saree transformation is reserved for registered patrons. Please sign in or register to submit your commission.
+                Physical loom inspection and vintage saree transformation is reserved for registered patrons. Please
+                sign in or register to submit your commission.
               </p>
               <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <button class="vas-btn vas-btn-rose vas-btn-sm" onclick="window.openAuthModal('login')">Sign In &rarr;</button>
-                <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAuthModal('register')">Register Profile</button>
+                <button class="vas-btn vas-btn-rose vas-btn-sm" onclick="window.openAuthModal('login')">Sign In
+                  &rarr;</button>
+                <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAuthModal('register')">Register
+                  Profile</button>
               </div>
             </div>
 
@@ -1311,7 +1337,8 @@
               style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:36px; padding:36px; margin-bottom: 24px;">
               <div>
                 <h3 style="margin-bottom:8px;">Commission a Saree Reborn</h3>
-                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">Submit your vintage saree details to schedule physical loom intake.</p>
+                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">Submit your vintage saree
+                  details to schedule physical loom intake.</p>
                 <form id="sareeRebornForm" onsubmit="window.handleSareeRebornSubmit(event)">
                   <div class="vas-form-grid">
                     <div class="vas-form-group">
@@ -1362,7 +1389,8 @@
               <!-- Active Reborn Status Card -->
               <div>
                 <h3 style="margin-bottom:8px;">Live Saree Reborn Commissions</h3>
-                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:16px;">Track physical inspection verdicts in real-time.</p>
+                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:16px;">Track physical inspection
+                  verdicts in real-time.</p>
                 <div id="sareeRebornOrdersList">
                   <!-- Rendered by js/app.js -->
                 </div>
@@ -1378,99 +1406,128 @@
               <span class="vas-eyebrow">DOORSTEP CONCIERGE</span>
               <h2 class="vas-title">Own-Fabric <em>Custom Stitching</em></h2>
               <p class="vas-subtitle">
-                Have your own unstitched fabric? Send it to our atelier. We pick it up from your doorstep in Bengaluru or provide insured courier slips for pan-India patrons.
+                Have your own unstitched fabric? Send it to our atelier. We pick it up from your doorstep in Bengaluru
+                or provide insured courier slips for pan-India patrons.
               </p>
             </div>
 
             <!-- Own-Fabric Member Lock Card -->
             <div id="ownFabricAuthLockOverlay" class="vas-service-lock-card">
               <div class="vas-lock-badge">🔒 DOORSTEP FABRIC PICKUP</div>
-              <h4 style="font-family:var(--vas-font-serif); font-size:1.4rem; margin:8px 0 6px;">Sign In to Schedule Tailor Pickup</h4>
+              <h4 style="font-family:var(--vas-font-serif); font-size:1.4rem; margin:8px 0 6px;">Sign In to Schedule
+                Tailor Pickup</h4>
               <p style="color:var(--vas-muted); font-size:0.9rem; margin:0 auto 16px; max-width:480px;">
-                Doorstep fabric collection and made-to-measure tailoring is available exclusively to registered patrons. Please sign in or create an account to book your collection slot.
+                Doorstep fabric collection and made-to-measure tailoring is available exclusively to registered patrons.
+                Please sign in or create an account to book your collection slot.
               </p>
               <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.openAuthModal('login')">Sign In &rarr;</button>
-                <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAuthModal('register')">Register Profile</button>
+                <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.openAuthModal('login')">Sign In
+                  &rarr;</button>
+                <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAuthModal('register')">Register
+                  Profile</button>
               </div>
             </div>
 
-              <div class="vas-own-fabric-card">
-                <form id="ownFabricForm" onsubmit="window.handleOwnFabricSubmit(event)">
-                  <div class="vas-form-grid">
-                    <div class="vas-form-group full">
-                      <div class="vas-dropzone" onclick="document.getElementById('ownFabPhoto').click()">
-                        <div class="vas-dropzone-icon">📷</div>
-                        <strong>Upload Fabric Reference Photo</strong>
-                        <p style="font-size:0.8rem; color:var(--vas-muted); margin-top:4px;">Capture weave texture or embroidered border edges (JPG, PNG)</p>
-                        <input type="file" id="ownFabPhoto" accept="image/*" style="display:none;" />
-                      </div>
+            <div class="vas-own-fabric-card">
+              <form id="ownFabricForm" onsubmit="window.handleOwnFabricSubmit(event)">
+                <div class="vas-form-grid">
+                  <div class="vas-form-group full">
+                    <div class="vas-dropzone" onclick="document.getElementById('ownFabPhoto').click()" style="cursor:pointer;">
+                      <div class="vas-dropzone-icon">📷</div>
+                      <strong>Upload Fabric Reference Photo</strong>
+                      <p style="font-size:0.8rem; color:var(--vas-muted); margin-top:4px;">Capture weave texture, border details or fabric pattern (JPG, PNG)</p>
+                      <div id="ownFabPhotoName" style="font-size:0.75rem; color:#b88628; margin-top:4px; font-weight:600;"></div>
+                      <input type="file" id="ownFabPhoto" accept="image/*" style="display:none;" onchange="if(this.files[0]) document.getElementById('ownFabPhotoName').textContent = '✓ Selected: ' + this.files[0].name;" />
                     </div>
-
-                    <div class="vas-form-group">
-                      <label>Fabric Type</label>
-                      <select id="ownFabType" class="vas-select">
-                        <option>Pure Mulberry Silk / Raw Silk</option>
-                        <option>Handloom Chanderi / Tussar</option>
-                        <option>Pure Belgian Linen / Cotton</option>
-                        <option>Georgette / Organza</option>
-                        <option>Velvet / Brocade</option>
-                      </select>
-                    </div>
-
-                    <div class="vas-form-group">
-                      <label>Quantity in Meters</label>
-                      <input type="number" id="ownFabMeters" class="vas-input" value="2.5" step="0.25" min="1" max="20"
-                        required />
-                    </div>
-
-                    <div class="vas-form-group">
-                      <label>Garment to Stitch</label>
-                      <select id="ownFabGarment" class="vas-select">
-                        <option>Designer Blouse (Princess Cut)</option>
-                        <option>Men's Bandhgala Suit</option>
-                        <option>Men's Pure Linen Shirt</option>
-                        <option>Anarkali Kurti &amp; Pants</option>
-                        <option>Flared Lehenga Skirt</option>
-                      </select>
-                    </div>
-
-                    <div class="vas-form-group">
-                      <label>Pickup Date</label>
-                      <input type="date" id="ownFabDate" class="vas-input" min="2026-10-08" required />
-                    </div>
-
-                    <div class="vas-form-group">
-                      <label>Pickup Time Slot</label>
-                      <select id="ownFabSlot" class="vas-select">
-                        <option>Morning (10:00 AM – 01:00 PM)</option>
-                        <option>Afternoon (02:00 PM – 05:00 PM)</option>
-                        <option>Evening (05:00 PM – 08:00 PM)</option>
-                      </select>
-                    </div>
-
-                    <div class="vas-form-group">
-                      <label>Doorstep Pickup Address</label>
-                      <input type="text" id="ownFabAddress" class="vas-input"
-                        value="Penthouse 4B, Prestige Willow, Indiranagar, Bengaluru" required />
+                    <div style="font-size:0.75rem; color:#8d5e16; margin-top:8px; background:#fffcf4; border:1px solid #f2c46a; border-left:3px solid #b88628; padding:8px 12px; border-radius:6px; line-height:1.4;">
+                      <strong>⚠️ Mandatory Protocol:</strong> Fabric photos submitted online are strictly for visual reference only. They do <em>not</em> determine final suitability. All physical fabrics undergo mandatory physical examination upon arrival at our Indiranagar atelier prior to design confirmation.
                     </div>
                   </div>
 
-                  <div
-                    style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; flex-wrap:wrap; gap:16px;">
-                    <div>
-                      <span style="font-size:0.85rem; color:var(--vas-muted);">Estimated Stitching Charge:</span>
-                      <div style="font-family:var(--vas-font-serif); font-size:1.4rem; font-weight:700; color:var(--vas-ink);">
-                        ₹1,800 <small style="font-size:0.75rem; font-family:sans-serif; color:var(--vas-muted);">(Lining &amp; canvas included)</small>
-                      </div>
-                    </div>
-                    <button type="submit" class="vas-btn vas-btn-gold">
-                      📦 Schedule Doorstep Fabric Collection
-                    </button>
+                  <div class="vas-form-group">
+                    <label>Fabric Type</label>
+                    <select id="ownFabType" class="vas-select">
+                      <option>Pure Mulberry Silk / Raw Silk</option>
+                      <option>Handloom Chanderi / Tussar</option>
+                      <option>Pure Belgian Linen / Cotton</option>
+                      <option>Georgette / Organza</option>
+                      <option>Velvet / Brocade</option>
+                    </select>
                   </div>
-                </form>
-              </div>
+
+                  <div class="vas-form-group">
+                    <label>Quantity in Meters</label>
+                    <input type="number" id="ownFabMeters" class="vas-input" value="2.5" step="0.25" min="1" max="20"
+                      required />
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label>Garment to Stitch</label>
+                    <select id="ownFabGarment" class="vas-select">
+                      <option>Designer Blouse (Princess Cut)</option>
+                      <option>Men's Bandhgala Suit</option>
+                      <option>Men's Pure Linen Shirt</option>
+                      <option>Anarkali Kurti &amp; Pants</option>
+                      <option>Flared Lehenga Skirt</option>
+                    </select>
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label>Design Preferences (Optional)</label>
+                    <input type="text" id="ownFabDesign" class="vas-input" placeholder="e.g. Sweetheart neckline, elbow sleeves, deep back arch" />
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label>Measurements / Fit Notes (Optional)</label>
+                    <input type="text" id="ownFabMeasurements" class="vas-input" placeholder="e.g. Bust 34, Waist 28, or 22-Point Standard Fit" />
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label>Pickup / Drop-off Preference</label>
+                    <select id="ownFabPickupMethod" class="vas-select">
+                      <option value="Doorstep Courier Pickup">Doorstep Courier Pickup</option>
+                      <option value="Patron Drop-off at Boutique Desk">Patron Drop-off at Boutique Desk (Indiranagar)</option>
+                    </select>
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" id="ownFabDate" class="vas-input" min="2026-10-08" required />
+                  </div>
+
+                  <div class="vas-form-group">
+                    <label>Preferred Time Slot</label>
+                    <select id="ownFabSlot" class="vas-select">
+                      <option>Morning (10:00 AM – 01:00 PM)</option>
+                      <option>Afternoon (02:00 PM – 05:00 PM)</option>
+                      <option>Evening (05:00 PM – 08:00 PM)</option>
+                    </select>
+                  </div>
+
+                  <div class="vas-form-group full">
+                    <label>Address / Location</label>
+                    <input type="text" id="ownFabAddress" class="vas-input"
+                      value="Penthouse 4B, Prestige Willow, Indiranagar, Bengaluru" required />
+                  </div>
+                </div>
+
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; flex-wrap:wrap; gap:16px;">
+                  <div>
+                    <span style="font-size:0.85rem; color:var(--vas-muted);">Estimated Stitching Charge:</span>
+                    <div
+                      style="font-family:var(--vas-font-serif); font-size:1.4rem; font-weight:700; color:var(--vas-ink);">
+                      ₹1,800 <small style="font-size:0.75rem; font-family:sans-serif; color:var(--vas-muted);">(Lining
+                        &amp; canvas included)</small>
+                    </div>
+                  </div>
+                  <button type="submit" class="vas-btn vas-btn-gold">
+                    📦 Schedule Doorstep Fabric Collection
+                  </button>
+                </div>
+              </form>
             </div>
+          </div>
         </section>
       </div>
 
@@ -1484,7 +1541,8 @@
             <span class="vas-eyebrow">VISIT THE FLAGSHIP ATELIER</span>
             <h1 class="vas-title">Come See Us in <em>Bengaluru</em></h1>
             <p class="vas-subtitle">
-              Walk in for fabric hand-feel, bespoke pin fittings, or to drop off your vintage saree with our master couturiers.
+              Walk in for fabric hand-feel, bespoke pin fittings, or to drop off your vintage saree with our master
+              couturiers.
             </p>
           </div>
         </div>
@@ -1507,34 +1565,41 @@
                   <div class="vas-contact-icon">🕒</div>
                   <div>
                     <strong>Atelier Hours</strong>
-                    <p>Monday &ndash; Saturday: 10:00 AM &ndash; 08:30 PM<br />Sunday: By Private Fitting Appointment Only</p>
+                    <p>Monday &ndash; Saturday: 10:00 AM &ndash; 08:30 PM<br />Sunday: By Private Fitting Appointment
+                      Only</p>
                   </div>
                 </div>
                 <div class="vas-contact-item">
                   <div class="vas-contact-icon">📞</div>
                   <div>
                     <strong>Phone &amp; WhatsApp Concierge</strong>
-                    <p>Phone: <a href="tel:+919886012345" style="color:var(--vas-gold-dark);">+91 98860 12345</a><br />WhatsApp: +91 98860 12345 (24/7 Response)</p>
+                    <p>Phone: <a href="tel:+919886012345" style="color:var(--vas-gold-dark);">+91 98860
+                        12345</a><br />WhatsApp: +91 98860 12345 (24/7 Response)</p>
                   </div>
                 </div>
                 <div class="vas-contact-item">
                   <div class="vas-contact-icon">✉️</div>
                   <div>
                     <strong>Email Desk</strong>
-                    <p><a href="mailto:concierge@vastrae.com" style="color:var(--vas-gold-dark);">concierge@vastrae.com</a></p>
+                    <p><a href="mailto:concierge@vastrae.com"
+                        style="color:var(--vas-gold-dark);">concierge@vastrae.com</a></p>
                   </div>
                 </div>
 
                 <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
-                  <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openConsultationModal()">📅 Book Video Fitting</button>
-                  <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openReviewModal()">✍️ Post Review</button>
+                  <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openConsultationModal()">📅 Book Video
+                    Fitting</button>
+                  <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openReviewModal()">✍️ Post
+                    Review</button>
                 </div>
               </div>
 
               <!-- Right: Callback Inquiry Form -->
               <div class="vas-contact-card">
-                <h3 style="margin-bottom:8px; font-family:var(--vas-font-serif);">Send an Inquiry / Request Callback</h3>
-                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">Our chief bridal stylist responds within 30 minutes on WhatsApp.</p>
+                <h3 style="margin-bottom:8px; font-family:var(--vas-font-serif);">Send an Inquiry / Request Callback
+                </h3>
+                <p style="font-size:0.88rem; color:var(--vas-muted); margin-bottom:20px;">Our chief bridal stylist
+                  responds within 30 minutes on WhatsApp.</p>
                 <form id="contactForm" onsubmit="window.handleContactSubmit(event)">
                   <div class="vas-form-grid">
                     <div class="vas-form-group">
@@ -1543,7 +1608,8 @@
                     </div>
                     <div class="vas-form-group">
                       <label>WhatsApp Mobile (+91) *</label>
-                      <input type="tel" id="cntPhone" class="vas-input" placeholder="9886012345" required pattern="[6-9][0-9]{9}" />
+                      <input type="tel" id="cntPhone" class="vas-input" placeholder="9886012345" required
+                        pattern="[6-9][0-9]{9}" />
                     </div>
                     <div class="vas-form-group full">
                       <label>Subject / Service</label>
@@ -1557,7 +1623,8 @@
                     </div>
                     <div class="vas-form-group full">
                       <label>Message / Event Notes</label>
-                      <textarea id="cntMsg" class="vas-textarea" rows="3" placeholder="Tell us your wedding date or stitching requirements..." required></textarea>
+                      <textarea id="cntMsg" class="vas-textarea" rows="3"
+                        placeholder="Tell us your wedding date or stitching requirements..." required></textarea>
                     </div>
                   </div>
                   <button type="submit" class="vas-btn vas-btn-rose" style="margin-top:14px; width:100%;">
@@ -1584,25 +1651,32 @@
               <div class="vas-review-card">
                 <div class="vas-stars">★★★★★</div>
                 <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
-                  &ldquo;I had my mother's 30-year-old Kanjeevaram wedding saree converted into a lehenga and potli bag through Saree Reborn. Master Savitha physically inspected the weave and stabilized the silk. The fit was astonishing!&rdquo;
+                  &ldquo;I had my mother's 30-year-old Kanjeevaram wedding saree converted into a lehenga and potli bag
+                  through Saree Reborn. Master Savitha physically inspected the weave and stabilized the silk. The fit
+                  was astonishing!&rdquo;
                 </p>
-                <strong>Pooja Nambiar</strong> &middot; <small style="color:var(--vas-muted);">Indiranagar, Bengaluru</small>
+                <strong>Pooja Nambiar</strong> &middot; <small style="color:var(--vas-muted);">Indiranagar,
+                  Bengaluru</small>
               </div>
 
               <div class="vas-review-card">
                 <div class="vas-stars">★★★★★</div>
                 <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
-                  &ldquo;Ordered a custom peacock maggam blouse through the interactive customizer. The virtual model draping was super helpful, and the 2-inch side seam allowance gave me total peace of mind.&rdquo;
+                  &ldquo;Ordered a custom peacock maggam blouse through the interactive customizer. The virtual model
+                  draping was super helpful, and the 2-inch side seam allowance gave me total peace of mind.&rdquo;
                 </p>
-                <strong>Sneha Reddy</strong> &middot; <small style="color:var(--vas-muted);">Whitefield, Bengaluru</small>
+                <strong>Sneha Reddy</strong> &middot; <small style="color:var(--vas-muted);">Whitefield,
+                  Bengaluru</small>
               </div>
 
               <div class="vas-review-card">
                 <div class="vas-stars">★★★★★</div>
                 <p style="font-size:0.9rem; line-height:1.6; margin-bottom:12px;">
-                  &ldquo;First time getting a bespoke Bandhgala suit stitched online. They picked up my raw silk fabric from my doorstep and delivered it within 5 days with surgeon cuffs and perfect shoulder slope.&rdquo;
+                  &ldquo;First time getting a bespoke Bandhgala suit stitched online. They picked up my raw silk fabric
+                  from my doorstep and delivered it within 5 days with surgeon cuffs and perfect shoulder slope.&rdquo;
                 </p>
-                <strong>Rohan Singhania</strong> &middot; <small style="color:var(--vas-muted);">Koramangala, Bengaluru</small>
+                <strong>Rohan Singhania</strong> &middot; <small style="color:var(--vas-muted);">Koramangala,
+                  Bengaluru</small>
               </div>
             </div>
           </div>
@@ -1623,21 +1697,25 @@
               <div class="vas-visit-card">
                 <div class="vas-visit-icon">🚗</div>
                 <h3>Valet Parking &amp; Metro</h3>
-                <p>Located on 100 Feet Road right opposite CMH Road intersection. Complimentary valet parking available for patrons. 3 minutes from Indiranagar Metro Station.</p>
+                <p>Located on 100 Feet Road right opposite CMH Road intersection. Complimentary valet parking available
+                  for patrons. 3 minutes from Indiranagar Metro Station.</p>
               </div>
 
               <div class="vas-visit-card">
                 <div class="vas-visit-icon">☕</div>
                 <h3>Private Bridal Suites</h3>
-                <p>Dedicated air-conditioned fitting rooms with three-way full length mirrors, artisanal South Indian filter coffee, and one-on-one styling with Master Couturiers.</p>
+                <p>Dedicated air-conditioned fitting rooms with three-way full length mirrors, artisanal South Indian
+                  filter coffee, and one-on-one styling with Master Couturiers.</p>
               </div>
 
               <div class="vas-visit-card">
                 <div class="vas-visit-icon">💬</div>
                 <h3>Instant WhatsApp Desk</h3>
-                <p>Need directions, live pin location, or appointment rescheduling? Message our concierge desk directly anytime for instant assistance.</p>
+                <p>Need directions, live pin location, or appointment rescheduling? Message our concierge desk directly
+                  anytime for instant assistance.</p>
                 <div style="margin-top:16px;">
-                  <a href="https://wa.me/919886012345" target="_blank" rel="noopener" class="vas-btn vas-btn-sm vas-btn-rose">
+                  <a href="https://wa.me/919886012345" target="_blank" rel="noopener"
+                    class="vas-btn vas-btn-sm vas-btn-rose">
                     Chat on WhatsApp &rarr;
                   </a>
                 </div>
@@ -1653,36 +1731,52 @@
               <span class="vas-eyebrow">COMMON INQUIRIES</span>
               <h2 class="vas-title">Concierge <em>VIP FAQ</em></h2>
               <p class="vas-subtitle">
-                Quick answers regarding salon visits, fitting turnaround times, fabric drop-offs, and bespoke consultations.
+                Quick answers regarding salon visits, fitting turnaround times, fabric drop-offs, and bespoke
+                consultations.
               </p>
             </div>
 
-            <div class="vas-faq-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">Do I need an appointment to visit the Indiranagar salon?</h4>
+            <div class="vas-faq-grid"
+              style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
+              <div class="vas-faq-card vas-glass-card"
+                style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
+                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">Do I need an appointment to
+                  visit the Indiranagar salon?</h4>
                 <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Walk-ins are warmly welcomed from Monday to Saturday (10:00 AM – 8:30 PM) for browsing fabrics and collections. For bridal trousseau consultations or calico fittings, reserving a time slot is recommended.
+                  Walk-ins are warmly welcomed from Monday to Saturday (10:00 AM – 8:30 PM) for browsing fabrics and
+                  collections. For bridal trousseau consultations or calico fittings, reserving a time slot is
+                  recommended.
                 </p>
               </div>
 
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">What is the typical turnaround time for custom tailoring?</h4>
+              <div class="vas-faq-card vas-glass-card"
+                style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
+                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">What is the typical turnaround
+                  time for custom tailoring?</h4>
                 <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Standard custom blouse and kurti stitching takes 48 to 72 hours. Hand-embroidered maggam bridal blouses require 5 to 7 days, and full wedding lehengas require 10 to 14 days. Express 24-hr rush service is available.
+                  Standard custom blouse and kurti stitching takes 48 to 72 hours. Hand-embroidered maggam bridal
+                  blouses require 5 to 7 days, and full wedding lehengas require 10 to 14 days. Express 24-hr rush
+                  service is available.
                 </p>
               </div>
 
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">Can I bring my own fabric or heirloom saree?</h4>
+              <div class="vas-faq-card vas-glass-card"
+                style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
+                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">Can I bring my own fabric or
+                  heirloom saree?</h4>
                 <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Absolutely! You can drop off your fabric at our flagship salon or use our doorstep collection service across Bengaluru. Our master tailors physically inspect the weave and draft your custom pattern.
+                  Absolutely! You can drop off your fabric at our flagship salon or use our doorstep collection service
+                  across Bengaluru. Our master tailors physically inspect the weave and draft your custom pattern.
                 </p>
               </div>
 
-              <div class="vas-faq-card vas-glass-card" style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
-                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">What if my garment needs sizing adjustments later?</h4>
+              <div class="vas-faq-card vas-glass-card"
+                style="padding:24px; border-radius:var(--vas-radius); border:1px solid var(--vas-border);">
+                <h4 style="font-size:1.05rem; margin-bottom:8px; color:var(--vas-ink);">What if my garment needs sizing
+                  adjustments later?</h4>
                 <p style="font-size:0.88rem; color:var(--vas-muted); line-height:1.6; margin:0;">
-                  Every garment crafted at VASTRAÉ includes generous 2-inch internal seam allowances and complimentary lifetime alteration privileges. Simply bring it in or request a courier pickup.
+                  Every garment crafted at VASTRAÉ includes generous 2-inch internal seam allowances and complimentary
+                  lifetime alteration privileges. Simply bring it in or request a courier pickup.
                 </p>
               </div>
             </div>
@@ -1702,7 +1796,8 @@
                 <span class="vas-brand-sub">HAUTE COUTURE ATELIER &middot; BENGALURU</span>
               </div>
               <p style="font-size:0.88rem; line-height:1.6;">
-                A single boutique atelier dedicated to precision custom stitching, personalized outfit customization, and sustainable Saree Reborn upcycling.
+                A single boutique atelier dedicated to precision custom stitching, personalized outfit customization,
+                and sustainable Saree Reborn upcycling.
               </p>
             </div>
 
@@ -1711,7 +1806,8 @@
               <ul class="vas-footer-links">
                 <li><a href="#home" onclick="window.navigateToPage('home', event)">Home</a></li>
                 <li><a href="#about" onclick="window.navigateToPage('about', event)">About Atelier</a></li>
-                <li><a href="#collection" onclick="window.navigateToPage('collection', event)">Curated Collection</a></li>
+                <li><a href="#collection" onclick="window.navigateToPage('collection', event)">Curated Collection</a>
+                </li>
                 <li><a href="#services" onclick="window.navigateToPage('services', event)">Boutique Services</a></li>
                 <li><a href="#contact" onclick="window.navigateToPage('contact', event)">Contact Us</a></li>
               </ul>
@@ -1720,22 +1816,15 @@
             <div class="vas-footer-col">
               <h4>Couture Suites</h4>
               <ul class="vas-footer-links">
-                <li><a href="#customize" onclick="window.navigateToSection('customize', event)">Customize Your Way</a></li>
-                <li><a href="#sareeReborn" onclick="window.navigateToSection('sareeReborn', event)">Saree Reborn (Waste-to-Best)</a></li>
-                <li><a href="#ownFabric" onclick="window.navigateToSection('ownFabric', event)">Own-Fabric Collection</a></li>
-                <li><a href="#accessories" onclick="window.navigateToSection('accessories', event)">Artisanal Accessories</a></li>
+                <li><a href="#customize" onclick="window.navigateToSection('customize', event)">Customize Your Way</a>
+                </li>
+                <li><a href="#sareeReborn" onclick="window.navigateToSection('sareeReborn', event)">Saree Reborn
+                    (Waste-to-Best)</a></li>
+                <li><a href="#ownFabric" onclick="window.navigateToSection('ownFabric', event)">Own-Fabric
+                    Collection</a></li>
+                <li><a href="#accessories" onclick="window.navigateToSection('accessories', event)">Artisanal
+                    Accessories</a></li>
                 <li><a href="javascript:void(0)" onclick="window.openCustomerDashboard()">Customer Sanctuary</a></li>
-              </ul>
-            </div>
-
-            <div class="vas-footer-col">
-              <h4>Atelier Privileges</h4>
-              <ul class="vas-footer-links">
-                <li><a href="#services" onclick="window.navigateToPage('services', event)">Bespoke Alterations</a></li>
-                <li><a href="#about" onclick="window.navigateToPage('about', event)">Heritage Craftsmanship</a></li>
-                <li><a href="#contact" onclick="window.navigateToPage('contact', event)">Salon Appointments</a></li>
-                <li><a href="javascript:void(0)" onclick="window.openConsultationModal()">Virtual Consultations</a></li>
-                <li><a href="javascript:void(0)" onclick="window.openCustomerDashboard()">Client Sanctuary Access</a></li>
               </ul>
             </div>
 
@@ -1758,212 +1847,199 @@
       </footer>
     </main>
 
-
     <!-- ======================================================================
-         PART 6 & 7: CUSTOMER DASHBOARD & WORKSPACE VIEW
+         PART 6 & 7: CUSTOMER DASHBOARD & CLIENT SANCTUARY WORKSPACE
          ====================================================================== -->
-    <div class="vas-dashboard-view" id="customerDashboardView" style="display:none;">
-      <div class="vas-container">
-        <!-- Dashboard Top Header Bar (Elevated card, visible below navbar) -->
-        <div class="vas-dash-topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding:22px 28px; background:#ffffff; border-radius:12px; border:1px solid var(--vas-border); box-shadow:var(--vas-shadow-sm); flex-wrap:wrap; gap:16px;">
-          <div>
-            <span class="vas-eyebrow" style="color:var(--vas-gold-dark); letter-spacing:0.12em;">CLIENT SANCTUARY &middot; PRIVATE WORKSPACE</span>
-            <h1 style="font-size:1.85rem; margin:4px 0 0; color:var(--vas-ink);">Customer Sanctuary</h1>
+    <div class="vas-dashboard-view vas-dash-shell" id="customerDashboardView" style="display:none;">
+      <!-- Left Obsidian Luxury Sidebar -->
+      <aside class="vas-dash-sidebar-ref">
+        <div>
+          <div class="vas-dash-sidebar-brand">
+            <span class="vas-dash-brand-title">VASTRAÉ</span>
+            <span class="vas-dash-brand-sub">Client Sanctuary</span>
           </div>
-          <div style="display:flex; gap:12px; align-items:center;">
-            <button class="vas-btn vas-btn-outline vas-btn-sm" style="font-weight:600; padding:8px 18px;" onclick="window.returnToPublicWebsite()">
-              ← Return to Boutique
+
+          <nav class="vas-dash-nav-ref" id="customerNavList">
+            <button class="vas-dash-nav-item active" onclick="window.switchDashboardTab('overview', this)">
+              <span><span class="icon">▣</span> Sanctuary Hub</span>
             </button>
-            <button class="vas-btn vas-btn-sm" style="background:#b33939; color:#fff; border:none; font-weight:600; padding:8px 18px; border-radius:6px; cursor:pointer;" onclick="window.handleLogout()">
-              ⎋ Sign Out
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('customize', this)">
+              <span><span class="icon">🪡</span> Customize Studio</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('tryon', this)">
+              <span><span class="icon">✨</span> AI Virtual Try-On</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('orders', this)">
+              <span><span class="icon">📦</span> Orders &amp; Tracking</span>
+              <span class="vas-dash-nav-badge" id="custOrdersNavBadge">0</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('reborn', this)">
+              <span><span class="icon">♻️</span> Saree Reborn</span>
+              <span class="vas-dash-nav-badge" id="custRebornNavBadge">0</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('ownfabric', this)">
+              <span><span class="icon">🧵</span> Send Own Fabric</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('measurements', this)">
+              <span><span class="icon">📏</span> Measurements</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('designs', this)">
+              <span><span class="icon">🎨</span> Saved Designs</span>
+              <span class="vas-dash-nav-badge" id="custDesignsNavBadge">0</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('consultation', this)">
+              <span><span class="icon">🪞</span> Styling Call</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('profile', this)">
+              <span><span class="icon">👤</span> Profile &amp; Address</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchDashboardTab('notifications', this)">
+              <span><span class="icon">🔔</span> Activity Log</span>
+            </button>
+          </nav>
+        </div>
+
+        <div class="vas-dash-sidebar-footer">
+          <div class="vas-dash-user-pill">
+            <div class="vas-dash-avatar-sm" id="dashUserAvatar">C</div>
+            <div class="vas-dash-user-meta">
+              <strong id="dashUserName">Client Sanctuary</strong>
+              <small id="dashUserTier">Atelier Patron</small>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="vas-dash-logout-btn" onclick="window.returnToPublicWebsite()" title="Return to Boutique" style="color:var(--vas-champagne);">
+              ←
+            </button>
+            <button class="vas-dash-logout-btn" onclick="window.handleLogout()" title="Sign Out">
+              ⎋
             </button>
           </div>
         </div>
+      </aside>
 
-        <div class="vas-dashboard-layout">
-          <!-- Sidebar Nav & Mini Profile -->
-          <aside class="vas-dashboard-sidebar">
-            <div class="vas-profile-card-mini">
-              <div class="vas-avatar-circle" id="dashUserAvatar">C</div>
-              <h3 id="dashUserName" style="font-size:1.15rem; margin-bottom:2px;">Client Sanctuary</h3>
-              <span id="dashUserTier" style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase;">Atelier Patron</span>
-              <p id="dashUserEmail" style="font-size:0.8rem; color:var(--vas-muted); margin:4px 0 0;">client@vastrae.com</p>
-              <p id="dashUserPhone" style="font-size:0.8rem; color:var(--vas-muted); margin:0;">+91 98860 12345</p>
-            </div>
-
-            <nav class="vas-dash-nav">
-              <button class="vas-dash-nav-btn active" onclick="window.switchDashboardTab('orders', this)">
-                📦 Order History & Tailoring Status
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchDashboardTab('designs', this)">
-                🎨 Saved Designs & Moodboards
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchDashboardTab('reborn', this)">
-                ♻️ Saree Reborn Commissions
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchDashboardTab('measurements', this)">
-                📏 Family Measurement Cards
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchDashboardTab('profile', this)">
-                👤 Edit Personal Profile & Address
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchDashboardTab('notifications', this)">
-                🔔 Notifications & Activity Log
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.openConsultationModal()">
-                🪞 Book Styling Video Call
-              </button>
-            </nav>
-          </aside>
-
-          <!-- Main Dashboard Pane -->
-          <main class="vas-dash-content">
-            <!-- Stat Counters -->
-            <div class="vas-dash-stat-grid">
-              <div class="vas-stat-card">
-                <span>Active Orders</span>
-                <strong id="dashStatOrders">0</strong>
-              </div>
-              <div class="vas-stat-card">
-                <span>Saved Designs</span>
-                <strong id="dashStatCustom">0</strong>
-              </div>
-              <div class="vas-stat-card">
-                <span>Saree Reborn</span>
-                <strong id="dashStatReborn">0</strong>
-              </div>
-              <div class="vas-stat-card">
-                <span>Loyalty Points</span>
-                <strong id="dashStatPoints">0</strong>
-              </div>
-            </div>
-
-            <!-- Dynamic Tab Content Rendered by js/app.js -->
-            <div id="dashTabPane">
-              <!-- Orders / Profile / Measurements / Designs / Reborn -->
-            </div>
-          </main>
-        </div>
-      </div>
+      <!-- Right Main Luxury Canvas -->
+      <main class="vas-dash-canvas-ref" id="customerContentPane">
+        <div id="dashTabPane"></div>
+      </main>
     </div>
 
     <!-- ======================================================================
          PART 8: ADMIN DASHBOARD VIEW (MANAGEMENT STUDIO)
          ====================================================================== -->
-    <div class="vas-dashboard-view" id="adminDashboardView" style="display:none;">
-      <div class="vas-container">
-        <!-- Admin Dashboard Top Header Bar (Elevated card, visible below navbar) -->
-        <div class="vas-dash-topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding:22px 28px; background:#ffffff; border-radius:12px; border:1px solid var(--vas-border); box-shadow:var(--vas-shadow-sm); flex-wrap:wrap; gap:16px;">
-          <div>
-            <span class="vas-eyebrow" style="color:var(--vas-gold-dark); letter-spacing:0.12em;">VASTRAÉ ATELIER &middot; BACK-OFFICE DIRECTORY</span>
-            <h1 style="font-size:1.85rem; margin:4px 0 0; color:var(--vas-ink);">Admin Management Console</h1>
+    <div class="vas-dashboard-view vas-dash-shell" id="adminDashboardView" style="display:none;">
+      <!-- Left Obsidian Luxury Sidebar -->
+      <aside class="vas-dash-sidebar-ref">
+        <div>
+          <div class="vas-dash-sidebar-brand">
+            <span class="vas-dash-brand-title">VASTRAÉ</span>
+            <span class="vas-dash-brand-sub">Management Studio</span>
           </div>
-          <div style="display:flex; gap:12px; align-items:center;">
-            <button class="vas-btn vas-btn-outline vas-btn-sm" style="font-weight:600; padding:8px 18px;" onclick="window.returnToPublicWebsite()">
-              ← Return to Boutique
+
+          <nav class="vas-dash-nav-ref" id="adminNavList">
+            <button class="vas-dash-nav-item active" onclick="window.switchAdminTab('overview', this)">
+              <span><span class="icon">▣</span> Overview</span>
             </button>
-            <button class="vas-btn vas-btn-sm" style="background:#b33939; color:#fff; border:none; font-weight:600; padding:8px 18px; border-radius:6px; cursor:pointer;" onclick="window.handleLogout()">
-              ⎋ Sign Out
+            <button class="vas-dash-nav-item" onclick="window.switchAdminTab('tailors', this)">
+              <span><span class="icon">🪡</span> Manage Tailors</span>
+              <span class="vas-dash-nav-badge" id="adminTailorsNavBadge">0</span>
             </button>
-          </div>
+            <button class="vas-dash-nav-item" onclick="window.switchAdminTab('orders', this)">
+              <span><span class="icon">📋</span> Customer Orders</span>
+              <span class="vas-dash-nav-badge" id="adminOrdersNavBadge">0</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchAdminTab('inventory', this)">
+              <span><span class="icon">🧵</span> Fabric Inventory</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchAdminTab('products', this)">
+              <span><span class="icon">◇</span> Products &amp; Catalog</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchAdminTab('clients', this)">
+              <span><span class="icon">👥</span> Registered Clients</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchAdminTab('reports', this)">
+              <span><span class="icon">📊</span> Executive Reports</span>
+            </button>
+          </nav>
         </div>
 
-        <div class="vas-dashboard-layout">
-          <!-- Sidebar Nav & Admin Profile -->
-          <aside class="vas-dashboard-sidebar">
-            <div class="vas-profile-card-mini">
-              <div class="vas-avatar-circle" id="adminAvatar" style="background:#f4ebdc; color:#8a6d3b; border-color:#d4af37;">🛡️</div>
-              <h3 id="adminNameDisplay" style="font-size:1.15rem; margin-bottom:2px;">Atelier Administrator</h3>
-              <span style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase;">Store Director &middot; Full Back-Office</span>
-              <p style="font-size:0.8rem; color:var(--vas-muted); margin:4px 0 0;">admin@vastrae.com</p>
+        <div class="vas-dash-sidebar-footer">
+          <div class="vas-dash-user-pill">
+            <div class="vas-dash-avatar-sm" id="adminAvatar">🛡️</div>
+            <div class="vas-dash-user-meta">
+              <strong id="adminNameDisplay">Atelier Admin</strong>
+              <small>Store Director</small>
             </div>
-
-            <nav class="vas-dash-nav" id="adminNavList">
-              <button class="vas-dash-nav-btn active" onclick="window.switchAdminTab('overview', this)">
-                ▣ Overview &amp; Live Statistics
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('tailors', this)">
-                🪡 Manage Tailors
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('orders', this)">
-                📋 Customer Orders &amp; Assignment
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('inventory', this)">
-                🧵 Fabric Inventory
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('products', this)">
-                ◇ Products &amp; Catalogue
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchAdminTab('clients', this)">
-                👥 Registered Clients
-              </button>
-            </nav>
-          </aside>
-
-          <!-- Main Admin Pane -->
-          <main class="vas-dash-content" id="adminContentPane">
-            <!-- Dynamic Tab Content Rendered by js/app.js -->
-            <div id="adminTabPane"></div>
-          </main>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="vas-dash-logout-btn" onclick="window.returnToPublicWebsite()" title="Return to Boutique" style="color:var(--vas-champagne);">
+              ←
+            </button>
+            <button class="vas-dash-logout-btn" onclick="window.handleLogout()" title="Sign Out">
+              ⎋
+            </button>
+          </div>
         </div>
-      </div>
+      </aside>
+
+      <!-- Right Main Luxury Canvas -->
+      <main class="vas-dash-canvas-ref" id="adminContentPane">
+        <div id="adminTabPane"></div>
+      </main>
     </div>
 
     <!-- ======================================================================
          PART 9: TAILOR DASHBOARD VIEW (MASTER TAILOR PRODUCTION STUDIO)
          ====================================================================== -->
-    <div class="vas-dashboard-view" id="tailorDashboardView" style="display:none;">
-      <div class="vas-container">
-        <!-- Tailor Dashboard Top Header Bar (Elevated card, visible below navbar) -->
-        <div class="vas-dash-topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding:22px 28px; background:#ffffff; border-radius:12px; border:1px solid var(--vas-border); box-shadow:var(--vas-shadow-sm); flex-wrap:wrap; gap:16px;">
-          <div>
-            <span class="vas-eyebrow" style="color:var(--vas-gold-dark); letter-spacing:0.12em;">VASTRAÉ ATELIER &middot; CRAFT WORKBENCH</span>
-            <h1 style="font-size:1.85rem; margin:4px 0 0; color:var(--vas-ink);">Master Tailor Production Studio</h1>
+    <div class="vas-dashboard-view vas-dash-shell" id="tailorDashboardView" style="display:none;">
+      <!-- Left Obsidian Luxury Sidebar -->
+      <aside class="vas-dash-sidebar-ref">
+        <div>
+          <div class="vas-dash-sidebar-brand">
+            <span class="vas-dash-brand-title">VASTRAÉ</span>
+            <span class="vas-dash-brand-sub">Master Tailor Studio</span>
           </div>
-          <div style="display:flex; gap:12px; align-items:center;">
-            <button class="vas-btn vas-btn-outline vas-btn-sm" style="font-weight:600; padding:8px 18px;" onclick="window.returnToPublicWebsite()">
-              ← Return to Boutique
+
+          <nav class="vas-dash-nav-ref" id="tailorNavList">
+            <button class="vas-dash-nav-item active" onclick="window.switchTailorTab('queue', this)">
+              <span><span class="icon">✂️</span> Production Queue</span>
+              <span class="vas-dash-nav-badge" id="tailorQueueNavBadge">0</span>
             </button>
-            <button class="vas-btn vas-btn-sm" style="background:#b33939; color:#fff; border:none; font-weight:600; padding:8px 18px; border-radius:6px; cursor:pointer;" onclick="window.handleLogout()">
-              ⎋ Sign Out
+            <button class="vas-dash-nav-item" onclick="window.switchTailorTab('measurements', this)">
+              <span><span class="icon">📏</span> Measurements</span>
             </button>
-          </div>
+            <button class="vas-dash-nav-item" onclick="window.switchTailorTab('reborn', this)">
+              <span><span class="icon">♻️</span> Saree Reborn</span>
+            </button>
+            <button class="vas-dash-nav-item" onclick="window.switchTailorTab('profile', this)">
+              <span><span class="icon">◉</span> My Profile</span>
+            </button>
+          </nav>
         </div>
 
-        <div class="vas-dashboard-layout">
-          <!-- Sidebar Nav & Tailor Profile -->
-          <aside class="vas-dashboard-sidebar">
-            <div class="vas-profile-card-mini">
-              <div class="vas-avatar-circle" id="tailorAvatar" style="background:#efe7dd; color:#6b4423; border-color:#c5a059;">🪡</div>
-              <h3 id="tailorNameDisplay" style="font-size:1.15rem; margin-bottom:2px;">Master Tailor</h3>
-              <span id="tailorStatusBadge" style="font-size:0.75rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase;">Master Couturier &middot; Active</span>
-              <p id="tailorEmailDisplay" style="font-size:0.8rem; color:var(--vas-muted); margin:4px 0 0;">tailor@vastrae.com</p>
-              <p id="tailorPhoneDisplay" style="font-size:0.8rem; color:var(--vas-muted); margin:0;">+91 98860 00000</p>
+        <div class="vas-dash-sidebar-footer">
+          <div class="vas-dash-user-pill">
+            <div class="vas-dash-avatar-sm" id="tailorAvatar">🪡</div>
+            <div class="vas-dash-user-meta">
+              <strong id="tailorNameDisplay">Master Tailor</strong>
+              <small id="tailorStatusBadge">Active Couturier</small>
             </div>
-
-            <nav class="vas-dash-nav" id="tailorNavList">
-              <button class="vas-dash-nav-btn active" onclick="window.switchTailorTab('queue', this)">
-                ✂ Production Queue &amp; Orders
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchTailorTab('measurements', this)">
-                📏 Client Measurement Sheets
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchTailorTab('reborn', this)">
-                ♻ Saree Reborn Commissions
-              </button>
-              <button class="vas-dash-nav-btn" onclick="window.switchTailorTab('profile', this)">
-                ◉ My Tailor Profile
-              </button>
-            </nav>
-          </aside>
-
-          <!-- Main Tailor Pane -->
-          <main class="vas-dash-content" id="tailorContentPane">
-            <!-- Dynamic Tab Content Rendered by js/app.js -->
-            <div id="tailorTabPane"></div>
-          </main>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="vas-dash-logout-btn" onclick="window.returnToPublicWebsite()" title="Return to Boutique" style="color:var(--vas-champagne);">
+              ←
+            </button>
+            <button class="vas-dash-logout-btn" onclick="window.handleLogout()" title="Sign Out">
+              ⎋
+            </button>
+          </div>
         </div>
-      </div>
+      </aside>
+
+      <!-- Right Main Luxury Canvas -->
+      <main class="vas-dash-canvas-ref" id="tailorContentPane">
+        <div id="tailorTabPane"></div>
+      </main>
     </div>
 
   </div> <!-- End #vastraeApp -->
@@ -1977,16 +2053,20 @@
 
       <div style="text-align:center; margin-bottom:20px;">
         <span class="vas-eyebrow">VASTRAÉ ATELIER ACCESS</span>
-        <h2 style="font-size:1.6rem; margin:4px 0;">Sign In to VASTRAÉ</h2>
+        <h2 style="font-size:1.6rem; margin:4px 0;">Customer Sanctuary</h2>
       </div>
 
       <div class="vas-auth-tabs">
-        <button class="vas-auth-tab-btn active" id="tabLoginBtn" onclick="window.switchAuthTab('login')">Sign In</button>
-        <button class="vas-auth-tab-btn" id="tabRegisterBtn" onclick="window.switchAuthTab('register')">Register Profile</button>
+        <button class="vas-auth-tab-btn active" id="tabLoginBtn" onclick="window.switchAuthTab('login')">Sign
+          In</button>
+        <button class="vas-auth-tab-btn" id="tabRegisterBtn" onclick="window.switchAuthTab('register')">Register
+          Profile</button>
       </div>
 
       <!-- Error Message Box -->
-      <div id="authErrorMsg" style="display:none; background:var(--vas-danger-bg); color:var(--vas-danger); padding:10px 14px; border-radius:6px; font-size:0.82rem; margin-bottom:14px;"></div>
+      <div id="authErrorMsg"
+        style="display:none; background:var(--vas-danger-bg); color:var(--vas-danger); padding:10px 14px; border-radius:6px; font-size:0.82rem; margin-bottom:14px;">
+      </div>
 
       <!-- Login Form Container -->
       <div id="loginFormContainer">
@@ -1997,7 +2077,8 @@
           </div>
           <div class="vas-form-group">
             <label>Password</label>
-            <input type="password" id="loginPass" class="vas-input" placeholder="Enter your 6-character password" required />
+            <input type="password" id="loginPass" class="vas-input" placeholder="Enter your 6-character password"
+              required />
           </div>
           <button type="submit" class="vas-btn vas-btn-rose" style="width:100%;">
             Sign In &rarr;
@@ -2010,18 +2091,19 @@
         <form onsubmit="window.handleRegisterSubmit(event)">
           <div class="vas-form-group">
             <label>Username (Text Only *):</label>
-            <input type="text" id="regUsername" class="vas-input" placeholder="e.g. PriyaK" required />
-            <small style="font-size:0.72rem; color:var(--vas-muted);">Accepts alphabetical characters only (no numbers).</small>
+            <input type="text" id="regUsername" class="vas-input" placeholder="e.g. AishaR" required />
+            <small style="font-size:0.72rem; color:var(--vas-muted);">Accepts alphabetical characters only (no
+              numbers).</small>
           </div>
 
           <div class="vas-form-group">
             <label>Full Name *</label>
-            <input type="text" id="regFullName" class="vas-input" placeholder="e.g. Priya Kumar" required />
+            <input type="text" id="regFullName" class="vas-input" placeholder="e.g. Aisha Rehman" required />
           </div>
 
           <div class="vas-form-group">
             <label>Email Address *</label>
-            <input type="email" id="regEmail" class="vas-input" placeholder="priya@example.com" required />
+            <input type="email" id="regEmail" class="vas-input" placeholder="aisha@example.com" required />
           </div>
 
           <!-- Phone with Fixed +91 Display -->
@@ -2029,9 +2111,11 @@
             <label>Mobile Number (+91 Fixed Prefix) *</label>
             <div class="vas-phone-group">
               <span class="vas-phone-prefix">+91</span>
-              <input type="tel" id="regPhone" class="vas-phone-input" placeholder="Enter 10-digit mobile" maxlength="10" required />
+              <input type="tel" id="regPhone" class="vas-phone-input" placeholder="Enter 10-digit mobile" maxlength="10"
+                required />
             </div>
-            <small style="font-size:0.72rem; color:var(--vas-muted);">Customer enters only the 10-digit mobile number.</small>
+            <small style="font-size:0.72rem; color:var(--vas-muted);">Customer enters only the 10-digit mobile
+              number.</small>
           </div>
 
           <!-- Password Rules Note -->
@@ -2046,11 +2130,13 @@
           <div class="vas-form-grid">
             <div class="vas-form-group">
               <label>Password (6 Chars) *</label>
-              <input type="password" id="regPassword" class="vas-input" maxlength="6" placeholder="e.g. V@s123" required />
+              <input type="password" id="regPassword" class="vas-input" maxlength="6" placeholder="e.g. V@s123"
+                required />
             </div>
             <div class="vas-form-group">
               <label>Confirm Password *</label>
-              <input type="password" id="regConfirmPassword" class="vas-input" maxlength="6" placeholder="Repeat password" required />
+              <input type="password" id="regConfirmPassword" class="vas-input" maxlength="6"
+                placeholder="Repeat password" required />
             </div>
           </div>
 
@@ -2078,13 +2164,32 @@
       </div>
 
       <div style="border-top:1px solid var(--vas-border); padding-top:16px; margin-top:20px;">
-        <div style="display:flex; justify-content:space-between; font-size:1.15rem; font-weight:700; margin-bottom:16px;">
+        <div
+          style="display:flex; justify-content:space-between; font-size:1.15rem; font-weight:700; margin-bottom:16px;">
           <span>Subtotal:</span>
           <span id="cartSubtotal">₹0</span>
         </div>
-        <button class="vas-btn vas-btn-primary" style="width:100%; justify-content:center;" onclick="window.proceedToCheckout()">
+        <button class="vas-btn vas-btn-primary" style="width:100%; justify-content:center;"
+          onclick="window.proceedToCheckout()">
           Proceed to Order & Checkout &rarr;
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       WISHLIST MODAL
+       ====================================================================== -->
+  <div class="vas-modal" id="wishlistModal">
+    <div class="vas-modal-card" style="max-width:580px;">
+      <button class="vas-modal-close" onclick="window.closeModal()">&times;</button>
+      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
+        <span class="vas-eyebrow">SAVED COUTURE &amp; MOODBOARDS</span>
+        <h2 style="font-size:1.5rem; margin:0;" id="wishlistModalTitle">My Wishlist</h2>
+      </div>
+
+      <div id="wishlistItemsList">
+        <!-- Rendered by js/app.js -->
       </div>
     </div>
   </div>
@@ -2118,6 +2223,7 @@
   <script src="js/services/address-service.js"></script>
   <script src="js/services/measurement-service.js"></script>
   <script src="js/services/saree-reborn-service.js"></script>
+  <script src="js/services/own-fabric-service.js"></script>
   <script src="js/services/accessory-service.js"></script>
   <script src="js/services/order-service.js"></script>
   <script src="js/services/consultation-service.js"></script>

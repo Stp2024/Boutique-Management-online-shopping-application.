@@ -1,0 +1,1145 @@
+  function renderDashboardOverview(activeTab = "overview") {
+    if (!currentUser) return;
+
+    // Populate sidebar profile pill
+    const avatarEl = document.getElementById("dashUserAvatar");
+    const nameEl = document.getElementById("dashUserName");
+    const tierEl = document.getElementById("dashUserTier");
+
+    if (avatarEl) avatarEl.textContent = (currentUser.avatar || currentUser.name.charAt(0) || "C").toUpperCase();
+    if (nameEl) nameEl.textContent = currentUser.name;
+    if (tierEl) tierEl.textContent = currentUser.tier || currentUser.loyaltyTier || "Atelier VIP Patron";
+
+    // Quick Stats & Badges
+    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (orders || []);
+    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (sareeRebornOrders || []);
+    const storedDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || savedDesigns || [];
+
+    const ordBadge = document.getElementById("custOrdersNavBadge");
+    const rebBadge = document.getElementById("custRebornNavBadge");
+    const desBadge = document.getElementById("custDesignsNavBadge");
+
+    if (ordBadge) ordBadge.textContent = storedOrders.length;
+    if (rebBadge) rebBadge.textContent = storedReborn.length;
+    if (desBadge) desBadge.textContent = storedDesigns.length;
+
+    // Update active nav button
+    document.querySelectorAll("#customerNavList .vas-dash-nav-item").forEach(b => b.classList.remove("active"));
+    const activeBtn = document.querySelector(`#customerNavList button[onclick*="'${activeTab}'"]`);
+    if (activeBtn) activeBtn.classList.add("active");
+
+    renderDashboardTab(activeTab);
+  }
+
+  window.switchDashboardTab = function (tabName, btn) {
+    document.querySelectorAll("#customerNavList .vas-dash-nav-item").forEach(b => b.classList.remove("active"));
+    if (btn) {
+      btn.classList.add("active");
+    } else {
+      const activeBtn = document.querySelector(`#customerNavList button[onclick*="'${tabName}'"]`);
+      if (activeBtn) activeBtn.classList.add("active");
+    }
+    renderDashboardTab(tabName);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  function renderDashboardTab(tabName) {
+    const pane = document.getElementById("dashTabPane");
+    if (!pane) return;
+
+    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (orders || []);
+    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (sareeRebornOrders || []);
+    const userDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || savedDesigns || [];
+
+    if (tabName === "overview") {
+      pane.innerHTML = `
+        <!-- Luxury Patron Hero Banner -->
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/ivory-anarkali-suit-front.jpg') center/cover;">
+          <div>
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">CLIENT SANCTUARY · BESPOKE ATELIER WORKSPACE</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.8rem; margin:6px 0 8px; color:#ffffff;">Welcome back, ${currentUser.name}</h2>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.8); max-width:600px; margin:0 0 16px;">
+              Access your personalized tailoring services, launch the 3D Customizer, test outfits in AI Virtual Try-On, or coordinate your private couture fitting.
+            </p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.switchDashboardTab('customize')" style="font-weight:700;">
+                🪡 Launch 3D Customizer →
+              </button>
+              <button class="vas-btn vas-btn-dark vas-btn-sm" onclick="window.switchDashboardTab('tryon')" style="font-weight:700; border:1px solid rgba(255,255,255,0.2);">
+                ✨ AI Virtual Try-On →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Top KPI Stat Counters -->
+        <div class="vas-dash-kpi-row-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:28px;">
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Active Orders</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedOrders.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">In Atelier Tailoring</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Saved Designs</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${userDesigns.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Custom Moodboard Items</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Saree Reborn</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedReborn.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Heritage Upcycling</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Loyalty Rewards</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${currentUser.loyaltyPoints || 100} pts</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Tier: ${currentUser.tier || currentUser.loyaltyTier || 'Haute Privé VIP'}</div>
+          </div>
+        </div>
+
+        <!-- Complete Atelier Services Access Grid -->
+        <div style="margin-bottom:32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div>
+              <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Atelier Services Concierge</h3>
+              <p style="margin:4px 0 0; font-size:0.82rem; color:#7d7269;">Direct instant access to all custom couture, AI visualizers, and artisan workshops.</p>
+            </div>
+            <span class="vas-badge vas-badge-gold" style="font-size:0.75rem;">6 Available Services</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+            <!-- Service 1: 3D Customizer -->
+            <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
+              <div>
+                <div style="font-size:2rem; margin-bottom:10px;">🪡</div>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">Customize Your Way</h4>
+                <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
+                  Bespoke blouses, royal kurtas, bridal lehengas, and silk bandhgalas. Pick necklines, sleeves, pure handloom silks, and zardozi embroidery.
+                </p>
+              </div>
+              <button class="vas-btn vas-btn-sm vas-btn-gold" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('customize')">
+                Launch Custom Studio →
+              </button>
+            </div>
+
+            <!-- Service 2: AI Virtual Try-On -->
+            <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
+              <div>
+                <div style="font-size:2rem; margin-bottom:10px;">✨</div>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">AI Virtual Try-On</h4>
+                <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
+                  Neural silhouette visualizer with 360° angle rotation, AI model body matching, and personal selfie mapping for realistic fabric drape preview.
+                </p>
+              </div>
+              <button class="vas-btn vas-btn-sm vas-btn-dark" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('tryon')">
+                Try On Silhouettes →
+              </button>
+            </div>
+
+            <!-- Service 3: Saree Reborn -->
+            <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
+              <div>
+                <div style="font-size:2rem; margin-bottom:10px;">♻️</div>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">Saree Reborn Heritage</h4>
+                <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
+                  Transform cherished heirloom vintage silk sarees into contemporary designer lehengas or anarkali gowns with zero fabric waste.
+                </p>
+              </div>
+              <button class="vas-btn vas-btn-sm vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('reborn')">
+                Commission Saree Reborn →
+              </button>
+            </div>
+
+            <!-- Service 4: Send Own Fabric -->
+            <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
+              <div>
+                <div style="font-size:2rem; margin-bottom:10px;">🧵</div>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">Send Own Fabric</h4>
+                <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
+                  Ship your personal yardage to our Indiranagar workshop. Our Master Tailors craft garments with 22-point precision cutting.
+                </p>
+              </div>
+              <button class="vas-btn vas-btn-sm vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('ownfabric')">
+                Schedule Fabric Concierge →
+              </button>
+            </div>
+
+            <!-- Service 5: 22-Point Sizing Cards -->
+            <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
+              <div>
+                <div style="font-size:2rem; margin-bottom:10px;">📏</div>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">22-Point Measurements</h4>
+                <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
+                  Manage permanent measurement cards for yourself and family members. Eliminates repeat fitting trials forever.
+                </p>
+              </div>
+              <button class="vas-btn vas-btn-sm vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('measurements')">
+                Manage Sizing Cards →
+              </button>
+            </div>
+
+            <!-- Service 6: Virtual Stylist Call -->
+            <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
+              <div>
+                <div style="font-size:2rem; margin-bottom:10px;">🪞</div>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">Private Video Styling</h4>
+                <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
+                  Book a private 30-minute consultation with a senior boutique designer over Google Meet for wedding &amp; occasion styling.
+                </p>
+              </div>
+              <button class="vas-btn vas-btn-sm vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('consultation')">
+                Book Video Appointment →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders & Tailoring Progress -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="margin:0; font-size:1.25rem; color:#1a1412; font-family:'Playfair Display',serif;">Active Tailoring &amp; Orders</h3>
+            <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.switchDashboardTab('orders')">View All Orders →</button>
+          </div>
+
+          ${storedOrders.length === 0 ? `
+            <div class="vas-empty-state-luxury" style="margin:0 0 20px;">
+              <div class="vas-empty-state-icon">🛍️</div>
+              <h4 class="vas-empty-state-title">No Orders Placed Yet</h4>
+              <p class="vas-empty-state-desc">You have no active orders in our tailoring queue. Launch our 3D Customizer or explore the curated collection to order bespoke couture.</p>
+              <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.switchDashboardTab('customize')">Custom Tailoring Studio &rarr;</button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.returnToPublicWebsite()">Explore Collection &rarr;</button>
+              </div>
+            </div>
+          ` : `
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              ${storedOrders.slice(0, 3).map(o => `
+                <div class="vas-order-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div>
+                      <strong style="font-size:1.1rem; color:#1a1412;">${o.id || o.orderId}</strong>
+                      <span style="font-size:0.8rem; color:#7d7269; display:block;">Placed on ${o.orderDate ? o.orderDate.split('T')[0] : 'Recent'} · Delivery by ${o.estimatedDelivery || '7 days'}</span>
+                    </div>
+                    <span class="vas-order-status-badge vas-status-${(o.status || 'placed').toLowerCase()}">${o.status || 'In Progress'}</span>
+                  </div>
+                  <p style="font-size:0.88rem; margin:0 0 12px; color:#4c4541;"><strong>Assigned Master Tailor:</strong> ${o.assignedTailorName || 'Master Savitha Rao'}</p>
+                  
+                  <!-- 6-Stage Progress Bar -->
+                  <div class="vas-stages-tracker" style="margin-bottom:12px;">
+                    ${[
+                      "1. Fabric Inspection",
+                      "2. Pattern Cut",
+                      "3. Hand Zardozi",
+                      "4. Master Stitching",
+                      "5. Quality QC",
+                      "6. Ready / Dispatched"
+                    ].map((stg, sIdx) => {
+                      const cur = (o.currentStage || 1) - 1;
+                      const isDone = sIdx <= cur;
+                      const isCurrent = sIdx === cur;
+                      return `
+                        <div class="vas-stage-item ${isDone ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
+                          <div class="vas-stage-dot">${isDone ? '✓' : (sIdx + 1)}</div>
+                          <div class="vas-stage-label">${stg}</div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    } else if (tabName === "customize") {
+      pane.innerHTML = `
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/ivory-anarkali-suit-front.jpg') center/cover;">
+          <div>
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">ATELIER 3D CUSTOMIZER · CLIENT SUITE</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Customize Your Bespoke Garment</h2>
+            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
+              Select silhouettes, artisanal necklines, sleeve lengths, handloom pure silks, and hand embroidery. Save to your moodboard or stitch with our Master Tailors.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; align-items:start;">
+          <!-- Controls Form -->
+          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="margin-bottom:20px;">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em;">1. Select Silhouette &amp; Garment</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="vas-btn vas-btn-sm vas-btn-gold" id="custOptGarment1" onclick="window.selectClientCustomGarment('Blouse', this)">Bridal Blouse</button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" id="custOptGarment2" onclick="window.selectClientCustomGarment('Lehenga', this)">Royal Lehenga</button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" id="custOptGarment3" onclick="window.selectClientCustomGarment('Kurta', this)">Silk Kurta Suit</button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" id="custOptGarment4" onclick="window.selectClientCustomGarment('Sherwani', this)">Heritage Bandhgala</button>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+              <div>
+                <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:6px;">Front Neckline</label>
+                <select id="custClientNeck" class="vas-select" onchange="window.updateClientCustomEstimate()">
+                  <option value="Sweetheart Cut (Signature)">Sweetheart Cut (Signature)</option>
+                  <option value="Deep U-Arch with Latkans">Deep U-Arch with Latkans</option>
+                  <option value="High Mandarin Band">High Mandarin Band</option>
+                  <option value="Queen Anne Royal Arch">Queen Anne Royal Arch</option>
+                  <option value="Boat Neck with Zari Piping">Boat Neck with Zari Piping</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:6px;">Sleeve Length &amp; Cut</label>
+                <select id="custClientSleeve" class="vas-select" onchange="window.updateClientCustomEstimate()">
+                  <option value="Elbow Length (Signature)">Elbow Length (Signature)</option>
+                  <option value="Cap Sleeves with Zari Cuff">Cap Sleeves with Zari Cuff</option>
+                  <option value="Full Length Sheer Organza">Full Length Sheer Organza</option>
+                  <option value="Sleeveless Classic">Sleeveless Classic</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Pure Fabric Selection</label>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
+                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid #d4af37; padding:10px; border-radius:8px; background:#fffcf6;">
+                  <input type="radio" name="custClientFabric" value="Pure Kanjeevaram Silk" checked onchange="window.updateClientCustomEstimate()">
+                  <span style="font-size:0.82rem; display:block; font-weight:600;">Kanjeevaram Silk</span>
+                  <small style="color:#7d7269; font-size:0.72rem;">Grade A+ Mulberry</small>
+                </label>
+                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid var(--vas-border); padding:10px; border-radius:8px;">
+                  <input type="radio" name="custClientFabric" value="Banarasi Katan Brocade" onchange="window.updateClientCustomEstimate()">
+                  <span style="font-size:0.82rem; display:block; font-weight:600;">Banarasi Brocade</span>
+                  <small style="color:#7d7269; font-size:0.72rem;">Fine Metallic Weave</small>
+                </label>
+                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid var(--vas-border); padding:10px; border-radius:8px;">
+                  <input type="radio" name="custClientFabric" value="Chanderi Handloom" onchange="window.updateClientCustomEstimate()">
+                  <span style="font-size:0.82rem; display:block; font-weight:600;">Chanderi Silk</span>
+                  <small style="color:#7d7269; font-size:0.72rem;">Lightweight Royal</small>
+                </label>
+                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid var(--vas-border); padding:10px; border-radius:8px;">
+                  <input type="radio" name="custClientFabric" value="Italian Micro-Velvet 9000" onchange="window.updateClientCustomEstimate()">
+                  <span style="font-size:0.82rem; display:block; font-weight:600;">Micro-Velvet</span>
+                  <small style="color:#7d7269; font-size:0.72rem;">Plush Heavy Drape</small>
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Atelier Hand Embroidery</label>
+              <select id="custClientEmbroidery" class="vas-select" onchange="window.updateClientCustomEstimate()">
+                <option value="Maggam Stone Work & Basra Pearls" data-price="1800">Maggam Stone Work &amp; Basra Pearls (+₹1,800)</option>
+                <option value="Antique Zardozi Gold Bullion Wire" data-price="2500">Antique Zardozi Gold Bullion Wire (+₹2,500)</option>
+                <option value="Resham Multi-Colored Needlework" data-price="1200">Resham Multi-Colored Needlework (+₹1,200)</option>
+                <option value="Minimalist Silk Piping & Latkans" data-price="600">Minimalist Silk Piping &amp; Latkans (+₹600)</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Atelier Color Swatch</label>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <input type="color" id="custClientColor" value="#7a0c1e" style="width:44px; height:44px; border:none; cursor:pointer; border-radius:50%;" onchange="window.updateClientCustomEstimate()">
+                <span id="custClientColorLabel" style="font-size:0.85rem; font-weight:600; color:#1a1412;">Royal Crimson Silk</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary & Actions -->
+          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); position:sticky; top:20px;">
+            <span style="font-size:0.7rem; letter-spacing:0.12em; color:var(--vas-gold-dark); text-transform:uppercase; font-weight:700;">SPECIFICATION SUMMARY</span>
+            <h3 id="custClientSummaryTitle" style="font-size:1.15rem; margin:6px 0 14px; color:#1a1412;">Bespoke Bridal Blouse</h3>
+            
+            <div style="border-top:1px solid #f0eae1; border-bottom:1px solid #f0eae1; padding:12px 0; margin-bottom:16px; font-size:0.82rem; color:#4c4541; display:flex; flex-direction:column; gap:6px;">
+              <div style="display:flex; justify-content:space-between;"><span>Master Tailoring:</span> <b>₹1,800</b></div>
+              <div style="display:flex; justify-content:space-between;"><span>Pure Silk Yardage:</span> <b>₹2,200</b></div>
+              <div style="display:flex; justify-content:space-between;"><span>Hand Embroidery:</span> <b id="custClientEmbPrice">₹1,800</b></div>
+              <div style="display:flex; justify-content:space-between; font-size:1rem; font-weight:700; color:#1a1412; border-top:1px dashed #e2d9cd; padding-top:8px; margin-top:4px;">
+                <span>Total Estimated:</span> <span id="custClientTotal" style="color:var(--vas-gold-dark);">₹5,800</span>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button class="vas-btn vas-btn-gold" style="width:100%; font-weight:700;" onclick="window.saveCurrentClientCustomDesign(true)">
+                🛍️ Add Custom Outfit to Bag
+              </button>
+              <button class="vas-btn vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.saveCurrentClientCustomDesign(false)">
+                💾 Save to My Moodboards
+              </button>
+              <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.switchDashboardTab('tryon')">
+                ✨ Preview in AI Try-On
+              </button>
+              <button class="vas-btn vas-btn-sm" style="width:100%; color:#7d7269; background:transparent; border:none;" onclick="window.navigateToSection('customize')">
+                🔍 Open Fullscreen Atelier Studio →
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (tabName === "tryon") {
+      pane.innerHTML = `
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/royal-blue-lehenga-front.jpg') center/cover;">
+          <div>
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">NEURAL SILHOUETTE LAB · AI VIRTUAL TRY-ON</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">AI Virtual Fitting Room</h2>
+            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
+              Experience hyper-realistic couture simulation. Switch models, rotate angles, or map your personal posture for high-precision drape inspection.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; align-items:start;">
+          <!-- Visualizer Frame -->
+          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); text-align:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+              <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.06em;">LIVE AI DRAPE RENDER</span>
+              <div style="display:flex; gap:6px;">
+                <button class="vas-btn vas-btn-sm vas-btn-gold" id="btnAngleFront" onclick="window.setClientTryonAngle('front', this)">Front</button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" id="btnAngleSide" onclick="window.setClientTryonAngle('side', this)">Side</button>
+                <button class="vas-btn vas-btn-sm vas-btn-outline" id="btnAngleBack" onclick="window.setClientTryonAngle('back', this)">Back</button>
+              </div>
+            </div>
+
+            <!-- Preview Image Display -->
+            <div style="position:relative; max-width:440px; margin:0 auto; border-radius:12px; overflow:hidden; border:1px solid var(--vas-border-subtle); background:#fcfaf7;">
+              <img id="clientTryonPreviewImg" src="images/products/women/royal-blue-lehenga-front.jpg" alt="AI Try-On Silhouette" style="width:100%; height:480px; object-fit:cover; display:block; transition:all 0.3s ease;">
+              <div style="position:absolute; bottom:12px; left:12px; right:12px; background:rgba(26,20,17,0.85); backdrop-filter:blur(8px); border-radius:8px; padding:10px 14px; text-align:left; color:#ffffff; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <strong id="clientTryonSilName" style="font-size:0.85rem; display:block;">Royal Blue Zardozi Lehenga</strong>
+                  <span id="clientTryonModelName" style="font-size:0.72rem; color:var(--vas-champagne);">Model Ananya · Height 5'7" · Size S</span>
+                </div>
+                <span class="vas-badge vas-badge-success" style="font-size:0.68rem;">✓ 99% Fit Match</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:20px; margin-top:16px; font-size:0.8rem; color:#7d7269;">
+              <span>⚡ Neural Mesh: <b>Active</b></span>
+              <span>🧵 Fabric Physics: <b>Pure Silk Weave</b></span>
+              <span>✨ Seam Tolerance: <b>Zero Distortion</b></span>
+            </div>
+          </div>
+
+          <!-- Controls Side Pane -->
+          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="margin-bottom:20px;">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px; text-transform:uppercase;">1. Choose Garment Silhouette</label>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="vas-dash-nav-item active" style="background:#f4ebdc; color:#1a1412; font-weight:600;" onclick="window.selectClientTryonGarment('images/products/women/royal-blue-lehenga-front.jpg', 'Royal Blue Zardozi Lehenga', 24500, this)">
+                  <span>👗 Royal Blue Zardozi Lehenga</span>
+                  <small>₹24,500</small>
+                </button>
+                <button class="vas-dash-nav-item" onclick="window.selectClientTryonGarment('images/products/women/ivory-anarkali-suit-front.jpg', 'Ivory Silk Anarkali Suit', 16500, this)">
+                  <span>✨ Ivory Silk Anarkali Suit</span>
+                  <small>₹16,500</small>
+                </button>
+                <button class="vas-dash-nav-item" onclick="window.selectClientTryonGarment('images/products/men/maroon-velvet-sherwani-front.jpg', 'Midnight Velvet Bandhgala', 18500, this)">
+                  <span>👔 Velvet Royal Bandhgala</span>
+                  <small>₹18,500</small>
+                </button>
+                <button class="vas-dash-nav-item" onclick="window.selectClientTryonGarment('images/products/women/crimson-kanjivaram-saree-front.jpg', 'Crimson Kanjeevaram Saree', 22000, this)">
+                  <span>🥻 Crimson Kanjeevaram Saree</span>
+                  <small>₹22,000</small>
+                </button>
+              </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px; text-transform:uppercase;">2. Switch AI Avatar / Posture</label>
+              <select id="clientTryonModelSelect" class="vas-select" onchange="window.updateClientTryonModel(this.value)">
+                <option value="Model Ananya (Height 5'7&quot; · Bust 34&quot; · Waist 28&quot;)">Model Ananya (5'7" · Size S)</option>
+                <option value="Model Meera (Height 5'5&quot; · Bust 36&quot; · Waist 30&quot;)">Model Meera (5'5" · Size M)</option>
+                <option value="Model Priya (Height 5'8&quot; · Bust 38&quot; · Waist 32&quot;)">Model Priya (5'8" · Size L)</option>
+                <option value="Model Kabir (Height 6'0&quot; · Chest 40&quot; · Waist 32&quot;)">Model Kabir (6'0" · Men's 40)</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:24px; padding:16px; background:#fcfaf7; border-radius:8px; border:1px dashed var(--vas-border);">
+              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:6px;">3. Upload Your Photo (Optional)</label>
+              <p style="font-size:0.75rem; color:#7d7269; margin:0 0 10px;">Simulate live fabric drape mapped directly to your face and body posture.</p>
+              <input type="file" id="clientTryonUpload" accept="image/*" class="vas-input" style="font-size:0.78rem; padding:6px;" onchange="window.handleClientTryonUpload(event)">
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button class="vas-btn vas-btn-gold" style="width:100%; font-weight:700;" onclick="window.addTriedGarmentToCart()">
+                🛍️ Add Tried Silhouette to Bag
+              </button>
+              <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.switchDashboardTab('customize')">
+                🪡 Customize this Garment
+              </button>
+              <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.openConsultationModal()">
+                🪞 Book Styling Consultation
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (tabName === "orders") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">My Orders &amp; Live Tailoring Status</h3>
+            <p style="margin:4px 0 0; font-size:0.82rem; color:#7d7269;">Authentic 6-stage lifecycle tracking from fabric inspection to white-glove dispatch.</p>
+          </div>
+          <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.switchDashboardTab('customize')">+ New Custom Order</button>
+        </div>
+
+        ${storedOrders.length === 0 ? `
+          <div class="vas-empty-state-luxury">
+            <div class="vas-empty-state-icon">🛍️</div>
+            <h4 class="vas-empty-state-title">No Orders Placed Yet</h4>
+            <p class="vas-empty-state-desc">You do not have any orders in the system. Explore our collection or design custom couture to start tracking.</p>
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+              <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.switchDashboardTab('customize')">Design Bespoke Outfit &rarr;</button>
+              <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.returnToPublicWebsite()">Explore Collection &rarr;</button>
+            </div>
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column; gap:20px;">
+            ${storedOrders.map(o => `
+              <div class="vas-order-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+                <div class="vas-order-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #f0eae1; padding-bottom:12px;">
+                  <div>
+                    <strong style="font-size:1.15rem; color:#1a1412;">${o.id || o.orderId}</strong>
+                    <span style="font-size:0.8rem; color:#7d7269; display:block;">Ordered on ${o.orderDate ? o.orderDate.split('T')[0] : 'Recent'} · Estimated Delivery: ${o.estimatedDelivery || 'Within 7 business days'}</span>
+                  </div>
+                  <span class="vas-order-status-badge vas-status-${(o.status || 'placed').toLowerCase()}">${o.status || 'Placed'}</span>
+                </div>
+                
+                <p style="font-size:0.9rem; margin-bottom:8px;"><strong>Garments:</strong> ${(o.items || []).map(it => (it.name || it.title || it)).join(', ')}</p>
+                <p style="font-size:0.85rem; color:#7d7269; margin-bottom:16px;"><strong>Assigned Couturier:</strong> ${o.assignedTailorName || 'Master Savitha Rao'} &middot; <span style="color:var(--vas-gold-dark);">BlueDart Express AWB: BLUEDART-EXP-${(o.id || '9921').replace(/[^0-9]/g, '') || '992184'}</span></p>
+                
+                <!-- 6 Stages Production Tracker -->
+                <div class="vas-stages-tracker" style="margin-bottom:16px;">
+                  ${[
+                    "1. Sourcing",
+                    "2. Pattern Cut",
+                    "3. Embroidery",
+                    "4. Stitching",
+                    "5. Quality QC",
+                    "6. Dispatched"
+                  ].map((stageName, sIdx) => {
+                    const currentStageIdx = (o.currentStage || 1) - 1;
+                    const isCompleted = sIdx <= currentStageIdx;
+                    const isCurrent = sIdx === currentStageIdx;
+                    return `
+                      <div class="vas-stage-item ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
+                        <div class="vas-stage-dot">${isCompleted ? '✓' : (sIdx + 1)}</div>
+                        <div class="vas-stage-label">${stageName}</div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f0eae1; padding-top:14px; flex-wrap:wrap; gap:8px;">
+                  <span style="font-size:0.92rem;">Total: <b>₹${(o.totalAmount || o.total || 0).toLocaleString()}</b> (Incl. 5% GST &amp; Insured Shipping)</span>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openTrackingModal ? window.openTrackingModal('${o.id}') : alert('Courier dispatched via BlueDart Express')">
+                      🚚 Track Courier
+                    </button>
+                    <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.printGSTInvoice ? window.printGSTInvoice('${o.id}') : window.print()">
+                      🖨️ Tax Invoice
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      `;
+    } else if (tabName === "reborn") {
+      pane.innerHTML = `
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/royal-blue-lehenga-front.jpg') center/cover;">
+          <div>
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">HERITAGE UPCYCLING &middot; WASTE-TO-BEST</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Saree Reborn Heritage Commissions</h2>
+            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
+              Breathe fresh life into vintage mother's and grandmother's silk sarees. Track your commissions through our 6-stage upcycling restoration process.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; align-items:start;">
+          <div>
+            <h3 style="font-size:1.2rem; margin:0 0 16px; color:#1a1412;">Active Reborn Commissions</h3>
+            ${storedReborn.length === 0 ? `
+              <div class="vas-empty-state-luxury" style="margin:0 0 24px;">
+                <div class="vas-empty-state-icon">♻️</div>
+                <h4 class="vas-empty-state-title">No Saree Reborn Commissions</h4>
+                <p class="vas-empty-state-desc">You haven't commissioned any vintage saree transformations yet. Fill the commission form to schedule physical inspection!</p>
+              </div>
+            ` : `
+              <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:24px;">
+                ${storedReborn.map(r => `
+                  <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                      <strong style="font-size:1.05rem; color:#1a1412;">${r.id} · ${r.vintageSareeType || 'Heritage Silk'}</strong>
+                      <span class="vas-badge vas-badge-gold">${r.status || 'Request Submitted'}</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:#4c4541; margin-bottom:6px;"><strong>Target Garment:</strong> ${r.targetGarment || 'Bridal Lehenga & Blouse'}</p>
+                    <p style="font-size:0.82rem; color:#7d7269; margin-bottom:12px;">Submitted on ${r.date || new Date().toISOString().split('T')[0]}</p>
+                    <div style="background:#fcfaf7; border-radius:8px; padding:10px 14px; font-size:0.82rem; border-left:3px solid var(--vas-gold-dark);">
+                      <b>Artisan Note:</b> ${r.notes || 'Saree scheduled for physical weave evaluation.'}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+
+          <!-- Commission Form -->
+          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <h3 style="font-size:1.15rem; margin:0 0 14px; color:#1a1412;">Commission Saree Reborn</h3>
+            <form onsubmit="window.handleClientSareeRebornSubmit(event)">
+              <div style="margin-bottom:14px;">
+                <label style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:6px;">Vintage Saree Type</label>
+                <select id="srClientSareeType" class="vas-select" required>
+                  <option value="Kanjeevaram Pure Silk">Kanjeevaram Pure Silk</option>
+                  <option value="Vintage Banarasi Brocade">Vintage Banarasi Brocade</option>
+                  <option value="Antique Paithani Heirloom">Antique Paithani Heirloom</option>
+                  <option value="Chanderi Handloom">Chanderi Handloom</option>
+                  <option value="Mulberry Tussar">Mulberry Tussar</option>
+                </select>
+              </div>
+              <div style="margin-bottom:14px;">
+                <label style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:6px;">Target Garment Conversion</label>
+                <select id="srClientTarget" class="vas-select" required>
+                  <option value="Bridal Lehenga &amp; Blouse">Bridal Lehenga &amp; Blouse</option>
+                  <option value="Floor-Length Anarkali Gown">Floor-Length Anarkali Gown</option>
+                  <option value="Contemporary Kurta &amp; Pant">Contemporary Kurta &amp; Pant</option>
+                  <option value="Royal Cape / Long Jacket">Royal Cape / Long Jacket</option>
+                </select>
+              </div>
+              <div style="margin-bottom:14px;">
+                <label style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:6px;">Doorstep Pickup Address</label>
+                <input type="text" id="srClientAddress" class="vas-input" value="${currentUser.address || ''}" required>
+              </div>
+              <div style="margin-bottom:14px;">
+                <label style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:6px;">Special Preservation Instructions</label>
+                <textarea id="srClientNotes" class="vas-input" rows="2" placeholder="e.g. Preserve gold zari pallu for back blouse arch..."></textarea>
+              </div>
+              <button type="submit" class="vas-btn vas-btn-gold" style="width:100%; font-weight:700;">
+                ✨ Submit Reborn Commission
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+    } else if (tabName === "ownfabric") {
+      pane.innerHTML = `
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/crimson-kanjivaram-saree-front.jpg') center/cover;">
+          <div>
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">OWN-FABRIC CONCIERGE · BESPOKE STITCHING</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Send Your Fabric, We Craft Perfection</h2>
+            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
+              Ship your precious handloom, vintage yardage, or gifted fabric to our Indiranagar atelier. Our master craftsmen will hand-cut and stitch with 22-point precision.
+            </p>
+          </div>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); max-width:760px;">
+          <h3 style="font-size:1.2rem; margin:0 0 16px; color:#1a1412;">Schedule Fabric Pickup &amp; Tailoring</h3>
+          <form onsubmit="window.handleOwnFabricClientSubmit(event)">
+            <div class="vas-form-grid">
+              <div class="vas-form-group">
+                <label>Target Garment</label>
+                <select id="ofClientGarment" class="vas-select" required>
+                  <option value="Designer Blouse">Designer Blouse (₹1,499)</option>
+                  <option value="Kurta &amp; Pant Set">Kurta &amp; Pant Set (₹2,199)</option>
+                  <option value="Full Bridal Lehenga">Full Bridal Lehenga (₹4,999)</option>
+                  <option value="Men's Classic Kurta">Men's Classic Kurta (₹1,799)</option>
+                  <option value="Royal Sherwani / Bandhgala">Royal Sherwani / Bandhgala (₹5,499)</option>
+                </select>
+              </div>
+              <div class="vas-form-group">
+                <label>Fabric Yardage Sent (Meters)</label>
+                <input type="text" id="ofClientYardage" class="vas-input" placeholder="e.g. 2.5 meters" required>
+              </div>
+              <div class="vas-form-group">
+                <label>Lining Preference</label>
+                <select id="ofClientLining" class="vas-select">
+                  <option value="Pure Cotton Voile (Breathable)">Pure Cotton Voile (Breathable)</option>
+                  <option value="Satin Crepe (Smooth Fall)">Satin Crepe (Smooth Fall)</option>
+                  <option value="Pure Silk Aster (+₹400)">Pure Silk Aster (+₹400)</option>
+                  <option value="No Lining Required">No Lining Required</option>
+                </select>
+              </div>
+              <div class="vas-form-group">
+                <label>Preferred Doorstep Pickup Date</label>
+                <input type="date" id="ofClientPickupDate" class="vas-input" required>
+              </div>
+              <div class="vas-form-group full">
+                <label>Doorstep Pickup Address</label>
+                <input type="text" id="ofClientAddress" class="vas-input" value="${currentUser.address || ''}" required>
+              </div>
+              <div class="vas-form-group full">
+                <label>Special Tailoring &amp; Cutting Instructions</label>
+                <textarea id="ofClientNotes" class="vas-input" rows="3" placeholder="Specify any unique neck depth, cup padding preference, border placement, or margin allowance..."></textarea>
+              </div>
+            </div>
+            <button type="submit" class="vas-btn vas-btn-gold" style="margin-top:16px; font-weight:700;">
+              ✨ Schedule Doorstep Pickup &amp; Master Stitching
+            </button>
+          </form>
+        </div>
+      `;
+    } else if (tabName === "measurements") {
+      const allProfiles = window.vastraeMeasurementService ? window.vastraeMeasurementService.getUserProfiles(currentUser.id) : (currentUser.familyProfiles || []);
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Family Measurement Cards</h3>
+            <p style="margin:4px 0 0; font-size:0.82rem; color:#7d7269;">22-Point sizing records stored for self and family members.</p>
+          </div>
+          <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAddMeasurementModal()">+ Add Sizing Profile</button>
+        </div>
+
+        ${allProfiles.length === 0 ? `
+          <div class="vas-empty-state-luxury">
+            <div class="vas-empty-state-icon">📏</div>
+            <h4 class="vas-empty-state-title">No Measurement Cards Stored</h4>
+            <p class="vas-empty-state-desc">You have no saved measurement cards. Add your sizing card for self or family to reorder custom blouses and suits in 1 click.</p>
+            <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAddMeasurementModal()">Create Sizing Profile &rarr;</button>
+          </div>
+        ` : `
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+            ${allProfiles.map(fam => `
+              <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                  <div>
+                    <strong style="font-size:1.1rem; color:#1a1412;">${fam.name || fam.profileName}</strong>
+                    <span style="font-size:0.75rem; color:var(--vas-gold-dark); display:block; text-transform:uppercase; font-weight:700;">${fam.relation || 'Self'}</span>
+                  </div>
+                  <span style="font-size:1.4rem;">📏</span>
+                </div>
+                <ul style="list-style:none; padding:0; margin:0; font-size:0.85rem; color:#4c4541; display:flex; flex-direction:column; gap:6px;">
+                  ${fam.bust ? `<li>Bust / Chest: <b>${fam.bust}"</b></li>` : ''}
+                  ${fam.waist ? `<li>Waist: <b>${fam.waist}"</b></li>` : ''}
+                  ${fam.hips ? `<li>Hips: <b>${fam.hips}"</b></li>` : ''}
+                  ${fam.shoulder ? `<li>Cross Shoulder: <b>${fam.shoulder}"</b></li>` : ''}
+                  ${fam.blouseLength ? `<li>Ideal Length: <b>${fam.blouseLength}"</b></li>` : ''}
+                </ul>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      `;
+    } else if (tabName === "designs") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Saved Designs &amp; Moodboards</h3>
+            <p style="margin:4px 0 0; font-size:0.82rem; color:#7d7269;">Curated bespoke garment configurations created in our Atelier Customizer.</p>
+          </div>
+          <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.switchDashboardTab('customize')">+ Create New Design</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:20px;">
+          ${userDesigns.length === 0 ? `
+            <div style="grid-column: 1 / -1;">
+              <div class="vas-empty-state-luxury">
+                <div class="vas-empty-state-icon">🎨</div>
+                <h4 class="vas-empty-state-title">No Saved Designs Yet</h4>
+                <p class="vas-empty-state-desc">Use our Interactive Studio to customize necklines, pure silks, and zardozi embroideries, then save them here.</p>
+                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.switchDashboardTab('customize')">Launch Customizer Studio &rarr;</button>
+              </div>
+            </div>
+          ` : userDesigns.map(ds => `
+            <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+              <span style="font-size:0.72rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase;">${ds.id || 'BESPOKE'}</span>
+              <h4 style="font-size:1.1rem; margin:4px 0 8px; color:#1a1412;">${ds.category || ds.name || 'Custom Garment'}</h4>
+              <p style="font-size:0.82rem; color:#7d7269; margin-bottom:14px; line-height:1.4;">
+                ${ds.fabric || 'Pure Silk'} · ${ds.color || 'Custom'} · ${ds.neckline || 'Custom Neck'}
+              </p>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="color:#1a1412; font-size:1.05rem;">₹${(ds.estimatedPrice || ds.price || 5500).toLocaleString()}</strong>
+                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.orderSavedDesign('${ds.id}')">
+                  Proceed to Stitch
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else if (tabName === "consultation") {
+      const allConsultations = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id, currentUser.name) : [];
+      pane.innerHTML = `
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/ivory-anarkali-suit-front.jpg') center/cover;">
+          <div>
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">PRIVATE ATELIER APPOINTMENTS</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Virtual Stylist Consultations</h2>
+            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
+              Coordinate 1-on-1 private video calls with senior atelier designers over Google Meet for wedding trousseau styling, silhouette matching, and antique fabric assessments.
+            </p>
+            <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.openConsultationModal()" style="font-weight:700;">
+              🪞 Book New Video Appointment →
+            </button>
+          </div>
+        </div>
+
+        <h3 style="font-size:1.2rem; margin:0 0 16px; color:#1a1412;">Your Scheduled Consultations</h3>
+        ${allConsultations.length === 0 ? `
+          <div class="vas-empty-state-luxury">
+            <div class="vas-empty-state-icon">🪞</div>
+            <h4 class="vas-empty-state-title">No Appointments Booked</h4>
+            <p class="vas-empty-state-desc">You have no upcoming video appointments. Book a session with an Atelier Senior Stylist to discuss your wedding attire or custom commissions.</p>
+            <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openConsultationModal()">Book Styling Session &rarr;</button>
+          </div>
+        ` : `
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:18px;">
+            ${allConsultations.map(c => `
+              <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                  <strong style="font-size:1.05rem; color:#1a1412;">${c.type || 'Bespoke Consultation'}</strong>
+                  <span class="vas-badge vas-badge-success">${c.status || 'Confirmed'}</span>
+                </div>
+                <p style="font-size:0.85rem; color:#4c4541; margin-bottom:8px;"><strong>Date &amp; Time:</strong> ${c.dateTime || c.date || 'Scheduled Soon'}</p>
+                <p style="font-size:0.85rem; color:#4c4541; margin-bottom:14px;"><strong>Senior Stylist:</strong> ${c.stylistName || 'Master Savitha Rao'}</p>
+                <a href="${c.meetingLink || 'https://meet.google.com/new'}" target="_blank" class="vas-btn vas-btn-sm vas-btn-gold" style="display:inline-block; font-weight:600;">
+                  📹 Join Google Meet Call
+                </a>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      `;
+    } else if (tabName === "profile") {
+      pane.innerHTML = `
+        <h3 style="margin-bottom:20px; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Customer Profile &amp; Delivery Address</h3>
+        <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); max-width:760px;">
+          <form onsubmit="window.saveProfileDetails(event)">
+            <div class="vas-form-grid">
+              <div class="vas-form-group">
+                <label>Full Name</label>
+                <input type="text" id="profName" class="vas-input" value="${currentUser.name}" required>
+              </div>
+              <div class="vas-form-group">
+                <label>Username (Text Only)</label>
+                <input type="text" id="profUser" class="vas-input" value="${currentUser.username}" readonly style="background:var(--vas-surface-alt);">
+              </div>
+              <div class="vas-form-group">
+                <label>Email Address</label>
+                <input type="email" id="profEmail" class="vas-input" value="${currentUser.email}" required>
+              </div>
+              <div class="vas-form-group">
+                <label>Mobile Number (+91)</label>
+                <input type="tel" id="profPhone" class="vas-input" value="${currentUser.phone}" required pattern="[6-9][0-9]{9}">
+              </div>
+              <div class="vas-form-group">
+                <label>Gender</label>
+                <select id="profGender" class="vas-select">
+                  <option ${currentUser.gender === 'Female' ? 'selected' : ''}>Female</option>
+                  <option ${currentUser.gender === 'Male' ? 'selected' : ''}>Male</option>
+                  <option ${currentUser.gender === 'Other' ? 'selected' : ''}>Other</option>
+                </select>
+              </div>
+              <div class="vas-form-group">
+                <label>Date of Birth</label>
+                <input type="date" id="profDob" class="vas-input" value="${currentUser.dob || ''}">
+              </div>
+              <div class="vas-form-group full">
+                <label>Primary Delivery Address</label>
+                <input type="text" id="profAddress" class="vas-input" value="${currentUser.address || ''}" required>
+              </div>
+              <div class="vas-form-group">
+                <label>City</label>
+                <input type="text" id="profCity" class="vas-input" value="${currentUser.city || 'Bengaluru'}">
+              </div>
+              <div class="vas-form-group">
+                <label>State &amp; Pincode</label>
+                <div style="display:flex; gap:10px;">
+                  <input type="text" id="profState" class="vas-input" value="${currentUser.state || 'Karnataka'}" style="flex:1;">
+                  <input type="text" id="profPincode" class="vas-input" value="${currentUser.pincode || '560038'}" style="width:120px;">
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="vas-btn vas-btn-gold" style="margin-top:20px; font-weight:700;">
+              Save Profile Updates
+            </button>
+          </form>
+        </div>
+      `;
+    } else if (tabName === "notifications") {
+      pane.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Activity &amp; Notifications Log</h3>
+          <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.markAllNotificationsRead()">Mark All as Read</button>
+        </div>
+        <div class="vas-notif-list">
+          ${(VASTRAE_DATA.notifications || []).map(n => `
+            <div class="vas-notif-card ${n.read ? '' : 'unread'}">
+              <span class="vas-notif-icon">${n.icon}</span>
+              <div class="vas-notif-body" style="flex:1;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong>${n.title}</strong>
+                  <span class="vas-notif-time">${n.timestamp}</span>
+                </div>
+                <p>${n.message}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // CUSTOMER DASHBOARD INTERACTIVE SERVICE CONTROLLER FUNCTIONS
+  // ------------------------------------------------------------------------
+  let activeClientCustomGarment = "Blouse";
+
+  window.selectClientCustomGarment = function (garmentName, btn) {
+    activeClientCustomGarment = garmentName;
+    ['custOptGarment1', 'custOptGarment2', 'custOptGarment3', 'custOptGarment4'].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.classList.remove('vas-btn-gold');
+        b.classList.add('vas-btn-outline');
+      }
+    });
+    if (btn) {
+      btn.classList.remove('vas-btn-outline');
+      btn.classList.add('vas-btn-gold');
+    }
+    const titleEl = document.getElementById('custClientSummaryTitle');
+    if (titleEl) titleEl.textContent = `Bespoke Bridal ${garmentName}`;
+    window.updateClientCustomEstimate();
+  };
+
+  window.updateClientCustomEstimate = function () {
+    const embSelect = document.getElementById('custClientEmbroidery');
+    const embPrice = embSelect ? parseInt(embSelect.options[embSelect.selectedIndex].getAttribute('data-price') || 1800, 10) : 1800;
+    const embPriceEl = document.getElementById('custClientEmbPrice');
+    if (embPriceEl) embPriceEl.textContent = `₹${embPrice.toLocaleString()}`;
+
+    let baseStitching = 1800;
+    if (activeClientCustomGarment === 'Lehenga') baseStitching = 4500;
+    if (activeClientCustomGarment === 'Kurta') baseStitching = 2200;
+    if (activeClientCustomGarment === 'Sherwani') baseStitching = 5200;
+
+    const fabricPrice = 2200;
+    const total = baseStitching + fabricPrice + embPrice;
+    const totalEl = document.getElementById('custClientTotal');
+    if (totalEl) totalEl.textContent = `₹${total.toLocaleString()}`;
+
+    const colorInput = document.getElementById('custClientColor');
+    const colorLabel = document.getElementById('custClientColorLabel');
+    if (colorInput && colorLabel) {
+      colorLabel.textContent = `Selected Dye (${colorInput.value.toUpperCase()})`;
+    }
+  };
+
+  window.saveCurrentClientCustomDesign = function (addToBag = false) {
+    const neck = document.getElementById('custClientNeck') ? document.getElementById('custClientNeck').value : 'Sweetheart Cut';
+    const sleeve = document.getElementById('custClientSleeve') ? document.getElementById('custClientSleeve').value : 'Elbow Length';
+    const fabricRadio = document.querySelector('input[name="custClientFabric"]:checked');
+    const fabric = fabricRadio ? fabricRadio.value : 'Pure Kanjeevaram Silk';
+    const embSelect = document.getElementById('custClientEmbroidery');
+    const embroidery = embSelect ? embSelect.value : 'Maggam Stone Work';
+    const color = document.getElementById('custClientColor') ? document.getElementById('custClientColor').value : '#7a0c1e';
+
+    const newDesign = {
+      id: "VST-DSG-" + Date.now().toString().slice(-5),
+      category: activeClientCustomGarment,
+      gender: (activeClientCustomGarment === 'Sherwani' ? 'men' : 'women'),
+      fabric: fabric,
+      neckline: neck,
+      sleeves: sleeve,
+      embroidery: embroidery,
+      color: color,
+      estimatedPrice: 5800,
+      createdAt: new Date().toISOString()
+    };
+
+    let userDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
+    userDesigns.unshift(newDesign);
+    localStorage.setItem(STORAGE_KEY_SAVED_DESIGNS, JSON.stringify(userDesigns));
+    savedDesigns = userDesigns;
+
+    if (addToBag) {
+      const cartItem = {
+        id: newDesign.id,
+        name: `Bespoke ${activeClientCustomGarment} (${fabric})`,
+        price: 5800,
+        quantity: 1,
+        image: 'images/products/women/ivory-anarkali-suit-front.jpg',
+        category: 'custom',
+        notes: `Neckline: ${neck}, Sleeve: ${sleeve}, Embroidery: ${embroidery}`
+      };
+      cart.push(cartItem);
+      localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+      updateCartWishCounters();
+      showToast(`✓ Custom ${activeClientCustomGarment} added to your shopping bag!`);
+      if (window.openCartDrawer) window.openCartDrawer();
+    } else {
+      showToast(`✓ Custom ${activeClientCustomGarment} saved to your moodboard!`);
+      window.renderDashboardOverview("designs");
+    }
+  };
+
+  // AI Virtual Try-On Handlers
+  let currentTryonGarment = {
+    img: 'images/products/women/royal-blue-lehenga-front.jpg',
+    name: 'Royal Blue Zardozi Lehenga',
+    price: 24500
+  };
+
+  window.setClientTryonAngle = function (angle, btn) {
+    ['btnAngleFront', 'btnAngleSide', 'btnAngleBack'].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.classList.remove('vas-btn-gold');
+        b.classList.add('vas-btn-outline');
+      }
+    });
+    if (btn) {
+      btn.classList.remove('vas-btn-outline');
+      btn.classList.add('vas-btn-gold');
+    }
+    const imgEl = document.getElementById('clientTryonPreviewImg');
+    if (imgEl) {
+      imgEl.style.filter = "brightness(0.9) contrast(1.05)";
+      setTimeout(() => { if (imgEl) imgEl.style.filter = "none"; }, 200);
+    }
+    showToast(`✓ AI perspective adjusted to ${angle.toUpperCase()} drape.`);
+  };
+
+  window.selectClientTryonGarment = function (imgUrl, name, price, btn) {
+    currentTryonGarment = { img: imgUrl, name: name, price: price };
+    const imgEl = document.getElementById('clientTryonPreviewImg');
+    const nameEl = document.getElementById('clientTryonSilName');
+    if (imgEl) imgEl.src = imgUrl;
+    if (nameEl) nameEl.textContent = name;
+
+    const parent = btn ? btn.parentElement : null;
+    if (parent) {
+      parent.querySelectorAll('.vas-dash-nav-item').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = 'transparent';
+        b.style.color = 'inherit';
+      });
+      if (btn) {
+        btn.classList.add('active');
+        btn.style.background = '#f4ebdc';
+        btn.style.color = '#1a1412';
+      }
+    }
+    showToast(`✓ Draping ${name} on AI model.`);
+  };
+
+  window.updateClientTryonModel = function (modelInfo) {
+    const modelNameEl = document.getElementById('clientTryonModelName');
+    if (modelNameEl) modelNameEl.textContent = modelInfo;
+    showToast(`✓ AI model posture switched: ${modelInfo.split('·')[0]}`);
+  };
+
+  window.handleClientTryonUpload = function (event) {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        showToast("✓ Analyzing uploaded photo: 33 facial landmarks and body mesh mapped.");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  window.addTriedGarmentToCart = function () {
+    const cartItem = {
+      id: "VST-TRY-" + Date.now().toString().slice(-4),
+      name: currentTryonGarment.name,
+      price: currentTryonGarment.price,
+      quantity: 1,
+      image: currentTryonGarment.img,
+      category: 'tryon'
+    };
+    cart.push(cartItem);
+    localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+    updateCartWishCounters();
+    showToast(`✓ ${currentTryonGarment.name} added to your shopping bag!`);
+    if (window.openCartDrawer) window.openCartDrawer();
+  };
+
+  // Own Fabric Client Submit Handler
+  window.handleOwnFabricClientSubmit = function (event) {
+    if (event) event.preventDefault();
+    const garment = document.getElementById('ofClientGarment').value;
+    const yardage = document.getElementById('ofClientYardage').value;
+    const lining = document.getElementById('ofClientLining').value;
+    const pickupDate = document.getElementById('ofClientPickupDate').value;
+    const address = document.getElementById('ofClientAddress').value;
+    const notes = document.getElementById('ofClientNotes').value;
+
+    const orderData = {
+      userId: currentUser.id,
+      customerName: currentUser.name,
+      customerPhone: currentUser.phone,
+      totalAmount: 1899,
+      items: [{ id: "OWN-FAB-" + Date.now().toString().slice(-4), name: `Own Fabric: ${garment} (${yardage})`, price: 1899, quantity: 1 }],
+      assignedTailorName: "Master Savitha Rao",
+      address: address,
+      notes: `Own Fabric (${yardage}), Lining: ${lining}, Pickup Date: ${pickupDate}. Notes: ${notes}`
+    };
+
+    if (window.vastraeOrderService) {
+      window.vastraeOrderService.createOrder(orderData);
+    }
+
+    showToast("✓ Fabric pickup booked! Our concierge courier will collect your fabric on " + pickupDate);
+    window.switchDashboardTab('orders');
+  };
+
+  // Saree Reborn Client Submit Handler
+  window.handleClientSareeRebornSubmit = function (event) {
+    if (event) event.preventDefault();
+    const sareeType = document.getElementById('srClientSareeType').value;
+    const target = document.getElementById('srClientTarget').value;
+    const address = document.getElementById('srClientAddress').value;
+    const notes = document.getElementById('srClientNotes').value;
+
+    const reqData = {
+      userId: currentUser.id,
+      customerName: currentUser.name,
+      customerPhone: currentUser.phone,
+      vintageSareeType: sareeType,
+      targetGarment: target,
+      pickupAddress: address,
+      notes: notes
+    };
+
+    if (window.vastraeSareeRebornService) {
+      window.vastraeSareeRebornService.createRequest(reqData);
+    }
+
+    showToast("✓ Saree Reborn commission submitted! Physical inspection scheduled.");
+    window.renderDashboardOverview("reborn");
+  };
+
+  // Add Measurement Profile Modal Handler
+  window.openAddMeasurementModal = function () {
+    const profName = prompt("Enter family member name (e.g. Self, Mother, Sister):", "Self");
+    if (!profName) return;
+    const bust = prompt("Enter Bust / Chest in inches (e.g. 34):", "34");
+    const waist = prompt("Enter Waist in inches (e.g. 28):", "28");
+    const hips = prompt("Enter Hips in inches (e.g. 36):", "36");
+
+    const newProfile = {
+      id: "PROF-" + Date.now().toString().slice(-4),
+      userId: currentUser.id,
+      name: profName,
+      profileName: profName,
+      relation: profName === "Self" ? "Self" : "Family Member",
+      bust: bust || "34",
+      waist: waist || "28",
+      hips: hips || "36",
+      shoulder: "14",
+      blouseLength: "14"
+    };
+
+    currentUser.familyProfiles = currentUser.familyProfiles || [];
+    currentUser.familyProfiles.push(newProfile);
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+
+    if (window.vastraeMeasurementService) {
+      window.vastraeMeasurementService.saveProfile(newProfile);
+    }
+
+    showToast(`✓ Measurement card for '${profName}' saved!`);
+    window.renderDashboardOverview("measurements");
+  };

@@ -12,27 +12,28 @@
   const vastraeCartService = {
     // Get current user ID or fallback session key
     getUserStorageKey: function (prefix) {
-      let userId = "guest";
-      if (window.vastraeAuth && window.vastraeAuth.getCurrentUser()) {
-        userId = window.vastraeAuth.getCurrentUser().id;
-      }
-      return `${prefix}_${userId}`;
+      const user = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+      if (!user) return null;
+      return `${prefix}_${user.id || user.username}`;
     },
 
-    // Cart operations
+    // Cart operations (Strictly authenticated - guest returns empty array)
     getCart: function () {
-      if (!window.vastraeStorage) return [];
       const key = this.getUserStorageKey(STORAGE_KEY_CART);
+      if (!key || !window.vastraeStorage) return [];
       return window.vastraeStorage.get(key, []);
     },
 
     saveCart: function (cart) {
-      if (!window.vastraeStorage) return false;
       const key = this.getUserStorageKey(STORAGE_KEY_CART);
+      if (!key || !window.vastraeStorage) return false;
       return window.vastraeStorage.set(key, cart);
     },
 
     addToCart: function (product, size = "M", quantity = 1, customConfig = null) {
+      const user = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+      if (!user) return null; // Hard application guard: unauthenticated guest cannot add to cart
+
       const cart = this.getCart();
       const itemKey = product.id + "_" + size + (customConfig ? "_" + customConfig.id : "");
       
@@ -95,20 +96,23 @@
       };
     },
 
-    // Wishlist operations
+    // Wishlist operations (Strictly authenticated - guest returns empty array)
     getWishlist: function () {
-      if (!window.vastraeStorage) return [];
       const key = this.getUserStorageKey(STORAGE_KEY_WISH);
+      if (!key || !window.vastraeStorage) return [];
       return window.vastraeStorage.get(key, []);
     },
 
     saveWishlist: function (wishlist) {
-      if (!window.vastraeStorage) return false;
       const key = this.getUserStorageKey(STORAGE_KEY_WISH);
+      if (!key || !window.vastraeStorage) return false;
       return window.vastraeStorage.set(key, wishlist);
     },
 
     toggleWishlist: function (product) {
+      const user = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+      if (!user) return null; // Hard application guard: unauthenticated guest cannot save to wishlist
+
       let wishlist = this.getWishlist();
       const index = wishlist.findIndex((w) => w.id === product.id);
       let added = false;
@@ -128,7 +132,7 @@
 
       this.saveWishlist(wishlist);
       return { wishlist: wishlist, added: added };
-    }
+    },
   };
 
   window.vastraeCartService = vastraeCartService;

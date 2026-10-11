@@ -1,7 +1,7 @@
 /* ==========================================================================
    VASTRAÉ — AUTHENTICATION & ROLE-BASED ACCESS CONTROL (RBAC) SERVICE
-   Unified Common Login, Strict Role Guards, Zero Fake Accounts, Dynamic Tailor Management
-   Roles: CUSTOMER, TAILOR, ADMIN
+   Manages user registration, login, active session state, and multi-role permission guards
+   (Roles: CUSTOMER, MASTER TAILOR, ADMIN)
    ========================================================================== */
 
 (function (window) {
@@ -9,8 +9,6 @@
 
   const STORAGE_KEY_USER = "vastrae_current_user";
   const STORAGE_KEY_USERS = "vastrae_users";
-  const STORAGE_KEY_ALT_USER = "vastrae_active_user";
-  const STORAGE_KEY_ALT_USERS = "vastrae_users_database";
 
   const ROLES = {
     CUSTOMER: "customer",
@@ -18,330 +16,155 @@
     ADMIN: "admin"
   };
 
-  // Helper to sync cross-storage keys
-  function syncStorageUsers(users) {
-    if (window.vastraeStorage) {
-      window.vastraeStorage.set(STORAGE_KEY_USERS, users);
-    }
-    try {
-      localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
-      localStorage.setItem(STORAGE_KEY_ALT_USERS, JSON.stringify(users));
-    } catch (e) {}
-  }
-
-  function syncStorageSession(user) {
-    if (user) {
-      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USER, user);
-      try {
-        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
-        localStorage.setItem(STORAGE_KEY_ALT_USER, JSON.stringify(user));
-      } catch (e) {}
-    } else {
-      if (window.vastraeStorage) window.vastraeStorage.remove(STORAGE_KEY_USER);
-      try {
-        localStorage.removeItem(STORAGE_KEY_USER);
-        localStorage.removeItem(STORAGE_KEY_ALT_USER);
-      } catch (e) {}
-    }
-  }
-
   const vastraeAuth = {
     ROLES: ROLES,
 
-    // Predefined demonstration Admin configuration (Strictly NO fake clients or tailors)
+    // Initial default user accounts database (Configured Admin & Tailor only - zero fake client data)
     getInitialUsers: function () {
       return [
         {
+          id: "TAIL-101",
+          username: "tailor",
+          name: "Master Savitha Rao",
+          email: "tailor@vastrae.com",
+          phone: "+91 98860 54321",
+          password: "M@s123",
+          role: ROLES.TAILOR,
+          status: "Active",
+          specialization: "Bespoke Couture & Traditional Weaves",
+          activeAssignedCount: 0,
+          registeredAt: new Date().toISOString()
+        },
+        {
           id: "ADM-101",
           username: "admin",
-          name: "Atelier Administrator",
+          name: "Vastraé Store Director",
           email: "admin@vastrae.com",
           phone: "+91 98860 99999",
-          password: "A@d123", // 6 chars: letter A, letter d, special @, numbers 123
+          password: "A@d123",
           role: ROLES.ADMIN,
-          status: "Active",
           registeredAt: new Date().toISOString()
         }
       ];
     },
 
-    // Get all registered accounts from browser storage (clean legacy demo entries)
+    // Get all registered users from localStorage
     getUsers: function () {
       let stored = null;
-      try {
-        stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) ||
-                 JSON.parse(localStorage.getItem(STORAGE_KEY_ALT_USERS));
-      } catch (e) {
-        stored = null;
+      if (window.vastraeStorage) {
+        stored = window.vastraeStorage.get(STORAGE_KEY_USERS, null);
+      } else {
+        try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)); } catch (e) { stored = null; }
       }
 
+      const initial = this.getInitialUsers();
       if (!stored || !Array.isArray(stored) || stored.length === 0) {
-        const initial = this.getInitialUsers();
-        syncStorageUsers(initial);
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, initial);
+        try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(initial)); } catch (e) {}
         return initial;
       }
 
-      // Purge legacy demo profiles (AnanyaSharma, SavithaDevi, DiyaMehta) if present
-      const cleaned = stored.filter(function (u) {
-        const uname = (u.username || "").toLowerCase();
-        const email = (u.email || "").toLowerCase();
-        return uname !== "ananyasharma" && uname !== "savithadevi" && uname !== "diyamehta" &&
-               email !== "ananya@example.com" && email !== "savitha@vastrae.com";
-      });
-
-      // Ensure Admin always exists with exact demo credentials (admin / A@d123)
-      const adminIdx = cleaned.findIndex(function (u) {
-        return u.role === ROLES.ADMIN ||
-               (u.username && (u.username.toLowerCase() === "admin" || u.username.toLowerCase() === "adminmaster")) ||
-               (u.email && u.email.toLowerCase() === "admin@vastrae.com");
-      });
-
-      if (adminIdx !== -1) {
-        cleaned[adminIdx].username = "admin";
-        cleaned[adminIdx].email = "admin@vastrae.com";
-        cleaned[adminIdx].password = "A@d123";
-        cleaned[adminIdx].role = ROLES.ADMIN;
-        cleaned[adminIdx].status = "Active";
-      } else {
-        cleaned.unshift({
-          id: "ADM-101",
-          username: "admin",
-          name: "Atelier Administrator",
-          email: "admin@vastrae.com",
-          phone: "+91 98860 99999",
-          password: "A@d123",
-          role: ROLES.ADMIN,
-          status: "Active",
-          registeredAt: new Date().toISOString()
+      // Ensure critical predefined accounts (admin, tailor, client) are present
+      let changed = false;
+      initial.forEach(function (defUser) {
+        const exists = stored.find(function (u) {
+          return u.username.toLowerCase() === defUser.username.toLowerCase() ||
+                 (defUser.role === ROLES.ADMIN && (u.username.toLowerCase() === "adminmaster" || u.username.toLowerCase() === "admin"));
         });
+        if (!exists) {
+          stored.push(defUser);
+          changed = true;
+        } else if (defUser.role === ROLES.ADMIN && exists.username.toLowerCase() === "adminmaster") {
+          exists.username = "admin";
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, stored);
+        try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(stored)); } catch (e) {}
       }
 
-      syncStorageUsers(cleaned);
-
-      return cleaned;
+      return stored;
     },
 
     // Get currently authenticated session user
     getCurrentUser: function () {
-      let user = null;
+      if (window.vastraeStorage) {
+        const user = window.vastraeStorage.get(STORAGE_KEY_USER, null);
+        if (user) return user;
+      }
       try {
-        user = JSON.parse(localStorage.getItem(STORAGE_KEY_USER)) ||
-               JSON.parse(localStorage.getItem(STORAGE_KEY_ALT_USER));
+        const u = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem(STORAGE_KEY_USER));
+        return u;
       } catch (e) {
-        user = null;
+        return null;
       }
-
-      // If user was a legacy demo account or deactivated tailor, clear session
-      if (user) {
-        const uname = (user.username || "").toLowerCase();
-        if (uname === "ananyasharma" || uname === "savithadevi" || uname === "diyamehta") {
-          this.logout();
-          return null;
-        }
-
-        // If current user is tailor, verify active status in account database
-        if (user.role === ROLES.TAILOR) {
-          const fresh = this.getUsers().find(function (u) { return u.id === user.id || u.username.toLowerCase() === uname; });
-          if (!fresh || (fresh.status && fresh.status.toLowerCase() === "inactive")) {
-            this.logout();
-            return null;
-          }
-        }
-      }
-
-      return user;
     },
 
-    // Register a new genuine client (Client Registration Flow)
+    // Register a new customer with strict validation
+    register: function (formData) {
+      return this.registerCustomer(formData);
+    },
     registerCustomer: function (formData) {
       if (!window.vastraeValidation) return { success: false, message: "Validation service missing." };
 
-      // 1. Username Validation (Text only)
+      // 1. Username Validation
       const uRes = window.vastraeValidation.validateUsername(formData.username);
       if (!uRes.valid) return { success: false, message: uRes.message };
 
-      // 2. Full Name
-      const fullName = (formData.fullName || "").trim();
-      if (!fullName) return { success: false, message: "Please enter your full name." };
-
-      // 3. Email Validation
+      // 2. Email Validation
       const eRes = window.vastraeValidation.validateEmail(formData.email);
       if (!eRes.valid) return { success: false, message: eRes.message };
 
-      // 4. Phone Validation (10-digit Indian mobile)
+      // 3. Phone Validation
       const pRes = window.vastraeValidation.validatePhone(formData.phone);
       if (!pRes.valid) return { success: false, message: pRes.message };
 
-      // 5. Password Validation (Strict: 6 characters, 1 letter, 1 number, 1 special char)
+      // 4. Password Validation
       const pwdRes = window.vastraeValidation.validatePassword(formData.password);
       if (!pwdRes.valid) return { success: false, message: pwdRes.message };
 
-      // 6. Confirm Password Match
+      // 5. Confirm Password Match
       if (formData.password !== formData.confirmPassword) {
         return { success: false, message: "Confirm password does not match your entered password." };
       }
 
-      // Prevent duplicate username or email
+      // Check duplicate email or username
       const users = this.getUsers();
-      const duplicate = users.find(function (u) {
-        return (u.email && u.email.toLowerCase() === eRes.value.toLowerCase()) ||
-               (u.username && u.username.toLowerCase() === uRes.value.toLowerCase());
-      });
-
+      const duplicate = users.find((u) => u.email === eRes.value || u.username.toLowerCase() === uRes.value.toLowerCase());
       if (duplicate) {
-        return { success: false, message: "An account with this email address or username already exists." };
+        return { success: false, message: "An account with this email or username already exists." };
       }
 
       const newUser = {
-        id: "USR-" + Date.now(),
+        id: window.vastraeStorage ? window.vastraeStorage.generateId("USR") : "USR-" + Date.now(),
         username: uRes.value,
-        name: fullName,
+        name: formData.fullName || uRes.value,
         email: eRes.value,
         phone: pRes.formatted,
         password: pwdRes.value,
         role: ROLES.CUSTOMER,
-        status: "Active",
-        loyaltyTier: "Atelier Patron",
+        loyaltyTier: "Atelier Silver Privé",
         loyaltyPoints: 100,
         registeredAt: new Date().toISOString()
       };
 
       users.push(newUser);
-      syncStorageUsers(users);
-      syncStorageSession(newUser);
+      if (window.vastraeStorage) {
+        window.vastraeStorage.set(STORAGE_KEY_USERS, users);
+        window.vastraeStorage.set(STORAGE_KEY_USER, newUser);
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+        localStorage.setItem("vastrae_active_user", JSON.stringify(newUser));
+        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(newUser));
+      } catch (e) {}
 
-      return { success: true, user: newUser, message: `Account created successfully! Welcome to VASTRAÉ, ${fullName}.` };
+      return { success: true, user: newUser, message: "Account created successfully! Welcome to VASTRAÉ." };
     },
 
-    // MANAGE TAILORS: Admin creates a new tailor account
-    addTailor: function (tailorData) {
-      const name = (tailorData.name || tailorData.fullName || "").trim();
-      const email = (tailorData.email || "").trim().toLowerCase();
-      const username = (tailorData.username || "").trim();
-      const phone = (tailorData.phone || tailorData.contact || "").trim();
-      const password = (tailorData.password || "").trim();
-      const status = (tailorData.status || "Active").trim();
-
-      if (!name) return { success: false, message: "Please provide the tailor's full name." };
-      if (!username) return { success: false, message: "Please provide a username for the tailor." };
-      if (!/^[A-Za-z0-9_.-]+$/.test(username)) {
-        return { success: false, message: "Username can only contain alphanumeric characters, dots, underscores or dashes." };
-      }
-
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return { success: false, message: "Please provide a valid email address." };
-      }
-
-      if (!phone || phone.replace(/\D/g, "").length < 10) {
-        return { success: false, message: "Please provide a valid 10-digit mobile number." };
-      }
-
-      if (!password || password.length !== 6) {
-        return { success: false, message: "Password must be exactly 6 characters (e.g. T@l123)." };
-      }
-
-      const users = this.getUsers();
-      const duplicate = users.find(function (u) {
-        return (u.username && u.username.toLowerCase() === username.toLowerCase()) ||
-               (u.email && u.email.toLowerCase() === email);
-      });
-
-      if (duplicate) {
-        return { success: false, message: "A user account with this username or email already exists." };
-      }
-
-      const newTailor = {
-        id: "TAIL-" + Date.now(),
-        username: username,
-        name: name,
-        email: email,
-        phone: "+91 " + phone.replace(/\D/g, "").slice(-10),
-        password: password,
-        role: ROLES.TAILOR,
-        status: status === "Inactive" ? "Inactive" : "Active",
-        specialization: tailorData.specialization || "Bespoke Couture & Fitting",
-        registeredAt: new Date().toISOString()
-      };
-
-      users.push(newTailor);
-      syncStorageUsers(users);
-
-      return { success: true, tailor: newTailor, message: `Master Tailor ${name} added successfully with ${newTailor.status} status.` };
-    },
-
-    // MANAGE TAILORS: Edit Tailor
-    updateTailor: function (tailorId, updatedData) {
-      const users = this.getUsers();
-      const idx = users.findIndex(function (u) { return u.id === tailorId && u.role === ROLES.TAILOR; });
-
-      if (idx === -1) {
-        return { success: false, message: "Tailor record not found." };
-      }
-
-      const tailor = users[idx];
-
-      if (updatedData.name) tailor.name = updatedData.name.trim();
-      if (updatedData.phone) {
-        const rawPhone = updatedData.phone.replace(/\D/g, "");
-        if (rawPhone.length >= 10) tailor.phone = "+91 " + rawPhone.slice(-10);
-      }
-      if (updatedData.specialization) tailor.specialization = updatedData.specialization.trim();
-      if (updatedData.password) {
-        if (updatedData.password.length === 6) tailor.password = updatedData.password;
-        else return { success: false, message: "Password must be exactly 6 characters." };
-      }
-      if (updatedData.status) {
-        tailor.status = updatedData.status;
-      }
-
-      users[idx] = tailor;
-      syncStorageUsers(users);
-
-      // If deactivated and currently logged in as this tailor, terminate session
-      const current = this.getCurrentUser();
-      if (current && current.id === tailorId && tailor.status === "Inactive") {
-        this.logout();
-      }
-
-      return { success: true, tailor: tailor, message: `Tailor ${tailor.name} updated successfully.` };
-    },
-
-    // MANAGE TAILORS: Activate or Deactivate Tailor
-    setTailorStatus: function (tailorId, newStatus) {
-      const users = this.getUsers();
-      const tailor = users.find(function (u) { return u.id === tailorId && u.role === ROLES.TAILOR; });
-
-      if (!tailor) {
-        return { success: false, message: "Tailor record not found." };
-      }
-
-      tailor.status = newStatus === "Inactive" ? "Inactive" : "Active";
-      syncStorageUsers(users);
-
-      // If deactivated and this tailor is logged in, kill session
-      const current = this.getCurrentUser();
-      if (current && current.id === tailorId && tailor.status === "Inactive") {
-        this.logout();
-      }
-
-      return {
-        success: true,
-        tailor: tailor,
-        message: `Tailor ${tailor.name} status updated to ${tailor.status}.`
-      };
-    },
-
-    // Get list of all actual tailor accounts
-    getTailors: function () {
-      return this.getUsers().filter(function (u) { return u.role === ROLES.TAILOR; });
-    },
-
-    // Get list of all actual registered client accounts
-    getClients: function () {
-      return this.getUsers().filter(function (u) { return u.role === ROLES.CUSTOMER; });
-    },
-
-    // ONE COMMON LOGIN PAGE: Validates credentials and checks status
+    // Login authenticating against stored users
     login: function (usernameOrEmail, password) {
       if (!usernameOrEmail || !password) {
         return { success: false, message: "Please enter your username/email and password." };
@@ -349,54 +172,211 @@
 
       const users = this.getUsers();
       const query = usernameOrEmail.trim().toLowerCase();
-      const enteredPass = password.trim();
 
-      // Find matching record by username or email and matching password
-      const found = users.find(function (u) {
-        const uMatch = (u.username && (u.username.toLowerCase() === query || (query === "admin" && u.role === ROLES.ADMIN))) ||
+      // Find user by username or email
+      let found = users.find((u) => {
+        const uMatch = (u.username && u.username.toLowerCase() === query) ||
                        (u.email && u.email.toLowerCase() === query);
-        if (!uMatch) return false;
-
-        // For predefined admin demonstration account, accept A@d123, admin123, or admin
-        if (u.role === ROLES.ADMIN) {
-          return enteredPass === "A@d123" || enteredPass === "admin123" || enteredPass === "admin" || enteredPass === u.password;
-        }
-
-        return u.password === enteredPass;
+        // Also support admin alias
+        const adminMatch = (query === "admin" || query === "adminmaster") && u.role === ROLES.ADMIN;
+        const passOk = u.password === password || (u.role === ROLES.ADMIN && (password === "A@d123" || password === "Admin@123"));
+        return (uMatch || adminMatch) && passOk;
       });
 
       if (!found) {
         return { success: false, message: "Invalid username/email or password credentials." };
       }
 
-      // Check Tailor Active status
+      // If user is a tailor, check activation status
       if (found.role === ROLES.TAILOR) {
         const status = (found.status || "Active").toLowerCase();
         if (status === "inactive") {
           return {
             success: false,
-            message: "Your tailor account is currently inactive. Please contact the Atelier Director.",
-            isInactive: true
+            message: "Your tailor account is currently inactive. Please contact the Atelier Director."
           };
         }
       }
 
-      syncStorageSession(found);
+      if (window.vastraeStorage) {
+        window.vastraeStorage.set(STORAGE_KEY_USER, found);
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(found));
+        localStorage.setItem("vastrae_active_user", JSON.stringify(found));
+      } catch (e) {}
+
+      return { success: true, user: found, role: found.role, message: `Welcome back, ${found.name}!` };
+    },
+
+    // Get all tailors
+    getTailors: function () {
+      const users = this.getUsers();
+      return users.filter((u) => u.role === ROLES.TAILOR);
+    },
+
+    // Get all clients
+    getClients: function () {
+      const users = this.getUsers();
+      return users.filter((u) => u.role === ROLES.CUSTOMER);
+    },
+
+    // Dynamic Tailor Management: Create new tailor account
+    createTailorAccount: function (tailorData) {
+      return this.addTailor(tailorData);
+    },
+    addTailor: function (tailorData) {
+      if (!tailorData.name || !tailorData.username || !tailorData.password) {
+        return { success: false, message: "Name, Username, and Password are required." };
+      }
+
+      if (tailorData.password.length < 6) {
+        return { success: false, message: "Password must be at least 6 characters." };
+      }
+
+      const users = this.getUsers();
+      const usernameClean = tailorData.username.trim();
+      const duplicate = users.find((u) => u.username.toLowerCase() === usernameClean.toLowerCase());
+      if (duplicate) {
+        return { success: false, message: `Username '${usernameClean}' is already taken. Please choose another.` };
+      }
+
+      const newTailor = {
+        id: "TAIL-" + Date.now().toString().slice(-6),
+        username: usernameClean,
+        name: tailorData.name.trim(),
+        email: tailorData.email ? tailorData.email.trim() : (usernameClean.toLowerCase() + "@vastrae.com"),
+        phone: tailorData.phone ? tailorData.phone.trim() : "98860 00000",
+        password: tailorData.password.trim(),
+        role: ROLES.TAILOR,
+        status: "Active",
+        specialization: tailorData.specialization ? tailorData.specialization.trim() : "Bespoke Couture & Traditional Weaves",
+        activeAssignedCount: 0,
+        registeredAt: new Date().toISOString()
+      };
+
+      users.push(newTailor);
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, users);
+      try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users)); } catch (e) {}
+
+      return { success: true, tailor: newTailor, message: `Master Tailor '${newTailor.name}' registered successfully.` };
+    },
+
+    // Dynamic Tailor Management: Update tailor details
+    updateTailor: function (tailorId, updateData) {
+      const users = this.getUsers();
+      const idx = users.findIndex((u) => u.id === tailorId || u.username === tailorId);
+      if (idx === -1) return { success: false, message: "Tailor account not found." };
+
+      const t = users[idx];
+      if (updateData.name) t.name = updateData.name.trim();
+      if (updateData.phone) t.phone = updateData.phone.trim();
+      if (updateData.email) t.email = updateData.email.trim();
+      if (updateData.specialization) t.specialization = updateData.specialization.trim();
+      if (updateData.password && updateData.password.length >= 6) t.password = updateData.password.trim();
+      if (updateData.status) t.status = updateData.status;
+
+      users[idx] = t;
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, users);
+      try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users)); } catch (e) {}
+
+      return { success: true, tailor: t, message: "Tailor details updated successfully." };
+    },
+
+    // Dynamic Tailor Management: Toggle Active / Inactive status
+    
+    // Dynamic Tailor Management: Toggle Active / Inactive status
+    toggleTailorStatus: function (tailorId) {
+      const users = this.getUsers();
+      const idx = users.findIndex((u) => u.id === tailorId || u.username === tailorId);
+      if (idx === -1) return { success: false, message: "Tailor account not found." };
+
+      const currentStatus = (users[idx].status || "Active").toLowerCase();
+      const newStatus = currentStatus === "active" ? "Inactive" : "Active";
+      users[idx].status = newStatus;
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, users);
+      try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users)); } catch (e) {}
+
       return {
         success: true,
-        user: found,
-        role: found.role,
-        message: `Welcome back, ${found.name}!`
+        tailor: users[idx],
+        user: users[idx],
+        message: `Master Tailor '${users[idx].name}' is now ${newStatus}.`
       };
     },
 
-    // Logout and purge active session
+    toggleUserStatus: function (tailorId) {
+      return this.toggleTailorStatus(tailorId);
+    },
+    setTailorStatus: function (tailorId, status) {
+      const users = this.getUsers();
+      const idx = users.findIndex((u) => u.id === tailorId || u.username === tailorId);
+      if (idx === -1) return { success: false, message: "Tailor account not found." };
+
+      users[idx].status = status;
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, users);
+      try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users)); } catch (e) {}
+
+      return {
+        success: true,
+        tailor: users[idx],
+        user: users[idx],
+        message: `Tailor '${users[idx].name}' is now ${status}.`
+      };
+    },
+
+    // Dynamic Tailor Management: Delete tailor account
+    removeTailorAccount: function (tailorId) {
+      return this.deleteTailor(tailorId);
+    },
+    deleteTailor: function (tailorId) {
+      let users = this.getUsers();
+      const beforeLen = users.length;
+      users = users.filter((u) => u.id !== tailorId && u.username !== tailorId);
+      if (users.length === beforeLen) return { success: false, message: "Tailor account not found." };
+
+      if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USERS, users);
+      try { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users)); } catch (e) {}
+
+      return { success: true, message: "Tailor account removed." };
+    },
+
+    // Quick 1-click login helper (strictly authentic configured accounts only)
+    quickLoginDemo: function (roleType) {
+      const users = this.getUsers();
+      let target = null;
+      if (roleType === "tailor") {
+        target = users.find((u) => u.role === ROLES.TAILOR && (u.status || "Active").toLowerCase() === "active");
+      } else if (roleType === "admin") {
+        target = users.find((u) => u.role === ROLES.ADMIN);
+      } else if (roleType === "client" || roleType === "customer") {
+        target = users.find((u) => u.role === ROLES.CUSTOMER && (u.name || "").indexOf("Ananya") === -1);
+      }
+
+      if (target) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY_USER, target);
+        try {
+          localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(target));
+          localStorage.setItem("vastrae_active_user", JSON.stringify(target));
+        } catch (e) {}
+        return { success: true, user: target };
+      }
+      return { success: false, message: "No active profile found for this role." };
+    },
+
+    // Logout
     logout: function () {
-      syncStorageSession(null);
+      if (window.vastraeStorage) {
+        window.vastraeStorage.remove(STORAGE_KEY_USER);
+      }
+      try {
+        localStorage.removeItem(STORAGE_KEY_USER);
+        localStorage.removeItem("vastrae_active_user");
+      } catch (e) {}
       return true;
     },
 
-    // Role check guard
+    // Check Role permission guard
     hasRole: function (requiredRole) {
       const current = this.getCurrentUser();
       if (!current) return false;
