@@ -905,7 +905,18 @@ img {
   }
 
   .vas-nav-menu.open {
-    right: 0;
+    right: 0 !important;
+  }
+
+  .vas-nav-menu .vas-nav-link {
+    height: auto !important;
+    padding: 12px 0 !important;
+    font-size: 1.05rem !important;
+    width: 100% !important;
+  }
+
+  .vas-nav-menu .vas-nav-link::after {
+    bottom: 0 !important;
   }
 
   .vas-mobile-toggle {
@@ -4008,37 +4019,108 @@ img {
 }
 
 /* ==========================================================================
-   ROLE-BASED DASHBOARD ACCESS CONTROL & ISOLATION
-   Hides public website & navbar when Admin or Tailor is logged in
+   LUXURY USER ACCOUNT DROPDOWN MENU
    ========================================================================== */
-body.vas-role-admin #topHeader,
-body.vas-role-tailor #topHeader,
-body.vas-role-customer #topHeader,
-body.vas-role-admin #publicWebsiteView,
-body.vas-role-tailor #publicWebsiteView,
-body.vas-role-customer #publicWebsiteView,
-body.vas-role-admin #customerDashboardView,
-body.vas-role-tailor #customerDashboardView {
-  display: none !important;
+.vas-user-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
 }
 
-body.vas-role-admin #adminDashboardView {
-  display: flex !important;
+.vas-user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 250px;
+  background: #1c1815;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  padding: 10px 0;
+  z-index: 2500;
+  display: none;
 }
 
-body.vas-role-tailor #tailorDashboardView {
-  display: flex !important;
+.vas-dropdown-header {
+  padding: 10px 16px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-body.vas-role-customer #customerDashboardView {
-  display: flex !important;
+.vas-dropdown-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d89a8c, #8c5346);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: var(--vas-font-serif, 'Playfair Display', serif);
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
-body.vas-role-admin #tailorDashboardView,
-body.vas-role-tailor #adminDashboardView,
-body.vas-role-customer #adminDashboardView,
-body.vas-role-customer #tailorDashboardView {
-  display: none !important;
+.vas-dropdown-header strong {
+  display: block;
+  color: #f7ede2;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 165px;
+}
+
+.vas-dropdown-header small {
+  display: block;
+  color: #dfc7a7;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.vas-dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 6px 0;
+}
+
+.vas-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  color: #dfc7a7;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.vas-dropdown-item:hover {
+  background: rgba(212, 175, 55, 0.15);
+  color: #ffffff;
+}
+
+.vas-dropdown-item .icon {
+  font-size: 1.05rem;
+  width: 20px;
+  text-align: center;
+}
+
+.vas-dropdown-logout {
+  color: #e59888;
+}
+
+.vas-dropdown-logout:hover {
+  background: rgba(216, 154, 140, 0.2);
+  color: #ffb8a8;
 }
 
 /* ==========================================================================
@@ -4158,6 +4240,7 @@ body.vas-logged-in #authNavActions {
   color: rgba(255, 255, 255, 0.88) !important;
   transition: color 0.25s ease !important;
   white-space: nowrap !important;
+  cursor: pointer !important;
 }
 
 .vas-nav-link:hover {
@@ -4187,6 +4270,14 @@ body.vas-logged-in #authNavActions {
 /* ==========================================================================
    REFERENCE-IMAGE LUXURY DASHBOARDS (ADMIN, TAILOR, CUSTOMER)
    ========================================================================== */
+body.vas-dashboard-active #topHeader,
+body.vas-dashboard-active .vas-header,
+body.vas-role-admin.vas-dashboard-active #topHeader,
+body.vas-role-tailor.vas-dashboard-active #topHeader,
+body.vas-role-customer.vas-dashboard-active #topHeader {
+  display: none !important;
+}
+
 .vas-dashboard-view {
   background: #fbf8f2 !important;
   min-height: 100vh !important;
