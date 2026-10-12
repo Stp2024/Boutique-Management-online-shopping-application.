@@ -424,12 +424,9 @@
       }
       return { success: false, message: "No active profile found for this role." };
     },
-    },
 
     // Logout
     logout: function () {
-      if (window.vastraeStorage) {
-        window.vastraeStorage.remove(STORAGE_KEY_USER);
       if (window.vastraeStorage) {
         window.vastraeStorage.remove(STORAGE_KEY_USER);
         window.vastraeStorage.remove(STORAGE_KEY_USER_ALT);

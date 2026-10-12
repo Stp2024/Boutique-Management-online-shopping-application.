@@ -192,62 +192,41 @@
     const initialHash = (window.location.hash || "").replace("#", "");
     if (!currentUser) {
       // Unauthenticated visitor: Home page is displayed first
-      if (initialHash === "dashboard") {
+      if (["dashboard", "admin", "tailor"].includes(initialHash)) {
         window.navigateToPage("login");
         showToast("Please log in to access your Customer Workspace.");
-        showAuthError("Please log in to access your Customer Workspace.");
       } else if (["about", "collection", "services", "contact", "login"].includes(initialHash)) {
         window.navigateToPage(initialHash);
-      } else if (["customize", "sareeReborn", "ownFabric", "aiTryOnStudio"].includes(initialHash)) {
-        window.navigateToSection(initialHash);
-      } else if (initialHash === "accessories") {
+      } else if (["customize", "sareeReborn", "ownFabric", "aiTryOnStudio", "accessories"].includes(initialHash)) {
         window.navigateToSection(initialHash);
       } else {
-        // Default in the beginning: Home page
         window.navigateToPage("home");
       }
-
-    // Route to correct page based on URL hash (Admin & Tailor dashboards open in dedicated new tab)
-
-        const initialHash = (window.location.hash || "").replace("#", "");
-    if (initialHash === "dashboard") {
-      if (currentUser && currentUser.role === "customer") {
-        showDashboardView();
-      } else {
-        showToast("Please sign in as a customer to access your Customer Workspace.");
-        openAuthModal("login");
-        window.navigateToPage("home");
-      }
-    } else if (initialHash === "admin") {
-      if (currentUser && currentUser.role === "admin") {
-        window.showAdminDashboard();
-        return;
-      } else {
-        showToast("Access restricted: Administrator credentials required.");
-        openAuthModal("login");
-        window.navigateToPage("home");
-      }
-    } else if (initialHash === "tailor") {
-      if (currentUser && currentUser.role === "tailor") {
-        window.showTailorDashboard();
-        return;
-      } else {
-        showToast("Access restricted: Master Tailor credentials required.");
-        openAuthModal("login");
-        window.navigateToPage("home");
-      }
-    } else if (["home", "about", "collection", "services", "contact"].includes(initialHash)) {
-      window.navigateToPage(initialHash);
-    } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(initialHash)) {
-      window.navigateToSection(initialHash);
     } else {
+      // Authenticated visitor: Route cleanly based on role or hash
       if (initialHash === "dashboard") {
-        showDashboardView();
+        if (currentUser.role === "admin") {
+          window.showAdminDashboard();
+        } else if (currentUser.role === "tailor") {
+          window.showTailorDashboard();
+        } else {
+          showDashboardView();
+        }
       } else if (initialHash === "admin") {
-        window.openAdminConsoleModal();
+        if (currentUser.role === "admin") {
+          window.showAdminDashboard();
+        } else {
+          showToast("Access restricted: Administrator credentials required.");
+          window.navigateToPage("home");
+        }
       } else if (initialHash === "tailor") {
-        window.openMasterTailorWorkspace();
-      } else if (["home", "about", "collection", "services", "contact", "login"].includes(initialHash)) {
+        if (currentUser.role === "tailor") {
+          window.showTailorDashboard();
+        } else {
+          showToast("Access restricted: Master Tailor credentials required.");
+          window.navigateToPage("home");
+        }
+      } else if (["home", "about", "collection", "services", "contact"].includes(initialHash)) {
         window.navigateToPage(initialHash);
       } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(initialHash)) {
         window.navigateToSection(initialHash);
@@ -342,6 +321,7 @@
     document.body.classList.add("vas-role-customer");
     document.body.classList.remove("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
+    document.body.classList.add("vas-dashboard-active");
 
     const pubView = document.getElementById("publicWebsiteView");
     const topHeader = document.getElementById("topHeader");
@@ -359,7 +339,37 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function getSyncUser() {
+    if (window.currentUser) {
+      currentUser = window.currentUser;
+      return currentUser;
+    }
+    if (window.vastraeAuth && typeof window.vastraeAuth.getCurrentUser === "function") {
+      const u = window.vastraeAuth.getCurrentUser();
+      if (u) {
+        currentUser = u;
+        window.currentUser = u;
+        return u;
+      }
+    }
+    try {
+      const u = JSON.parse(localStorage.getItem("vas_user")) ||
+                JSON.parse(localStorage.getItem("vastrae_current_user")) ||
+                JSON.parse(localStorage.getItem("vastrae_active_user")) ||
+                null;
+      if (u) {
+        currentUser = u;
+        window.currentUser = u;
+        return u;
+      }
+    } catch (e) {}
+    currentUser = null;
+    window.currentUser = null;
+    return null;
+  }
+
   function openCustomerDashboard(activeTab = "overview") {
+    currentUser = getSyncUser();
     if (!currentUser) {
       showToast("Please log in to access your Customer Workspace.");
       showAuthError("Please log in to access your Customer Workspace.");
@@ -370,49 +380,212 @@
     showDashboardView(activeTab);
   }
   window.openCustomerDashboard = openCustomerDashboard;
+
   window.handleNavAuthClick = function () {
-    if (!currentUser) {
-      openAuthModal("login");
-      return;
-    }
-    if (currentUser.role === "admin") {
-      window.location.hash = "#admin";
-      window.showAdminDashboard();
-    } else if (currentUser.role === "tailor") {
-      window.location.hash = "#tailor";
-      window.showTailorDashboard();
+    const loggedUser = getSyncUser();
+    if (loggedUser) {
+      window.toggleUserDropdown();
     } else {
-      window.location.hash = "#dashboard";
-      openCustomerDashboard();
+      if (typeof openAuthModal === "function") {
+        openAuthModal("login");
+      } else {
+        window.navigateToPage("login");
+      }
     }
   };
 
+  window.toggleUserDropdown = function () {
+    const dd = document.getElementById("vasUserDropdown");
+    if (!dd) return;
+    if (dd.style.display === "block") {
+      dd.style.display = "none";
+    } else {
+      window.updateNavDropdownInfo();
+      dd.style.display = "block";
+    }
+  };
 
+  window.closeUserDropdown = function () {
+    const dd = document.getElementById("vasUserDropdown");
+    if (dd) dd.style.display = "none";
+  };
+
+  window.updateNavDropdownInfo = function () {
+    const user = getSyncUser();
+    if (!user) return;
+
+    const name = user.name || user.username || "Patron";
+    const role = (user.role || "customer").toLowerCase();
+
+    const dAvatar = document.getElementById("navDropdownAvatar");
+    const dName = document.getElementById("navDropdownName");
+    const dRole = document.getElementById("navDropdownRole");
+    const dDashText = document.getElementById("dropdownDashText");
+    const dProfText = document.getElementById("dropdownProfText");
+
+    if (dAvatar) dAvatar.textContent = name.charAt(0).toUpperCase();
+    if (dName) dName.textContent = name;
+    if (dRole) {
+      if (role === "admin") dRole.textContent = "Store Director (Admin)";
+      else if (role === "tailor") dRole.textContent = "Master Tailor (Couturier)";
+      else dRole.textContent = "Atelier Patron (Customer)";
+    }
+    if (dDashText) {
+      if (role === "admin") dDashText.textContent = "Admin Studio Dashboard";
+      else if (role === "tailor") dDashText.textContent = "Tailor Production Dashboard";
+      else dDashText.textContent = "Customer Sanctuary Dashboard";
+    }
+    if (dProfText) {
+      if (role === "admin") dProfText.textContent = "Admin Profile";
+      else if (role === "tailor") dProfText.textContent = "Tailor Profile";
+      else dProfText.textContent = "My Profile & Measurements";
+    }
+  };
+
+  window.handleDropdownNavigate = function (dest) {
+    window.closeUserDropdown();
+    const user = getSyncUser();
+    const role = (user && user.role) ? user.role.toLowerCase() : "customer";
+
+    if (dest === "dashboard") {
+      if (role === "admin") {
+        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard();
+        else window.navigateToPage("adminDashboard");
+      } else if (role === "tailor") {
+        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard();
+        else window.navigateToPage("tailorDashboard");
+      } else {
+        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard();
+        else window.navigateToPage("customerDashboard");
+      }
+    } else if (dest === "profile") {
+      if (role === "admin") {
+        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard();
+        else window.navigateToPage("adminDashboard");
+      } else if (role === "tailor") {
+        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard();
+        else window.navigateToPage("tailorDashboard");
+      } else {
+        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard();
+        else window.navigateToPage("customerDashboard");
+      }
+    } else if (dest === "profile") {
+      if (role === "admin") {
+        if (typeof window.showAdminDashboard === "function") {
+          window.showAdminDashboard("profile");
+        } else {
+          window.navigateToPage("adminDashboard");
+          if (typeof window.switchAdminTab === "function") window.switchAdminTab("profile");
+        }
+      } else if (role === "tailor") {
+        if (typeof window.showTailorDashboard === "function") {
+          window.showTailorDashboard("profile");
+        } else {
+          window.navigateToPage("tailorDashboard");
+          if (typeof window.switchTailorTab === "function") window.switchTailorTab("profile");
+        }
+      } else {
+        if (typeof window.openCustomerDashboard === "function") {
+          window.openCustomerDashboard("profile");
+        } else {
+          window.navigateToPage("customerDashboard");
+          if (typeof window.switchDashboardTab === "function") window.switchDashboardTab("profile");
+        }
+      }
+    }
+  };
+
+  window.handleDropdownLogout = function () {
+    window.closeUserDropdown();
+    if (window.vastraeAuth && typeof window.vastraeAuth.logout === "function") {
+      window.vastraeAuth.logout();
+    }
+    currentUser = null;
+    window.currentUser = null;
+    localStorage.removeItem("vas_user");
+    localStorage.removeItem("vastrae_active_user");
+    localStorage.removeItem("vastrae_current_user");
+    document.body.classList.remove("vas-role-admin", "vas-role-tailor", "vas-role-customer");
+    if (typeof updateAuthUI === "function") updateAuthUI();
+    window.navigateToPage("home");
+    showToast("✓ Signed out successfully. Until next time!");
+  };
+
+  document.addEventListener("click", function (e) {
+    const wrap = document.getElementById("vasUserDropdownWrap");
+    if (wrap && !wrap.contains(e.target)) {
+      window.closeUserDropdown();
+    }
+  });
 
   window.navigateToPage = function (pageName, event) {
     if (event) {
-      event.preventDefault();
+      if (typeof event.preventDefault === "function") event.preventDefault();
+      if (typeof event.stopPropagation === "function") event.stopPropagation();
     }
+
+    // Clean page ID and map aliases
+    let target = (pageName || "home").toString().trim().replace(/^#/, "");
+    if (!target) target = "home";
+    if (target === "collections") target = "collection";
+    if (target === "about-us") target = "about";
+    if (target === "contact-us") target = "contact";
+
+    // Handle dashboard and profile routing
+    if (target === "customerDashboard" || target === "dashboard") {
+      openCustomerDashboard();
+      return;
+    }
+    if (target === "tailorDashboard" || target === "tailor") {
+      if (typeof window.showTailorDashboard === "function") {
+        window.showTailorDashboard();
+      } else {
+        openCustomerDashboard();
+      }
+      return;
+    }
+    if (target === "adminDashboard" || target === "admin") {
+      if (typeof window.showAdminDashboard === "function") {
+        window.showAdminDashboard();
+      } else {
+        openCustomerDashboard();
+      }
+      return;
+    }
+    if (target === "profile") {
+      openCustomerDashboard("profile");
+      return;
+    }
+
     const validPages = ["home", "about", "collection", "services", "contact", "login"];
-    let target = validPages.includes(pageName) ? pageName : "home";
+    if (!validPages.includes(target)) {
+      target = "home";
+    }
 
     // Show services page; if unauthenticated, show helpful toast about signing in first to use interactive features
     if (target === "services" && !currentUser) {
       showToast("🔒 Welcome to Boutique Services. Please sign in first to use the customizer or submit orders.");
     }
 
+    document.body.classList.remove("vas-dashboard-active");
     const pubView = document.getElementById("publicWebsiteView");
     const dashView = document.getElementById("customerDashboardView");
     const adminDash = document.getElementById("adminDashboardView");
     const tailorDash = document.getElementById("tailorDashboardView");
+    const topHeader = document.getElementById("topHeader");
+
     if (pubView) pubView.style.display = "block";
     if (dashView) dashView.style.display = "none";
     if (adminDash) adminDash.style.display = "none";
     if (tailorDash) tailorDash.style.display = "none";
+    if (topHeader) topHeader.style.display = "block";
 
     // Close mobile nav drawer if open
     const menu = document.querySelector(".vas-nav-menu");
     if (menu) menu.classList.remove("open");
+
+    // Close any open modals
+    if (typeof closeModal === "function") closeModal();
 
     // Hide all pages, reveal chosen page
     validPages.forEach(p => {
@@ -422,32 +595,39 @@
       }
     });
 
-    // If navigating to login, ensure default sign in tab is activated
+    // If navigating to login, ensure auth modal is opened cleanly
     if (target === "login") {
-      const currentTab = document.getElementById("forgotFormContainer") && document.getElementById("forgotFormContainer").style.display === "block" ? "forgot" :
-        (document.getElementById("registerFormContainer") && document.getElementById("registerFormContainer").style.display === "block" ? "register" : "login");
-      if (currentTab !== "register" && currentTab !== "forgot") {
-        window.switchAuthTab("login");
+      if (typeof window.openAuthModal === "function") {
+        window.openAuthModal("login");
       }
     }
 
     // Update active nav link
     document.querySelectorAll(".vas-nav-menu .vas-nav-link").forEach(link => {
       const pageAttr = link.getAttribute("data-page");
-      if (pageAttr === target) {
+      if (pageAttr === target || (target === "collection" && (pageAttr === "collection" || pageAttr === "collections"))) {
         link.classList.add("active");
       } else {
         link.classList.remove("active");
       }
     });
 
-    updateAuthUI();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof updateAuthUI === "function") updateAuthUI();
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
 
-    if (window.history.pushState) {
-      window.history.pushState(null, null, "#" + target);
-    } else {
-      window.location.hash = "#" + target;
+    // Safe history routing on both file:// and http://
+    try {
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, "#" + target);
+      } else {
+        window.location.hash = "#" + target;
+      }
+    } catch (e) {
+      try { window.location.hash = "#" + target; } catch (err) {}
     }
   };
 
@@ -675,8 +855,15 @@
   }
 
   window.openAuthModal = function (tab = "login") {
-    window.navigateToPage("login");
-    window.switchAuthTab(tab);
+    if (typeof openModal === "function") {
+      openModal("authModal");
+    } else {
+      const modal = document.getElementById("authModal");
+      if (modal) modal.classList.add("active");
+    }
+    if (typeof window.switchAuthTab === "function") {
+      window.switchAuthTab(tab);
+    }
   };
 
   window.switchAuthTab = function (tab) {
@@ -840,7 +1027,7 @@
     localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
     localStorage.setItem("vastrae_users", JSON.stringify(usersDb));
 
-    currentUser = newUser;
+    window.currentUser = currentUser;
     localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
     localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
 
@@ -938,12 +1125,15 @@
     }
 
     currentUser = matched;
+    window.currentUser = matched;
     localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    localStorage.setItem("vas_user", JSON.stringify(currentUser));
     localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
     localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
     if (window.vastraeAuth && typeof window.vastraeAuth.setCurrentUser === "function") {
       window.vastraeAuth.setCurrentUser(currentUser);
     }
+    updateAuthUI();
 
     loadUserCartAndWishlist();
     orders = (window.vastraeOrderService ? window.vastraeOrderService.getOrders() : JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS))) || [];
@@ -1037,10 +1227,6 @@
         openAuthModal("login");
         return;
       }
-    }
-
-    showToast("Password reset instructions sent to " + forgotEmail);
-    openAuthModal("login");
     }
 
     // Check account exists
@@ -1212,6 +1398,7 @@
   window.handleLogout = function () {
     if (confirm("Are you sure you wish to log out from VASTRAÉ Atelier?")) {
       currentUser = null;
+      window.currentUser = null;
       pendingAuthAction = null;
       localStorage.removeItem(STORAGE_KEY_USER);
       localStorage.removeItem("vastrae_current_user");
@@ -1248,20 +1435,31 @@
   };
 
   window.returnToPublicWebsite = function () {
-    if (currentUser && (currentUser.role === "admin" || currentUser.role === "tailor")) {
-      if (confirm("To view the public boutique website, you must sign out of your console. Would you like to sign out now?")) {
-        window.handleLogout();
-      }
-      return;
-    }
+    document.body.classList.remove("vas-role-admin");
+    document.body.classList.remove("vas-role-tailor");
+    document.body.classList.remove("vas-role-customer");
+    document.body.classList.remove("vas-dashboard-active");
+
+    const pubView = document.getElementById("publicWebsiteView");
+    const topHeader = document.getElementById("topHeader");
+    const customerDash = document.getElementById("customerDashboardView");
     const adminDash = document.getElementById("adminDashboardView");
     const tailorDash = document.getElementById("tailorDashboardView");
+
+    if (pubView) pubView.style.display = "block";
+    if (topHeader) topHeader.style.display = "block";
+    if (customerDash) customerDash.style.display = "none";
     if (adminDash) adminDash.style.display = "none";
     if (tailorDash) tailorDash.style.display = "none";
+
+    window.location.hash = "#home";
     window.navigateToPage("home");
+    updateAuthUI();
   };
 
   function updateAuthUI() {
+    window.updateAuthUI = updateAuthUI;
+    currentUser = getSyncUser();
     const navLoginRegister = document.getElementById("navLoginRegisterLink");
     const unauthGroup = document.getElementById("unauthNavActions");
     const authGroup = document.getElementById("authNavActions");
@@ -1278,13 +1476,16 @@
     const tryOnShell = document.querySelector(".vas-tryon-studio-shell");
 
     if (currentUser) {
-      // Hide Login / Register option from navigation bar after login or registration
-      if (navLoginRegister) navLoginRegister.style.display = "none";
+      // Keep user account button visible showing logged in user name
+      if (navLoginRegister) navLoginRegister.style.display = "inline-flex";
+      const authBtn = document.getElementById("navAuthBtn");
+      if (authBtn) authBtn.style.display = "inline-flex";
       if (unauthGroup) unauthGroup.style.display = "none";
       if (authGroup) authGroup.style.display = "flex";
       if (unauthNavLinks) unauthNavLinks.style.display = "none";
       if (authNavLinks) authNavLinks.style.display = "flex";
-      if (nameSpan) nameSpan.textContent = (currentUser.name || currentUser.username || "Client").split(" ")[0];
+      if (nameSpan) nameSpan.textContent = currentUser.name || currentUser.username || "Client";
+      if (typeof window.updateNavDropdownInfo === "function") window.updateNavDropdownInfo();
       if (studioLockOverlay) studioLockOverlay.style.display = "none";
       if (rebornLockOverlay) rebornLockOverlay.style.display = "none";
       if (ownFabricLockOverlay) ownFabricLockOverlay.style.display = "none";
@@ -1306,7 +1507,10 @@
       updateCartWishCounters();
     } else {
       // Show Login / Register option when logged out
-      if (navLoginRegister) navLoginRegister.style.display = "";
+      if (navLoginRegister) navLoginRegister.style.display = "inline-flex";
+      const authBtn = document.getElementById("navAuthBtn");
+      if (authBtn) authBtn.style.display = "inline-flex";
+      if (nameSpan) nameSpan.textContent = "Login / Register";
       if (unauthGroup) unauthGroup.style.display = "flex";
       if (authGroup) authGroup.style.display = "none";
       if (unauthNavLinks) unauthNavLinks.style.display = "flex";
@@ -3416,6 +3620,7 @@
   // 10. CART, WISHLIST & CHECKOUT MANAGEMENT (PART 13)
   // ------------------------------------------------------------------------
   window.addToCart = function (productId, size = "M") {
+    currentUser = getSyncUser();
     if (!currentUser) {
       closeModal();
       pendingAuthAction = { type: "cart", productId: productId, size: size };
@@ -3448,6 +3653,7 @@
   };
 
   window.toggleWishlist = function (productId) {
+    currentUser = getSyncUser();
     if (!currentUser) {
       closeModal();
       pendingAuthAction = { type: "wishlist", productId: productId };
@@ -5558,6 +5764,7 @@
   // 12. DEDICATED MASTER TAILOR PRODUCTION WORKSPACE
   // ------------------------------------------------------------------------
   window.showTailorDashboard = function (activeTab = "queue") {
+    currentUser = getSyncUser();
     if (!currentUser || currentUser.role !== "tailor") {
       showToast("Access restricted: Master Tailor credentials required.");
       openAuthModal("login");
@@ -5566,6 +5773,8 @@
 
     document.body.classList.add("vas-role-tailor");
     document.body.classList.remove("vas-role-admin");
+    document.body.classList.remove("vas-role-customer");
+    document.body.classList.add("vas-dashboard-active");
 
     const pubView = document.getElementById("publicWebsiteView");
     const topHeader = document.getElementById("topHeader");
@@ -5612,6 +5821,7 @@
   // 12B. DEDICATED ATELIER ADMIN MANAGEMENT CONSOLE
   // ------------------------------------------------------------------------
   window.showAdminDashboard = function (activeTab = "overview") {
+    currentUser = getSyncUser();
     if (!currentUser || currentUser.role !== "admin") {
       showToast("Access restricted: Administrator credentials required.");
       openAuthModal("login");
@@ -5620,6 +5830,8 @@
 
     document.body.classList.add("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
+    document.body.classList.remove("vas-role-customer");
+    document.body.classList.add("vas-dashboard-active");
 
     const pubView = document.getElementById("publicWebsiteView");
     const topHeader = document.getElementById("topHeader");
@@ -5661,6 +5873,7 @@
     document.body.classList.remove("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
     document.body.classList.remove("vas-role-customer");
+    document.body.classList.remove("vas-dashboard-active");
 
     const pubView = document.getElementById("publicWebsiteView");
     const topHeader = document.getElementById("topHeader");
@@ -5676,14 +5889,18 @@
 
     window.location.hash = "#home";
     window.navigateToPage("home");
+    updateAuthUI();
   };
 
   window.handleLogout = function () {
     document.body.classList.remove("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
     document.body.classList.remove("vas-role-customer");
+    document.body.classList.remove("vas-dashboard-active");
     currentUser = null;
+    window.currentUser = null;
     localStorage.removeItem(STORAGE_KEY_USER);
+    localStorage.removeItem("vas_user");
     localStorage.removeItem("vastrae_current_user");
     localStorage.removeItem("vastrae_active_user");
     if (window.vastraeAuth) window.vastraeAuth.logout();
@@ -7787,6 +8004,8 @@ window.handleCreateTailor = function (event) {
       pendingAuthAction = null;
     }
   }
+  window.openModal = openModal;
+  window.closeModal = closeModal;
 
   
   // --------------------------------------------------------------------------
@@ -7819,22 +8038,6 @@ window.handleCreateTailor = function (event) {
     window.openCartDrawer();
   };
 
-  window.handleNavAuthClick = function () {
-    if (!currentUser) {
-      openAuthModal("login");
-      return;
-    }
-    if (currentUser.role === "admin") {
-      window.location.hash = "#admin";
-      if (window.showAdminDashboard) window.showAdminDashboard();
-    } else if (currentUser.role === "tailor") {
-      window.location.hash = "#tailor";
-      if (window.showTailorDashboard) window.showTailorDashboard();
-    } else {
-      window.location.hash = "#dashboard";
-      if (window.openCustomerDashboard) window.openCustomerDashboard();
-    }
-  };
 
   window.openWishlistModal = function () {
     if (!currentUser) {
