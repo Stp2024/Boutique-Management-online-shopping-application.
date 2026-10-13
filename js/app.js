@@ -35,6 +35,7 @@
       currentUser = null;
     } else {
       currentUser = stored;
+      window.currentUser = stored;
     }
   } catch (e) {
     currentUser = null;
@@ -96,30 +97,7 @@
   }
 
   function purgeLegacyDemoAndPriyaShetty() {
-    try {
-      const ownFabKey = "vastrae_own_fabric";
-      let ownFab = JSON.parse(localStorage.getItem(ownFabKey));
-      if (Array.isArray(ownFab)) {
-        const filtered = ownFab.filter(r => {
-          const name = ((r.customerName || r.clientName || "") + " " + (r.id || "")).toLowerCase();
-          return name.indexOf("priya shetty") === -1 && name.indexOf("shetty") === -1;
-        });
-        if (filtered.length !== ownFab.length) {
-          localStorage.setItem(ownFabKey, JSON.stringify(filtered));
-        }
-      }
-      const ordersKey = "vastrae_orders";
-      let ords = JSON.parse(localStorage.getItem(ordersKey));
-      if (Array.isArray(ords)) {
-        const filteredOrds = ords.filter(o => {
-          const text = (JSON.stringify(o)).toLowerCase();
-          return text.indexOf("priya shetty") === -1 && text.indexOf("shetty") === -1;
-        });
-        if (filteredOrds.length !== ords.length) {
-          localStorage.setItem(ordersKey, JSON.stringify(filteredOrds));
-        }
-      }
-    } catch (e) {}
+    // Disabled: preserve all genuine user activities dynamically
   }
 
   // Authentic client storage (strictly empty for guest until login/registration)
@@ -204,13 +182,14 @@
       }
     } else {
       // Authenticated visitor: Route cleanly based on role or hash
-      if (initialHash === "dashboard") {
+      if (initialHash === "dashboard" || initialHash.startsWith("dashboard")) {
+        const subTab = initialHash.split("/")[1] || "overview";
         if (currentUser.role === "admin") {
-          window.showAdminDashboard();
+          window.showAdminDashboard(subTab);
         } else if (currentUser.role === "tailor") {
-          window.showTailorDashboard();
+          window.showTailorDashboard(subTab === "overview" ? "queue" : subTab);
         } else {
-          showDashboardView();
+          showDashboardView(subTab);
         }
       } else if (initialHash === "admin") {
         if (currentUser.role === "admin") {
@@ -268,13 +247,14 @@
     // Hash change handler
     window.addEventListener("hashchange", function () {
       const currentRoute = (window.location.hash || "").replace("#", "");
-      if (currentRoute === "dashboard") {
+      if (currentRoute === "dashboard" || currentRoute.startsWith("dashboard")) {
         if (!currentUser) {
           showToast("Please log in to access your Customer Workspace.");
           showAuthError("Please log in to access your Customer Workspace.");
           window.navigateToPage("login");
         } else {
-          showDashboardView();
+          const subTab = currentRoute.split("/")[1] || window._targetDashboardTab || "overview";
+          showDashboardView(subTab);
         }
       } else if (currentRoute === "admin") {
         if (currentUser && currentUser.role === "admin") {
@@ -306,6 +286,7 @@
   function showPublicView() {
     const pubView = document.getElementById("publicWebsiteView");
     const dashView = document.getElementById("customerDashboardView");
+    if (typeof window.returnAiStudioToHome === "function") window.returnAiStudioToHome();
     if (pubView) pubView.style.display = "block";
     if (dashView) dashView.style.display = "none";
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -340,10 +321,6 @@
   }
 
   function getSyncUser() {
-    if (window.currentUser) {
-      currentUser = window.currentUser;
-      return currentUser;
-    }
     if (window.vastraeAuth && typeof window.vastraeAuth.getCurrentUser === "function") {
       const u = window.vastraeAuth.getCurrentUser();
       if (u) {
@@ -363,6 +340,10 @@
         return u;
       }
     } catch (e) {}
+    if (window.currentUser) {
+      currentUser = window.currentUser;
+      return currentUser;
+    }
     currentUser = null;
     window.currentUser = null;
     return null;
@@ -376,8 +357,13 @@
       window.navigateToPage("login");
       return;
     }
-    window.location.hash = "#dashboard";
-    showDashboardView(activeTab);
+    window._targetDashboardTab = activeTab;
+    const targetHash = activeTab === "overview" ? "#dashboard" : `#dashboard/${activeTab}`;
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    } else {
+      showDashboardView(activeTab);
+    }
   }
   window.openCustomerDashboard = openCustomerDashboard;
 
@@ -421,6 +407,7 @@
     const dName = document.getElementById("navDropdownName");
     const dRole = document.getElementById("navDropdownRole");
     const dDashText = document.getElementById("dropdownDashText");
+    const dMeasText = document.getElementById("dropdownMeasText");
     const dProfText = document.getElementById("dropdownProfText");
 
     if (dAvatar) dAvatar.textContent = name.charAt(0).toUpperCase();
@@ -432,13 +419,18 @@
     }
     if (dDashText) {
       if (role === "admin") dDashText.textContent = "Admin Studio Dashboard";
-      else if (role === "tailor") dDashText.textContent = "Tailor Production Dashboard";
+      else if (role === "tailor") dDashText.textContent = "Tailor Production Workbench";
       else dDashText.textContent = "Customer Sanctuary Dashboard";
     }
+    if (dMeasText) {
+      if (role === "admin") dMeasText.textContent = "Material Inventory Desk";
+      else if (role === "tailor") dMeasText.textContent = "Client Sizing Specs";
+      else dMeasText.textContent = "View My Measurements";
+    }
     if (dProfText) {
-      if (role === "admin") dProfText.textContent = "Admin Profile";
-      else if (role === "tailor") dProfText.textContent = "Tailor Profile";
-      else dProfText.textContent = "My Profile & Measurements";
+      if (role === "admin") dProfText.textContent = "Store Management & Roles";
+      else if (role === "tailor") dProfText.textContent = "Atelier Tailor Profile";
+      else dProfText.textContent = "My Profile Details";
     }
   };
 
@@ -449,45 +441,39 @@
 
     if (dest === "dashboard") {
       if (role === "admin") {
-        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard();
+        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard("overview");
         else window.navigateToPage("adminDashboard");
       } else if (role === "tailor") {
-        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard();
+        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard("queue");
         else window.navigateToPage("tailorDashboard");
       } else {
-        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard();
+        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard("overview");
         else window.navigateToPage("customerDashboard");
+      }
+    } else if (dest === "measurements") {
+      if (role === "admin") {
+        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard("inventory");
+        else window.navigateToPage("adminDashboard");
+      } else if (role === "tailor") {
+        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard("measurements");
+        else window.navigateToPage("tailorDashboard");
+      } else {
+        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard("measurements");
+        else {
+          window.navigateToPage("customerDashboard");
+          if (typeof window.switchDashboardTab === "function") window.switchDashboardTab("measurements");
+        }
       }
     } else if (dest === "profile") {
       if (role === "admin") {
-        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard();
+        if (typeof window.showAdminDashboard === "function") window.showAdminDashboard("team");
         else window.navigateToPage("adminDashboard");
       } else if (role === "tailor") {
-        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard();
+        if (typeof window.showTailorDashboard === "function") window.showTailorDashboard("profile");
         else window.navigateToPage("tailorDashboard");
       } else {
-        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard();
-        else window.navigateToPage("customerDashboard");
-      }
-    } else if (dest === "profile") {
-      if (role === "admin") {
-        if (typeof window.showAdminDashboard === "function") {
-          window.showAdminDashboard("profile");
-        } else {
-          window.navigateToPage("adminDashboard");
-          if (typeof window.switchAdminTab === "function") window.switchAdminTab("profile");
-        }
-      } else if (role === "tailor") {
-        if (typeof window.showTailorDashboard === "function") {
-          window.showTailorDashboard("profile");
-        } else {
-          window.navigateToPage("tailorDashboard");
-          if (typeof window.switchTailorTab === "function") window.switchTailorTab("profile");
-        }
-      } else {
-        if (typeof window.openCustomerDashboard === "function") {
-          window.openCustomerDashboard("profile");
-        } else {
+        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard("profile");
+        else {
           window.navigateToPage("customerDashboard");
           if (typeof window.switchDashboardTab === "function") window.switchDashboardTab("profile");
         }
@@ -507,6 +493,9 @@
     localStorage.removeItem("vastrae_current_user");
     document.body.classList.remove("vas-role-admin", "vas-role-tailor", "vas-role-customer");
     if (typeof updateAuthUI === "function") updateAuthUI();
+    if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogout === "function") {
+      window.vastraeNotificationService.onUserLogout();
+    }
     window.navigateToPage("home");
     showToast("✓ Signed out successfully. Until next time!");
   };
@@ -648,7 +637,7 @@
         }
       });
       setTimeout(() => {
-        const targetId = sectionId === "virtualTryOn" ? "customize" : sectionId;
+        const targetId = (sectionId === "virtualTryOn" || sectionId === "aiTryOnStudio") ? "aiTryOnStudio" : sectionId;
         const el = document.getElementById(targetId);
         if (el) {
           const headerOffset = 84;
@@ -674,6 +663,7 @@
   };
 
   window.returnToPublicWebsite = function () {
+    if (typeof window.returnAiStudioToHome === "function") window.returnAiStudioToHome();
     window.navigateToPage("home");
   };
 
@@ -1042,6 +1032,9 @@
     saveUserWishlist();
 
     updateAuthUI();
+    if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogin === "function") {
+      window.vastraeNotificationService.onUserLogin(currentUser);
+    }
     showToast(`✓ Welcome to VASTRAÉ, ${fullName}! Your client account has been created.`);
 
     // Execute preserved intended action if guest was shopping
@@ -1134,6 +1127,9 @@
       window.vastraeAuth.setCurrentUser(currentUser);
     }
     updateAuthUI();
+    if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogin === "function") {
+      window.vastraeNotificationService.onUserLogin(currentUser);
+    }
 
     loadUserCartAndWishlist();
     orders = (window.vastraeOrderService ? window.vastraeOrderService.getOrders() : JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS))) || [];
@@ -1341,6 +1337,9 @@
         localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
         loadUserCartAndWishlist();
         updateAuthUI();
+        if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogin === "function") {
+          window.vastraeNotificationService.onUserLogin(currentUser);
+        }
         closeModal();
 
         if (pendingAuthAction) {
@@ -1396,6 +1395,7 @@
   };
 
   window.handleLogout = function () {
+    if (typeof window.returnAiStudioToHome === "function") window.returnAiStudioToHome();
     if (confirm("Are you sure you wish to log out from VASTRAÉ Atelier?")) {
       currentUser = null;
       window.currentUser = null;
@@ -1435,6 +1435,7 @@
   };
 
   window.returnToPublicWebsite = function () {
+    if (typeof window.returnAiStudioToHome === "function") window.returnAiStudioToHome();
     document.body.classList.remove("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
     document.body.classList.remove("vas-role-customer");
@@ -1497,11 +1498,9 @@
       if (ownFabricForm) ownFabricForm.classList.remove("vas-service-content-locked");
       if (tryOnShell) tryOnShell.classList.remove("vas-service-content-locked");
 
-      // Notification badge
-      const notifBadge = document.getElementById("navNotifCount");
-      if (notifBadge) {
-        notifBadge.textContent = "2";
-        notifBadge.style.display = "flex";
+      // Dynamic notification badge
+      if (window.vastraeNotificationService && typeof window.vastraeNotificationService.updateBadgeUI === "function") {
+        window.vastraeNotificationService.updateBadgeUI();
       }
 
       updateCartWishCounters();
@@ -1533,7 +1532,13 @@
       const notifBadge = document.getElementById("navNotifCount");
       if (cartBadge) cartBadge.style.display = "none";
       if (wishBadge) wishBadge.style.display = "none";
-      if (notifBadge) notifBadge.style.display = "none";
+      if (notifBadge) {
+        notifBadge.style.display = "none";
+        notifBadge.textContent = "0";
+      }
+      if (window.vastraeNotificationService && typeof window.vastraeNotificationService.updateBadgeUI === "function") {
+        window.vastraeNotificationService.updateBadgeUI();
+      }
     }
   }
 
@@ -3413,6 +3418,11 @@
 
     const newRequest = {
       id: ref,
+      userId: currentUser ? (currentUser.id || currentUser.username) : "client",
+      customerId: currentUser ? (currentUser.id || currentUser.username) : "client",
+      customerName: currentUser ? currentUser.name : clientName,
+      customerPhone: clientPhone,
+      customerEmail: currentUser ? (currentUser.email || "") : "",
       date: new Date().toISOString().split("T")[0],
       clientName: clientName,
       clientPhone: clientPhone,
@@ -3428,11 +3438,19 @@
       stage: "Pickup Scheduled",
       estimate: totalEstimate,
       notes: notes,
-      masterTailor: "Master Savitha Devi (Indiranagar Atelier)"
+      masterTailor: "Master Savitha Rao",
+      assignedTailorName: "Master Savitha Rao",
+      status: "REQUEST SUBMITTED"
     };
 
     sareeRebornOrders.unshift(newRequest);
     localStorage.setItem(STORAGE_KEY_REBORN, JSON.stringify(sareeRebornOrders));
+    if (window.vastraeSareeRebornService) {
+      const allR = window.vastraeSareeRebornService.getAllRequests();
+      allR.unshift(newRequest);
+      try { localStorage.setItem("vastrae_saree_reborn", JSON.stringify(allR)); } catch (e) {}
+    }
+    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
     renderSareeRebornTracker();
 
     // Display Confirmation Receipt
@@ -3456,6 +3474,23 @@
     if (rCost) rCost.textContent = `₹${(totalEstimate - 300).toLocaleString('en-IN')} – ₹${(totalEstimate + 400).toLocaleString('en-IN')} (Estimate)`;
 
     showToast(`✓ Saree Reborn Request #${ref} confirmed! Scheduled for Master Tailor inspection.`);
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        "Saree Reborn Request Submitted",
+        `Upcycling request #${ref} for '${selected.title}' confirmed. Doorstep saree collection scheduled on ${pickupDate} (${pickupSlot}).`,
+        "reborn",
+        "♻️",
+        { actionTab: "reborn" }
+      );
+    }
+  };
+
+  window.handleSareeRebornSubmit = function (event) {
+    if (event) event.preventDefault();
+    if (typeof window.switchRebornStep === "function") {
+      window.switchRebornStep(2);
+    }
   };
 
   window.simulateInspectionFromReceipt = function () {
@@ -3562,6 +3597,19 @@
 
     localStorage.setItem(STORAGE_KEY_REBORN, JSON.stringify(sareeRebornOrders));
     renderSareeRebornTracker();
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        isUsable ? "Loom Inspection Passed ✅" : "Loom Inspection Notice ⚠️",
+        isUsable
+          ? `Master Savitha passed loom tensile inspection for #${orderId}. Tailor proceeding to pattern drafting.`
+          : `Inspection verdict for #${orderId}: Silk weave too fragile for needlework. Packaged for safe archival return.`,
+        "reborn",
+        isUsable ? "✅" : "⚠️",
+        { actionTab: "reborn" }
+      );
+    }
+
     closeModal();
   };
 
@@ -3589,10 +3637,11 @@
     let req = null;
     if (window.vastraeOwnFabricService) {
       req = window.vastraeOwnFabricService.createRequest({
-        userId: currentUser.id,
+        userId: currentUser ? (currentUser.id || currentUser.username) : "client",
+        customerId: currentUser ? (currentUser.id || currentUser.username) : "client",
         customerName: currentUser.name,
-        customerPhone: currentUser.phone,
-        customerEmail: currentUser.email,
+        customerPhone: currentUser.phone || "",
+        customerEmail: currentUser.email || "",
         outfitType: garment,
         fabricType: fabricType,
         yardageMeters: meters,
@@ -3605,6 +3654,7 @@
         fabricPhotos: ["images/products/women/crimson-kanjivaram-saree-front.jpg"]
       });
     }
+    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
 
     const form = document.getElementById("ownFabricForm");
     if (form) form.reset();
@@ -3612,6 +3662,17 @@
     if (photoName) photoName.textContent = "";
 
     showToast(`✓ Own Fabric Request #${req ? req.ref : 'SUBMITTED'} logged! Stage 1: Request Submitted.`);
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        "Own Fabric Request Logged",
+        `Fabric pickup request #${req ? req.ref : 'OF-' + Date.now().toString().slice(-4)} for '${garment}' recorded. Doorstep courier scheduled for ${date} (${slot}).`,
+        "ownfabric",
+        "📦",
+        { actionTab: "ownfabric" }
+      );
+    }
+
     openCustomerDashboard();
     if (window.switchDashboardTab) window.switchDashboardTab("ownfabric");
   };
@@ -3782,19 +3843,68 @@
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     const newOrder = {
+      id: orderId,
       orderId: orderId,
+      userId: currentUser ? (currentUser.id || currentUser.username) : "client",
+      customerId: currentUser ? (currentUser.id || currentUser.username) : "client",
+      customerName: currentUser ? currentUser.name : "Customer",
+      customerEmail: currentUser ? (currentUser.email || "") : "",
+      customerPhone: currentUser ? (currentUser.phone || "") : "",
       date: new Date().toISOString().split("T")[0],
+      orderDate: new Date().toISOString(),
       items: cart.map(i => `${i.name} (x${i.quantity})`),
       total: totalAmount,
+      totalAmount: totalAmount,
       type: "Online Atelier Order",
       status: "Placed",
-      tailor: "Master Savitha Devi",
+      tailor: "Master Savitha Rao",
+      assignedTailorName: "Master Savitha Rao",
+      assignedTailorId: "USR-TAILOR-01",
       expectedDelivery: "2026-10-18",
+      currentStage: 1,
       stageIndex: 1
     };
 
     orders.unshift(newOrder);
     localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+
+    if (window.vastraeOrderService) {
+      const allO = window.vastraeOrderService.getOrders();
+      if (!allO.some(x => (x.id || x.orderId) === orderId)) {
+        allO.unshift(newOrder);
+        if (window.vastraeStorage) window.vastraeStorage.set("vastrae_orders", allO);
+        try { localStorage.setItem("vastrae_orders", JSON.stringify(allO)); } catch (e) {}
+      }
+    }
+
+    // Award loyalty points & upgrade tier dynamically
+    if (currentUser) {
+      const earnedPoints = Math.max(50, Math.round(totalAmount * 0.05));
+      currentUser.loyaltyPoints = (currentUser.loyaltyPoints || 100) + earnedPoints;
+      if (currentUser.loyaltyPoints >= 1000) {
+        currentUser.tier = "Imperial Privé Diamond";
+      } else if (currentUser.loyaltyPoints >= 500) {
+        currentUser.tier = "Haute Privé Gold";
+      } else {
+        currentUser.tier = "Atelier VIP Patron";
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+        localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
+        localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
+      } catch (e) {}
+    }
+    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        "Order Placed & Confirmed",
+        `Your bespoke order #${orderId} (₹${totalAmount.toLocaleString()}) has been received. Stage 1 Fabric Sourcing underway.`,
+        "order",
+        "🧵",
+        { actionTab: "orders" }
+      );
+    }
 
     // Clear cart
     cart = [];
@@ -3932,9 +4042,10 @@
   };
 
   // ------------------------------------------------------------------------
-  // 11. CUSTOMER DASHBOARD CONTROLLER (PART 6 & 7)
+  // 11. CUSTOMER DASHBOARD CONTROLLER (PART 6 & 7) — DYNAMIC ACTIVITY ENGINE
   // ------------------------------------------------------------------------
-  function renderDashboardOverview(activeTab = "overview") {
+  function updateDashboardBadges() {
+    currentUser = getSyncUser();
     if (!currentUser) return;
 
     // Populate sidebar profile pill
@@ -3946,18 +4057,32 @@
     if (nameEl) nameEl.textContent = currentUser.name;
     if (tierEl) tierEl.textContent = currentUser.tier || currentUser.loyaltyTier || "Atelier VIP Patron";
 
-    // Quick Stats & Badges
-    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (orders || []);
-    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (sareeRebornOrders || []);
-    const storedDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || savedDesigns || [];
+    // Dynamic counts across all customer services
+    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || []);
+    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []);
+    const storedOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id, currentUser.name) : [];
+    const storedDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
+    const storedConsult = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id, currentUser.name) : [];
 
     const ordBadge = document.getElementById("custOrdersNavBadge");
     const rebBadge = document.getElementById("custRebornNavBadge");
+    const ofBadge = document.getElementById("custOwnFabricNavBadge");
     const desBadge = document.getElementById("custDesignsNavBadge");
+    const conBadge = document.getElementById("custConsultNavBadge");
 
     if (ordBadge) ordBadge.textContent = storedOrders.length;
     if (rebBadge) rebBadge.textContent = storedReborn.length;
+    if (ofBadge) ofBadge.textContent = storedOwnFabric.length;
     if (desBadge) desBadge.textContent = storedDesigns.length;
+    if (conBadge) conBadge.textContent = storedConsult.length;
+  }
+  window.updateDashboardBadges = updateDashboardBadges;
+
+  function renderDashboardOverview(activeTab = "overview") {
+    currentUser = getSyncUser();
+    if (!currentUser) return;
+
+    updateDashboardBadges();
 
     // Update active nav button
     document.querySelectorAll("#customerNavList .vas-dash-nav-item").forEach(b => b.classList.remove("active"));
@@ -3968,6 +4093,9 @@
   }
 
   window.switchDashboardTab = function (tabName, btn) {
+    currentUser = getSyncUser();
+    updateDashboardBadges();
+
     document.querySelectorAll("#customerNavList .vas-dash-nav-item").forEach(b => b.classList.remove("active"));
     if (btn) {
       btn.classList.add("active");
@@ -3979,13 +4107,31 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  function returnAiStudioToHome() {
+    const studio = document.getElementById("aiTryOnStudio");
+    const anchor = document.getElementById("aiTryOnStudioAnchor");
+    if (studio && anchor && studio.parentElement !== anchor.parentElement) {
+      studio.classList.remove("vas-in-dashboard");
+      anchor.after(studio);
+    }
+  }
+  window.returnAiStudioToHome = returnAiStudioToHome;
+
   function renderDashboardTab(tabName) {
+    currentUser = getSyncUser();
     const pane = document.getElementById("dashTabPane");
     if (!pane) return;
 
-    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (orders || []);
-    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (sareeRebornOrders || []);
-    const userDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || savedDesigns || [];
+    if (tabName !== "tryon") {
+      returnAiStudioToHome();
+    }
+    updateDashboardBadges();
+
+    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || []);
+    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []);
+    const storedOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id, currentUser.name) : [];
+    const userDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
+    const storedConsult = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id, currentUser.name) : [];
 
     if (tabName === "overview") {
       pane.innerHTML = `
@@ -4008,27 +4154,37 @@
           </div>
         </div>
 
-        <!-- 4 Top KPI Stat Counters -->
-        <div class="vas-dash-kpi-row-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:28px;">
-          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+        <!-- 6 Dynamic Top KPI Stat Counters (Real-time updates) -->
+        <div class="vas-dash-kpi-row-6" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:14px; margin-bottom:28px;">
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
             <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Active Orders</div>
-            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedOrders.length}</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedOrders.length}</div>
             <div style="font-size:0.72rem; color:var(--vas-gold-dark);">In Atelier Tailoring</div>
           </div>
-          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
-            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Saved Designs</div>
-            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${userDesigns.length}</div>
-            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Custom Moodboard Items</div>
-          </div>
-          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
             <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Saree Reborn</div>
-            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedReborn.length}</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedReborn.length}</div>
             <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Heritage Upcycling</div>
           </div>
-          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:18px 20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Own Fabric</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedOwnFabric.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Physical Inspection Flow</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Saved Designs</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${userDesigns.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Custom Moodboard Items</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Styling Calls</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedConsult.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Google Meet Sessions</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
             <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Loyalty Rewards</div>
-            <div style="font-size:1.8rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${currentUser.loyaltyPoints || 100} pts</div>
-            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Tier: ${currentUser.tier || currentUser.loyaltyTier || 'Haute Privé VIP'}</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${currentUser.loyaltyPoints || 100} pts</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">${currentUser.tier || currentUser.loyaltyTier || 'Haute Privé VIP'}</div>
           </div>
         </div>
 
@@ -4311,101 +4467,48 @@
       `;
     } else if (tabName === "tryon") {
       pane.innerHTML = `
-        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/royal-blue-lehenga-front.jpg') center/cover;">
-          <div>
-            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">NEURAL SILHOUETTE LAB · AI VIRTUAL TRY-ON</span>
-            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">AI Virtual Fitting Room</h2>
-            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
-              Experience hyper-realistic couture simulation. Switch models, rotate angles, or map your personal posture for high-precision drape inspection.
-            </p>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; align-items:start;">
-          <!-- Visualizer Frame -->
-          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); text-align:center;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-              <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.06em;">LIVE AI DRAPE RENDER</span>
-              <div style="display:flex; gap:6px;">
-                <button class="vas-btn vas-btn-sm vas-btn-gold" id="btnAngleFront" onclick="window.setClientTryonAngle('front', this)">Front</button>
-                <button class="vas-btn vas-btn-sm vas-btn-outline" id="btnAngleSide" onclick="window.setClientTryonAngle('side', this)">Side</button>
-                <button class="vas-btn vas-btn-sm vas-btn-outline" id="btnAngleBack" onclick="window.setClientTryonAngle('back', this)">Back</button>
-              </div>
+        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/emerald-pakistani-suit-front.jpg') center/cover;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+            <div>
+              <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">VASTRAÉ DIGITAL FASHION STUDIO · CLIENT SANCTUARY</span>
+              <h2 style="font-family:'Playfair Display',serif; font-size:1.65rem; margin:6px 0 8px; color:#ffffff;">AI Virtual Try-On Studio</h2>
+              <p style="font-size:0.86rem; color:rgba(255,255,255,0.8); max-width:620px; margin:0;">
+                Experience the authentic 3-step digital atelier studio. Preserves your facial identity and skin tone across bridal lehengas, anarkalis, and Pakistani suits with interactive Before &amp; After analysis.
+              </p>
             </div>
-
-            <!-- Preview Image Display -->
-            <div style="position:relative; max-width:440px; margin:0 auto; border-radius:12px; overflow:hidden; border:1px solid var(--vas-border-subtle); background:#fcfaf7;">
-              <img id="clientTryonPreviewImg" src="images/products/women/royal-blue-lehenga-front.jpg" alt="AI Try-On Silhouette" style="width:100%; height:480px; object-fit:cover; display:block; transition:all 0.3s ease;">
-              <div style="position:absolute; bottom:12px; left:12px; right:12px; background:rgba(26,20,17,0.85); backdrop-filter:blur(8px); border-radius:8px; padding:10px 14px; text-align:left; color:#ffffff; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                  <strong id="clientTryonSilName" style="font-size:0.85rem; display:block;">Royal Blue Zardozi Lehenga</strong>
-                  <span id="clientTryonModelName" style="font-size:0.72rem; color:var(--vas-champagne);">Model Ananya · Height 5'7" · Size S</span>
-                </div>
-                <span class="vas-badge vas-badge-success" style="font-size:0.68rem;">✓ 99% Fit Match</span>
-              </div>
-            </div>
-
-            <div style="display:flex; justify-content:center; gap:20px; margin-top:16px; font-size:0.8rem; color:#7d7269;">
-              <span>⚡ Neural Mesh: <b>Active</b></span>
-              <span>🧵 Fabric Physics: <b>Pure Silk Weave</b></span>
-              <span>✨ Seam Tolerance: <b>Zero Distortion</b></span>
-            </div>
-          </div>
-
-          <!-- Controls Side Pane -->
-          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
-            <div style="margin-bottom:20px;">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px; text-transform:uppercase;">1. Choose Garment Silhouette</label>
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="vas-dash-nav-item active" style="background:#f4ebdc; color:#1a1412; font-weight:600;" onclick="window.selectClientTryonGarment('images/products/women/royal-blue-lehenga-front.jpg', 'Royal Blue Zardozi Lehenga', 24500, this)">
-                  <span>👗 Royal Blue Zardozi Lehenga</span>
-                  <small>₹24,500</small>
-                </button>
-                <button class="vas-dash-nav-item" onclick="window.selectClientTryonGarment('images/products/women/ivory-anarkali-suit-front.jpg', 'Ivory Silk Anarkali Suit', 16500, this)">
-                  <span>✨ Ivory Silk Anarkali Suit</span>
-                  <small>₹16,500</small>
-                </button>
-                <button class="vas-dash-nav-item" onclick="window.selectClientTryonGarment('images/products/men/maroon-velvet-sherwani-front.jpg', 'Midnight Velvet Bandhgala', 18500, this)">
-                  <span>👔 Velvet Royal Bandhgala</span>
-                  <small>₹18,500</small>
-                </button>
-                <button class="vas-dash-nav-item" onclick="window.selectClientTryonGarment('images/products/women/crimson-kanjivaram-saree-front.jpg', 'Crimson Kanjeevaram Saree', 22000, this)">
-                  <span>🥻 Crimson Kanjeevaram Saree</span>
-                  <small>₹22,000</small>
-                </button>
-              </div>
-            </div>
-
-            <div style="margin-bottom:20px;">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px; text-transform:uppercase;">2. Switch AI Avatar / Posture</label>
-              <select id="clientTryonModelSelect" class="vas-select" onchange="window.updateClientTryonModel(this.value)">
-                <option value="Model Ananya (Height 5'7&quot; · Bust 34&quot; · Waist 28&quot;)">Model Ananya (5'7" · Size S)</option>
-                <option value="Model Meera (Height 5'5&quot; · Bust 36&quot; · Waist 30&quot;)">Model Meera (5'5" · Size M)</option>
-                <option value="Model Priya (Height 5'8&quot; · Bust 38&quot; · Waist 32&quot;)">Model Priya (5'8" · Size L)</option>
-                <option value="Model Kabir (Height 6'0&quot; · Chest 40&quot; · Waist 32&quot;)">Model Kabir (6'0" · Men's 40)</option>
-              </select>
-            </div>
-
-            <div style="margin-bottom:24px; padding:16px; background:#fcfaf7; border-radius:8px; border:1px dashed var(--vas-border);">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:6px;">3. Upload Your Photo (Optional)</label>
-              <p style="font-size:0.75rem; color:#7d7269; margin:0 0 10px;">Simulate live fabric drape mapped directly to your face and body posture.</p>
-              <input type="file" id="clientTryonUpload" accept="image/*" class="vas-input" style="font-size:0.78rem; padding:6px;" onchange="window.handleClientTryonUpload(event)">
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <button class="vas-btn vas-btn-gold" style="width:100%; font-weight:700;" onclick="window.addTriedGarmentToCart()">
-                🛍️ Add Tried Silhouette to Bag
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="document.getElementById('tryOnPhotoInput').click()" style="font-weight:600;">
+                📸 Upload Photo
               </button>
-              <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.switchDashboardTab('customize')">
-                🪡 Customize this Garment
-              </button>
-              <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.openConsultationModal()">
-                🪞 Book Styling Consultation
+              <button class="vas-btn vas-btn-sm vas-btn-outline" style="color:#ffffff; border-color:rgba(255,255,255,0.45); font-weight:600;" onclick="window.syncSavedProfileMeasurements()">
+                📏 Sync Profile Sizing
               </button>
             </div>
           </div>
         </div>
+        <div id="dashTryOnStudioMount" class="vas-dash-tryon-mount"></div>
       `;
+
+      const mount = document.getElementById("dashTryOnStudioMount");
+      const studio = document.getElementById("aiTryOnStudio");
+      if (mount && studio) {
+        studio.classList.add("vas-in-dashboard");
+        mount.appendChild(studio);
+
+        // Hide guest preview banner since client is logged in
+        const lockOverlay = document.getElementById("tryOnAuthLockOverlay");
+        if (lockOverlay) lockOverlay.style.display = "none";
+
+        // Auto-sync measurements with logged-in user profile
+        if (typeof window.syncSavedProfileMeasurements === "function") {
+          window.syncSavedProfileMeasurements();
+        }
+
+        // Re-render outfits catalog to ensure selection and favorites are updated
+        if (window.vastraeTryOn && typeof window.vastraeTryOn.render === "function") {
+          window.vastraeTryOn.render();
+        }
+      }
     } else if (tabName === "orders") {
       pane.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
@@ -4980,7 +5083,23 @@
         </div>
       `;
     } else if (tabName === "measurements") {
-      const allProfiles = window.vastraeMeasurementService ? window.vastraeMeasurementService.getUserProfiles(currentUser.id) : (currentUser.familyProfiles || []);
+      let allProfiles = window.vastraeMeasurementService ? (window.vastraeMeasurementService.getUserProfiles(currentUser.id).length ? window.vastraeMeasurementService.getUserProfiles(currentUser.id) : window.vastraeMeasurementService.getUserProfiles(currentUser.username)) : [];
+      if ((!allProfiles || allProfiles.length === 0) && currentUser.familyProfiles && currentUser.familyProfiles.length) {
+        allProfiles = currentUser.familyProfiles;
+      }
+      if ((!allProfiles || allProfiles.length === 0) && currentUser.measurements) {
+        allProfiles = [{
+          id: "PROF-SELF",
+          name: currentUser.name || "Self",
+          profileName: currentUser.name || "Self",
+          relation: "Self (Patron Profile)",
+          bust: currentUser.measurements.bust || "34",
+          waist: currentUser.measurements.waist || "28",
+          hips: currentUser.measurements.hips || "37",
+          shoulder: currentUser.measurements.shoulder || "14.5",
+          blouseLength: currentUser.measurements.blouseLength || "15"
+        }];
+      }
       pane.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
           <div>
@@ -5156,21 +5275,48 @@
         </div>
       `;
     } else if (tabName === "notifications") {
+      const notifs = window.vastraeNotificationService ? window.vastraeNotificationService.getNotifications(currentUser) : [];
+      const unreadCount = notifs.filter(n => !n.read).length;
       pane.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Activity &amp; Notifications Log</h3>
-          <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.markAllNotificationsRead()">Mark All as Read</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin:0; font-size:1.35rem; color:#1a1412; font-family:'Playfair Display',serif;">Activity &amp; Notifications Log</h3>
+            <p style="margin:2px 0 0; font-size:0.85rem; color:var(--vas-muted);">Real-time timeline of your orders, styling appointments &amp; bespoke tailoring updates.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            ${notifs.length > 0 ? `
+              <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.markAllNotificationsRead()" ${unreadCount === 0 ? 'disabled style="opacity:0.6; cursor:default;"' : ''}>✓ Mark All Read</button>
+              <button class="vas-btn vas-btn-sm" style="border:1px solid rgba(0,0,0,0.15); background:#fff; color:#888;" onclick="window.clearAllNotifications()">Clear Log</button>
+            ` : ''}
+          </div>
         </div>
         <div class="vas-notif-list">
-          ${(VASTRAE_DATA.notifications || []).map(n => `
-            <div class="vas-notif-card ${n.read ? '' : 'unread'}">
-              <span class="vas-notif-icon">${n.icon}</span>
-              <div class="vas-notif-body" style="flex:1;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <strong>${n.title}</strong>
-                  <span class="vas-notif-time">${n.timestamp}</span>
+          ${notifs.length === 0 ? `
+            <div class="vas-notif-empty-state">
+              <span class="vas-notif-empty-icon">🔕</span>
+              <h3 class="vas-notif-empty-title">No Notifications Yet</h3>
+              <p class="vas-notif-empty-desc">Your activity log is clear. As you place orders, book styling consultations, or customize garments, real-time updates will appear here.</p>
+            </div>
+          ` : notifs.map(n => `
+            <div class="vas-notif-card ${n.read ? 'read' : 'unread'}" id="dash_notif_${n.id}" onclick="window.handleNotificationCardClick('${n.id}', '${n.actionTab || ''}')">
+              <div class="vas-notif-icon-wrap">
+                <span>${n.icon || '🔔'}</span>
+              </div>
+              <div class="vas-notif-body" style="flex:1; min-width:0;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                  <strong style="margin:0;">${n.title}</strong>
+                  ${!n.read ? `<span class="vas-notif-unread-dot" title="Unread"></span>` : ''}
                 </div>
-                <p>${n.message}</p>
+                <p style="margin:0 0 6px;">${n.message}</p>
+                <div class="vas-notif-meta-row">
+                  <span class="vas-notif-cat-tag">${(n.type || 'ATELIER').toUpperCase()}</span>
+                  <span class="vas-notif-time" data-timestamp="${n.createdAt || Date.now()}">${window.vastraeNotificationService ? window.vastraeNotificationService.formatRelativeTime(n.createdAt) : 'Just now'}</span>
+                  ${!n.read ? `
+                    <button class="vas-btn-text" style="font-size:0.75rem; color:var(--vas-gold-dark); margin-left:auto; text-decoration:underline; cursor:pointer;" onclick="event.stopPropagation(); window.markSingleNotificationRead('${n.id}')">
+                      Mark as Read
+                    </button>
+                  ` : ''}
+                </div>
               </div>
             </div>
           `).join('')}
@@ -5236,6 +5382,8 @@
 
     const newDesign = {
       id: "VST-DSG-" + Date.now().toString().slice(-5),
+      userId: currentUser ? (currentUser.id || currentUser.username) : "client",
+      customerName: currentUser ? currentUser.name : "Client",
       category: activeClientCustomGarment,
       gender: (activeClientCustomGarment === 'Sherwani' ? 'men' : 'women'),
       fabric: fabric,
@@ -5251,6 +5399,7 @@
     userDesigns.unshift(newDesign);
     localStorage.setItem(STORAGE_KEY_SAVED_DESIGNS, JSON.stringify(userDesigns));
     savedDesigns = userDesigns;
+    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
 
     if (addToBag) {
       const cartItem = {
@@ -5396,6 +5545,17 @@
     }
 
     showToast("✓ Own Fabric Request #" + (req ? req.ref : "SUBMITTED") + " logged! Stage 1: Request Submitted.");
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        "Own Fabric Request Logged",
+        `Fabric pickup request #${req ? req.ref : 'OF-' + Date.now().toString().slice(-4)} for '${garment}' recorded. Doorstep courier scheduled for ${pickupDate}.`,
+        "ownfabric",
+        "📦",
+        { actionTab: "ownfabric" }
+      );
+    }
+
     if (window.switchDashboardTab) window.switchDashboardTab('ownfabric');
   };
 
@@ -5445,23 +5605,51 @@
   // Saree Reborn Client Submit Handler
   window.handleClientSareeRebornSubmit = function (event) {
     if (event) event.preventDefault();
-    const sareeType = document.getElementById('srClientSareeType').value;
-    const target = document.getElementById('srClientTarget').value;
-    const address = document.getElementById('srClientAddress').value;
-    const notes = document.getElementById('srClientNotes').value;
+    currentUser = getSyncUser();
+    if (!currentUser) {
+      showToast("Please sign in or register to commission Saree Reborn.");
+      openAuthModal("login");
+      return;
+    }
+    const sareeType = (document.getElementById('srClientSareeType') || {}).value || "Kanjeevaram Pure Silk";
+    const target = (document.getElementById('srClientTarget') || {}).value || "Bridal Lehenga & Blouse";
+    const address = (document.getElementById('srClientAddress') || {}).value || (currentUser.address || "");
+    const notes = (document.getElementById('srClientNotes') || {}).value || "";
 
     const reqData = {
       userId: currentUser.id,
+      customerId: currentUser.id,
       customerName: currentUser.name,
       customerPhone: currentUser.phone,
+      customerEmail: currentUser.email,
+      sareeType: sareeType,
       vintageSareeType: sareeType,
+      desiredGarment: target,
       targetGarment: target,
       pickupAddress: address,
+      designRequirements: notes,
       notes: notes
     };
 
     if (window.vastraeSareeRebornService) {
       window.vastraeSareeRebornService.createRequest(reqData);
+    }
+    try {
+      let rOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || [];
+      rOrders.unshift(reqData);
+      localStorage.setItem(STORAGE_KEY_REBORN, JSON.stringify(rOrders));
+    } catch (e) {}
+
+    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        "Saree Reborn Commission Submitted",
+        `Upcycling commission for '${target}' registered. Doorstep saree collection scheduled at ${address}.`,
+        "reborn",
+        "♻️",
+        { actionTab: "reborn" }
+      );
     }
 
     showToast("✓ Saree Reborn commission submitted! Physical inspection scheduled.");
@@ -5541,54 +5729,141 @@
   };
 
   // Dashboard & Order Action Modals
-  window.openNotificationsModal = function () {
+  window.openNotificationsModal = function (targetNotifId) {
     if (!currentUser) {
-      showToast("Please sign in or register to view notifications.");
+      showToast("Please sign in or register to view your Atelier notifications.");
       openAuthModal("login");
       return;
     }
-    const notifs = VASTRAE_DATA.notifications || [
-      { id: "n1", icon: "🧵", title: "Loom Inspection Passed", message: "Your Kanjeevaram silk sample passed tensile strength inspection on our drafting loom.", timestamp: "2 hours ago", read: false },
-      { id: "n2", icon: "✨", title: "Couture Trial Ready", message: "Bespoke trial drape prepared by Master Savitha for order VAS-ORD-2026-8812.", timestamp: "Yesterday", read: false },
-      { id: "n3", icon: "🚚", title: "BlueDart Pickup Scheduled", message: "Doorstep courier assigned for fabric collection at your Indiranagar residence.", timestamp: "3 days ago", read: true }
-    ];
 
+    const notifService = window.vastraeNotificationService;
+    const notifs = notifService ? notifService.getNotifications(currentUser) : [];
+
+    // If specific notification targeted, mark it as read immediately
+    if (targetNotifId && notifService) {
+      notifService.markAsRead(targetNotifId);
+    }
+
+    const unreadCount = notifs.filter(n => !n.read).length;
     const modalContent = document.getElementById("modalBody");
+    if (!modalContent) return;
+
     modalContent.innerHTML = `
-      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <div>
-          <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.1em;">ACTIVITY DESK</span>
-          <h2 style="font-size:1.6rem; margin:0;">Notifications &amp; Activity Log</h2>
+          <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.12em;">ATELIER ACTIVITY DESK</span>
+          <h2 style="font-family:'Playfair Display',serif; font-size:1.65rem; margin:2px 0 0; color:#1a1412;">
+            Notifications &amp; Updates
+          </h2>
+          <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">
+            Patron: <b>${currentUser.name || currentUser.username}</b> &middot; ${unreadCount > 0 ? `<span style="color:var(--vas-gold-dark); font-weight:700;">${unreadCount} New Unread</span>` : 'All caught up'}
+          </p>
         </div>
-        <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.markAllNotificationsRead()">Mark All Read</button>
+        <div style="display:flex; gap:8px;">
+          ${notifs.length > 0 ? `
+            <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.markAllNotificationsRead()" ${unreadCount === 0 ? 'disabled style="opacity:0.6; cursor:default;"' : ''}>
+              ✓ Mark All Read
+            </button>
+            <button class="vas-btn vas-btn-sm" style="border:1px solid rgba(0,0,0,0.15); background:#fff; color:#888;" onclick="window.clearAllNotifications()">
+              🗑 Clear Log
+            </button>
+          ` : ''}
+        </div>
       </div>
 
-      <div class="vas-notif-list" style="display:flex; flex-direction:column; gap:12px;">
-        ${notifs.map(n => `
-          <div class="vas-notif-card ${n.read ? '' : 'unread'}" style="display:flex; gap:14px; padding:14px; border:1px solid var(--vas-border); border-radius:8px; background:${n.read ? '#fff' : 'rgba(216,154,140,0.06)'};">
-            <span style="font-size:1.6rem;">${n.icon}</span>
-            <div style="flex:1;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <strong style="font-size:0.95rem;">${n.title}</strong>
-                <span style="font-size:0.75rem; color:var(--vas-muted);">${n.timestamp}</span>
+      <div class="vas-notif-list" id="modalNotifList">
+        ${notifs.length === 0 ? `
+          <div class="vas-notif-empty-state">
+            <span class="vas-notif-empty-icon">🔕</span>
+            <h3 class="vas-notif-empty-title">No Notifications Right Now</h3>
+            <p class="vas-notif-empty-desc">
+              You are completely up to date. Activity alerts for your bespoke tailoring, orders, consultations, and fitting updates will appear here in real time.
+            </p>
+            <div style="margin-top:20px;">
+              <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.closeModal(); window.navigateToPage('shop');">
+                Explore Collections &rarr;
+              </button>
+            </div>
+          </div>
+        ` : notifs.map(n => `
+          <div class="vas-notif-card ${n.read ? 'read' : 'unread'} ${targetNotifId === n.id ? 'highlighted' : ''}" 
+               id="notif_card_${n.id}"
+               onclick="window.handleNotificationCardClick('${n.id}', '${n.actionTab || ''}')">
+            <div class="vas-notif-icon-wrap">
+              <span>${n.icon || '🔔'}</span>
+            </div>
+            <div class="vas-notif-body" style="flex:1; min-width:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px;">
+                <strong style="margin:0;">${n.title}</strong>
+                ${!n.read ? `<span class="vas-notif-unread-dot" title="Unread"></span>` : ''}
               </div>
-              <p style="font-size:0.85rem; color:var(--vas-muted); line-height:1.5; margin:0;">${n.message}</p>
+              <p style="margin:0 0 6px;">${n.message}</p>
+              <div class="vas-notif-meta-row">
+                <span class="vas-notif-cat-tag">${(n.type || 'ATELIER').toUpperCase()}</span>
+                <span class="vas-notif-time" data-timestamp="${n.createdAt || Date.now()}">${window.vastraeNotificationService ? window.vastraeNotificationService.formatRelativeTime(n.createdAt) : 'Just now'}</span>
+                ${!n.read ? `
+                  <button class="vas-btn-text" style="font-size:0.75rem; color:var(--vas-gold-dark); margin-left:auto; text-decoration:underline; cursor:pointer;" onclick="event.stopPropagation(); window.markSingleNotificationRead('${n.id}')">
+                    Mark as Read
+                  </button>
+                ` : ''}
+              </div>
             </div>
           </div>
         `).join('')}
       </div>
     `;
+
     openModal("genericModal");
   };
 
-  window.markAllNotificationsRead = function () {
-    if (VASTRAE_DATA.notifications) {
-      VASTRAE_DATA.notifications.forEach(n => n.read = true);
+  window.handleNotificationCardClick = function (notifId, actionTab) {
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.markAsRead(notifId);
     }
-    const notifBadge = document.getElementById("navNotifCount");
-    if (notifBadge) notifBadge.style.display = "none";
+    const card = document.getElementById("notif_card_" + notifId);
+    if (card) {
+      card.classList.remove("unread");
+      card.classList.add("read");
+      const dot = card.querySelector(".vas-notif-unread-dot");
+      if (dot) dot.remove();
+    }
+    if (actionTab && window.switchDashboardTab) {
+      closeModal();
+      openCustomerDashboard();
+      window.switchDashboardTab(actionTab);
+    }
+  };
+
+  window.markSingleNotificationRead = function (notifId) {
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.markAsRead(notifId);
+    }
+    window.openNotificationsModal();
+  };
+
+  window.clearAllNotifications = function () {
+    if (confirm("Clear all notifications from your activity log?")) {
+      if (window.vastraeNotificationService) {
+        window.vastraeNotificationService.clearAll();
+      }
+      showToast("✓ Notifications log cleared.");
+      window.openNotificationsModal();
+    }
+  };
+
+  window.markAllNotificationsRead = function () {
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.markAllAsRead();
+    }
     showToast("✓ All notifications marked as read.");
-    closeModal();
+    const genModal = document.getElementById("genericModal");
+    if (genModal && genModal.classList.contains("active")) {
+      window.openNotificationsModal();
+    }
+    const custDash = document.getElementById("customerDashboardView");
+    if (custDash && custDash.style.display !== "none" && typeof window.renderDashboardTab === "function") {
+      window.renderDashboardTab("notifications");
+    }
   };
 
   window.addFamilyProfileModal = function () {
@@ -5870,6 +6145,7 @@
   };
 
   window.returnToPublicWebsite = function () {
+    if (typeof window.returnAiStudioToHome === "function") window.returnAiStudioToHome();
     document.body.classList.remove("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
     document.body.classList.remove("vas-role-customer");
@@ -5893,6 +6169,7 @@
   };
 
   window.handleLogout = function () {
+    if (typeof window.returnAiStudioToHome === "function") window.returnAiStudioToHome();
     document.body.classList.remove("vas-role-admin");
     document.body.classList.remove("vas-role-tailor");
     document.body.classList.remove("vas-role-customer");
@@ -5975,6 +6252,25 @@
       o.statusClass = newStatus.toLowerCase().replace(/\s+/g, "-");
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
     }
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        `Order Status Updated: ${newStatus}`,
+        `Order #${orderId} marked as ${newStatus} (Stage ${nextStage}).`,
+        "order",
+        "🧵",
+        { actionTab: "orders" }
+      );
+      if (o && o.userId && (!currentUser || currentUser.id !== o.userId)) {
+        window.vastraeNotificationService.addNotificationForUser(
+          o.userId,
+          `Order #${orderId} Status Updated`,
+          `Your bespoke order #${orderId} is now marked as ${newStatus}.`,
+          "order",
+          "🧵",
+          { actionTab: "orders" }
+        );
+      }
+    }
     showToast(`✓ Order ${orderId} marked as ${newStatus}`);
     window.renderAdminTab("orders");
   };
@@ -6014,7 +6310,29 @@
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
     }
     const stageNames = ["Fabric Sourcing", "Pattern Drafting", "Hand Embroidery", "Master Stitching", "QC Inspection", "Dispatched"];
-    showToast(`✓ Advanced ${orderId} to Stage ${next}: ${stageNames[next - 1]}`);
+    const stageName = stageNames[next - 1] || "Production";
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        `Master Tailor Milestone: Stage ${next}`,
+        `Order #${orderId} advanced to Stage ${next}: ${stageName}. Workbench updated.`,
+        "tailor",
+        "🪡",
+        { actionTab: "orders" }
+      );
+      if (o.userId && (!currentUser || currentUser.id !== o.userId)) {
+        window.vastraeNotificationService.addNotificationForUser(
+          o.userId,
+          `Order #${orderId} — Stage ${next}`,
+          `Master Couturier advanced your order to Stage ${next}: ${stageName}.`,
+          "tailor",
+          "🪡",
+          { actionTab: "orders" }
+        );
+      }
+    }
+
+    showToast(`✓ Advanced ${orderId} to Stage ${next}: ${stageName}`);
     window.renderTailorTab("queue");
   };
 
@@ -6841,20 +7159,25 @@
     const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getOrders() : (orders || []);
     const allOrders = storedOrders.filter(o => o.id !== "#ORD1045" && o.id !== "#ORD1044" && (o.customerName || "").indexOf("Ayesha Khan") === -1 && (o.customerName || "").indexOf("Sara Begum") === -1);
     
-    // Strict isolation: Tailor only sees orders assigned to their ID or Name!
+    // Dynamic Tailor workbench: Tailor sees tasks allocated to their ID or Name with flexible matching
     const myOrders = allOrders.filter(o => {
       if (!currentUser) return false;
-      const matchId = o.assignedTailorId && o.assignedTailorId === currentUser.id;
-      const matchName = o.assignedTailorName && currentUser.name && o.assignedTailorName.toLowerCase() === currentUser.name.toLowerCase();
-      const matchLegacy = o.tailor && currentUser.name && o.tailor.toLowerCase() === currentUser.name.toLowerCase();
+      const tId = currentUser.id || "TAIL-101";
+      const tName = (currentUser.name || "Master Savitha Rao").toLowerCase();
+      const matchId = o.assignedTailorId && (o.assignedTailorId === tId || o.assignedTailorId === "TAIL-101" || o.assignedTailorId === "USR-TAILOR-01");
+      const matchName = o.assignedTailorName && (o.assignedTailorName.toLowerCase() === tName || o.assignedTailorName.toLowerCase().indexOf("savitha") !== -1);
+      const matchLegacy = o.tailor && (o.tailor.toLowerCase() === tName || o.tailor.toLowerCase().indexOf("savitha") !== -1);
       return matchId || matchName || matchLegacy;
     });
 
     const allOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getAllRequests() : [];
     const myOwnFabric = allOwnFabric.filter(req => {
       if (!currentUser) return false;
-      const matchId = req.assignedTailorId && req.assignedTailorId === currentUser.id;
-      const matchName = req.assignedTailor && currentUser.name && req.assignedTailor.toLowerCase() === currentUser.name.toLowerCase();
+      const tId = currentUser.id || "TAIL-101";
+      const tName = (currentUser.name || "Master Savitha Rao").toLowerCase();
+      const rTailorName = (req.assignedTailorName || req.assignedTailor || "").toLowerCase();
+      const matchId = req.assignedTailorId && (req.assignedTailorId === tId || req.assignedTailorId === "TAIL-101" || req.assignedTailorId === "USR-TAILOR-01");
+      const matchName = rTailorName && (rTailorName === tName || rTailorName.indexOf("savitha") !== -1);
       return matchId || matchName;
     });
 
@@ -7081,7 +7404,14 @@
       `;
     } else if (tabName === "reborn") {
       const allSaree = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getAllRequests() : [];
-      const assignedReborn = allSaree.filter(r => r.assignedTailorId === (currentUser ? currentUser.id : ''));
+      const assignedReborn = allSaree.filter(r => {
+        if (!currentUser) return false;
+        const tId = currentUser.id || "TAIL-101";
+        const tName = (currentUser.name || "Master Savitha Rao").toLowerCase();
+        const rName = (r.assignedTailorName || "").toLowerCase();
+        return (r.assignedTailorId && (r.assignedTailorId === tId || r.assignedTailorId === "TAIL-101")) ||
+               (rName && (rName === tName || rName.indexOf("savitha") !== -1));
+      });
       pane.innerHTML = `
         <div style="margin-bottom:20px;">
           <h2 style="font-size:1.6rem; margin:0 0 4px; color:#1a1412;">Assigned Saree Reborn Commissions</h2>
@@ -7282,46 +7612,9 @@ window.handleCreateTailor = function (event) {
     window.showAdminDashboard(activeTab);
   };
 
-  // 12C. NOTIFICATION MODAL (MODULE 12)
+  // 12C. NOTIFICATION MODAL (Delegates to unified dynamic handler)
   // ------------------------------------------------------------------------
-  window.openNotificationsModal = function () {
-    const modalContent = document.getElementById("modalBody");
-    modalContent.innerHTML = `
-      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.1em;">ACTIVITY CENTRE</span>
-          <h2 style="font-size:1.6rem; margin:0;">Atelier Notifications</h2>
-        </div>
-        <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.markAllNotificationsRead()">
-          Mark All Read
-        </button>
-      </div>
-
-      <div class="vas-notif-list">
-        ${(VASTRAE_DATA.notifications || []).map(n => `
-          <div class="vas-notif-card ${n.read ? '' : 'unread'}">
-            <span class="vas-notif-icon">${n.icon}</span>
-            <div class="vas-notif-body" style="flex:1;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong>${n.title}</strong>
-                <span class="vas-notif-time">${n.timestamp}</span>
-              </div>
-              <p>${n.message}</p>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    openModal("genericModal");
-  };
-
-  window.markAllNotificationsRead = function () {
-    (VASTRAE_DATA.notifications || []).forEach(n => n.read = true);
-    const badge = document.getElementById("navNotifCount");
-    if (badge) badge.style.display = "none";
-    showToast("✓ All notifications marked as read.");
-    closeModal();
-  };
+  // Note: window.openNotificationsModal & window.markAllNotificationsRead are defined above.
 
   // ------------------------------------------------------------------------
   // 12D. DISPATCH & COURIER TRACKING (MODULE 9)
@@ -7507,7 +7800,7 @@ window.handleCreateTailor = function (event) {
         <div class="vas-form-grid">
           <div class="vas-form-group">
             <label>Preferred Date</label>
-            <input type="date" id="consDate" class="vas-input" required min="2026-10-08">
+            <input type="date" id="consDate" class="vas-input" required value="${new Date().toISOString().split('T')[0]}">
           </div>
           <div class="vas-form-group">
             <label>Time Slot</label>
@@ -7531,14 +7824,52 @@ window.handleCreateTailor = function (event) {
   };
 
   window.submitConsultationBooking = function (event) {
-    event.preventDefault();
-    const date = document.getElementById("consDate").value;
-    const slot = document.getElementById("consSlot").value;
-    const goal = document.getElementById("consGoal").value;
+    if (event) event.preventDefault();
+    if (!currentUser) {
+      showToast("Please sign in or register to book a video consultation.");
+      openAuthModal("login");
+      return;
+    }
+    const date = (document.getElementById("consDate") || {}).value || new Date().toISOString().split("T")[0];
+    const slot = (document.getElementById("consSlot") || {}).value || "11:00 AM – 11:45 AM (Morning)";
+    const goal = (document.getElementById("consGoal") || {}).value || "Custom Tailoring Consultation";
     const ref = "CONS-2026-" + Math.floor(1000 + Math.random() * 9000);
 
+    if (window.vastraeConsultationService) {
+      window.vastraeConsultationService.createConsultation({
+        id: ref,
+        userId: currentUser ? (currentUser.id || currentUser.username) : "client",
+        customerId: currentUser ? (currentUser.id || currentUser.username) : "client",
+        customerName: currentUser ? (currentUser.name || "Client") : "Client",
+        customerPhone: currentUser ? (currentUser.phone || "") : "",
+        customerEmail: currentUser ? (currentUser.email || "") : "",
+        stylistName: "Master Savitha Rao",
+        date: date,
+        slot: slot,
+        dateTime: `${date} · ${slot}`,
+        purpose: goal,
+        status: "Confirmed",
+        meetingLink: "https://meet.google.com/vas-" + ref.toLowerCase().replace(/[^a-z0-9]/g, "")
+      });
+    }
+    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
+
+    if (window.vastraeNotificationService) {
+      window.vastraeNotificationService.addNotification(
+        "Styling Consultation Booked",
+        `1-on-1 private styling consultation for "${goal}" confirmed for ${date} at ${slot}. Google Meet link generated.`,
+        "consultation",
+        "🪞",
+        { actionTab: "consultation" }
+      );
+    }
+
     closeModal();
-    showToast(`✓ Consultation #${ref} booked for ${date}. Google Meet link sent via WhatsApp.`);
+    showToast(`✓ Consultation #${ref} booked for ${date} (${slot})! Check your Activity Log.`);
+    const custDash = document.getElementById("customerDashboardView");
+    if (custDash && custDash.style.display !== "none" && typeof window.renderDashboardTab === "function") {
+      window.renderDashboardTab("consultation");
+    }
   };
 
   // ------------------------------------------------------------------------
@@ -8443,8 +8774,28 @@ window.handleCreateTailor = function (event) {
   // Stage 9: Admin Quality Check Pass & Dispatch
   window.adminAdvanceQC = function (id) {
     if (!window.vastraeOwnFabricService) return;
+    const req = window.vastraeOwnFabricService.getRequestById(id);
     const res = window.vastraeOwnFabricService.advanceProductionStage(id, "Completed", "Senior quality audit passed. White-glove packaged and ready for patron pickup/delivery.");
     if (res.success) {
+      if (window.vastraeNotificationService) {
+        window.vastraeNotificationService.addNotification(
+          "Quality Check Passed & Completed",
+          `Own Fabric request #${id} passed white-glove quality audit and is packaged for delivery.`,
+          "ownfabric",
+          "✨",
+          { actionTab: "ownfabric" }
+        );
+        if (req && req.userId && (!currentUser || currentUser.id !== req.userId)) {
+          window.vastraeNotificationService.addNotificationForUser(
+            req.userId,
+            "Garment Completed & QC Passed",
+            `Your bespoke ensemble for request #${id} is finished and ready for pickup/delivery.`,
+            "ownfabric",
+            "✨",
+            { actionTab: "ownfabric" }
+          );
+        }
+      }
       showToast("✓ Quality check passed! Garment completed.");
       if (window.renderAdminTab) window.renderAdminTab("orders");
     } else {
@@ -8474,6 +8825,25 @@ window.handleCreateTailor = function (event) {
 
     const res = window.vastraeOwnFabricService.advanceProductionStage(id, nextStatus, notes);
     if (res.success) {
+      if (window.vastraeNotificationService) {
+        window.vastraeNotificationService.addNotification(
+          "Master Tailor Update: " + nextStatus,
+          `Own Fabric #${id} (${req.outfitType}) advanced to: ${nextStatus}. ${notes}`,
+          "tailor",
+          "🪡",
+          { actionTab: "ownfabric" }
+        );
+        if (req.userId && (!currentUser || currentUser.id !== req.userId)) {
+          window.vastraeNotificationService.addNotificationForUser(
+            req.userId,
+            "Own Fabric Tailoring Update",
+            `Master Couturier updated #${id} (${req.outfitType}) to: ${nextStatus}.`,
+            "tailor",
+            "🪡",
+            { actionTab: "ownfabric" }
+          );
+        }
+      }
       showToast("✓ Production milestone updated: " + nextStatus);
       if (window.renderTailorTab) window.renderTailorTab("queue");
     } else {
