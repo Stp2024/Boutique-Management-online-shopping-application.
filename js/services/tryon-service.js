@@ -251,6 +251,8 @@
     const dropZone = document.getElementById("tryOnDropZone");
     const fileInput = document.getElementById("tryOnPhotoInput");
     if (!dropZone || !fileInput) return;
+    if (dropZone._eventsBound) return;
+    dropZone._eventsBound = true;
 
     ["dragenter", "dragover"].forEach(eventName => {
       dropZone.addEventListener(eventName, (e) => {
@@ -574,13 +576,17 @@
 
   // Body Measurements Handlers (Requirement 4)
   function loadSavedMeasurements() {
-    // Check boutique localStorage profiles
+    // Check boutique localStorage profiles & active user
     let saved = null;
     try {
-      const activeUser = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
+      const activeUser = window.currentUser || JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
       if (activeUser && activeUser.measurements) {
         saved = activeUser.measurements;
-      } else {
+      } else if (window.vastraeMeasurementService && activeUser) {
+        const profs = window.vastraeMeasurementService.getUserProfiles(activeUser.id || activeUser.username) || [];
+        if (profs.length > 0) saved = profs[0];
+      }
+      if (!saved) {
         const stored = localStorage.getItem("vastrae_measurements");
         if (stored) saved = JSON.parse(stored);
       }
@@ -589,10 +595,11 @@
     }
 
     if (saved) {
-      TryOnState.measurements.height = saved.height || TryOnState.measurements.height;
-      TryOnState.measurements.bust = saved.bust || TryOnState.measurements.bust;
-      TryOnState.measurements.waist = saved.waist || TryOnState.measurements.waist;
-      TryOnState.measurements.hips = saved.hips || TryOnState.measurements.hips;
+      if (saved.height) TryOnState.measurements.height = String(saved.height);
+      if (saved.bust) TryOnState.measurements.bust = String(saved.bust);
+      if (saved.waist) TryOnState.measurements.waist = String(saved.waist);
+      if (saved.hips) TryOnState.measurements.hips = String(saved.hips);
+      if (saved.fitPreference) TryOnState.measurements.fitPreference = saved.fitPreference;
     }
 
     // Populate inputs if present
@@ -1336,6 +1343,8 @@
     const sliderContainer = document.getElementById("tryOnSliderContainer");
     const sliderHandle = document.getElementById("tryOnSliderHandle");
     if (!sliderContainer || !sliderHandle) return;
+    if (sliderContainer._eventsBound) return;
+    sliderContainer._eventsBound = true;
 
     let isDragging = false;
 

@@ -2815,42 +2815,293 @@ img {
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  padding: 16px;
+  padding: 16px 18px;
   border-radius: var(--vas-radius-sm);
   background: #ffffff;
   border: 1px solid var(--vas-border);
-  transition: var(--vas-transition);
+  transition: all 0.25s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.vas-notif-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border-color: rgba(212, 175, 55, 0.35);
 }
 
 .vas-notif-card.unread {
-  background: var(--vas-gold-pale);
-  border-color: var(--vas-gold-light);
+  background: linear-gradient(to right, rgba(212, 175, 55, 0.08), #ffffff);
+  border-color: var(--vas-gold-light, #d4af37);
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.08);
 }
 
-.vas-notif-icon {
-  font-size: 1.5rem;
-  line-height: 1;
+.vas-notif-card.highlighted {
+  animation: vasNotifHighlight 2s ease infinite alternate;
+}
+
+@keyframes vasNotifHighlight {
+  from {
+    border-color: var(--vas-gold);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  }
+  to {
+    border-color: #f2c46a;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+  }
+}
+
+.vas-notif-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--vas-surface-alt, #faf7f5);
+  border: 1px solid var(--vas-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.4rem;
+}
+
+.vas-notif-card.unread .vas-notif-icon-wrap {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
 }
 
 .vas-notif-body strong {
   display: block;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: var(--vas-ink);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  font-family: var(--vas-font-sans);
 }
 
 .vas-notif-body p {
-  font-size: 0.85rem;
-  color: var(--vas-muted);
-  line-height: 1.45;
-  margin-bottom: 4px;
+  font-size: 0.88rem;
+  color: #554d47;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.vas-notif-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .vas-notif-time {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   color: var(--vas-gold-dark);
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vas-notif-cat-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--vas-gold-dark);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.vas-notif-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4af37;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+  display: inline-block;
+  margin-left: auto;
+}
+
+/* Empty State */
+.vas-notif-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  background: #ffffff;
+  border-radius: var(--vas-radius-sm);
+  border: 1px dashed var(--vas-border);
+}
+
+.vas-notif-empty-icon {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 12px;
+  display: inline-block;
+  opacity: 0.8;
+}
+
+.vas-notif-empty-title {
+  font-size: 1.25rem;
+  font-family: var(--vas-font-serif, serif);
+  color: var(--vas-charcoal, #1a1412);
+  margin: 0 0 6px;
+}
+
+.vas-notif-empty-desc {
+  font-size: 0.88rem;
+  color: var(--vas-muted);
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Badge Pulse Animation */
+.vas-badge-pulse {
+  animation: vasBadgePulseAnim 0.5s ease-in-out 3;
+}
+
+@keyframes vasBadgePulseAnim {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); filter: drop-shadow(0 0 6px #d4af37); }
+  100% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   DYNAMIC POP-UP MESSAGE BANNER (CLICK TO VIEW FULL NOTIFICATION)
+   ========================================================================== */
+.vas-notif-popup-banner {
+  position: fixed;
+  top: 86px;
+  right: 24px;
+  z-index: 99999;
+  max-width: 440px;
+  width: calc(100vw - 48px);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-20px) scale(0.96);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.vas-notif-popup-banner.vas-notif-popup-show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.vas-notif-popup-banner.vas-notif-popup-hide {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.95);
+  pointer-events: none;
+}
+
+.vas-notif-popup-card {
+  background: linear-gradient(135deg, rgba(28, 22, 19, 0.97), rgba(42, 34, 30, 0.96));
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 175, 55, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  color: #ffffff;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.vas-notif-popup-card:hover {
+  border-color: rgba(242, 196, 106, 0.75);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45), 0 0 26px rgba(212, 175, 55, 0.35);
+  transform: translateY(-2px);
+}
+
+.vas-notif-popup-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.35rem;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+.vas-notif-popup-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.vas-notif-popup-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--vas-champagne, #f2c46a);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.vas-notif-popup-time {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.vas-notif-popup-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.vas-notif-popup-message {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.45;
+  margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vas-notif-popup-cta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--vas-champagne, #f2c46a);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.02em;
+}
+
+.vas-notif-popup-cta:hover {
+  text-decoration: underline;
+}
+
+.vas-notif-popup-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0 4px;
+  cursor: pointer;
+  transition: color 0.15s;
+  position: absolute;
+  top: 10px;
+  right: 12px;
+}
+
+.vas-notif-popup-close:hover {
+  color: #ffffff;
 }
 
 /* Admin Console UI */
@@ -7057,4 +7308,53 @@ body.vas-role-customer.vas-dashboard-active #topHeader {
   margin-top: 28px;
   padding-top: 20px;
   border-top: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+/* ==========================================================================
+   AI Try-On Studio Embedded in Customer Sanctuary Dashboard
+   ========================================================================== */
+.vas-tryon-studio-section.vas-in-dashboard {
+  background: transparent !important;
+  padding: 0 0 32px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-container {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-tryon-header {
+  margin: 0 auto 28px !important;
+  max-width: 100% !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-tryon-eyebrow {
+  background: #ffffff !important;
+  border-color: rgba(220, 212, 240, 0.8) !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-tryon-title {
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem) !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-tryon-desc {
+  font-size: 0.9rem !important;
+  margin-bottom: 20px !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-tryon-panel {
+  box-shadow: 0 4px 18px rgba(76, 69, 65, 0.04) !important;
+  border: 1px solid var(--vas-border) !important;
+  background: #ffffff !important;
+}
+
+.vas-tryon-studio-section.vas-in-dashboard .vas-tryon-step-nav-item {
+  background: #ffffff !important;
+}
+
+.vas-dash-tryon-mount {
+  width: 100%;
 }

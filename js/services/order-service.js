@@ -40,7 +40,7 @@
 
       // Filter out legacy demo order VST-ORD-1001 or Ananya Sharma demo order
       const cleaned = stored.filter(function (o) {
-        return o.id !== "VST-ORD-1001" && o.userId !== "USR-101" &&
+        return o.id !== "VST-ORD-1001" &&
                (o.customerName || "").toLowerCase() !== "ananya sharma";
       });
 
@@ -52,21 +52,33 @@
       return cleaned;
     },
 
+    getOrderById: function (orderId) {
+      const all = this.getOrders();
+      return all.find(function (o) { return o.id === orderId || o.orderId === orderId; }) || null;
+    },
+
     getCustomerOrders: function (userId, customerName) {
       const all = this.getOrders();
       if (!userId && !customerName) return [];
+      const uLower = (userId || "").toString().toLowerCase();
+      const cLower = (customerName || "").toString().toLowerCase();
       return all.filter(function (o) {
-        return (userId && o.userId === userId) ||
-               (customerName && (o.customerName || "").toLowerCase() === customerName.toLowerCase());
+        const oUser = (o.userId || o.customerId || "").toString().toLowerCase();
+        const oName = (o.customerName || o.clientName || "").toString().toLowerCase();
+        return (uLower && (oUser === uLower || oUser.indexOf(uLower) !== -1 || uLower.indexOf(oUser) !== -1)) ||
+               (cLower && (oName === cLower || oName.indexOf(cLower) !== -1 || cLower.indexOf(oName) !== -1));
       });
     },
 
     getTailorOrders: function (tailorId, tailorName) {
       const all = this.getOrders();
       if (!tailorId && !tailorName) return [];
+      const tLower = (tailorName || "").toString().toLowerCase();
       return all.filter(function (o) {
-        return (tailorId && o.assignedTailorId === tailorId) ||
-               (tailorName && (o.assignedTailorName || "").toLowerCase() === tailorName.toLowerCase());
+        const matchId = (tailorId && o.assignedTailorId === tailorId);
+        const aName = (o.assignedTailorName || o.tailor || "").toString().toLowerCase();
+        const matchName = tLower && (aName === tLower || (tLower.indexOf("savitha") !== -1 && aName.indexOf("savitha") !== -1));
+        return matchId || matchName;
       });
     },
 
@@ -88,8 +100,9 @@
         currentStage: 1,
         stageTitle: STAGES[0].title,
         status: "Placed",
-        assignedTailorId: orderData.assignedTailorId || null,
-        assignedTailorName: orderData.assignedTailorName || "Unassigned",
+        assignedTailorId: orderData.assignedTailorId || "TAIL-101",
+        assignedTailorName: orderData.assignedTailorName || "Master Savitha Rao",
+        tailor: orderData.assignedTailorName || orderData.tailor || "Master Savitha Rao",
         wipImages: [],
         notes: orderData.notes || "Order placed. Fabric sourcing & inspection initiated.",
         measurements: orderData.measurements || null,
@@ -100,6 +113,18 @@
       all.unshift(newOrder);
       if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+
+      if (window.vastraeNotificationService && newOrder.userId && newOrder.userId !== "GUEST") {
+        window.vastraeNotificationService.addNotificationForUser(
+          newOrder.userId,
+          "Bespoke Order Confirmed",
+          `Order #${newOrder.id} confirmed. Stage 1 Fabric Sourcing & Inspection initiated.`,
+          "order",
+          "🧵",
+          { actionTab: "orders" }
+        );
+      }
+
       return newOrder;
     },
 
@@ -121,6 +146,18 @@
       all[index] = order;
       if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+
+      if (window.vastraeNotificationService && order.userId) {
+        window.vastraeNotificationService.addNotificationForUser(
+          order.userId,
+          `Order #${order.orderId || order.id} — Stage ${order.currentStage}`,
+          `Master Couturier updated your order: ${order.stageTitle}.`,
+          "tailor",
+          "🪡",
+          { actionTab: "orders" }
+        );
+      }
+
       return order;
     },
 
@@ -137,6 +174,18 @@
       all[index] = order;
       if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+
+      if (window.vastraeNotificationService && order.userId) {
+        window.vastraeNotificationService.addNotificationForUser(
+          order.userId,
+          `Couturier Assigned — Order #${order.orderId || order.id}`,
+          `Master Couturier ${tailorName} has been assigned to tailor your ensemble.`,
+          "tailor",
+          "✂️",
+          { actionTab: "orders" }
+        );
+      }
+
       return order;
     }
   };

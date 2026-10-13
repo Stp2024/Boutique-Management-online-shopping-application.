@@ -75,13 +75,9 @@
         return [];
       }
 
-      // Purge any legacy demo requests or Priya Shetty requests
+      // Clean orders list
       const cleaned = stored.filter(function (r) {
-        const name = (r.customerName || "").toLowerCase();
-        return name.indexOf("ananya") === -1 &&
-               name.indexOf("sara begum") === -1 &&
-               name.indexOf("priya shetty") === -1 &&
-               name.indexOf("shetty") === -1;
+        return r && r.id !== "VST-OF-DEMO-01";
       });
 
       if (cleaned.length !== stored.length) {
@@ -95,9 +91,13 @@
     getCustomerRequests: function (userId, customerName) {
       const all = this.getAllRequests();
       if (!userId && !customerName) return [];
+      const uLower = (userId || "").toString().toLowerCase();
+      const cLower = (customerName || "").toString().toLowerCase();
       return all.filter(function (r) {
-        return (userId && r.userId === userId) ||
-               (customerName && (r.customerName || "").toLowerCase() === customerName.toLowerCase());
+        const rUser = (r.userId || r.customerId || "").toString().toLowerCase();
+        const rName = (r.customerName || r.clientName || "").toString().toLowerCase();
+        return (uLower && (rUser === uLower || rUser.indexOf(uLower) !== -1)) ||
+               (cLower && (rName === cLower || rName.indexOf(cLower) !== -1 || cLower.indexOf(rName) !== -1));
       });
     },
 
@@ -200,6 +200,15 @@
 
       all.unshift(newReq);
       this.saveAll(all);
+      if (window.vastraeNotificationService) {
+        window.vastraeNotificationService.addNotification(
+          "Own Fabric Request Logged",
+          `Fabric pickup request #${newReq.id} for '${newReq.outfitType}' recorded. Doorstep courier assigned.`,
+          "ownfabric",
+          "📦",
+          { actionTab: "ownfabric" }
+        );
+      }
       return newReq;
     },
 
@@ -271,6 +280,18 @@
 
       req.updatedAt = new Date().toISOString();
       this.saveAll(all);
+
+      if (window.vastraeNotificationService && req.userId && req.userId !== "GUEST") {
+        window.vastraeNotificationService.addNotificationForUser(
+          req.userId,
+          `Own Fabric Inspection: ${suitability}`,
+          `Inspection verdict for #${req.id} (${req.outfitType}): ${suitability}. ${req.physicalInspection.findings}`,
+          "ownfabric",
+          suitability === "Suitable" ? "✅" : "⚠️",
+          { actionTab: "ownfabric" }
+        );
+      }
+
       return { success: true, request: req, message: `Physical inspection recorded: ${suitability}` };
     },
 
@@ -307,6 +328,18 @@
       req.updatedAt = new Date().toISOString();
 
       this.saveAll(all);
+
+      if (window.vastraeNotificationService && req.userId && req.userId !== "GUEST") {
+        window.vastraeNotificationService.addNotificationForUser(
+          req.userId,
+          "Own Fabric Proposal Ready",
+          `Atelier formulated feasible design '${req.proposal.confirmedDesign}' for ₹${total}. Please review and approve in your dashboard.`,
+          "ownfabric",
+          "📐",
+          { actionTab: "ownfabric" }
+        );
+      }
+
       return { success: true, request: req, message: "Design & price proposal sent to client for approval." };
     },
 
@@ -366,6 +399,18 @@
       req.updatedAt = new Date().toISOString();
 
       this.saveAll(all);
+
+      if (window.vastraeNotificationService && req.userId && req.userId !== "GUEST") {
+        window.vastraeNotificationService.addNotificationForUser(
+          req.userId,
+          "Master Tailor Allocated",
+          `Your fabric #${req.id} is allocated to Master Couturier ${tailorName}. Production commencing on atelier loom.`,
+          "tailor",
+          "🪡",
+          { actionTab: "ownfabric" }
+        );
+      }
+
       return { success: true, request: req, message: `Own Fabric work assigned to Master Tailor ${tailorName}.` };
     },
 
@@ -385,6 +430,18 @@
       req.updatedAt = new Date().toISOString();
 
       this.saveAll(all);
+
+      if (window.vastraeNotificationService && req.userId && req.userId !== "GUEST") {
+        window.vastraeNotificationService.addNotificationForUser(
+          req.userId,
+          `Own Fabric Milestone: ${req.status}`,
+          `Master Couturier updated #${req.id}: ${notes || req.status}`,
+          "tailor",
+          "🪡",
+          { actionTab: "ownfabric" }
+        );
+      }
+
       return { success: true, request: req, message: `Production stage updated to: ${req.status}` };
     }
   };

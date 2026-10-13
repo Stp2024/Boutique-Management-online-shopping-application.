@@ -28,9 +28,9 @@
         return [];
       }
 
-      // Purge demo records for USR-101
+      // Purge legacy Ananya demo records only
       const cleaned = stored.filter(function (p) {
-        return p.userId !== "USR-101" && (p.profileName || "").indexOf("Ananya") === -1;
+        return (p.profileName || "").indexOf("Ananya") === -1 && (p.name || "").indexOf("Ananya") === -1;
       });
 
       if (cleaned.length !== stored.length) {

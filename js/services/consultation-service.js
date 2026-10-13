@@ -51,9 +51,13 @@
     getCustomerConsultations: function (userId, customerName) {
       const all = this.getConsultations();
       if (!userId && !customerName) return [];
+      const uLower = (userId || "").toString().toLowerCase();
+      const cLower = (customerName || "").toString().toLowerCase();
       return all.filter(function (c) {
-        return (userId && c.userId === userId) ||
-               (customerName && (c.customerName || "").toLowerCase() === customerName.toLowerCase());
+        const cUser = (c.userId || c.customerId || "").toString().toLowerCase();
+        const cName = (c.customerName || c.clientName || "").toString().toLowerCase();
+        return (uLower && (cUser === uLower || cUser.indexOf(uLower) !== -1 || uLower.indexOf(cUser) !== -1)) ||
+               (cLower && (cName === cLower || cName.indexOf(cLower) !== -1 || cLower.indexOf(cName) !== -1));
       });
     },
 
@@ -78,6 +82,15 @@
 
       all.unshift(newAppointment);
       window.vastraeStorage.set(STORAGE_KEY, all);
+      if (window.vastraeNotificationService) {
+        window.vastraeNotificationService.addNotification(
+          "Styling Consultation Booked",
+          `Virtual styling session with ${newAppointment.stylistName} scheduled for ${newAppointment.date} at ${newAppointment.slot}.`,
+          "consultation",
+          "🪞",
+          { actionTab: "consultation" }
+        );
+      }
       return newAppointment;
     },
 

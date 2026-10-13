@@ -9,19 +9,19 @@
 
   const vastraeTailorService = {
     // Get all work items assigned to a master tailor
-    getAssignedTasks: function (tailorId) {
+    getAssignedTasks: function (tailorId, tailorName) {
       let orders = [];
       let sareeRequests = [];
       let ownFabricRequests = [];
 
       if (window.vastraeOrderService) {
-        orders = window.vastraeOrderService.getTailorOrders(tailorId);
+        orders = window.vastraeOrderService.getTailorOrders(tailorId, tailorName);
       }
       if (window.vastraeSareeRebornService) {
-        sareeRequests = window.vastraeSareeRebornService.getTailorRequests(tailorId);
+        sareeRequests = window.vastraeSareeRebornService.getTailorRequests(tailorId, tailorName);
       }
       if (window.vastraeOwnFabricService) {
-        ownFabricRequests = window.vastraeOwnFabricService.getTailorRequests(tailorId);
+        ownFabricRequests = window.vastraeOwnFabricService.getTailorRequests(tailorId, tailorName);
       }
 
       return {
