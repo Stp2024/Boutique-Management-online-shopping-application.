@@ -75,29 +75,18 @@
         return [];
       }
 
-      // Clean orders list
-      const cleaned = stored.filter(function (r) {
-        return r && r.id !== "VST-OF-DEMO-01";
-      });
-
-      if (cleaned.length !== stored.length) {
-        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
-      }
-
-      return cleaned;
+      return stored;
     },
 
     getCustomerRequests: function (userId, customerName) {
       const all = this.getAllRequests();
-      if (!userId && !customerName) return [];
-      const uLower = (userId || "").toString().toLowerCase();
-      const cLower = (customerName || "").toString().toLowerCase();
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || user.role !== "customer" || !user.id) return [];
+      const ownerId = String(user.id);
       return all.filter(function (r) {
-        const rUser = (r.userId || r.customerId || "").toString().toLowerCase();
-        const rName = (r.customerName || r.clientName || "").toString().toLowerCase();
-        return (uLower && (rUser === uLower || rUser.indexOf(uLower) !== -1)) ||
-               (cLower && (rName === cLower || rName.indexOf(cLower) !== -1 || cLower.indexOf(rName) !== -1));
+        return String(r.customerId || r.userId || "") === ownerId;
       });
     },
 
@@ -128,11 +117,18 @@
     createRequest: function (data) {
       const all = this.getAllRequests();
       const id = window.vastraeStorage ? window.vastraeStorage.generateId("VST-OF") : "VST-OF-" + Date.now().toString().slice(-5);
+      const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      const ownerId = activeUser && activeUser.role === "customer"
+        ? activeUser.id
+        : (data.customerId || data.userId || null);
 
       const newReq = {
         id: id,
         ref: id,
-        userId: data.userId || "GUEST",
+        userId: ownerId,
+        customerId: ownerId,
         customerName: data.customerName || "Customer",
         customerPhone: data.customerPhone || "",
         customerEmail: data.customerEmail || "",

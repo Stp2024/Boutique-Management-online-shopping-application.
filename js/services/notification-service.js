@@ -10,23 +10,15 @@
   const STORAGE_PREFIX = "vastrae_notifications";
 
   function getCurrentUser() {
-    if (window.currentUser) return window.currentUser;
     if (window.vastraeAuth && typeof window.vastraeAuth.getCurrentUser === "function") {
-      const u = window.vastraeAuth.getCurrentUser();
-      if (u) return u;
+      return window.vastraeAuth.getCurrentUser();
     }
-    try {
-      const stored =
-        JSON.parse(localStorage.getItem("vastrae_active_user")) ||
-        JSON.parse(localStorage.getItem("vastrae_current_user")) ||
-        JSON.parse(localStorage.getItem("vas_user"));
-      if (stored && stored.username !== "DiyaMehta") return stored;
-    } catch (e) {}
     return null;
   }
 
   function getUserKey(user) {
-    const u = user || getCurrentUser();
+    const activeUser = getCurrentUser();
+    const u = activeUser;
     if (!u) return null;
     return String(u.id || u.username || u.email || "patron").trim();
   }
@@ -81,16 +73,7 @@
         return [];
       }
 
-      // Filter out legacy dummy notification with #VST-ORD-1001 if present
-      const cleaned = notifs.filter(function (n) {
-        return !n.message || n.message.indexOf("VST-ORD-1001") === -1;
-      });
-
-      if (cleaned.length !== notifs.length) {
-        this.saveNotifications(cleaned, user);
-      }
-
-      return cleaned;
+      return notifs;
     },
 
     saveNotifications: function (notifs, user) {

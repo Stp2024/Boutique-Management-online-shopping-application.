@@ -28,33 +28,31 @@
         return [];
       }
 
-      // Purge legacy Ananya demo records only
-      const cleaned = stored.filter(function (p) {
-        return (p.profileName || "").indexOf("Ananya") === -1 && (p.name || "").indexOf("Ananya") === -1;
-      });
-
-      if (cleaned.length !== stored.length) {
-        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
-      }
-
-      return cleaned;
+      return stored;
     },
 
     getUserProfiles: function (userId) {
       const all = this.getProfiles();
-      if (!userId) return [];
-      return all.filter(function (p) { return p.userId === userId; });
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || user.role !== "customer" || !user.id || String(user.id) !== String(userId || "")) return [];
+      return all.filter(function (p) { return String(p.userId || p.customerId || "") === String(user.id); });
     },
 
     // Save or update a profile
     saveProfile: function (profileData) {
       const profiles = this.getProfiles();
       const id = profileData.id || (window.vastraeStorage ? window.vastraeStorage.generateId("PROF") : "PROF-" + Date.now());
+      const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      const ownerId = activeUser && activeUser.role === "customer" ? activeUser.id : profileData.userId;
 
-      const index = profiles.findIndex((p) => p.id === id);
+      const index = profiles.findIndex((p) => p.id === id && String(p.userId || p.customerId || "") === String(ownerId || ""));
       const newProfile = Object.assign({}, profileData, {
         id: id,
+        userId: ownerId,
         updatedAt: new Date().toISOString()
       });
 
@@ -71,7 +69,13 @@
     // Delete a profile
     deleteProfile: function (profileId) {
       let profiles = this.getProfiles();
-      profiles = profiles.filter((p) => p.id !== profileId);
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user) return profiles;
+      profiles = profiles.filter((p) =>
+        p.id !== profileId || user.role === "customer" && String(p.userId || p.customerId || "") !== String(user.id)
+      );
       window.vastraeStorage.set(STORAGE_KEY, profiles);
       return profiles;
     },

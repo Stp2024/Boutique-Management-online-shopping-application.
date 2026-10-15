@@ -35,39 +35,35 @@
         return [];
       }
 
-      // Purge fake demo consultation
-      const cleaned = stored.filter(function (c) {
-        return c.id !== "VST-CON-1001" && (c.customerName || "").indexOf("Ananya") === -1;
-      });
-
-      if (cleaned.length !== stored.length) {
-        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
-      }
-
-      return cleaned;
+      return stored;
     },
 
     getCustomerConsultations: function (userId, customerName) {
       const all = this.getConsultations();
-      if (!userId && !customerName) return [];
-      const uLower = (userId || "").toString().toLowerCase();
-      const cLower = (customerName || "").toString().toLowerCase();
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || user.role !== "customer" || !user.id) return [];
+      const ownerId = String(user.id);
       return all.filter(function (c) {
-        const cUser = (c.userId || c.customerId || "").toString().toLowerCase();
-        const cName = (c.customerName || c.clientName || "").toString().toLowerCase();
-        return (uLower && (cUser === uLower || cUser.indexOf(uLower) !== -1 || uLower.indexOf(cUser) !== -1)) ||
-               (cLower && (cName === cLower || cName.indexOf(cLower) !== -1 || cLower.indexOf(cName) !== -1));
+        return String(c.customerId || c.userId || "") === ownerId;
       });
     },
 
     createConsultation: function (data) {
       const all = this.getConsultations();
       const id = window.vastraeStorage ? window.vastraeStorage.generateId("VST-CON") : "VST-CON-" + Date.now();
+      const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      const ownerId = activeUser && activeUser.role === "customer"
+        ? activeUser.id
+        : (data.customerId || data.userId || null);
 
       const newAppointment = {
         id: id,
-        userId: data.userId || "GUEST",
+        userId: ownerId,
+        customerId: ownerId,
         customerName: data.customerName || "Customer",
         customerPhone: data.customerPhone || "",
         customerEmail: data.customerEmail || "",

@@ -42,30 +42,19 @@
         return [];
       }
 
-      // Purge fake demo request
-      const cleaned = stored.filter(function (r) {
-        return r.id !== "VST-SR-1001" && (r.customerName || "").indexOf("Ananya") === -1;
-      });
-
-      if (cleaned.length !== stored.length) {
-        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
-      }
-
-      return cleaned;
+      return stored;
     },
 
     // Get requests for a specific customer
     getCustomerRequests: function (userId, customerName) {
       const all = this.getAllRequests();
-      if (!userId && !customerName) return [];
-      const uLower = (userId || "").toString().toLowerCase();
-      const cLower = (customerName || "").toString().toLowerCase();
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || user.role !== "customer" || !user.id) return [];
+      const ownerId = String(user.id);
       return all.filter(function (req) {
-        const rUser = (req.userId || req.customerId || "").toString().toLowerCase();
-        const rName = (req.customerName || req.clientName || "").toString().toLowerCase();
-        return (uLower && (rUser === uLower || rUser.indexOf(uLower) !== -1 || uLower.indexOf(rUser) !== -1)) ||
-               (cLower && (rName === cLower || rName.indexOf(cLower) !== -1 || cLower.indexOf(rName) !== -1));
+        return String(req.customerId || req.userId || "") === ownerId;
       });
     },
 
@@ -85,11 +74,17 @@
     createRequest: function (data) {
       const all = this.getAllRequests();
       const id = window.vastraeStorage ? window.vastraeStorage.generateId("VST-SR") : "VST-SR-" + Date.now();
+      const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      const ownerId = activeUser && activeUser.role === "customer"
+        ? activeUser.id
+        : (data.customerId || data.userId || null);
 
       const newRequest = {
         id: id,
-        userId: data.userId || data.customerId || "GUEST",
-        customerId: data.customerId || data.userId || "GUEST",
+        userId: ownerId,
+        customerId: ownerId,
         customerName: data.customerName || data.clientName || "Customer",
         customerPhone: data.customerPhone || data.phone || "",
         customerEmail: data.customerEmail || data.email || "",

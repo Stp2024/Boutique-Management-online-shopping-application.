@@ -2515,70 +2515,114 @@ const VASTRAE_DATA = {
     {
       "id": "SRV-01",
       "title": "Bespoke Custom Stitching",
-      "subtitle": "Precision Biometric Pattern Cut",
+      "subtitle": "Made to your measurements",
       "icon": "🪡",
       "image": "images/products/women/emerald-pakistani-suit-front.jpg",
-      "description": "Individualized paper pattern drafted from scratch based on 22 body measurements. Includes mulmul lining and 2-inch side seam alteration allowance.",
+      "description": "Discuss a garment, fit preferences, and measurements with the boutique before placing a custom stitching request.",
       "inclusions": [
-        "Calico trial drape before cutting precious silk",
-        "Reinforced neckline piping & bra strap tabs",
-        "Lifetime alteration privileges on side seams"
+        "Discuss garment style and intended fit",
+        "Share measurements and fabric preferences",
+        "Confirm the design and scope before work begins"
       ],
-      "startingPrice": "₹1,800",
-      "actionText": "Start Customizing →",
+      "actionText": "Learn More",
       "actionTarget": "customize",
-      "badge": "Signature Craft"
+      "badge": "Custom Stitching"
     },
     {
       "id": "SRV-02",
-      "title": "Custom Outfit Design",
-      "subtitle": "Bespoke Bridal & Gala Ensembles",
-      "icon": "✨",
-      "image": "images/products/women/royal-blue-lehenga-front.jpg",
-      "description": "From initial moodboard sketches to loom execution. Handcrafted authentic maggam stone work, certified metallic zardozi, and resham embroidery.",
+      "title": "Own-Fabric Tailoring",
+      "subtitle": "A garment from fabric you own",
+      "icon": "🧵",
+      "image": "images/products/women/kanjeevaram-silk-saree-detail.jpg",
+      "description": "Bring a fabric you already own and discuss suitable garment options, construction, and finishing with the boutique.",
       "inclusions": [
-        "1-on-1 chief couturier design sketch consultation",
-        "HD loom progress preview photos & swatches",
-        "Swarovski crystals & certified metallic zari"
+        "Discuss your fabric and intended design",
+        "Review possible garment styles",
+        "Agree on the request before stitching"
       ],
-      "startingPrice": "₹4,500",
-      "actionText": "Consult Stylist →",
-      "actionTarget": "consultation",
-      "badge": "Haute Couture"
+      "actionText": "Learn More",
+      "actionTarget": "ownFabric",
+      "badge": "Bring Your Fabric"
     },
     {
       "id": "SRV-03",
-      "title": "Saree Reborn & Upcycling",
-      "subtitle": "Vintage Heirloom Transformation",
-      "icon": "♻️",
-      "image": "images/products/women/crimson-banarasi-saree-front.jpg",
-      "description": "Convert mom’s vintage Kanjeevaram into a chic designer blouse, flared lehenga choli, or luxury potli under strict physical master inspection.",
+      "title": "Outfit Customization",
+      "subtitle": "Shape a look around your ideas",
+      "icon": "🎨",
+      "image": "images/products/women/royal-blue-lehenga-front.jpg",
+      "description": "Explore garment silhouettes, colour, fabric, and finishing choices to personalize an outfit.",
       "inclusions": [
-        "Mandatory Master Tailor physical loom inspection",
-        "Zero-waste pattern layout preserving rich pallu zari",
-        "Fragile silk stabilization backing"
+        "Choose from available design options",
+        "Discuss fabric and finishing preferences",
+        "Review details before confirming the order"
       ],
-      "startingPrice": "₹2,200",
-      "actionText": "Reborn Studio →",
-      "actionTarget": "sareeReborn",
-      "badge": "Heritage Upcycling"
+      "actionText": "Learn More",
+      "actionTarget": "customize",
+      "badge": "Personal Style"
     },
     {
       "id": "SRV-04",
-      "title": "AI Virtual Fashion Studio",
-      "subtitle": "Your Style, Virtually! See It. Style It. Make It Yours.",
+      "title": "Virtual Try-On",
+      "subtitle": "Explore looks in the digital studio",
       "icon": "🪞",
       "image": "images/products/women/ivory-anarkali-suit-front.jpg",
-      "description": "Step into our virtual fashion studio. Upload your silhouette photo to preview sarees, lehengas, and couture outfits with our interactive Before & After studio slider.",
+      "description": "Use the digital studio to explore outfit ideas and styling options before deciding what you would like to wear.",
       "inclusions": [
-        "Interactive Before & After draggable slider",
-        "Occasion discovery & personal Style Moodboard",
-        "Curated 'Complete the Look' jewellery & accessories"
+        "Explore available outfit styles",
+        "Try the studio's available preview tools",
+        "Save styling ideas to revisit"
       ],
-      "startingPrice": "Complimentary",
-      "actionText": "Launch Studio →",
+      "actionText": "Learn More",
       "actionTarget": "aiTryOnStudio",
-      "badge": "NEW ATELIER FEATURE"
+      "badge": "Virtual Styling"
+    },
+    {
+      "id": "SRV-05",
+      "title": "Saree Reborn",
+      "subtitle": "Give a cherished saree a new form",
+      "icon": "♻️",
+      "image": "images/products/women/crimson-banarasi-saree-front.jpg",
+      "description": "Discuss transforming a saree you own into another garment or accessory, depending on its condition and design.",
+      "inclusions": [
+        "Share your saree and transformation ideas",
+        "Discuss possible designs for the material",
+        "Confirm scope after the fabric is reviewed"
+      ],
+      "actionText": "Learn More",
+      "actionTarget": "sareeReborn",
+      "badge": "Thoughtful Reuse"
+    },
+    {
+      "id": "SRV-06",
+      "title": "Fit & Measurement Discussion",
+      "subtitle": "Share your fit preferences",
+      "icon": "📐",
+      "image": "images/products/vastrae-atelier-craft.jpg",
+      "description": "Talk through measurements and preferred fit as part of planning a custom garment.",
+      "inclusions": [
+        "Discuss fit and garment preferences",
+        "Share measurements for the request",
+        "Confirm details with the boutique"
+      ],
+      "actionText": "Learn More",
+      "actionTarget": "consultation",
+      "badge": "Personal Fit"
+    },
+    {
+      "id": "SRV-07",
+      "title": "Styling Consultation",
+      "subtitle": "Talk through an occasion look",
+      "icon": "✨",
+      "image": "images/products/accessories/bridal-potli-front.jpg",
+      "description": "Discuss outfit ideas, occasions, and accessories with the boutique to help shape a coordinated look.",
+      "inclusions": [
+        "Share your event and style preferences",
+        "Discuss outfit and accessory options",
+        "Explore suitable next steps"
+      ],
+      "actionText": "Learn More",
+      "actionTarget": "consultation",
+      "badge": "Personal Styling"
     }
   ],
   "artisans": [
@@ -2654,74 +2698,7 @@ const VASTRAE_DATA = {
       "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
     }
   ],
-  "reviews": [
-    {
-      "id": "REV-01",
-      "name": "Ananya Sharma",
-      "role": "Bridal Client",
-      "location": "Indiranagar, Bengaluru",
-      "initials": "AS",
-      "stars": 5,
-      "text": "For my wedding at Palace Grounds, VASTRAÉ turned my grandmother's 45-year-old Kanjeevaram into a spectacular contemporary lehenga. The respect they showed to the antique zari and the fit on the first trial was unbelievable.",
-      "date": "September 2026",
-      "occasion": "Bridal Heritage"
-    },
-    {
-      "id": "REV-02",
-      "name": "Rohit Krishnan",
-      "role": "Patron Member",
-      "location": "Koramangala, Bengaluru",
-      "initials": "RK",
-      "stars": 5,
-      "text": "The 22-point measurement system is genuine Savile Row caliber. I ordered a midnight velvet bandhgala for our corporate awards gala. No bunching, no tightness around the shoulders—felt like second skin.",
-      "date": "August 2026",
-      "occasion": "Black-Tie Gala"
-    },
-    {
-      "id": "REV-03",
-      "name": "Pooja Venkatesh",
-      "role": "Atelier Patron",
-      "location": "Lavelle Road, Bengaluru",
-      "initials": "PV",
-      "stars": 5,
-      "text": "Their doorstep fabric pickup in Indiranagar was seamless. The master tailor brought fabric swatches, recorded my blouse measurements, and delivered the finished maggam-embroidered blouse in just 48 hours.",
-      "date": "October 2026",
-      "occasion": "Bespoke Blouse"
-    },
-    {
-      "id": "REV-04",
-      "name": "Pooja Nambiar",
-      "role": "Saree Reborn Patron",
-      "location": "Indiranagar, Bengaluru",
-      "initials": "PN",
-      "stars": 5,
-      "text": "I had my mother's 30-year-old Kanjeevaram wedding saree converted into a lehenga and potli bag through Saree Reborn. Master Savitha physically inspected the weave and stabilized the silk. The fit was astonishing!",
-      "date": "September 2026",
-      "occasion": "Saree Reborn"
-    },
-    {
-      "id": "REV-05",
-      "name": "Sneha Reddy",
-      "role": "Custom Client",
-      "location": "Whitefield, Bengaluru",
-      "initials": "SR",
-      "stars": 5,
-      "text": "Ordered a custom peacock maggam blouse through the interactive customizer. The virtual model draping was super helpful, and the 2-inch side seam allowance gave me total peace of mind.",
-      "date": "October 2026",
-      "occasion": "Custom Tailoring"
-    },
-    {
-      "id": "REV-06",
-      "name": "Rohan Singhania",
-      "role": "Bespoke Patron",
-      "location": "Koramangala, Bengaluru",
-      "initials": "RS",
-      "stars": 5,
-      "text": "First time getting a bespoke Bandhgala suit stitched online. They picked up my raw silk fabric from my doorstep and delivered it within 5 days with surgeon cuffs and perfect shoulder slope.",
-      "date": "August 2026",
-      "occasion": "Bespoke Bandhgala"
-    }
-  ],
+  "reviews": [],
   "faqs": [
     {
       "category": "Appointments",

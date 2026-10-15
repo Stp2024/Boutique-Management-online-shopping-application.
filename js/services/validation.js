@@ -42,27 +42,18 @@
       let cleaned = phone.trim().replace(/\D/g, "");
       if (cleaned.startsWith("91") && cleaned.length === 12) {
         cleaned = cleaned.slice(2);
+      } else if (cleaned.startsWith("0") && cleaned.length === 11) {
+        cleaned = cleaned.slice(1);
       }
-      if (cleaned.length !== 10) return { valid: false, message: "Please enter a valid 10-digit Indian mobile number." };
+      if (cleaned.length !== 10) return { valid: false, message: "Please enter a valid 10-digit mobile number." };
       if (!/^[6-9]\d{9}$/.test(cleaned)) return { valid: false, message: "Mobile number must start with 6, 7, 8, or 9." };
       return { valid: true, value: cleaned, formatted: "+91 " + cleaned };
     },
 
-    // Password rules: At least 6 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character
+    // Password rules: At least 6 characters in length
     validatePassword: function (password) {
       if (!password || typeof password !== "string") return { valid: false, message: "Password is required." };
       if (password.length < 6) return { valid: false, message: "Password must be at least 6 characters long." };
-      
-      const hasUpper = /[A-Z]/.test(password);
-      const hasLower = /[a-z]/.test(password);
-      const hasNumber = /[0-9]/.test(password);
-      const hasSpecial = /[@$!%*#?&_\-\.]/.test(password);
-
-      if (!hasUpper) return { valid: false, message: "Password must contain at least 1 uppercase letter (A-Z)." };
-      if (!hasLower) return { valid: false, message: "Password must contain at least 1 lowercase letter (a-z)." };
-      if (!hasNumber) return { valid: false, message: "Password must contain at least 1 number (0-9)." };
-      if (!hasSpecial) return { valid: false, message: "Password must contain at least 1 special character (@$!%*#?&_.-)." };
-
       return { valid: true, value: password };
     },
 

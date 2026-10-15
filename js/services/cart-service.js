@@ -14,20 +14,27 @@
     getUserStorageKey: function (prefix) {
       const user = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
       if (!user) return null;
-      return `${prefix}_${user.id || user.username}`;
+      return user.id ? `${prefix}_${user.id}` : null;
     },
 
-    // Cart operations (Strictly authenticated - guest returns empty array)
+    // Cart operations (Reads/writes vastrae_cart directly in localStorage)
     getCart: function () {
       const key = this.getUserStorageKey(STORAGE_KEY_CART);
-      if (!key || !window.vastraeStorage) return [];
-      return window.vastraeStorage.get(key, []);
+      if (!key) return [];
+      try {
+        const stored = JSON.parse(localStorage.getItem(key));
+        if (Array.isArray(stored)) return stored;
+      } catch (e) {}
+      return [];
     },
 
     saveCart: function (cart) {
       const key = this.getUserStorageKey(STORAGE_KEY_CART);
-      if (!key || !window.vastraeStorage) return false;
-      return window.vastraeStorage.set(key, cart);
+      if (!key) return false;
+      try {
+        localStorage.setItem(key, JSON.stringify(cart));
+      } catch (e) {}
+      return true;
     },
 
     addToCart: function (product, size = "M", quantity = 1, customConfig = null) {
@@ -96,17 +103,24 @@
       };
     },
 
-    // Wishlist operations (Strictly authenticated - guest returns empty array)
+    // Wishlist operations (Reads/writes vastrae_wishlist directly in localStorage)
     getWishlist: function () {
       const key = this.getUserStorageKey(STORAGE_KEY_WISH);
-      if (!key || !window.vastraeStorage) return [];
-      return window.vastraeStorage.get(key, []);
+      if (!key) return [];
+      try {
+        const stored = JSON.parse(localStorage.getItem(key));
+        if (Array.isArray(stored)) return stored;
+      } catch (e) {}
+      return [];
     },
 
     saveWishlist: function (wishlist) {
       const key = this.getUserStorageKey(STORAGE_KEY_WISH);
-      if (!key || !window.vastraeStorage) return false;
-      return window.vastraeStorage.set(key, wishlist);
+      if (!key) return false;
+      try {
+        localStorage.setItem(key, JSON.stringify(wishlist));
+      } catch (e) {}
+      return true;
     },
 
     toggleWishlist: function (product) {
