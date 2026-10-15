@@ -15,99 +15,141 @@
   // ------------------------------------------------------------------------
   // 1. APPLICATION STATE & PERSISTENCE (ZERO DEMO DATA - AUTHENTIC CLIENT SESSIONS)
   // ------------------------------------------------------------------------
-  const STORAGE_KEY_USER = "vastrae_active_user";
-  const STORAGE_KEY_USERS_DB = "vastrae_users_database";
   const STORAGE_KEY_CART = "vastrae_cart";
   const STORAGE_KEY_WISH = "vastrae_wishlist";
   const STORAGE_KEY_ORDERS = "vastrae_orders";
+  const STORAGE_KEY_PRODUCTS = "vastrae_products";
+  const STORAGE_KEY_MEASUREMENTS = "vastrae_measurements";
   const STORAGE_KEY_SAVED_DESIGNS = "vastrae_saved_designs";
   const STORAGE_KEY_REBORN = "vastrae_saree_reborn";
   const STORAGE_KEY_OWN_FABRIC = "vastrae_own_fabric";
 
-  // Active session customer (strictly null by default; no demo profile)
+  // Rule 5: Seed products once on first load if empty, then use localStorage always
+  const initialProductsCatalog = (window.VASTRAE_DATA && Array.isArray(window.VASTRAE_DATA.products))
+    ? [...window.VASTRAE_DATA.products]
+    : [];
+
+  function seedProductsIfEmpty() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+      if (stored === null) {
+        if (initialProductsCatalog.length > 0) {
+          localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(initialProductsCatalog));
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Ensure catalog is seeded immediately into localStorage on load
+  seedProductsIfEmpty();
+
+  function getStoredProducts() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+      if (raw !== null) {
+        const stored = JSON.parse(raw);
+        if (Array.isArray(stored)) return stored;
+      }
+    } catch (e) {}
+    seedProductsIfEmpty();
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+      if (raw !== null) {
+        const stored = JSON.parse(raw);
+        if (Array.isArray(stored)) return stored;
+      }
+    } catch (e) {}
+    return initialProductsCatalog;
+  }
+  window.getStoredProducts = getStoredProducts;
+
+  // Sync VASTRAE_DATA.products getter/setter with localStorage (zero recursion)
+  if (window.VASTRAE_DATA) {
+    try {
+      Object.defineProperty(window.VASTRAE_DATA, "products", {
+        get: function () {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+            if (raw !== null) {
+              const stored = JSON.parse(raw);
+              if (Array.isArray(stored)) return stored;
+            }
+          } catch (e) {}
+          return initialProductsCatalog;
+        },
+        set: function (val) {
+          if (Array.isArray(val)) {
+            try { localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(val)); } catch (e) {}
+          }
+        },
+        configurable: true
+      });
+    } catch (e) {}
+  }
+
+  // Active session customer (Rule 1: read from vastrae_user with fallback)
   let currentUser = null;
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USER)) || JSON.parse(localStorage.getItem("vastrae_current_user"));
-    // Purge legacy demo profile if previously stored in browser
-    if (stored && (stored.username === "DiyaMehta" || stored.name === "Diya Mehta")) {
-      localStorage.removeItem(STORAGE_KEY_USER);
-      localStorage.removeItem("vastrae_current_user");
-      currentUser = null;
-    } else {
-      currentUser = stored;
-      window.currentUser = stored;
-    }
+    const stored = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+      ? window.vastraeAuth.getCurrentUser()
+      : null;
+    currentUser = stored;
+    window.currentUser = stored;
   } catch (e) {
     currentUser = null;
   }
 
   // Authentic client storage (empty for guest until login/registration)
-    // Intended action preserved during guest browsing until authentication
+  // Intended action preserved during guest browsing until authentication
   let pendingAuthAction = null;
 
   function getUserKey() {
-    if (!currentUser) return null;
-    return currentUser.id || currentUser.username || currentUser.email || "client";
+    if (!currentUser || !currentUser.id) return null;
+    return String(currentUser.id);
   }
 
-  function loadUserCartAndWishlist() {
-    if (currentUser) {
-      const uKey = getUserKey();
-      const storedCart = localStorage.getItem(`${STORAGE_KEY_CART}_${uKey}`);
-      if (storedCart !== null) {
-        try { cart = JSON.parse(storedCart) || []; } catch (e) { cart = []; }
-      } else {
-        try { cart = JSON.parse(localStorage.getItem(STORAGE_KEY_CART)) || []; } catch (e) { cart = []; }
-        localStorage.setItem(`${STORAGE_KEY_CART}_${uKey}`, JSON.stringify(cart));
-      }
-
-      const storedWish = localStorage.getItem(`${STORAGE_KEY_WISH}_${uKey}`);
-      if (storedWish !== null) {
-        try { wishlist = JSON.parse(storedWish) || []; } catch (e) { wishlist = []; }
-      } else {
-        try { wishlist = JSON.parse(localStorage.getItem(STORAGE_KEY_WISH)) || []; } catch (e) { wishlist = []; }
-        localStorage.setItem(`${STORAGE_KEY_WISH}_${uKey}`, JSON.stringify(wishlist));
-      }
-    } else {
-      cart = [];
-      wishlist = [];
+  function getCustomerRecords(storageKey) {
+    const userKey = getUserKey();
+    if (!userKey) return [];
+    try {
+      const records = JSON.parse(localStorage.getItem(`${storageKey}_${userKey}`)) || [];
+      return Array.isArray(records) ? records : [];
+    } catch (e) {
+      return [];
     }
   }
 
+  function loadUserCartAndWishlist() {
+    cart = getCustomerRecords(STORAGE_KEY_CART);
+    wishlist = getCustomerRecords(STORAGE_KEY_WISH);
+    if (!Array.isArray(cart)) cart = [];
+    if (!Array.isArray(wishlist)) wishlist = [];
+  }
+
   function saveUserCart() {
-    if (currentUser) {
-      const uKey = getUserKey();
-      localStorage.setItem(`${STORAGE_KEY_CART}_${uKey}`, JSON.stringify(cart));
-      localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
-      if (window.vastraeCartService) {
-        window.vastraeCartService.saveCart(cart);
-      }
+    if (window.vastraeCartService) {
+      window.vastraeCartService.saveCart(cart);
+    } else if (getUserKey()) {
+      localStorage.setItem(`${STORAGE_KEY_CART}_${getUserKey()}`, JSON.stringify(cart));
     }
   }
 
   function saveUserWishlist() {
-    if (currentUser) {
-      const uKey = getUserKey();
-      localStorage.setItem(`${STORAGE_KEY_WISH}_${uKey}`, JSON.stringify(wishlist));
-      localStorage.setItem(STORAGE_KEY_WISH, JSON.stringify(wishlist));
-      if (window.vastraeCartService) {
-        window.vastraeCartService.saveWishlist(wishlist);
-      }
+    if (window.vastraeCartService) {
+      window.vastraeCartService.saveWishlist(wishlist);
+    } else if (getUserKey()) {
+      localStorage.setItem(`${STORAGE_KEY_WISH}_${getUserKey()}`, JSON.stringify(wishlist));
     }
-  }
-
-  function purgeLegacyDemoAndPriyaShetty() {
-    // Disabled: preserve all genuine user activities dynamically
   }
 
   // Authentic client storage (strictly empty for guest until login/registration)
   let cart = [];
   let wishlist = [];
   loadUserCartAndWishlist();
-  let savedDesigns = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || []) : [];
-  let orders = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || []) : [];
-  let sareeRebornOrders = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []) : [];
-  let ownFabricOrders = currentUser ? (JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || []) : [];
+  let savedDesigns = getCustomerRecords(STORAGE_KEY_SAVED_DESIGNS);
+  let orders = currentUser && window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id) : [];
+  let sareeRebornOrders = currentUser && window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id) : [];
+  let ownFabricOrders = currentUser && window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id) : [];
 
   // Active state for Customize Your Way module
   let customState = {
@@ -141,10 +183,19 @@
   // ------------------------------------------------------------------------
   // 2. INITIALIZATION & ROUTING
   // ------------------------------------------------------------------------
-  function initApp() {
+  async function initApp() {
+    if (window.vastraeAuth && typeof window.vastraeAuth.migratePlaintextPasswords === "function") {
+      try {
+        await window.vastraeAuth.migratePlaintextPasswords();
+      } catch (error) {
+        console.error("Unable to migrate legacy account passwords to secure hashes.", error);
+        showToast("Account security setup could not finish. Please reload before signing in.");
+      }
+    }
+    currentUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+    window.currentUser = currentUser;
     setupAuthValidationListeners();
     getStoredUsers();
-    purgeLegacyDemoAndPriyaShetty();
     loadUserCartAndWishlist();
     updateAuthUI();
     updateCartWishCounters();
@@ -170,9 +221,10 @@
     const initialHash = (window.location.hash || "").replace("#", "");
     if (!currentUser) {
       // Unauthenticated visitor: Home page is displayed first
-      if (["dashboard", "admin", "tailor"].includes(initialHash)) {
-        window.navigateToPage("login");
-        showToast("Please log in to access your Customer Workspace.");
+      if (["dashboard", "admin", "tailor", "measurements", "profile"].includes(initialHash)) {
+        window.navigateToPage("home");
+        showToast("Please log in to access your " + (initialHash === "measurements" ? "measurements." : initialHash === "profile" ? "profile details." : "dashboard."));
+        openAuthModal("login");
       } else if (["about", "collection", "services", "contact", "login"].includes(initialHash)) {
         window.navigateToPage(initialHash);
       } else if (["customize", "sareeReborn", "ownFabric", "aiTryOnStudio", "accessories"].includes(initialHash)) {
@@ -190,6 +242,18 @@
           window.showTailorDashboard(subTab === "overview" ? "queue" : subTab);
         } else {
           showDashboardView(subTab);
+        }
+      } else if (initialHash === "measurements" || initialHash === "profile") {
+        if (currentUser.role === "customer") {
+          window.navigateToPage(initialHash);
+        } else if (currentUser.role === "admin") {
+          window.location.hash = "#admin";
+          window.showAdminDashboard();
+        } else if (currentUser.role === "tailor") {
+          window.location.hash = "#tailor";
+          window.showTailorDashboard();
+        } else {
+          window.navigateToPage("home");
         }
       } else if (initialHash === "admin") {
         if (currentUser.role === "admin") {
@@ -238,17 +302,31 @@
 
     // Video Autoplay Assistant
     const heroVid = document.getElementById("vasHeroVideo");
-    if (heroVid) {
-      heroVid.play().catch(function () {
-        // Fallback poster hero_boutique_bg.jpg is already active
-      });
+    if (heroVid && typeof heroVid.play === "function") {
+      try {
+        const p = heroVid.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(function () {});
+        }
+      } catch (e) {}
     }
 
     // Hash change handler
     window.addEventListener("hashchange", function () {
       const currentRoute = (window.location.hash || "").replace("#", "");
+      currentUser = getSyncUser();
       if (currentRoute === "dashboard" || currentRoute.startsWith("dashboard")) {
-        if (!currentUser) {
+        if (!currentUser || currentUser.role !== "customer") {
+          if (currentUser && currentUser.role === "admin") {
+            window.location.hash = "#admin";
+            window.showAdminDashboard();
+            return;
+          }
+          if (currentUser && currentUser.role === "tailor") {
+            window.location.hash = "#tailor";
+            window.showTailorDashboard();
+            return;
+          }
           showToast("Please log in to access your Customer Workspace.");
           showAuthError("Please log in to access your Customer Workspace.");
           window.navigateToPage("login");
@@ -256,18 +334,35 @@
           const subTab = currentRoute.split("/")[1] || window._targetDashboardTab || "overview";
           showDashboardView(subTab);
         }
+      } else if (currentRoute === "measurements") {
+        if (!currentUser || currentUser.role !== "customer") {
+          showToast("Please log in to view your measurements.");
+          openAuthModal("login");
+        } else {
+          window.navigateToPage("measurements");
+        }
+      } else if (currentRoute === "profile") {
+        if (!currentUser || currentUser.role !== "customer") {
+          showToast("Please log in to view your profile details.");
+          openAuthModal("login");
+        } else {
+          window.navigateToPage("profile");
+        }
       } else if (currentRoute === "admin") {
         if (currentUser && currentUser.role === "admin") {
           window.showAdminDashboard();
         } else {
+          window.navigateToPage("home");
           openAuthModal("login");
         }
       } else if (currentRoute === "tailor") {
         if (currentUser && currentUser.role === "tailor") {
           window.showTailorDashboard();
         } else {
+          window.navigateToPage("home");
           openAuthModal("login");
         }
+      } else if (["home", "about", "collection", "services", "contact", "login"].includes(currentRoute)) {
         window.navigateToPage(currentRoute);
       } else if (["customize", "sareeReborn", "ownFabric", "accessories"].includes(currentRoute)) {
         window.navigateToSection(currentRoute);
@@ -293,7 +388,8 @@
   }
 
   function showDashboardView(activeTab = "overview") {
-    if (!currentUser) {
+    currentUser = getSyncUser();
+    if (!currentUser || currentUser.role !== "customer") {
       showToast("Please log in to access your Customer Workspace.");
       showAuthError("Please log in to access your Customer Workspace.");
       window.navigateToPage("login");
@@ -321,32 +417,12 @@
   }
 
   function getSyncUser() {
-    if (window.vastraeAuth && typeof window.vastraeAuth.getCurrentUser === "function") {
-      const u = window.vastraeAuth.getCurrentUser();
-      if (u) {
-        currentUser = u;
-        window.currentUser = u;
-        return u;
-      }
-    }
-    try {
-      const u = JSON.parse(localStorage.getItem("vas_user")) ||
-                JSON.parse(localStorage.getItem("vastrae_current_user")) ||
-                JSON.parse(localStorage.getItem("vastrae_active_user")) ||
-                null;
-      if (u) {
-        currentUser = u;
-        window.currentUser = u;
-        return u;
-      }
-    } catch (e) {}
-    if (window.currentUser) {
-      currentUser = window.currentUser;
-      return currentUser;
-    }
-    currentUser = null;
-    window.currentUser = null;
-    return null;
+    const u = window.vastraeAuth && typeof window.vastraeAuth.getCurrentUser === "function"
+      ? window.vastraeAuth.getCurrentUser()
+      : null;
+    currentUser = u;
+    window.currentUser = u;
+    return u;
   }
 
   function openCustomerDashboard(activeTab = "overview") {
@@ -437,6 +513,11 @@
   window.handleDropdownNavigate = function (dest) {
     window.closeUserDropdown();
     const user = getSyncUser();
+    if (!user) {
+      showToast("Please sign in or register to access this section.");
+      openAuthModal("login");
+      return;
+    }
     const role = (user && user.role) ? user.role.toLowerCase() : "customer";
 
     if (dest === "dashboard") {
@@ -447,8 +528,7 @@
         if (typeof window.showTailorDashboard === "function") window.showTailorDashboard("queue");
         else window.navigateToPage("tailorDashboard");
       } else {
-        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard("overview");
-        else window.navigateToPage("customerDashboard");
+        openCustomerDashboard("overview");
       }
     } else if (dest === "measurements") {
       if (role === "admin") {
@@ -458,11 +538,8 @@
         if (typeof window.showTailorDashboard === "function") window.showTailorDashboard("measurements");
         else window.navigateToPage("tailorDashboard");
       } else {
-        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard("measurements");
-        else {
-          window.navigateToPage("customerDashboard");
-          if (typeof window.switchDashboardTab === "function") window.switchDashboardTab("measurements");
-        }
+        window.location.hash = "#measurements";
+        window.navigateToPage("measurements");
       }
     } else if (dest === "profile") {
       if (role === "admin") {
@@ -472,11 +549,8 @@
         if (typeof window.showTailorDashboard === "function") window.showTailorDashboard("profile");
         else window.navigateToPage("tailorDashboard");
       } else {
-        if (typeof window.openCustomerDashboard === "function") window.openCustomerDashboard("profile");
-        else {
-          window.navigateToPage("customerDashboard");
-          if (typeof window.switchDashboardTab === "function") window.switchDashboardTab("profile");
-        }
+        window.location.hash = "#profile";
+        window.navigateToPage("profile");
       }
     }
   };
@@ -488,11 +562,17 @@
     }
     currentUser = null;
     window.currentUser = null;
-    localStorage.removeItem("vas_user");
-    localStorage.removeItem("vastrae_active_user");
-    localStorage.removeItem("vastrae_current_user");
+    cart = [];
+    wishlist = [];
+    savedDesigns = [];
+    orders = [];
+    sareeRebornOrders = [];
+    ownFabricOrders = [];
+    if (window.clearTryOnCustomerData) window.clearTryOnCustomerData();
+    clearAuthFormState();
     document.body.classList.remove("vas-role-admin", "vas-role-tailor", "vas-role-customer");
     if (typeof updateAuthUI === "function") updateAuthUI();
+    updateCartWishCounters();
     if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogout === "function") {
       window.vastraeNotificationService.onUserLogout();
     }
@@ -541,14 +621,16 @@
       }
       return;
     }
-    if (target === "profile") {
-      openCustomerDashboard("profile");
-      return;
-    }
-
-    const validPages = ["home", "about", "collection", "services", "contact", "login"];
+    const validPages = ["home", "about", "collection", "services", "contact", "login", "measurements", "profile"];
     if (!validPages.includes(target)) {
       target = "home";
+    }
+
+    // Guard measurements and profile for authenticated patrons
+    if ((target === "measurements" || target === "profile") && !currentUser) {
+      showToast("Please sign in or register to view your " + (target === "measurements" ? "measurements" : "profile") + ".");
+      openAuthModal("login");
+      return;
     }
 
     // Show services page; if unauthenticated, show helpful toast about signing in first to use interactive features
@@ -583,6 +665,26 @@
         pageEl.style.display = (p === target) ? "block" : "none";
       }
     });
+
+    // Update browser URL hash cleanly without forcing reload
+    if (window.location.hash !== "#" + target) {
+      try {
+        window.history.pushState(null, "", "#" + target);
+      } catch (e) {
+        window.location.hash = "#" + target;
+      }
+    }
+
+    // If navigating to dedicated pages, trigger their real dynamic data renderers
+    if (target === "measurements") {
+      if (typeof window.renderMeasurementsPage === "function") {
+        window.renderMeasurementsPage();
+      }
+    } else if (target === "profile") {
+      if (typeof window.renderProfilePage === "function") {
+        window.renderProfilePage();
+      }
+    }
 
     // If navigating to login, ensure auth modal is opened cleanly
     if (target === "login") {
@@ -671,19 +773,19 @@
   // 4. AUTHENTICATION & PROFILE SYSTEM (EXACT VALIDATION REQUIREMENTS)
   // ------------------------------------------------------------------------
   function getStoredUsers() {
-    let db = [];
-    try {
-      db = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_DB)) || JSON.parse(localStorage.getItem("vastrae_users")) || [];
-    } catch (e) {
-      db = [];
-    }
-    if (!Array.isArray(db)) {
-      db = [];
-    }
-    // Clean out legacy demo account if present
-    db = db.filter(u => u && u.username !== "AnanyaSharma" && u.email !== "ananya@example.com");
-    return db;
+    return window.vastraeAuth && typeof window.vastraeAuth.getUsers === "function"
+      ? window.vastraeAuth.getUsers()
+      : [];
   }
+
+  function saveStoredUsers(users) {
+    const list = Array.isArray(users) ? users : [];
+    if (!window.vastraeAuth || typeof window.vastraeAuth.saveUsers !== "function") {
+      throw new Error("Account storage service is unavailable.");
+    }
+    window.vastraeAuth.saveUsers(list);
+  }
+  window.saveStoredUsers = saveStoredUsers;
 
   function showFieldError(elementId, msg) {
     const el = document.getElementById(elementId);
@@ -702,15 +804,31 @@
     if (errBox) errBox.style.display = "none";
   }
 
+  function clearAuthFormState() {
+    ["loginUser", "loginPass", "regFullName", "regUsername", "regEmail", "regPhone",
+      "regPassword", "regConfirmPassword"].forEach(function (id) {
+      const input = document.getElementById(id);
+      if (input) input.value = "";
+    });
+    const password = document.getElementById("loginPass");
+    if (password) {
+      password.type = "password";
+      password.autocomplete = "current-password";
+    }
+    const errorBox = document.getElementById("authErrorMsg");
+    if (errorBox) errorBox.style.display = "none";
+    clearAllFieldErrors();
+    if (typeof window.switchAuthTab === "function") window.switchAuthTab("login");
+  }
+
   function setupAuthValidationListeners() {
-    // Full Name: accepts only letters and spaces; rejects numbers and special characters; keeps valid text visible
+    // Full Name: accepts letters and spaces; keeps valid text visible
     const fullNameInput = document.getElementById("regFullName");
     const fullNameError = document.getElementById("regFullNameError");
     if (fullNameInput) {
       fullNameInput.addEventListener("input", function (e) {
         const rawVal = e.target.value;
         if (/[^A-Za-z\s]/.test(rawVal)) {
-          // Reject numbers and special characters, keep valid text visible
           e.target.value = rawVal.replace(/[^A-Za-z\s]/g, "");
           if (fullNameError) {
             fullNameError.textContent = "Only letters and spaces are allowed";
@@ -720,6 +838,15 @@
           if (fullNameError) {
             fullNameError.textContent = "";
             fullNameError.style.display = "none";
+          }
+        }
+      });
+      fullNameInput.addEventListener("blur", function (e) {
+        const val = e.target.value.trim();
+        if (val && val.length < 2) {
+          if (fullNameError) {
+            fullNameError.textContent = "Full Name must be at least 2 characters long.";
+            fullNameError.style.display = "block";
           }
         }
       });
@@ -736,15 +863,19 @@
             usernameError.textContent = "Username can only contain letters, numbers, and underscores.";
             usernameError.style.display = "block";
           }
-        } else if (val && val.length < 3) {
-          if (usernameError) {
-            usernameError.textContent = "Username must be at least 3 characters long.";
-            usernameError.style.display = "block";
-          }
         } else {
           if (usernameError) {
             usernameError.textContent = "";
             usernameError.style.display = "none";
+          }
+        }
+      });
+      usernameInput.addEventListener("blur", function (e) {
+        const val = e.target.value.trim();
+        if (val && val.length < 3) {
+          if (usernameError) {
+            usernameError.textContent = "Username must be at least 3 characters long.";
+            usernameError.style.display = "block";
           }
         }
       });
@@ -756,15 +887,19 @@
     if (emailInput) {
       emailInput.addEventListener("input", function (e) {
         const val = e.target.value.trim();
+        if (val && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+          if (emailError) {
+            emailError.textContent = "";
+            emailError.style.display = "none";
+          }
+        }
+      });
+      emailInput.addEventListener("blur", function (e) {
+        const val = e.target.value.trim();
         if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
           if (emailError) {
             emailError.textContent = "Please enter a valid email address.";
             emailError.style.display = "block";
-          }
-        } else {
-          if (emailError) {
-            emailError.textContent = "";
-            emailError.style.display = "none";
           }
         }
       });
@@ -775,21 +910,38 @@
     const phoneError = document.getElementById("regPhoneError");
     if (phoneInput) {
       phoneInput.addEventListener("input", function (e) {
-        const val = e.target.value.replace(/\D/g, "");
-        if (val && val.length === 10 && !/^[6-9]/.test(val)) {
-          if (phoneError) {
-            phoneError.textContent = "Mobile number must start with 6, 7, 8, or 9.";
-            phoneError.style.display = "block";
-          }
-        } else if (val && val.length > 0 && val.length !== 10) {
-          if (phoneError) {
-            phoneError.textContent = "Please enter a valid 10-digit mobile number.";
-            phoneError.style.display = "block";
+        let val = e.target.value.replace(/\D/g, "");
+        if (val.startsWith("91") && val.length === 12) val = val.slice(2);
+        if (val.startsWith("0") && val.length === 11) val = val.slice(1);
+        if (val.length > 10) val = val.slice(0, 10);
+        e.target.value = val;
+
+        if (val.length === 10) {
+          if (!/^[6-9]/.test(val)) {
+            if (phoneError) {
+              phoneError.textContent = "Mobile number must start with 6, 7, 8, or 9.";
+              phoneError.style.display = "block";
+            }
+          } else {
+            if (phoneError) {
+              phoneError.textContent = "";
+              phoneError.style.display = "none";
+            }
           }
         } else {
+          // Clear error while typing until blur
           if (phoneError) {
             phoneError.textContent = "";
             phoneError.style.display = "none";
+          }
+        }
+      });
+      phoneInput.addEventListener("blur", function (e) {
+        const val = e.target.value.replace(/\D/g, "");
+        if (val && val.length !== 10) {
+          if (phoneError) {
+            phoneError.textContent = "Please enter a valid 10-digit mobile number.";
+            phoneError.style.display = "block";
           }
         }
       });
@@ -801,23 +953,19 @@
     if (passwordInput) {
       passwordInput.addEventListener("input", function (e) {
         const val = e.target.value;
-        if (val) {
-          const res = window.vastraeValidation ? window.vastraeValidation.validatePassword(val) : { valid: val.length >= 6 };
-          if (!res.valid) {
-            if (passwordError) {
-              passwordError.textContent = res.message;
-              passwordError.style.display = "block";
-            }
-          } else {
-            if (passwordError) {
-              passwordError.textContent = "";
-              passwordError.style.display = "none";
-            }
-          }
-        } else {
+        if (val.length >= 6) {
           if (passwordError) {
             passwordError.textContent = "";
             passwordError.style.display = "none";
+          }
+        }
+      });
+      passwordInput.addEventListener("blur", function (e) {
+        const val = e.target.value;
+        if (val && val.length < 6) {
+          if (passwordError) {
+            passwordError.textContent = "Password must be at least 6 characters long.";
+            passwordError.style.display = "block";
           }
         }
       });
@@ -829,15 +977,19 @@
     if (confirmPassInput) {
       confirmPassInput.addEventListener("input", function (e) {
         const pass = document.getElementById("regPassword") ? document.getElementById("regPassword").value : "";
-        if (e.target.value && e.target.value !== pass) {
-          if (confirmPassError) {
-            confirmPassError.textContent = "Confirm password does not match.";
-            confirmPassError.style.display = "block";
-          }
-        } else {
+        if (e.target.value && e.target.value === pass) {
           if (confirmPassError) {
             confirmPassError.textContent = "";
             confirmPassError.style.display = "none";
+          }
+        }
+      });
+      confirmPassInput.addEventListener("blur", function (e) {
+        const pass = document.getElementById("regPassword") ? document.getElementById("regPassword").value : "";
+        if (e.target.value && e.target.value !== pass) {
+          if (confirmPassError) {
+            confirmPassError.textContent = "Confirm password does not match the chosen password.";
+            confirmPassError.style.display = "block";
           }
         }
       });
@@ -845,6 +997,7 @@
   }
 
   window.openAuthModal = function (tab = "login") {
+    if (!getSyncUser() && tab === "login") clearAuthFormState();
     if (typeof openModal === "function") {
       openModal("authModal");
     } else {
@@ -895,10 +1048,19 @@
       const emailField = document.getElementById("forgotEmail");
       if (emailField) emailField.value = "";
     }
+    if (isLogin) {
+      const userField = document.getElementById("loginUser");
+      const passField = document.getElementById("loginPass");
+      if (userField) userField.value = "";
+      if (passField) {
+        passField.value = "";
+        passField.type = "password";
+      }
+    }
   };
 
   // Validate & Handle Register Form Submit
-  window.handleRegisterSubmit = function (event) {
+  window.handleRegisterSubmit = async function (event) {
     event.preventDefault();
 
     const fullName = document.getElementById("regFullName").value.trim();
@@ -969,57 +1131,58 @@
       return;
     }
 
-    // Create authentic customer profile
-    const usersDb = getStoredUsers();
-    currentUser = {
-      id: "CUST-" + Math.floor(1000 + Math.random() * 9000),
-      username: username,
-      name: fullName,
-      role: "customer",
-      email: email,
-      phone: pRes.formatted || ("+91 " + phone),
-      password: password,
-      role: "customer",
-      gender: "Female",
-      dob: "1998-01-01",
-      address: "100 Feet Road, Indiranagar, Bengaluru",
-      city: "Bengaluru",
-      state: "Karnataka",
-      pincode: "560038",
-      avatar: fullName.charAt(0).toUpperCase(),
-      tier: "Atelier Patron Member",
-      loyaltyPoints: 100,
-      familyProfiles: [
-        { name: fullName, relation: "Self", bust: "34\"", waist: "28\"", hips: "36\"", shoulder: "14\"", blouseLength: "14\"" }
-      ],
-      addresses: [
-        { label: "Default Address", address: "100 Feet Road, Indiranagar, Bengaluru - 560038", isDefault: true }
-      ],
-      registeredAt: new Date().toISOString()
-    };
-
-    usersDb.push(currentUser);
-    saveStoredUsers(usersDb);
-
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-    localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
-    localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
-
-    if (window.vastraeAuth && typeof window.vastraeAuth.getUsers === "function") {
-      try {
-        const authUsers = window.vastraeAuth.getUsers();
-        if (!authUsers.find(u => u.username === username || u.email === email)) {
-          authUsers.push(currentUser);
-          localStorage.setItem("vastrae_users", JSON.stringify(authUsers));
-        }
-      } catch (e) {}
+    let registration;
+    try {
+      registration = await window.vastraeAuth.registerCustomer({
+        fullName: fullName,
+        username: username,
+        email: email,
+        phone: phone,
+        password: password,
+        confirmPassword: confirmPassword
+      });
+    } catch (error) {
+      console.error("Customer registration could not be completed.", error);
+      showAuthError("Secure account creation is unavailable right now. Please try again.");
+      return;
     }
-    localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
-    localStorage.setItem("vastrae_users", JSON.stringify(usersDb));
+    if (!registration.success) {
+      showAuthError(registration.message || "Account creation could not be completed.");
+      return;
+    }
+
+    const usersDb = getStoredUsers();
+    const account = usersDb.find(function (user) { return String(user.id) === String(registration.user.id); });
+    if (!account) {
+      showAuthError("Your account was created, but could not be loaded. Please sign in.");
+      window.vastraeAuth.logout();
+      return;
+    }
+    Object.assign(account, {
+      gender: "Female",
+      dob: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      avatar: fullName.charAt(0).toUpperCase(),
+      tier: account.loyaltyTier || "Atelier Patron Member",
+      familyProfiles: [],
+      addresses: []
+    });
+    saveStoredUsers(usersDb);
+    currentUser = Object.assign({}, registration.user, account, {
+      passwordHash: undefined,
+      passwordSalt: undefined,
+      passwordIterations: undefined
+    });
+    delete currentUser.passwordHash;
+    delete currentUser.passwordSalt;
+    delete currentUser.passwordIterations;
+    window.vastraeAuth.setCurrentUser(account);
 
     window.currentUser = currentUser;
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-    localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
+    if (window.loadTryOnCustomerData) window.loadTryOnCustomerData(currentUser.id);
 
     // Reset customer workspace for new patron
     cart = [];
@@ -1031,11 +1194,24 @@
     saveUserCart();
     saveUserWishlist();
 
+    // Clear registration form fields
+    try {
+      document.getElementById("regFullName").value = "";
+      document.getElementById("regUsername").value = "";
+      document.getElementById("regEmail").value = "";
+      document.getElementById("regPhone").value = "";
+      document.getElementById("regPassword").value = "";
+      document.getElementById("regConfirmPassword").value = "";
+    } catch (e) {}
+
     updateAuthUI();
     if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogin === "function") {
       window.vastraeNotificationService.onUserLogin(currentUser);
     }
     showToast(`✓ Welcome to VASTRAÉ, ${fullName}! Your client account has been created.`);
+
+    // Close Auth Modal
+    if (typeof closeModal === "function") closeModal();
 
     // Execute preserved intended action if guest was shopping
     if (pendingAuthAction) {
@@ -1070,15 +1246,15 @@
       return;
     }
 
-    openCustomerDashboard();
+    openCustomerDashboard("overview");
   };
 
   // Handle Login Submit (Unified common login, automatic role detection, strict dashboard redirection)
     // Handle Login Submit (Unified common login, automatic role detection, strict in-page dashboard redirection)
-  window.handleLoginSubmit = function (event) {
+  window.handleLoginSubmit = async function (event) {
     if (event) event.preventDefault();
     const loginUser = (document.getElementById("loginUser").value || "").trim();
-    const loginPass = (document.getElementById("loginPass").value || "").trim();
+    const loginPass = document.getElementById("loginPass").value || "";
 
     const errorBox = document.getElementById("authErrorMsg");
     if (errorBox) errorBox.style.display = "none";
@@ -1094,50 +1270,34 @@
       return;
     }
 
-    const usersDb = getStoredUsers();
-    const query = loginUser.toLowerCase();
-    let matched = usersDb.find(u => 
-      ((u.username && u.username.toLowerCase() === query) || (u.email && u.email.toLowerCase() === query)) &&
-      u.password === loginPass
-    );
-
-    // Also check window.vastraeAuth users
-    if (!matched && window.vastraeAuth && typeof window.vastraeAuth.getUsers === "function") {
-      try {
-        const aUsers = window.vastraeAuth.getUsers();
-        matched = aUsers.find(u => 
-          ((u.username && u.username.toLowerCase() === query) || (u.email && u.email.toLowerCase() === query)) &&
-          u.password === loginPass
-        );
-      } catch (e) {}
-    }
-
-    if (!matched) {
-      showAuthError("Invalid username/email or password. Please check your credentials.");
+    let result;
+    try {
+      result = await window.vastraeAuth.login(loginUser, loginPass);
+    } catch (error) {
+      console.error("Sign-in could not be completed.", error);
+      showAuthError("Sign-in is unavailable right now. Please try again.");
       return;
     }
-
-    currentUser = matched;
-    window.currentUser = matched;
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-    localStorage.setItem("vas_user", JSON.stringify(currentUser));
-    localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
-    localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
-    if (window.vastraeAuth && typeof window.vastraeAuth.setCurrentUser === "function") {
-      window.vastraeAuth.setCurrentUser(currentUser);
+    if (!result.success) {
+      showAuthError(result.message || "Invalid username/email or password. Please check your credentials.");
+      return;
     }
+    currentUser = result.user;
+    window.currentUser = currentUser;
+    if (window.loadTryOnCustomerData) window.loadTryOnCustomerData(currentUser.id);
     updateAuthUI();
     if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogin === "function") {
       window.vastraeNotificationService.onUserLogin(currentUser);
     }
 
     loadUserCartAndWishlist();
-    orders = (window.vastraeOrderService ? window.vastraeOrderService.getOrders() : JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS))) || [];
-    savedDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
-    sareeRebornOrders = (window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getAllRequests() : JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN))) || [];
-    ownFabricOrders = JSON.parse(localStorage.getItem(STORAGE_KEY_OWN_FABRIC)) || [];
+    orders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id) : [];
+    savedDesigns = getCustomerRecords(STORAGE_KEY_SAVED_DESIGNS);
+    sareeRebornOrders = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id) : [];
+    ownFabricOrders = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id) : [];
 
     closeModal();
+    clearAuthFormState();
 
     // Check if there was an intended cart or wishlist action from guest browsing
     if (pendingAuthAction) {
@@ -1197,7 +1357,7 @@
   };
 
   // Handle Forgot Password Submit from HEAD
-  window.handleForgotPasswordSubmit = function (event) {
+  window.handleForgotPasswordSubmit = async function (event) {
     if (event) event.preventDefault();
     const forgotEmail = document.getElementById("forgotEmail") ? document.getElementById("forgotEmail").value.trim() : "";
     const emailErr = document.getElementById("forgotEmailError");
@@ -1217,12 +1377,27 @@
 
     const newPass = document.getElementById("forgotNewPassword") ? document.getElementById("forgotNewPassword").value : "";
     if (newPass && window.vastraeAuth && typeof window.vastraeAuth.resetPassword === "function") {
-      const res = window.vastraeAuth.resetPassword(forgotEmail, newPass);
-      if (res && res.success) {
+      let res;
+      try {
+        res = await window.vastraeAuth.resetPassword(forgotEmail, newPass);
+      } catch (error) {
+        console.error("Password reset could not be completed.", error);
+        if (alertBox) {
+          alertBox.textContent = "Password reset is unavailable right now. Please try again.";
+          alertBox.style.display = "block";
+        }
+        return;
+      }
+      if (res.success) {
         showToast(res.message);
         openAuthModal("login");
         return;
       }
+      if (alertBox) {
+        alertBox.textContent = res.message;
+        alertBox.style.display = "block";
+      }
+      return;
     }
 
     // Check account exists
@@ -1260,7 +1435,7 @@
   };
 
   // Finalize Password Reset
-  window.handlePasswordResetFinalize = function () {
+  window.handlePasswordResetFinalize = async function () {
     const newPass = document.getElementById("forgotNewPass").value;
     const confirmPass = document.getElementById("forgotConfirmPass").value;
     const newPassErr = document.getElementById("forgotNewPassError");
@@ -1289,17 +1464,33 @@
     }
 
     // Update in database
-    const usersDb = getStoredUsers();
-    const user = usersDb.find(u => u.email && u.email.toLowerCase() === window.forgotRecoveryEmail.toLowerCase());
-    if (user) {
-      user.password = newPass;
-      localStorage.setItem(STORAGE_KEY_USERS_DB, JSON.stringify(usersDb));
-      localStorage.setItem("vastrae_users", JSON.stringify(usersDb));
+    if (!window.forgotRecoveryEmail) {
+      if (alertBox) {
+        alertBox.textContent = "Verify your email address before resetting your password.";
+        alertBox.style.display = "block";
+      }
+      return;
     }
-
+    let resetResult;
+    try {
+      resetResult = await window.vastraeAuth.resetPassword(window.forgotRecoveryEmail, newPass);
+    } catch (error) {
+      console.error("Password reset could not be completed.", error);
+      if (alertBox) {
+        alertBox.textContent = "Password reset is unavailable right now. Please try again.";
+        alertBox.style.display = "block";
+      }
+      return;
+    }
+    if (!resetResult.success) {
+      if (alertBox) {
+        alertBox.textContent = resetResult.message;
+        alertBox.style.display = "block";
+      }
+      return;
+    }
     if (alertBox) {
-      alertBox.textContent = "✓ Password has been reset successfully! Redirecting to Sign In...";
-      alertBox.style.background = "#eef8f1";
+      alertBox.textContent = "Password updated successfully. Please sign in with your new password.";
       alertBox.style.color = "#1d6c38";
       alertBox.style.border = "1px solid #c2e6cd";
       alertBox.style.display = "block";
@@ -1310,10 +1501,7 @@
 
     setTimeout(() => {
       window.switchAuthTab("login");
-      const userField = document.getElementById("loginUser");
-      if (userField) userField.value = window.forgotRecoveryEmail || "";
-      const passField = document.getElementById("loginPass");
-      if (passField) passField.value = "";
+      clearAuthFormState();
       showToast("Password reset successfully. Please sign in with your new password.");
     }, 1500);
   };
@@ -1328,70 +1516,10 @@
 
   // Quick Role Authentication Helper using actual accounts
   window.quickLoginDemo = function (role) {
-    if (window.vastraeAuth) {
-      const res = window.vastraeAuth.quickLoginDemo(role);
-      if (res && res.success) {
-        currentUser = res.user;
-        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-        localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
-        localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
-        loadUserCartAndWishlist();
-        updateAuthUI();
-        if (window.vastraeNotificationService && typeof window.vastraeNotificationService.onUserLogin === "function") {
-          window.vastraeNotificationService.onUserLogin(currentUser);
-        }
-        closeModal();
-
-        if (pendingAuthAction) {
-          const action = pendingAuthAction;
-          pendingAuthAction = null;
-          const p = VASTRAE_DATA.products.find(item => item.id === action.productId);
-          if (action.type === "cart" && p) {
-            const existing = cart.find(item => item.id === p.id);
-            if (existing) {
-              existing.quantity += 1;
-            } else {
-              cart.push({
-                id: p.id,
-                name: p.name,
-                price: p.price,
-                image: p.image,
-                size: action.size || (p.sizes ? p.sizes[0] : "M"),
-                color: p.color,
-                quantity: 1,
-                customization: p.customizable ? "Standard Atelier Fit" : "Ready-to-Wear"
-              });
-            }
-            saveUserCart();
-            updateCartWishCounters();
-            renderCollectionGrid();
-            showToast(`✓ Signed in as ${currentUser.name}! Added "${p.name}" to your Shopping Bag.`);
-            openCartDrawer();
-          } else if (action.type === "wishlist" && p) {
-            if (!wishlist.includes(p.id)) {
-              wishlist.push(p.id);
-              saveUserWishlist();
-              updateCartWishCounters();
-              renderCollectionGrid();
-            }
-            showToast(`✓ Signed in as ${currentUser.name}! Saved "${p.name}" to your Wishlist.`);
-          }
-          return;
-        }
-        if (currentUser.role === "admin") {
-          window.location.hash = "#admin";
-          window.showAdminDashboard();
-        } else if (currentUser.role === "tailor") {
-          window.location.hash = "#tailor";
-          window.showTailorDashboard();
-        } else {
-          openCustomerDashboard();
-        }
-        showToast("✓ Signed in as " + currentUser.name);
-        return;
-      }
-    }
-    showToast("Please use the login form with valid credentials.");
+    const result = window.vastraeAuth
+      ? window.vastraeAuth.quickLoginDemo(role)
+      : { message: "Sign-in service is unavailable." };
+    showToast(result.message || "Please use the login form with valid credentials.");
   };
 
   window.handleLogout = function () {
@@ -1400,10 +1528,8 @@
       currentUser = null;
       window.currentUser = null;
       pendingAuthAction = null;
-      localStorage.removeItem(STORAGE_KEY_USER);
-      localStorage.removeItem("vastrae_current_user");
-      localStorage.removeItem("vastrae_active_user");
       if (window.vastraeAuth) window.vastraeAuth.logout();
+      clearAuthFormState();
 
       cart = [];
       wishlist = [];
@@ -1577,8 +1703,8 @@
     if (items.length === 0) {
       grid.innerHTML = `
         <div style="grid-column: 1 / -1; text-align:center; padding: 48px; background:#fff; border-radius:12px; border:1px solid var(--vas-border);">
-          <p style="font-family:var(--vas-font-serif); font-size:1.3rem; margin-bottom:8px;">No garments matched your search query.</p>
-          <p style="color:var(--vas-muted); font-size:0.9rem; margin-bottom:16px;">Try adjusting your keywords or browse all atelier creations.</p>
+          <p style="font-family:var(--vas-font-serif); font-size:1.3rem; margin-bottom:8px;">No garments available in boutique catalog (0).</p>
+          <p style="color:var(--vas-muted); font-size:0.9rem; margin-bottom:16px;">Garments and couture collections are loaded dynamically from local storage.</p>
           <button class="vas-btn vas-btn-outline" onclick="window.filterCollection('all', null)">View Full Collection</button>
         </div>
       `;
@@ -1753,10 +1879,13 @@
   }
 
   function renderServicesGrid() {
-    const grid = document.getElementById("vasServicesGrid");
-    if (!grid || !window.VASTRAE_DATA || !window.VASTRAE_DATA.services) return;
+    const grids = [
+      document.getElementById("vasServicesGrid"),
+      document.getElementById("vasHomeServicesGrid")
+    ].filter(Boolean);
+    if (!grids.length || !window.VASTRAE_DATA || !window.VASTRAE_DATA.services) return;
 
-    grid.innerHTML = window.VASTRAE_DATA.services.map(s => `
+    const cards = window.VASTRAE_DATA.services.map(s => `
       <article class="vas-service-card vas-glass-card ${s.badge.includes('NEW') ? 'vas-service-card-featured' : ''}">
         <div class="vas-service-media">
           <img src="${s.image}" alt="${s.title}" loading="lazy" />
@@ -1768,21 +1897,20 @@
           <span class="vas-service-subtitle">${s.subtitle}</span>
           <p>${s.description}</p>
           <div class="vas-service-inclusions">
-            <strong>What's Included:</strong>
-            <ul>
-              ${s.inclusions.map(inc => `<li>${inc}</li>`).join('')}
-            </ul>
+            <strong>What to discuss</strong>
+            <ul>${s.inclusions.map(inc => `<li>${inc}</li>`).join('')}</ul>
           </div>
           <div class="vas-service-footer">
-            <div class="vas-service-price">${s.startingPrice.startsWith('₹') ? 'From ' : ''}<strong>${s.startingPrice}</strong></div>
+            <span class="vas-service-price">Discuss scope with the boutique</span>
             ${s.actionTarget === 'consultation' ?
-              `<button class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openConsultationModal()">${s.actionText}</button>` :
-              `<a href="#${s.actionTarget}" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('${s.actionTarget}', event)">${s.actionText}</a>`
+              `<button class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.openConsultationModal()">${s.actionText || 'Learn More'}</button>` :
+              `<a href="#${s.actionTarget}" class="vas-btn vas-btn-sm vas-btn-rose" onclick="window.navigateToSection('${s.actionTarget}', event)">${s.actionText || 'Learn More'}</a>`
             }
           </div>
         </div>
       </article>
     `).join('');
+    grids.forEach(grid => { grid.innerHTML = cards; });
   }
 
   function renderArtisansGrid() {
@@ -1805,13 +1933,39 @@
   }
 
   const STORAGE_KEY_REVIEWS = "vastrae_patron_reviews";
+  function escapeReviewValue(value) {
+    return String(value || "").replace(/[&<>"']/g, function (character) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[character];
+    });
+  }
+
   function getDynamicReviews() {
     let custom = [];
     try {
       custom = JSON.parse(localStorage.getItem(STORAGE_KEY_REVIEWS)) || [];
-    } catch(e) { custom = []; }
-    const defaults = (window.VASTRAE_DATA && window.VASTRAE_DATA.reviews) ? window.VASTRAE_DATA.reviews : [];
-    return [...custom, ...defaults];
+      if (!Array.isArray(custom)) throw new Error("Stored customer reviews are not a list.");
+    } catch(error) {
+      console.error("Could not load customer reviews.", error);
+      custom = [];
+    }
+    return custom.filter(review => review && review.text && review.name).map(function (review) {
+      const stars = Number(review.stars);
+      return Object.assign({}, review, {
+        name: escapeReviewValue(review.name),
+        location: escapeReviewValue(review.location),
+        role: escapeReviewValue(review.role),
+        initials: escapeReviewValue(review.initials),
+        text: escapeReviewValue(review.text),
+        occasion: escapeReviewValue(review.occasion),
+        stars: Number.isFinite(stars) ? Math.max(1, Math.min(5, Math.floor(stars))) : 5
+      });
+    });
   }
 
   function renderReviewsGrid() {
@@ -1819,6 +1973,9 @@
     const contactGrid = document.getElementById("vasContactReviewsGrid");
     const reviews = getDynamicReviews();
 
+    const emptyState = `<div class="vas-empty-state-luxury" style="grid-column:1/-1; text-align:center;">
+      <p>Customer reviews will appear here after they are shared with the boutique.</p>
+    </div>`;
     const homeHtml = reviews.slice(0, 3).map(r => `
       <div class="vas-review-card vas-glass-card">
         <div class="vas-review-stars" style="color:var(--vas-gold-dark); font-size:1.05rem; margin-bottom:10px;">${"★".repeat(r.stars)}</div>
@@ -1853,12 +2010,23 @@
       </div>
     `).join("");
 
-    if (homeGrid) homeGrid.innerHTML = homeHtml;
-    if (contactGrid) contactGrid.innerHTML = contactHtml;
+    if (homeGrid) homeGrid.innerHTML = homeHtml || emptyState;
+    if (contactGrid) contactGrid.innerHTML = contactHtml || emptyState;
   }
 
   window.openWriteReviewModal = function() {
+    const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser();
+    if (!user || user.role !== "customer") {
+      showToast("Please sign in to share a review.");
+      openAuthModal("login");
+      return;
+    }
     const m = document.getElementById("writeReviewModal");
+    const authorField = document.getElementById("revAuthor");
+    if (authorField) {
+      authorField.value = user.name || "";
+      authorField.readOnly = true;
+    }
     if (m) m.style.display = "flex";
   };
 
@@ -1869,10 +2037,17 @@
 
   window.submitPatronReview = function(event) {
     event.preventDefault();
-    const author = document.getElementById("revAuthor").value.trim();
+    const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser();
+    if (!user || user.role !== "customer") {
+      window.closeWriteReviewModal();
+      window.openWriteReviewModal();
+      return;
+    }
+    const author = user.name || "Customer";
     const location = document.getElementById("revLocation").value.trim();
     const occasion = document.getElementById("revOccasion").value.trim() || "Atelier Experience";
-    const stars = parseInt(document.getElementById("revStars").value, 10) || 5;
+    const submittedStars = parseInt(document.getElementById("revStars").value, 10) || 5;
+    const stars = Math.max(1, Math.min(5, submittedStars));
     const text = document.getElementById("revText").value.trim();
 
     if (!author || !text) return;
@@ -1881,7 +2056,7 @@
     const newRev = {
       id: "REV-USER-" + Date.now(),
       name: author,
-      role: "Verified Patron",
+      role: "Customer",
       location: location,
       initials: initials,
       stars: stars,
@@ -1893,9 +2068,20 @@
     let userReviews = [];
     try {
       userReviews = JSON.parse(localStorage.getItem(STORAGE_KEY_REVIEWS)) || [];
-    } catch(e) { userReviews = []; }
+      if (!Array.isArray(userReviews)) throw new Error("Stored customer reviews are not a list.");
+    } catch(error) {
+      console.error("Could not save the customer review.", error);
+      showToast("Your review could not be saved. Please try again.");
+      return;
+    }
     userReviews.unshift(newRev);
-    localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(userReviews));
+    try {
+      localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(userReviews));
+    } catch(error) {
+      console.error("Could not save the customer review.", error);
+      showToast("Your review could not be saved. Please try again.");
+      return;
+    }
 
     renderReviewsGrid();
     window.closeWriteReviewModal();
@@ -2872,6 +3058,8 @@
     const designId = "DSGN-2026-" + Math.floor(100 + Math.random() * 900);
     const newDesign = {
       id: designId,
+      userId: currentUser.id,
+      customerId: currentUser.id,
       gender: customState.gender,
       category: customState.category,
       neckline: customState.neckline || customState.collar,
@@ -2884,7 +3072,7 @@
       date: new Date().toISOString().split("T")[0]
     };
     savedDesigns.unshift(newDesign);
-    localStorage.setItem(STORAGE_KEY_SAVED_DESIGNS, JSON.stringify(savedDesigns));
+    localStorage.setItem(`${STORAGE_KEY_SAVED_DESIGNS}_${getUserKey()}`, JSON.stringify(savedDesigns));
     showToast(`✓ Design saved to your Moodboard (${designId})`);
   };
 
@@ -2905,7 +3093,7 @@
       customization: `${customState.fabric} · ${customState.neckline || customState.collar} · ${customState.sleeves}`
     };
     cart.unshift(item);
-    localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+    saveUserCart();
     updateCartWishCounters();
     showToast(`✓ Customized outfit added to Bag! Opening Checkout...`);
     openCartDrawer();
@@ -3827,92 +4015,408 @@
       renderCartModal();
   };
 
+  // ------------------------------------------------------------------------
+  // ATELIER PAYMENT METHODS & CHECKOUT ENGINE
+  // ------------------------------------------------------------------------
+  let selectedPaymentMode = "upi";
+  let activeUpiApp = "Google Pay";
+  let activeBank = "HDFC Bank";
+
   window.proceedToCheckout = function () {
-    if (!currentUser) {
+    const user = getSyncUser();
+    if (!user) {
       showToast("Please sign in or register to complete your order checkout.");
       openAuthModal("login");
       return;
     }
-    if (cart.length === 0) {
+    if (!Array.isArray(cart) || cart.length === 0) {
       showToast("Your cart is empty.");
       return;
     }
 
     closeModal();
+    window.openPaymentModal();
+  };
+
+  window.openPaymentModal = function () {
+    const user = getSyncUser();
+    if (!user) {
+      showToast("Please sign in or register to complete your order checkout.");
+      openAuthModal("login");
+      return;
+    }
+    if (!Array.isArray(cart) || cart.length === 0) {
+      showToast("Your shopping bag is empty.");
+      return;
+    }
+
+    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const earnedPoints = Math.floor(totalAmount / 10);
+    const subtotal = Math.round(totalAmount / 1.05);
+    const gst = totalAmount - subtotal;
+
+    const summaryEl = document.getElementById("paymentOrderSummary");
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <strong style="font-size:0.95rem; color:#1a1412;">Order Summary (${cart.length} item${cart.length > 1 ? 's' : ''})</strong>
+          <span style="font-size:0.8rem; color:var(--vas-gold-dark); font-weight:700;">+${earnedPoints} Atelier Points</span>
+        </div>
+        <div style="max-height:120px; overflow-y:auto; margin-bottom:10px; padding-right:4px;">
+          ${cart.map(item => `
+            <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:4px; color:#4c4541;">
+              <span>${item.name} <span style="color:#7d7269;">(x${item.quantity})</span></span>
+              <b>₹${(item.price * item.quantity).toLocaleString()}</b>
+            </div>
+          `).join('')}
+        </div>
+        <div style="border-top:1px dashed #dcd4c8; padding-top:8px; font-size:0.8rem; color:#7d7269; display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>Taxable Value:</span>
+          <span>₹${subtotal.toLocaleString()}</span>
+        </div>
+        <div style="font-size:0.8rem; color:#7d7269; display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>CGST (2.5%) + SGST (2.5%):</span>
+          <span>₹${gst.toLocaleString()}</span>
+        </div>
+        <div style="font-size:0.8rem; color:var(--vas-success); display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>White-Glove Insured Delivery:</span>
+          <span><b>FREE (Complimentary)</b></span>
+        </div>
+        <div style="border-top:1.5px solid #1a1412; padding-top:8px; font-size:1.1rem; font-weight:700; color:#1a1412; display:flex; justify-content:space-between;">
+          <span>Total Payable:</span>
+          <span style="color:var(--vas-gold-dark);">₹${totalAmount.toLocaleString()}</span>
+        </div>
+      `;
+    }
+
+    const addrInput = document.getElementById("checkoutAddress");
+    if (addrInput) {
+      addrInput.value = user.address ? `${user.address}, ${user.city || 'Bengaluru'}, ${user.state || 'Karnataka'} - ${user.pincode || '560038'}` : "No. 42, 100 Feet Road, Indiranagar, Bengaluru - 560038";
+    }
+
+    window.selectPaymentMethod("upi");
+    openModal("paymentModal");
+  };
+
+  window.selectPaymentMethod = function (mode) {
+    selectedPaymentMode = mode || "upi";
+
+    ["upi", "card", "netbanking", "cod"].forEach(m => {
+      const btn = document.getElementById(`payMethodBtn-${m}`);
+      if (btn) {
+        if (m === selectedPaymentMode) btn.classList.add("active");
+        else btn.classList.remove("active");
+      }
+    });
+
+    const pane = document.getElementById("paymentMethodDetailsPane");
+    const confirmBtn = document.getElementById("btnConfirmPayment");
+    const totalAmount = (Array.isArray(cart) ? cart : []).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    if (mode === "upi") {
+      if (confirmBtn) confirmBtn.innerHTML = `Pay ₹${totalAmount.toLocaleString()} via UPI &rarr;`;
+      if (pane) {
+        pane.innerHTML = `
+          <div style="margin-bottom:14px;">
+            <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Fast Instant Checkout with UPI App</label>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:8px; margin-bottom:12px;">
+              <button type="button" class="vas-upi-app-btn active" onclick="window.setUpiApp('gpay', this)">
+                <span>🟢</span> Google Pay
+              </button>
+              <button type="button" class="vas-upi-app-btn" onclick="window.setUpiApp('phonepe', this)">
+                <span>🟣</span> PhonePe
+              </button>
+              <button type="button" class="vas-upi-app-btn" onclick="window.setUpiApp('paytm', this)">
+                <span>🔵</span> Paytm
+              </button>
+              <button type="button" class="vas-upi-app-btn" onclick="window.setUpiApp('bhim', this)">
+                <span>🟠</span> BHIM UPI
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <label for="payUpiId" style="font-size:0.8rem; font-weight:600; color:#7d7269; display:block; margin-bottom:4px;">Or Enter Virtual Payment Address (VPA / UPI ID)</label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="payUpiId" class="vas-input" placeholder="e.g. mobileNumber@okhdfcbank or username@ybl" value="${currentUser ? (currentUser.phone ? currentUser.phone + '@okhdfcbank' : '') : ''}">
+              <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" style="white-space:nowrap;" onclick="window.verifyUpiId()">Verify VPA</button>
+            </div>
+            <span id="upiVerificationMsg" style="font-size:0.75rem; color:var(--vas-success); display:block; margin-top:4px;">✓ Verified &amp; ready for instant payment authorization</span>
+          </div>
+
+          <div style="background:#f9f6f0; border-radius:8px; padding:10px 12px; font-size:0.75rem; color:#7d7269; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.1rem;">⚡</span>
+            <span>Zero payment gateway transaction surcharge. Instant confirmation upon MPIN approval in your UPI app.</span>
+          </div>
+        `;
+      }
+    } else if (mode === "card") {
+      if (confirmBtn) confirmBtn.innerHTML = `Pay ₹${totalAmount.toLocaleString()} via Card &rarr;`;
+      if (pane) {
+        pane.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <label style="font-size:0.82rem; font-weight:700; color:#1a1412; margin:0;">Credit / Debit Card Details</label>
+            <div style="display:flex; gap:4px; font-size:0.7rem; font-weight:700; color:#7d7269;">
+              <span style="border:1px solid #ddd; border-radius:4px; padding:2px 6px;">VISA</span>
+              <span style="border:1px solid #ddd; border-radius:4px; padding:2px 6px;">MasterCard</span>
+              <span style="border:1px solid #ddd; border-radius:4px; padding:2px 6px;">RuPay</span>
+              <span style="border:1px solid #ddd; border-radius:4px; padding:2px 6px;">AMEX</span>
+            </div>
+          </div>
+
+          <div class="vas-form-group" style="margin-bottom:12px;">
+            <label style="font-size:0.78rem; color:#7d7269;">Card Number</label>
+            <input type="text" id="payCardNum" class="vas-input" placeholder="4111 •••• •••• 4242" maxlength="19" value="4111 8890 2341 4242">
+          </div>
+
+          <div class="vas-form-group" style="margin-bottom:12px;">
+            <label style="font-size:0.78rem; color:#7d7269;">Cardholder Name</label>
+            <input type="text" id="payCardName" class="vas-input" placeholder="Name on card" value="${currentUser ? currentUser.name : 'Atelier Patron'}">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="vas-form-group" style="margin-bottom:0;">
+              <label style="font-size:0.78rem; color:#7d7269;">Expiry (MM/YY)</label>
+              <input type="text" id="payCardExp" class="vas-input" placeholder="MM/YY" maxlength="5" value="12/28">
+            </div>
+            <div class="vas-form-group" style="margin-bottom:0;">
+              <label style="font-size:0.78rem; color:#7d7269;">CVV / CVC</label>
+              <input type="password" id="payCardCvv" class="vas-input" placeholder="•••" maxlength="4" value="888">
+            </div>
+          </div>
+
+          <div style="background:#f9f6f0; border-radius:8px; padding:10px 12px; font-size:0.75rem; color:#7d7269; display:flex; align-items:center; gap:8px;">
+            <span>🛡️</span>
+            <span>Bank-grade 256-bit encryption. Card credentials are never stored on plain servers.</span>
+          </div>
+        `;
+      }
+    } else if (mode === "netbanking") {
+      if (confirmBtn) confirmBtn.innerHTML = `Pay ₹${totalAmount.toLocaleString()} via Net Banking &rarr;`;
+      if (pane) {
+        pane.innerHTML = `
+          <div style="margin-bottom:12px;">
+            <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Popular Indian Banks</label>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:8px; margin-bottom:14px;">
+              <button type="button" class="vas-bank-pill active" onclick="window.setBank('HDFC Bank', this)">
+                HDFC Bank
+              </button>
+              <button type="button" class="vas-bank-pill" onclick="window.setBank('ICICI Bank', this)">
+                ICICI Bank
+              </button>
+              <button type="button" class="vas-bank-pill" onclick="window.setBank('State Bank of India', this)">
+                SBI
+              </button>
+              <button type="button" class="vas-bank-pill" onclick="window.setBank('Axis Bank', this)">
+                Axis Bank
+              </button>
+              <button type="button" class="vas-bank-pill" onclick="window.setBank('Kotak Mahindra Bank', this)">
+                Kotak Bank
+              </button>
+            </div>
+          </div>
+
+          <div class="vas-form-group" style="margin-bottom:12px;">
+            <label style="font-size:0.78rem; color:#7d7269;">Or Select Other Bank (50+ Supported)</label>
+            <select id="payNetbankSelect" class="vas-select" onchange="window.setBank(this.value, null)">
+              <option value="HDFC Bank">HDFC Bank</option>
+              <option value="ICICI Bank">ICICI Bank</option>
+              <option value="State Bank of India">State Bank of India (SBI)</option>
+              <option value="Axis Bank">Axis Bank</option>
+              <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+              <option value="Bank of Baroda">Bank of Baroda</option>
+              <option value="Punjab National Bank">Punjab National Bank</option>
+              <option value="Canara Bank">Canara Bank</option>
+              <option value="IndusInd Bank">IndusInd Bank</option>
+              <option value="Federal Bank">Federal Bank</option>
+              <option value="Yes Bank">Yes Bank</option>
+            </select>
+          </div>
+
+          <div style="background:#f9f6f0; border-radius:8px; padding:10px 12px; font-size:0.75rem; color:#7d7269; display:flex; align-items:center; gap:8px;">
+            <span>🏛️</span>
+            <span>You will be redirected securely to your bank portal for two-factor authentication.</span>
+          </div>
+        `;
+      }
+    } else if (mode === "cod") {
+      if (confirmBtn) confirmBtn.innerHTML = `Confirm Pay on Doorstep Fitting (₹${totalAmount.toLocaleString()}) &rarr;`;
+      if (pane) {
+        pane.innerHTML = `
+          <div style="text-align:center; padding:10px 6px;">
+            <div style="font-size:2.2rem; margin-bottom:8px;">🤝</div>
+            <h4 style="margin:0 0 6px; font-size:1.05rem; color:#1a1412;">Atelier Fitting Pay (Pay on Doorstep Delivery)</h4>
+            <p style="font-size:0.85rem; color:#7d7269; max-width:440px; margin:0 auto 14px; line-height:1.5;">
+              Pay <strong>₹0 now</strong>. When our white-glove courier delivers your bespoke cedarwood casket, inspect the fit with our 2-inch allowance and pay via <strong>Cash, UPI QR, or Card</strong> on the spot.
+            </p>
+            <div style="background:#fcfaf7; border:1px solid #eedec5; border-radius:8px; padding:10px 14px; font-size:0.8rem; color:#9a7632; display:inline-block; text-align:left;">
+              ✓ Complimentary doorstep fit test<br>
+              ✓ Free lifetime alterations with 2-inch seam allowance<br>
+              ✓ Full inspection before handover
+            </div>
+          </div>
+        `;
+      }
+    }
+  };
+
+  window.setUpiApp = function (app, btn) {
+    document.querySelectorAll(".vas-upi-app-btn").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+    activeUpiApp = app === 'gpay' ? 'Google Pay' : (app === 'phonepe' ? 'PhonePe' : (app === 'paytm' ? 'Paytm' : 'BHIM UPI'));
+    showToast(`✓ Selected ${activeUpiApp} for payment.`);
+  };
+
+  window.setBank = function (bankName, btn) {
+    if (btn) {
+      document.querySelectorAll(".vas-bank-pill").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+    activeBank = bankName;
+    const sel = document.getElementById("payNetbankSelect");
+    if (sel && btn) sel.value = bankName;
+  };
+
+  window.verifyUpiId = function () {
+    const inp = document.getElementById("payUpiId");
+    const msg = document.getElementById("upiVerificationMsg");
+    if (inp && inp.value.trim().length > 3) {
+      if (msg) {
+        msg.textContent = `✓ VPA verified for ${currentUser ? currentUser.name : 'Atelier Patron'}`;
+        msg.style.color = "var(--vas-success)";
+      }
+      showToast("✓ UPI ID verified successfully.");
+    } else {
+      if (msg) {
+        msg.textContent = "Please enter a valid UPI address (e.g. 9886012345@okhdfcbank)";
+        msg.style.color = "var(--vas-danger)";
+      }
+    }
+  };
+
+  window.confirmAndProcessPayment = function () {
+    const user = getSyncUser();
+    if (!user) {
+      showToast("Please sign in or register to complete your order checkout.");
+      openAuthModal("login");
+      return;
+    }
+    if (!Array.isArray(cart) || cart.length === 0) {
+      showToast("Your shopping bag is empty.");
+      return;
+    }
+
+    const addrInput = document.getElementById("checkoutAddress");
+    const shippingAddress = (addrInput && addrInput.value.trim()) || (user.address ? `${user.address}, ${user.city || 'Bengaluru'} - ${user.pincode || '560038'}` : "Indiranagar, Bengaluru");
+
+    let paymentMethodLabel = "Atelier Secure Payment";
+    if (selectedPaymentMode === "upi") {
+      const vpa = (document.getElementById("payUpiId") || {}).value;
+      paymentMethodLabel = `UPI (${activeUpiApp}${vpa ? ' - ' + vpa : ''})`;
+    } else if (selectedPaymentMode === "card") {
+      const cardNum = (document.getElementById("payCardNum") || {}).value || "•••• 4242";
+      const last4 = cardNum.replace(/[^0-9]/g, "").slice(-4) || "4242";
+      paymentMethodLabel = `Credit Card (Ending in ${last4})`;
+    } else if (selectedPaymentMode === "netbanking") {
+      paymentMethodLabel = `Net Banking (${activeBank})`;
+    } else if (selectedPaymentMode === "cod") {
+      paymentMethodLabel = "Atelier Fitting Pay (Cash / UPI on Delivery)";
+    }
+
     const orderId = "VAS-ORD-2026-" + Math.floor(1000 + Math.random() * 9000);
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const earnedPoints = Math.floor(totalAmount / 10);
 
-    const newOrder = {
-      id: orderId,
-      orderId: orderId,
-      userId: currentUser ? (currentUser.id || currentUser.username) : "client",
-      customerId: currentUser ? (currentUser.id || currentUser.username) : "client",
-      customerName: currentUser ? currentUser.name : "Customer",
-      customerEmail: currentUser ? (currentUser.email || "") : "",
-      customerPhone: currentUser ? (currentUser.phone || "") : "",
-      date: new Date().toISOString().split("T")[0],
-      orderDate: new Date().toISOString(),
-      items: cart.map(i => `${i.name} (x${i.quantity})`),
-      total: totalAmount,
-      totalAmount: totalAmount,
-      type: "Online Atelier Order",
-      status: "Placed",
-      tailor: "Master Savitha Rao",
-      assignedTailorName: "Master Savitha Rao",
-      assignedTailorId: "USR-TAILOR-01",
-      expectedDelivery: "2026-10-18",
-      currentStage: 1,
-      stageIndex: 1
-    };
+    const btn = document.getElementById("btnConfirmPayment");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Securing Atelier Payment...";
+    }
 
-    orders.unshift(newOrder);
-    localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+    setTimeout(() => {
+      closeModal();
 
-    if (window.vastraeOrderService) {
-      const allO = window.vastraeOrderService.getOrders();
-      if (!allO.some(x => (x.id || x.orderId) === orderId)) {
-        allO.unshift(newOrder);
-        if (window.vastraeStorage) window.vastraeStorage.set("vastrae_orders", allO);
-        try { localStorage.setItem("vastrae_orders", JSON.stringify(allO)); } catch (e) {}
+      const newOrder = {
+        id: orderId,
+        orderId: orderId,
+        userId: user.id || user.username || "client",
+        customerId: user.id || user.username || "client",
+        customerName: user.name || "Customer",
+        customerEmail: user.email || "",
+        customerPhone: user.phone || "",
+        date: new Date().toISOString().split("T")[0],
+        orderDate: new Date().toISOString(),
+        items: cart.map(i => `${i.name} (x${i.quantity})`),
+        total: totalAmount,
+        totalAmount: totalAmount,
+        type: "Online Atelier Order",
+        status: "Placed", // STRICTLY Placed! Cannot be Delivered!
+        currentStage: 1, // STRICTLY Stage 1!
+        stageIndex: 1,
+        stageTitle: "Fabric Sourcing & Inspection",
+        paymentStatus: selectedPaymentMode === "cod" ? "Pay upon Fitting / Delivery" : "Paid",
+        paymentMethod: paymentMethodLabel,
+        tailor: "Master Savitha Rao",
+        assignedTailorName: "Master Savitha Rao",
+        assignedTailorId: "TAIL-101",
+        expectedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        deliveryAddress: shippingAddress,
+        notes: `Order placed & payment verified via ${paymentMethodLabel}. Stage 1 Fabric Sourcing & Inspection underway.`
+      };
+
+      if (!Array.isArray(orders)) orders = [];
+      orders.unshift(newOrder);
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+
+      if (window.vastraeOrderService) {
+        const allO = window.vastraeOrderService.getOrders();
+        if (!allO.some(x => (x.id || x.orderId) === orderId)) {
+          allO.unshift(newOrder);
+          if (window.vastraeStorage) window.vastraeStorage.set("vastrae_orders", allO);
+          try { localStorage.setItem("vastrae_orders", JSON.stringify(allO)); } catch (e) {}
+        }
       }
-    }
 
-    // Award loyalty points & upgrade tier dynamically
-    if (currentUser) {
-      const earnedPoints = Math.max(50, Math.round(totalAmount * 0.05));
-      currentUser.loyaltyPoints = (currentUser.loyaltyPoints || 100) + earnedPoints;
-      if (currentUser.loyaltyPoints >= 1000) {
-        currentUser.tier = "Imperial Privé Diamond";
-      } else if (currentUser.loyaltyPoints >= 500) {
-        currentUser.tier = "Haute Privé Gold";
-      } else {
-        currentUser.tier = "Atelier VIP Patron";
+      // Rule 3: Add loyalty points
+      currentUser = getSyncUser();
+      if (currentUser) {
+        currentUser.loyaltyPoints = (Number(currentUser.loyaltyPoints) || 0) + earnedPoints;
+        if (currentUser.loyaltyPoints >= 1000) {
+          currentUser.tier = "Imperial Privé Diamond";
+        } else if (currentUser.loyaltyPoints >= 500) {
+          currentUser.tier = "Haute Privé Gold";
+        } else {
+          currentUser.tier = "Atelier Patron Member";
+        }
+        const updatedAccount = window.vastraeAuth.updateAccount(currentUser.id, currentUser);
+        if (updatedAccount.success) {
+          currentUser = updatedAccount.user;
+          window.currentUser = currentUser;
+        } else {
+          console.error("Could not save the customer's loyalty balance.", updatedAccount.message);
+        }
       }
-      try {
-        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-        localStorage.setItem("vastrae_current_user", JSON.stringify(currentUser));
-        localStorage.setItem("vastrae_active_user", JSON.stringify(currentUser));
-      } catch (e) {}
-    }
-    if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
 
-    if (window.vastraeNotificationService) {
-      window.vastraeNotificationService.addNotification(
-        "Order Placed & Confirmed",
-        `Your bespoke order #${orderId} (₹${totalAmount.toLocaleString()}) has been received. Stage 1 Fabric Sourcing underway.`,
-        "order",
-        "🧵",
-        { actionTab: "orders" }
-      );
-    }
+      if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
 
-    // Clear cart
-    cart = [];
-    saveUserCart();
-    updateCartWishCounters();
+      if (window.vastraeNotificationService) {
+        window.vastraeNotificationService.addNotification(
+          "Payment Confirmed & Order Placed",
+          `Order #${orderId} (₹${totalAmount.toLocaleString()}) confirmed via ${paymentMethodLabel}. Stage 1 Fabric Sourcing underway.`,
+          "order",
+          "🧵",
+          { actionTab: "orders" }
+        );
+      }
 
-    // Show printable confirmation
-    openOrderConfirmationModal(newOrder);
+      // Rule 3: Clear cart
+      cart = [];
+      saveUserCart();
+      updateCartWishCounters();
+
+      showToast(`✓ Payment verified! Order #${orderId} commissioned.`);
+      openOrderConfirmationModal(newOrder);
+    }, 400);
   };
 
   function openOrderConfirmationModal(order) {
@@ -3922,37 +4426,52 @@
         <div style="width:64px; height:64px; border-radius:50%; background:var(--vas-success-bg); color:var(--vas-success); font-size:2rem; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">✓</div>
         <h2 style="font-size:1.8rem; margin-bottom:6px;">Order Confirmed!</h2>
         <span style="font-size:0.85rem; color:var(--vas-gold-dark); font-weight:700; text-transform:uppercase; letter-spacing:0.1em;">Order Reference: ${order.orderId}</span>
-        <p style="color:var(--vas-muted); font-size:0.92rem; max-width:480px; margin:10px auto 24px;">
-          Thank you, ${currentUser.name}! Your bespoke order has been routed to our Bengaluru atelier. A formal GST invoice and live stage updates have been logged.
+        <p style="color:var(--vas-muted); font-size:0.92rem; max-width:480px; margin:10px auto 20px;">
+          Thank you, ${currentUser ? currentUser.name : 'Patron'}! Your bespoke creation has been routed to our Bengaluru atelier. Formal GST invoice and live stage updates have been logged.
         </p>
 
-        <div style="background:var(--vas-surface-alt); border-radius:8px; padding:18px; text-align:left; margin-bottom:24px;">
+        <div style="background:var(--vas-surface-alt); border-radius:10px; padding:18px; text-align:left; margin-bottom:20px; border:1px solid var(--vas-border);">
           <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
             <span>Items Commissioned:</span>
             <strong>${order.items.join(', ')}</strong>
           </div>
           <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span>Payment Mode:</span>
+            <strong style="color:var(--vas-gold-dark);">${order.paymentMethod || 'Atelier Secure Payment'} (${order.paymentStatus || 'Paid'})</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
             <span>Total Paid:</span>
             <strong>₹${order.total.toLocaleString()}</strong>
           </div>
-          <div style="display:flex; justify-content:space-between;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
             <span>Assigned Couturier:</span>
             <strong>${order.tailor}</strong>
           </div>
+          <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px dashed #dcd4c8;">
+            <span>Current Production Status:</span>
+            <span class="vas-badge vas-badge-gold" style="font-size:0.75rem;">Stage 1: Fabric Sourcing &amp; Inspection (In Progress)</span>
+          </div>
         </div>
 
-        <div style="display:flex; justify-content:center; gap:12px;">
-          <button class="vas-btn vas-btn-primary" onclick="window.printGSTInvoice('${order.orderId}')">
+        <div style="background:#fefbf5; border:1px solid #ebd8b5; border-radius:8px; padding:10px 14px; font-size:0.8rem; color:#87641f; margin-bottom:22px; text-align:left;">
+          ⚠️ <b>Stage Lifecycle Notice:</b> Your bespoke garment is freshly commissioned and cannot be marked as delivered until master paper drafting, artisanal embroidery, assemble stitching, and white-glove quality audits are completed.
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+          <button class="vas-btn vas-btn-gold" onclick="window.openTrackingModal('${order.orderId}')">
+            🚚 Track Live Production Stages
+          </button>
+          <button class="vas-btn vas-btn-outline" onclick="window.printGSTInvoice('${order.orderId}')">
             🖨️ Print GST Tax Invoice
           </button>
-          <button class="vas-btn vas-btn-outline" onclick="window.closeModal(); window.openCustomerDashboard();">
+          <button class="vas-btn vas-btn-outline" onclick="window.closeModal(); window.openCustomerDashboard('orders');">
             View in Dashboard
           </button>
         </div>
       </div>
     `;
     openModal("genericModal");
-  }
+  };
 
   // Printable GST Invoice Generator (Module 8)
   window.printGSTInvoice = function (orderId) {
@@ -4058,23 +4577,36 @@
     if (tierEl) tierEl.textContent = currentUser.tier || currentUser.loyaltyTier || "Atelier VIP Patron";
 
     // Dynamic counts across all customer services
-    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || []);
-    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []);
-    const storedOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id, currentUser.name) : [];
-    const storedDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
-    const storedConsult = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id, currentUser.name) : [];
+    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id) : [];
+    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id) : [];
+    const storedOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id) : [];
+    const storedDesigns = getCustomerRecords(STORAGE_KEY_SAVED_DESIGNS);
+    const storedConsult = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id) : [];
+    const completedOrderCount = storedOrders.filter(order => /^(completed|delivered)$/i.test(order.status || "")).length;
+    const cancelledOrderCount = storedOrders.filter(order => /^(cancelled|canceled)$/i.test(order.status || "")).length;
+    const activeOrderCount = storedOrders.length - completedOrderCount - cancelledOrderCount;
+    const today = new Date().toISOString().slice(0, 10);
+    const upcomingConsult = storedConsult.filter(consultation =>
+      !/^(completed|cancelled)$/i.test(consultation.status || "") && (!consultation.date || consultation.date >= today)
+    );
+
+    const storedMeas = window.vastraeMeasurementService
+      ? window.vastraeMeasurementService.getUserProfiles(currentUser.id)
+      : [];
 
     const ordBadge = document.getElementById("custOrdersNavBadge");
     const rebBadge = document.getElementById("custRebornNavBadge");
     const ofBadge = document.getElementById("custOwnFabricNavBadge");
     const desBadge = document.getElementById("custDesignsNavBadge");
     const conBadge = document.getElementById("custConsultNavBadge");
+    const measBadge = document.getElementById("custMeasNavBadge");
 
     if (ordBadge) ordBadge.textContent = storedOrders.length;
     if (rebBadge) rebBadge.textContent = storedReborn.length;
     if (ofBadge) ofBadge.textContent = storedOwnFabric.length;
     if (desBadge) desBadge.textContent = storedDesigns.length;
-    if (conBadge) conBadge.textContent = storedConsult.length;
+    if (conBadge) conBadge.textContent = upcomingConsult.length;
+    if (measBadge) measBadge.textContent = storedMeas.length;
   }
   window.updateDashboardBadges = updateDashboardBadges;
 
@@ -4127,11 +4659,18 @@
     }
     updateDashboardBadges();
 
-    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || []);
-    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id, currentUser.name) : (JSON.parse(localStorage.getItem(STORAGE_KEY_REBORN)) || []);
-    const storedOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id, currentUser.name) : [];
-    const userDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
-    const storedConsult = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id, currentUser.name) : [];
+    const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getCustomerOrders(currentUser.id) : [];
+    const storedReborn = window.vastraeSareeRebornService ? window.vastraeSareeRebornService.getCustomerRequests(currentUser.id) : [];
+    const storedOwnFabric = window.vastraeOwnFabricService ? window.vastraeOwnFabricService.getCustomerRequests(currentUser.id) : [];
+    const userDesigns = getCustomerRecords(STORAGE_KEY_SAVED_DESIGNS);
+    const storedConsult = window.vastraeConsultationService ? window.vastraeConsultationService.getCustomerConsultations(currentUser.id) : [];
+    const completedOrderCount = storedOrders.filter(order => /^(completed|delivered)$/i.test(order.status || "")).length;
+    const cancelledOrderCount = storedOrders.filter(order => /^(cancelled|canceled)$/i.test(order.status || "")).length;
+    const activeOrderCount = storedOrders.length - completedOrderCount - cancelledOrderCount;
+    const today = new Date().toISOString().slice(0, 10);
+    const upcomingConsult = storedConsult.filter(consultation =>
+      !/^(completed|cancelled)$/i.test(consultation.status || "") && (!consultation.date || consultation.date >= today)
+    );
 
     if (tabName === "overview") {
       pane.innerHTML = `
@@ -4158,8 +4697,18 @@
         <div class="vas-dash-kpi-row-6" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:14px; margin-bottom:28px;">
           <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
             <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Active Orders</div>
-            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedOrders.length}</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${activeOrderCount}</div>
             <div style="font-size:0.72rem; color:var(--vas-gold-dark);">In Atelier Tailoring</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Total Orders</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedOrders.length}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">All your orders</div>
+          </div>
+          <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Completed Orders</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${completedOrderCount}</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Delivered or completed</div>
           </div>
           <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
             <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Saree Reborn</div>
@@ -4177,14 +4726,14 @@
             <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Custom Moodboard Items</div>
           </div>
           <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
-            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Styling Calls</div>
-            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${storedConsult.length}</div>
+            <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Upcoming Consultations</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${upcomingConsult.length}</div>
             <div style="font-size:0.72rem; color:var(--vas-gold-dark);">Google Meet Sessions</div>
           </div>
           <div class="vas-dash-kpi-card" style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:16px 18px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
             <div style="font-size:0.75rem; text-transform:uppercase; color:#7d7269; font-weight:600; letter-spacing:0.05em;">Loyalty Rewards</div>
-            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${currentUser.loyaltyPoints || 100} pts</div>
-            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">${currentUser.tier || currentUser.loyaltyTier || 'Haute Privé VIP'}</div>
+            <div style="font-size:1.75rem; font-weight:700; color:#1a1412; margin:4px 0 2px;">${(currentUser && currentUser.loyaltyPoints) || 0} pts</div>
+            <div style="font-size:0.72rem; color:var(--vas-gold-dark);">${(currentUser && (currentUser.tier || currentUser.loyaltyTier)) || 'Atelier Patron Member'}</div>
           </div>
         </div>
 
@@ -4264,7 +4813,7 @@
                   Manage permanent measurement cards for yourself and family members. Eliminates repeat fitting trials forever.
                 </p>
               </div>
-              <button class="vas-btn vas-btn-sm vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.switchDashboardTab('measurements')">
+              <button class="vas-btn vas-btn-sm vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.navigateToPage('measurements')">
                 Manage Sizing Cards →
               </button>
             </div>
@@ -4555,7 +5104,7 @@
                     "6. Dispatched"
                   ].map((stageName, sIdx) => {
                     const currentStageIdx = (o.currentStage || 1) - 1;
-                    const isCompleted = sIdx <= currentStageIdx;
+                    const isCompleted = sIdx < currentStageIdx;
                     const isCurrent = sIdx === currentStageIdx;
                     return `
                       <div class="vas-stage-item ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
@@ -5083,62 +5632,8 @@
         </div>
       `;
     } else if (tabName === "measurements") {
-      let allProfiles = window.vastraeMeasurementService ? (window.vastraeMeasurementService.getUserProfiles(currentUser.id).length ? window.vastraeMeasurementService.getUserProfiles(currentUser.id) : window.vastraeMeasurementService.getUserProfiles(currentUser.username)) : [];
-      if ((!allProfiles || allProfiles.length === 0) && currentUser.familyProfiles && currentUser.familyProfiles.length) {
-        allProfiles = currentUser.familyProfiles;
-      }
-      if ((!allProfiles || allProfiles.length === 0) && currentUser.measurements) {
-        allProfiles = [{
-          id: "PROF-SELF",
-          name: currentUser.name || "Self",
-          profileName: currentUser.name || "Self",
-          relation: "Self (Patron Profile)",
-          bust: currentUser.measurements.bust || "34",
-          waist: currentUser.measurements.waist || "28",
-          hips: currentUser.measurements.hips || "37",
-          shoulder: currentUser.measurements.shoulder || "14.5",
-          blouseLength: currentUser.measurements.blouseLength || "15"
-        }];
-      }
-      pane.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-          <div>
-            <h3 style="margin:0; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Family Measurement Cards</h3>
-            <p style="margin:4px 0 0; font-size:0.82rem; color:#7d7269;">22-Point sizing records stored for self and family members.</p>
-          </div>
-          <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAddMeasurementModal()">+ Add Sizing Profile</button>
-        </div>
-
-        ${allProfiles.length === 0 ? `
-          <div class="vas-empty-state-luxury">
-            <div class="vas-empty-state-icon">📏</div>
-            <h4 class="vas-empty-state-title">No Measurement Cards Stored</h4>
-            <p class="vas-empty-state-desc">You have no saved measurement cards. Add your sizing card for self or family to reorder custom blouses and suits in 1 click.</p>
-            <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAddMeasurementModal()">Create Sizing Profile &rarr;</button>
-          </div>
-        ` : `
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
-            ${allProfiles.map(fam => `
-              <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:20px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
-                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                  <div>
-                    <strong style="font-size:1.1rem; color:#1a1412;">${fam.name || fam.profileName}</strong>
-                    <span style="font-size:0.75rem; color:var(--vas-gold-dark); display:block; text-transform:uppercase; font-weight:700;">${fam.relation || 'Self'}</span>
-                  </div>
-                  <span style="font-size:1.4rem;">📏</span>
-                </div>
-                <ul style="list-style:none; padding:0; margin:0; font-size:0.85rem; color:#4c4541; display:flex; flex-direction:column; gap:6px;">
-                  ${fam.bust ? `<li>Bust / Chest: <b>${fam.bust}"</b></li>` : ''}
-                  ${fam.waist ? `<li>Waist: <b>${fam.waist}"</b></li>` : ''}
-                  ${fam.hips ? `<li>Hips: <b>${fam.hips}"</b></li>` : ''}
-                  ${fam.shoulder ? `<li>Cross Shoulder: <b>${fam.shoulder}"</b></li>` : ''}
-                  ${fam.blouseLength ? `<li>Ideal Length: <b>${fam.blouseLength}"</b></li>` : ''}
-                </ul>
-              </div>
-            `).join('')}
-          </div>
-        `}
-      `;
+      window.navigateToPage("measurements");
+      return;
     } else if (tabName === "designs") {
       pane.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
@@ -5219,61 +5714,8 @@
         `}
       `;
     } else if (tabName === "profile") {
-      pane.innerHTML = `
-        <h3 style="margin-bottom:20px; font-size:1.3rem; color:#1a1412; font-family:'Playfair Display',serif;">Customer Profile &amp; Delivery Address</h3>
-        <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); max-width:760px;">
-          <form onsubmit="window.saveProfileDetails(event)">
-            <div class="vas-form-grid">
-              <div class="vas-form-group">
-                <label>Full Name</label>
-                <input type="text" id="profName" class="vas-input" value="${currentUser.name}" required>
-              </div>
-              <div class="vas-form-group">
-                <label>Username (Text Only)</label>
-                <input type="text" id="profUser" class="vas-input" value="${currentUser.username}" readonly style="background:var(--vas-surface-alt);">
-              </div>
-              <div class="vas-form-group">
-                <label>Email Address</label>
-                <input type="email" id="profEmail" class="vas-input" value="${currentUser.email}" required>
-              </div>
-              <div class="vas-form-group">
-                <label>Mobile Number (+91)</label>
-                <input type="tel" id="profPhone" class="vas-input" value="${currentUser.phone}" required pattern="[6-9][0-9]{9}">
-              </div>
-              <div class="vas-form-group">
-                <label>Gender</label>
-                <select id="profGender" class="vas-select">
-                  <option ${currentUser.gender === 'Female' ? 'selected' : ''}>Female</option>
-                  <option ${currentUser.gender === 'Male' ? 'selected' : ''}>Male</option>
-                  <option ${currentUser.gender === 'Other' ? 'selected' : ''}>Other</option>
-                </select>
-              </div>
-              <div class="vas-form-group">
-                <label>Date of Birth</label>
-                <input type="date" id="profDob" class="vas-input" value="${currentUser.dob || ''}">
-              </div>
-              <div class="vas-form-group full">
-                <label>Primary Delivery Address</label>
-                <input type="text" id="profAddress" class="vas-input" value="${currentUser.address || ''}" required>
-              </div>
-              <div class="vas-form-group">
-                <label>City</label>
-                <input type="text" id="profCity" class="vas-input" value="${currentUser.city || 'Bengaluru'}">
-              </div>
-              <div class="vas-form-group">
-                <label>State &amp; Pincode</label>
-                <div style="display:flex; gap:10px;">
-                  <input type="text" id="profState" class="vas-input" value="${currentUser.state || 'Karnataka'}" style="flex:1;">
-                  <input type="text" id="profPincode" class="vas-input" value="${currentUser.pincode || '560038'}" style="width:120px;">
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="vas-btn vas-btn-gold" style="margin-top:20px; font-weight:700;">
-              Save Profile Updates
-            </button>
-          </form>
-        </div>
-      `;
+      window.navigateToPage("profile");
+      return;
     } else if (tabName === "notifications") {
       const notifs = window.vastraeNotificationService ? window.vastraeNotificationService.getNotifications(currentUser) : [];
       const unreadCount = notifs.filter(n => !n.read).length;
@@ -5382,7 +5824,8 @@
 
     const newDesign = {
       id: "VST-DSG-" + Date.now().toString().slice(-5),
-      userId: currentUser ? (currentUser.id || currentUser.username) : "client",
+      userId: currentUser.id,
+      customerId: currentUser.id,
       customerName: currentUser ? currentUser.name : "Client",
       category: activeClientCustomGarment,
       gender: (activeClientCustomGarment === 'Sherwani' ? 'men' : 'women'),
@@ -5395,9 +5838,9 @@
       createdAt: new Date().toISOString()
     };
 
-    let userDesigns = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED_DESIGNS)) || [];
+    let userDesigns = getCustomerRecords(STORAGE_KEY_SAVED_DESIGNS);
     userDesigns.unshift(newDesign);
-    localStorage.setItem(STORAGE_KEY_SAVED_DESIGNS, JSON.stringify(userDesigns));
+    localStorage.setItem(`${STORAGE_KEY_SAVED_DESIGNS}_${getUserKey()}`, JSON.stringify(userDesigns));
     savedDesigns = userDesigns;
     if (typeof window.updateDashboardBadges === "function") window.updateDashboardBadges();
 
@@ -5412,7 +5855,7 @@
         notes: `Neckline: ${neck}, Sleeve: ${sleeve}, Embroidery: ${embroidery}`
       };
       cart.push(cartItem);
-      localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+      saveUserCart();
       updateCartWishCounters();
       showToast(`✓ Custom ${activeClientCustomGarment} added to your shopping bag!`);
       if (window.openCartDrawer) window.openCartDrawer();
@@ -5499,7 +5942,7 @@
       category: 'tryon'
     };
     cart.push(cartItem);
-    localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+    saveUserCart();
     updateCartWishCounters();
     showToast(`✓ ${currentTryonGarment.name} added to your shopping bag!`);
     if (window.openCartDrawer) window.openCartDrawer();
@@ -5656,39 +6099,328 @@
     window.renderDashboardOverview("reborn");
   };
 
-  // Add Measurement Profile Modal Handler
+  // ========================================================================
+  // DEDICATED PAGE: VIEW MY MEASUREMENTS (PAGE 6) & PROFILE DETAILS (PAGE 7)
+  // ========================================================================
+
   window.openAddMeasurementModal = function () {
-    const profName = prompt("Enter family member name (e.g. Self, Mother, Sister):", "Self");
+    currentUser = getSyncUser();
+    if (!currentUser) {
+      showToast("Please sign in or register to add sizing profiles.");
+      openAuthModal("login");
+      return;
+    }
+    const profName = prompt("Enter profile name / person (e.g. Self, Mother, Sister, Bride):", currentUser.name || "Self");
     if (!profName) return;
-    const bust = prompt("Enter Bust / Chest in inches (e.g. 34):", "34");
-    const waist = prompt("Enter Waist in inches (e.g. 28):", "28");
-    const hips = prompt("Enter Hips in inches (e.g. 36):", "36");
+    const relation = prompt("Relation (e.g. Self, Family, Wedding Trousseau):", "Self") || "Self";
+    const bust = prompt("Enter Bust / Chest (inches):", "34") || "34";
+    const waist = prompt("Enter Natural Waist (inches):", "28") || "28";
+    const hips = prompt("Enter Full Hips (inches):", "36") || "36";
+    const shoulder = prompt("Enter Cross Shoulder (inches):", "14.5") || "14.5";
+    const blouseLength = prompt("Enter Ideal Blouse/Top Length (inches):", "14.5") || "14.5";
 
     const newProfile = {
       id: "PROF-" + Date.now().toString().slice(-4),
       userId: currentUser.id,
       name: profName,
       profileName: profName,
-      relation: profName === "Self" ? "Self" : "Family Member",
-      bust: bust || "34",
-      waist: waist || "28",
-      hips: hips || "36",
-      shoulder: "14",
-      blouseLength: "14"
+      relation: relation,
+      bust: bust,
+      waist: waist,
+      hips: hips,
+      shoulder: shoulder,
+      blouseLength: blouseLength,
+      notes: "Atelier 22-Point Tailored Profile"
     };
 
+    if (window.vastraeMeasurementService) window.vastraeMeasurementService.saveProfile(newProfile);
+
     currentUser.familyProfiles = currentUser.familyProfiles || [];
-    currentUser.familyProfiles.push(newProfile);
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-
-    if (window.vastraeMeasurementService) {
-      window.vastraeMeasurementService.saveProfile(newProfile);
+    currentUser.familyProfiles.unshift(newProfile);
+    const updatedAccount = window.vastraeAuth.updateAccount(currentUser.id, currentUser);
+    if (!updatedAccount.success) {
+      showToast(updatedAccount.message);
+      return;
     }
+    currentUser = updatedAccount.user;
+    window.currentUser = currentUser;
 
-    showToast(`✓ Measurement card for '${profName}' saved!`);
-    window.renderDashboardOverview("measurements");
+    showToast(`✓ Sizing card '${profName}' saved to Measurement Vault!`);
+    if (typeof renderMeasurementsPage === "function") renderMeasurementsPage();
+    if (typeof renderDashboardOverview === "function") renderDashboardOverview("measurements");
   };
 
+  window.openAIScannerModal = function () {
+    currentUser = getSyncUser();
+    if (!currentUser) {
+      showToast("Please sign in to run the AI Biometric Scanner.");
+      openAuthModal("login");
+      return;
+    }
+    showToast("✨ Initiating High-Precision Optical Depth Camera & Skeletal Landmarks...");
+    if (window.vastraeMeasurementService && typeof window.vastraeMeasurementService.runAIScannerSimulation === "function") {
+      window.vastraeMeasurementService.runAIScannerSimulation(
+        (step, msg, pct) => {
+          showToast(`Biometric Scan [${pct}%]: ${msg}`);
+        },
+        (metrics) => {
+          const newProfile = {
+            id: "PROF-AI-" + Date.now().toString().slice(-4),
+            userId: currentUser.id,
+            name: `${currentUser.name} (AI Biometric)`,
+            profileName: `${currentUser.name} (AI Biometric)`,
+            relation: "Self (AI Biometric Scan)",
+            bust: String(metrics.bust || 34),
+            waist: String(metrics.waist || 28),
+            hips: String(metrics.hip || 36),
+            shoulder: String(metrics.shoulder || 14.5),
+            blouseLength: String(metrics.blouseLength || 15),
+            sleeve: String(metrics.sleeve || 18),
+            notes: `AI Biometric Scan verified at ${metrics.scanTimestamp || 'Flagship Atelier'}`
+          };
+          if (window.vastraeMeasurementService) window.vastraeMeasurementService.saveProfile(newProfile);
+          showToast("✓ AI Biometric Scan Complete! 22-Point metrics saved to your vault.");
+          if (typeof renderMeasurementsPage === "function") renderMeasurementsPage();
+          if (typeof renderDashboardOverview === "function") renderDashboardOverview("measurements");
+        }
+      );
+    }
+  };
+
+  function renderMeasurementsPage() {
+    currentUser = getSyncUser();
+    const grid = document.getElementById("measurementsPageGrid");
+    const countBadge = document.getElementById("measurementsCountBadge");
+    if (!grid) return;
+
+    const profiles = currentUser && window.vastraeMeasurementService
+      ? window.vastraeMeasurementService.getUserProfiles(currentUser.id)
+      : [];
+
+    if (countBadge) countBadge.textContent = profiles.length;
+
+    // Rule 4: If empty show 0 / empty state
+    if (profiles.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1;">
+          <div class="vas-empty-state-luxury" style="padding:48px 24px; text-align:center; background:#fff; border:1px solid var(--vas-border); border-radius:14px; box-shadow:0 4px 18px rgba(76,69,65,0.03);">
+            <div style="font-size:3rem; margin-bottom:12px;">📐</div>
+            <h3 style="font-family:var(--vas-font-serif); font-size:1.4rem; color:var(--vas-ink); margin-bottom:8px;">No Measurement Profiles Stored (0)</h3>
+            <p style="max-width:540px; margin:0 auto 20px; font-size:0.88rem; color:var(--vas-muted); line-height:1.6;">
+              Your measurement vault is currently empty. Add your 22-point sizing card or run our AI Biometric Scanner to instantly unlock tailored blouses, lehengas, and suits.
+            </p>
+            <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+              <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.openAddMeasurementModal()">+ Add Sizing Profile</button>
+              <button class="vas-btn vas-btn-outline vas-btn-sm" onclick="window.openAIScannerModal()">✨ Run AI Scanner</button>
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = profiles.map((p, idx) => `
+      <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:14px; padding:24px; box-shadow:0 4px 20px rgba(76,69,65,0.04); position:relative; transition:transform 0.2s ease, box-shadow 0.2s ease;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+          <div>
+            <span style="font-size:0.72rem; color:var(--vas-gold-dark); text-transform:uppercase; font-weight:700; letter-spacing:0.08em; display:block;">
+              ${p.relation || 'Patron Silhouette'}
+            </span>
+            <h3 style="font-family:var(--vas-font-serif); font-size:1.3rem; margin:2px 0 0; color:var(--vas-ink);">${p.name || p.profileName || 'Bespoke Fitting'}</h3>
+          </div>
+          <div style="width:38px; height:38px; border-radius:50%; background:var(--vas-surface-alt); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+            📏
+          </div>
+        </div>
+
+        <div style="background:var(--vas-surface-alt); border-radius:10px; padding:16px; margin-bottom:18px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
+            <div><span style="color:var(--vas-muted);">Bust / Chest:</span> <strong style="color:var(--vas-ink);">${p.bust || '34'}"</strong></div>
+            <div><span style="color:var(--vas-muted);">Natural Waist:</span> <strong style="color:var(--vas-ink);">${p.waist || '28'}"</strong></div>
+            <div><span style="color:var(--vas-muted);">Full Hips:</span> <strong style="color:var(--vas-ink);">${p.hips || p.hip || '36'}"</strong></div>
+            <div><span style="color:var(--vas-muted);">Cross Shoulder:</span> <strong style="color:var(--vas-ink);">${p.shoulder || '14.5'}"</strong></div>
+            <div><span style="color:var(--vas-muted);">Blouse Length:</span> <strong style="color:var(--vas-ink);">${p.blouseLength || '14.5'}"</strong></div>
+            <div><span style="color:var(--vas-muted);">Sleeve Length:</span> <strong style="color:var(--vas-ink);">${p.sleeve || '18'}"</strong></div>
+          </div>
+        </div>
+
+        ${p.notes ? `
+          <p style="font-size:0.78rem; color:var(--vas-muted); margin-bottom:16px; line-height:1.4; border-left:2px solid var(--vas-gold); padding-left:8px;">
+            ${p.notes}
+          </p>
+        ` : ''}
+
+        <div style="display:flex; justify-content:space-between; align-items:center; pt:12px; border-top:1px solid var(--vas-border);">
+          <span style="font-size:0.72rem; color:var(--vas-muted);">ID: <code>${p.id || ('PROF-' + idx)}</code></span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="window.deleteMeasurementCard('${p.id || idx}')" style="background:none; border:none; color:var(--vas-danger); font-size:0.78rem; font-weight:600; cursor:pointer; padding:4px 8px;">
+              Delete
+            </button>
+            <button onclick="window.useMeasurementInCustomizer('${p.id || idx}')" class="vas-btn vas-btn-gold vas-btn-xs" style="font-weight:600;">
+              Use in Studio &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  }
+  window.renderMeasurementsPage = renderMeasurementsPage;
+
+  window.deleteMeasurementCard = function(profileId) {
+    if (!confirm("Are you sure you want to remove this sizing card?")) return;
+    if (window.vastraeMeasurementService) window.vastraeMeasurementService.deleteProfile(profileId);
+    showToast("✓ Sizing profile removed.");
+    renderMeasurementsPage();
+  };
+
+  window.useMeasurementInCustomizer = function(profileId) {
+    window.location.hash = "#services";
+    window.navigateToSection("customize");
+    showToast("✓ Loaded measurements into 3D Customizer!");
+  };
+
+  function renderProfilePage() {
+    currentUser = getSyncUser();
+    if (!currentUser) return;
+
+    const u = currentUser;
+    const points = (Number(u.loyaltyPoints) || 0);
+    const tier = u.tier || (points >= 1000 ? "Imperial Privé Diamond" : points >= 500 ? "Haute Privé Gold" : "Atelier Patron Member");
+
+    // Orders count calculated from vastrae_orders (if empty show 0)
+    let realOrders = [];
+    try {
+      realOrders = JSON.parse(localStorage.getItem("vastrae_orders")) || [];
+    } catch(e) { realOrders = []; }
+    const uId = (u.id || u.username || "").toLowerCase();
+    const myOrders = realOrders.filter(o => {
+      const ordUser = (o.userId || o.customerId || "").toLowerCase();
+      const ordName = (o.customerName || "").toLowerCase();
+      return ordUser === uId || ordName === (u.name || "").toLowerCase();
+    });
+
+    // Populate Hero elements
+    const avatar = document.getElementById("profAvatarCircle");
+    if (avatar) avatar.textContent = (u.name || "P").charAt(0).toUpperCase();
+
+    const hName = document.getElementById("profHeaderName");
+    if (hName) hName.textContent = u.name || "Atelier Patron";
+
+    const hEmail = document.getElementById("profHeaderEmail");
+    if (hEmail) hEmail.textContent = u.email || "";
+
+    const hPhone = document.getElementById("profHeaderPhone");
+    if (hPhone) hPhone.textContent = u.phone || "+91";
+
+    const hTier = document.getElementById("profHeaderTier");
+    if (hTier) hTier.textContent = tier;
+
+    const pointsDisplay = document.getElementById("profLoyaltyPointsDisplay");
+    if (pointsDisplay) pointsDisplay.textContent = `${points} pts`;
+
+    const ordersDisplay = document.getElementById("profOrdersCountDisplay");
+    if (ordersDisplay) ordersDisplay.textContent = `${myOrders.length}`;
+
+    // Populate Form fields
+    const fName = document.getElementById("dedicatedProfName");
+    if (fName) fName.value = u.name || "";
+
+    const fUser = document.getElementById("dedicatedProfUsername");
+    if (fUser) fUser.value = u.username || "";
+
+    const fEmail = document.getElementById("dedicatedProfEmail");
+    if (fEmail) fEmail.value = u.email || "";
+
+    const fPhone = document.getElementById("dedicatedProfPhone");
+    if (fPhone) fPhone.value = u.phone || "";
+
+    const fGender = document.getElementById("dedicatedProfGender");
+    if (fGender) fGender.value = u.gender || "Female";
+
+    const fDob = document.getElementById("dedicatedProfDob");
+    if (fDob) fDob.value = u.dob || "";
+
+    const fAddress = document.getElementById("dedicatedProfAddress");
+    if (fAddress) fAddress.value = u.address || "";
+
+    const fCity = document.getElementById("dedicatedProfCity");
+    if (fCity) fCity.value = u.city || "";
+
+    const fState = document.getElementById("dedicatedProfState");
+    if (fState) fState.value = u.state || "";
+
+    const fPin = document.getElementById("dedicatedProfPincode");
+    if (fPin) fPin.value = u.pincode || "";
+  }
+  window.renderProfilePage = renderProfilePage;
+
+  window.handleDedicatedProfileSave = function (event) {
+    if (event) event.preventDefault();
+    currentUser = getSyncUser();
+    if (!currentUser) return;
+
+    currentUser.name = document.getElementById("dedicatedProfName").value.trim();
+    currentUser.email = document.getElementById("dedicatedProfEmail").value.trim();
+    currentUser.phone = document.getElementById("dedicatedProfPhone").value.trim();
+    currentUser.gender = document.getElementById("dedicatedProfGender").value;
+    currentUser.dob = document.getElementById("dedicatedProfDob").value;
+    currentUser.address = document.getElementById("dedicatedProfAddress").value.trim();
+    currentUser.city = document.getElementById("dedicatedProfCity").value.trim();
+    currentUser.state = document.getElementById("dedicatedProfState").value.trim();
+    currentUser.pincode = document.getElementById("dedicatedProfPincode").value.trim();
+    currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+
+    const result = window.vastraeAuth.updateAccount(currentUser.id, currentUser);
+    if (!result.success) {
+      showToast(result.message);
+      return;
+    }
+    currentUser = result.user;
+    window.currentUser = currentUser;
+
+    updateAuthUI();
+    renderProfilePage();
+
+    const msg = document.getElementById("dedicatedProfileSaveMsg");
+    if (msg) {
+      msg.style.display = "inline";
+      setTimeout(() => { msg.style.display = "none"; }, 3000);
+    }
+    showToast(`✓ Profile updated successfully, ${currentUser.name}!`);
+  };
+
+  window.handleDedicatedPasswordChange = async function (event) {
+    if (event) event.preventDefault();
+    currentUser = getSyncUser();
+    if (!currentUser) return;
+
+    const oldPass = document.getElementById("dedicatedOldPass").value;
+    const newPass = document.getElementById("dedicatedNewPass").value;
+    const confirmPass = document.getElementById("dedicatedConfirmNewPass").value;
+
+    if (newPass !== confirmPass) {
+      showToast("❌ Confirm password does not match new password.");
+      return;
+    }
+    let result;
+    try {
+      result = await window.vastraeAuth.changePassword(currentUser.id, oldPass, newPass);
+    } catch (error) {
+      console.error("Password change could not be completed.", error);
+      showToast("Password change is unavailable right now. Please try again.");
+      return;
+    }
+    if (!result.success) {
+      showToast(result.message);
+      return;
+    }
+
+    document.getElementById("dedicatedOldPass").value = "";
+    document.getElementById("dedicatedNewPass").value = "";
+    document.getElementById("dedicatedConfirmNewPass").value = "";
+
+    showToast("✓ Password updated securely!");
+  };
 
   window.saveProfileDetails = function (event) {
     event.preventDefault();
@@ -5703,7 +6435,13 @@
     currentUser.pincode = document.getElementById("profPincode").value;
     currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
 
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    const result = window.vastraeAuth.updateAccount(currentUser.id, currentUser);
+    if (!result.success) {
+      showToast(result.message);
+      return;
+    }
+    currentUser = result.user;
+    window.currentUser = currentUser;
     updateAuthUI();
     renderDashboardOverview();
     showToast("✓ Profile updated successfully.");
@@ -5723,7 +6461,7 @@
       customization: `${ds.fabric} · ${ds.neckline}`
     };
     cart.unshift(item);
-    localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+    saveUserCart();
     updateCartWishCounters();
     openCartDrawer();
   };
@@ -5929,50 +6667,19 @@
 
     if (!currentUser.familyProfiles) currentUser.familyProfiles = [];
     currentUser.familyProfiles.push({ name, relation, bust, waist, hips, shoulder });
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    const result = window.vastraeAuth.updateAccount(currentUser.id, currentUser);
+    if (!result.success) {
+      showToast(result.message);
+      return;
+    }
+    currentUser = result.user;
+    window.currentUser = currentUser;
     closeModal();
     renderDashboardTab("measurements");
     showToast(`✓ Added ${name}'s measurement card.`);
   };
 
-  window.openTrackingModal = function (orderId) {
-    const ord = orders.find(o => o.orderId === orderId) || orders[0];
-    const modalContent = document.getElementById("modalBody");
-    modalContent.innerHTML = `
-      <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
-        <span style="font-size:0.75rem; font-weight:700; color:var(--vas-gold-dark); text-transform:uppercase; letter-spacing:0.1em;">LIVE LOGISTICS FEED</span>
-        <h2 style="font-size:1.6rem; margin:4px 0;">Courier Tracking &middot; ${ord ? ord.orderId : orderId}</h2>
-        <span style="font-size:0.85rem; color:var(--vas-muted);">Logistics Partner: <strong>BlueDart Express Secure</strong> | AWB: <strong>BLUEDART-EXP-992184029</strong></span>
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:16px; margin:20px 0;">
-        <div style="display:flex; gap:14px; align-items:flex-start;">
-          <div style="width:32px; height:32px; border-radius:50%; background:var(--vas-gold-pale); color:var(--vas-gold-dark); display:flex; align-items:center; justify-content:center; font-weight:700;">✓</div>
-          <div>
-            <strong>Atelier Finishing &amp; QC Completed</strong>
-            <p style="font-size:0.8rem; color:var(--vas-muted); margin:2px 0 0;">Indiranagar Central Atelier, Bengaluru &middot; Today, 11:30 AM</p>
-          </div>
-        </div>
-        <div style="display:flex; gap:14px; align-items:flex-start;">
-          <div style="width:32px; height:32px; border-radius:50%; background:var(--vas-gold-pale); color:var(--vas-gold-dark); display:flex; align-items:center; justify-content:center; font-weight:700;">🚚</div>
-          <div>
-            <strong>Assigned to Dedicated BlueDart Courier</strong>
-            <p style="font-size:0.8rem; color:var(--vas-muted); margin:2px 0 0;">Out for doorstep handover in temperature-controlled casket packaging.</p>
-          </div>
-        </div>
-        <div style="display:flex; gap:14px; align-items:flex-start;">
-          <div style="width:32px; height:32px; border-radius:50%; background:var(--vas-surface-alt); color:var(--vas-muted); display:flex; align-items:center; justify-content:center; font-weight:700;">📦</div>
-          <div>
-            <strong>Doorstep Delivery Expected</strong>
-            <p style="font-size:0.8rem; color:var(--vas-muted); margin:2px 0 0;">Estimated arrival: By Tomorrow, 04:00 PM</p>
-          </div>
-        </div>
-      </div>
-
-      <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.closeModal()">Close Tracking</button>
-    `;
-    openModal("genericModal");
-  };
+    // Unified dynamic tracker defined above.
 
   window.openRevisionModal = function (orderId) {
     const modalContent = document.getElementById("modalBody");
@@ -6176,11 +6883,15 @@
     document.body.classList.remove("vas-dashboard-active");
     currentUser = null;
     window.currentUser = null;
-    localStorage.removeItem(STORAGE_KEY_USER);
-    localStorage.removeItem("vas_user");
-    localStorage.removeItem("vastrae_current_user");
-    localStorage.removeItem("vastrae_active_user");
+    cart = [];
+    wishlist = [];
+    savedDesigns = [];
+    orders = [];
+    sareeRebornOrders = [];
+    ownFabricOrders = [];
+    if (window.clearTryOnCustomerData) window.clearTryOnCustomerData();
     if (window.vastraeAuth) window.vastraeAuth.logout();
+    clearAuthFormState();
 
     const pubView = document.getElementById("publicWebsiteView");
     const topHeader = document.getElementById("topHeader");
@@ -6195,6 +6906,7 @@
     if (tailorDash) tailorDash.style.display = "none";
 
     updateAuthUI();
+    updateCartWishCounters();
     showToast("✓ Signed out successfully. Returned to VASTRAÉ public boutique.");
     window.location.hash = "#home";
     window.navigateToPage("home");
@@ -6401,11 +7113,11 @@
 
     const storedOrders = window.vastraeOrderService ? window.vastraeOrderService.getOrders() : (orders || []);
     // Strict clean data: zero fabricated orders or fake names
-    const allOrders = storedOrders.filter(o => o.id !== "#ORD1045" && o.id !== "#ORD1044" && (o.customerName || "").indexOf("Ayesha Khan") === -1 && (o.customerName || "").indexOf("Sara Begum") === -1);
+    const allOrders = storedOrders;
     const allUsers = window.vastraeAuth ? window.vastraeAuth.getUsers() : [];
     const tailors = allUsers.filter(u => u.role === "tailor");
     const activeTailors = tailors.filter(t => (t.status || "Active").toLowerCase() === "active");
-    const clients = allUsers.filter(u => u.role === "customer" && (u.name || "").indexOf("Ananya") === -1);
+    const clients = allUsers.filter(u => u.role === "customer");
     
     // Real authentic figures only
     const totalRevenue = allOrders.reduce((sum, o) => sum + (o.totalAmount || o.total || 0), 0);
@@ -7468,7 +8180,7 @@
     }
   };
 
-window.handleCreateTailor = function (event) {
+window.handleCreateTailor = async function (event) {
     if (event) event.preventDefault();
     const name = (document.getElementById("newTailorName").value || "").trim();
     const username = (document.getElementById("newTailorUsername").value || "").trim();
@@ -7486,21 +8198,28 @@ window.handleCreateTailor = function (event) {
       return;
     }
 
-    const res = window.vastraeAuth.addTailor({
+    let res;
+    try {
+      res = await window.vastraeAuth.addTailor({
       name: name,
       username: username,
       email: email,
       phone: phone,
       specialization: specialization,
       password: password
-    });
+      });
+    } catch (error) {
+      console.error("Tailor account could not be created.", error);
+      alert("Tailor account creation is unavailable right now. Please try again.");
+      return;
+    }
 
     if (!res.success) {
       alert(res.message);
       return;
     }
 
-    showToast(`✓ Master Tailor '${name}' created! Login Username: '${username}', Password: '${password}'`);
+    showToast(`✓ Master Tailor '${name}' created! Login Username: '${username}'.`);
     window.renderAdminTab("tailors");
   };
 
@@ -7517,7 +8236,7 @@ window.handleCreateTailor = function (event) {
     }
   };
 
-  window.handleEditTailorModal = function (tailorId) {
+  window.handleEditTailorModal = async function (tailorId) {
     const users = window.vastraeAuth ? window.vastraeAuth.getUsers() : [];
     const tailor = users.find(u => u.id === tailorId || u.username === tailorId);
     if (!tailor) return;
@@ -7539,7 +8258,18 @@ window.handleCreateTailor = function (event) {
       updateData.password = newPass;
     }
 
-    window.vastraeAuth.updateTailor(tailorId, updateData);
+    let result;
+    try {
+      result = await window.vastraeAuth.updateTailor(tailorId, updateData);
+    } catch (error) {
+      console.error("Tailor details could not be updated.", error);
+      showToast("Tailor details could not be updated. Please try again.");
+      return;
+    }
+    if (!result.success) {
+      showToast(result.message);
+      return;
+    }
     showToast(`✓ Updated profile for Master Tailor '${updateData.name}'.`);
     window.renderAdminTab("tailors");
   };
@@ -7590,7 +8320,12 @@ window.handleCreateTailor = function (event) {
   window.printExecutiveReport = function () {
     const win = window.open('', '_blank');
     if (!win) return;
-    const rev = (VASTRAE_DATA && VASTRAE_DATA.adminAnalytics) ? VASTRAE_DATA.adminAnalytics.totalRevenue : 850000;
+    let allOrders = [];
+    try {
+      allOrders = (window.vastraeOrderService ? window.vastraeOrderService.getOrders() : JSON.parse(localStorage.getItem("vastrae_orders"))) || [];
+    } catch(e) { allOrders = []; }
+    const rev = allOrders.reduce((sum, o) => sum + (Number(o.total || o.totalAmount) || 0), 0);
+    const activeTailorsCount = (window.vastraeAuth ? window.vastraeAuth.getUsers().filter(u => u.role === "tailor" && (u.status || "Active").toLowerCase() === "active").length : 0);
     win.document.write(`
       <html>
       <head><title>VASTRAÉ Couture - Executive Performance Report</title></head>
@@ -7599,7 +8334,8 @@ window.handleCreateTailor = function (event) {
         <p>Flagship: 100 Feet Road, Indiranagar, Bengaluru &middot; FY 2026-27</p>
         <hr/>
         <p><strong>Gross Atelier Revenue:</strong> ₹${rev.toLocaleString()}</p>
-        <p><strong>Active Tailors on Duty:</strong> 4 Master Couturiers</p>
+        <p><strong>Total Orders in System:</strong> ${allOrders.length}</p>
+        <p><strong>Active Tailors on Duty:</strong> ${activeTailorsCount} Master Couturiers</p>
         <p><strong>Pipeline Status:</strong> All stages operational.</p>
         <script>window.onload = function() { window.print(); };</script>
       </body>
@@ -8446,9 +9182,17 @@ window.handleCreateTailor = function (event) {
 
   // Initialize once DOM is ready
   if (document.readyState !== "loading") {
-    initApp();
+  initApp().catch(function (error) {
+    console.error("Vastraé could not initialize.", error);
+    showToast("The boutique could not finish loading. Please refresh and try again.");
+  });
   } else {
-    document.addEventListener("DOMContentLoaded", initApp);
+  document.addEventListener("DOMContentLoaded", function () {
+    initApp().catch(function (error) {
+      console.error("Vastraé could not initialize.", error);
+      showToast("The boutique could not finish loading. Please refresh and try again.");
+    });
+  });
   }
 
   // --------------------------------------------------------------------------

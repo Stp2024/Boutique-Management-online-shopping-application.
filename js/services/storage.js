@@ -9,14 +9,16 @@
   const PREFIX = "vastrae_";
 
   const KEYS = {
+    USER: PREFIX + "user",
+    CURRENT_USER: PREFIX + "user",
     USERS: PREFIX + "users",
-    CURRENT_USER: PREFIX + "current_user",
     PRODUCTS: PREFIX + "products",
     CART: PREFIX + "cart",
+    ORDERS: PREFIX + "orders",
     WISHLIST: PREFIX + "wishlist",
     MEASUREMENTS: PREFIX + "measurements",
     CUSTOM_DESIGNS: PREFIX + "custom_designs",
-    ORDERS: PREFIX + "orders",
+    SAVED_DESIGNS: PREFIX + "saved_designs",
     SAREE_REBORN: PREFIX + "saree_reborn",
     OWN_FABRIC: PREFIX + "own_fabric",
     TAILORS: PREFIX + "tailors",
@@ -33,7 +35,7 @@
     get: function (key, fallback = null) {
       try {
         const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : fallback;
+        return data !== null ? JSON.parse(data) : fallback;
       } catch (e) {
         console.error("Storage GET error for key " + key, e);
         return fallback;
@@ -66,6 +68,50 @@
       return `${prefix}-${randomNum}-${timestamp}`;
     }
   };
+
+  // Rule 6: Reactive Hook System for LocalStorage and State (No backend, server.js, or API calls)
+  function useLocalStorage(key, initialValue) {
+    let value = initialValue;
+    try {
+      const item = localStorage.getItem(key);
+      value = item !== null ? JSON.parse(item) : initialValue;
+    } catch (e) {
+      value = initialValue;
+    }
+
+    const setValue = function (newValue) {
+      try {
+        const valToStore = typeof newValue === "function" ? newValue(value) : newValue;
+        value = valToStore;
+        localStorage.setItem(key, JSON.stringify(valToStore));
+        window.dispatchEvent(new CustomEvent("vastrae-storage-update", { detail: { key: key, value: valToStore } }));
+        window.dispatchEvent(new Event("storage"));
+      } catch (e) {
+        console.error("useLocalStorage write error for key " + key, e);
+      }
+    };
+
+    return [value, setValue];
+  }
+
+  function useState(initialState) {
+    let state = typeof initialState === "function" ? initialState() : initialState;
+    const setState = function (newState) {
+      state = typeof newState === "function" ? newState(state) : newState;
+    };
+    return [state, setState];
+  }
+
+  function useEffect(effect, deps) {
+    return effect();
+  }
+
+  window.useLocalStorage = useLocalStorage;
+  window.useState = useState;
+  window.useEffect = useEffect;
+  vastraeStorage.useLocalStorage = useLocalStorage;
+  vastraeStorage.useState = useState;
+  vastraeStorage.useEffect = useEffect;
 
   window.vastraeStorage = vastraeStorage;
 })(typeof window !== "undefined" ? window : this);

@@ -16,8 +16,33 @@
 (function () {
   "use strict";
 
+  function getTryOnUserId() {
+    const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+      ? window.vastraeAuth.getCurrentUser()
+      : null;
+    return user && user.role === "customer" && user.id ? String(user.id) : null;
+  }
+
+  function readTryOnCollection(key, userId) {
+    if (!userId) return [];
+    try {
+      const value = JSON.parse(localStorage.getItem(`${key}_${userId}`)) || [];
+      return Array.isArray(value) ? value : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveTryOnCollection(key, value) {
+    if (!TryOnState.ownerId) return;
+    localStorage.setItem(`${key}_${TryOnState.ownerId}`, JSON.stringify(value));
+  }
+
+  const activeTryOnUserId = getTryOnUserId();
+
   // Core State
   const TryOnState = {
+    ownerId: activeTryOnUserId,
     userPhotoUrl: null,
     userImgElement: null,
     userFaceData: {
@@ -42,8 +67,8 @@
       fitPreference: "tailored" // "tailored", "comfort", "flared"
     },
     comparisonMode: "slider", // "slider" or "sideBySide"
-    favorites: JSON.parse(localStorage.getItem("vastrae_tryon_favorites")) || [],
-    styleBoard: JSON.parse(localStorage.getItem("vastrae_style_board")) || [],
+    favorites: readTryOnCollection("vastrae_tryon_favorites", activeTryOnUserId),
+    styleBoard: readTryOnCollection("vastrae_style_board", activeTryOnUserId),
     compareIds: [],
     isGenerating: false,
     generatedCompositeUrl: null,
@@ -55,6 +80,26 @@
       hasApiKey: false,
       label: "VASTRAÉ Atelier Photometric Synthesis"
     }
+  };
+
+  window.loadTryOnCustomerData = function (userId) {
+    const activeUserId = getTryOnUserId();
+    TryOnState.ownerId = activeUserId && (!userId || String(userId) === activeUserId) ? activeUserId : null;
+    TryOnState.favorites = readTryOnCollection("vastrae_tryon_favorites", TryOnState.ownerId);
+    TryOnState.styleBoard = readTryOnCollection("vastrae_style_board", TryOnState.ownerId);
+    TryOnState.measurements = { height: "165", bust: "34", waist: "28", hips: "38", fitPreference: "tailored" };
+    loadSavedMeasurements();
+    renderOutfitCatalog();
+    updateStyleBoardCounter();
+  };
+
+  window.clearTryOnCustomerData = function () {
+    TryOnState.ownerId = null;
+    TryOnState.favorites = [];
+    TryOnState.styleBoard = [];
+    TryOnState.measurements = { height: "165", bust: "34", waist: "28", hips: "38", fitPreference: "tailored" };
+    renderOutfitCatalog();
+    updateStyleBoardCounter();
   };
 
   // Haute Couture Saree Conversion Draping Styles removed (Sarees excluded from AI Try-On)
@@ -191,23 +236,13 @@
     ];
   }
 
-  // Check Backend AI API Status
+  // Check Backend AI API Status (Rule 6: Pure client-side localStorage architecture, zero backend/API calls)
   async function checkBackendAiStatus() {
-    try {
-      const resp = await fetch("/api/tryon/status", { cache: "no-store" });
-      if (resp.ok) {
-        const data = await resp.json();
-        TryOnState.backendStatus.online = true;
-        TryOnState.backendStatus.hasApiKey = Boolean(data.hasApiKey);
-        TryOnState.backendStatus.provider = data.configuredProvider || "local_photometric";
-        TryOnState.backendStatus.label = data.providerLabel || "VASTRAÉ Atelier Engine";
-        updateEngineBadgeUI();
-      }
-    } catch (e) {
-      // Running statically without backend_server.py
-      TryOnState.backendStatus.online = false;
-      updateEngineBadgeUI();
-    }
+    TryOnState.backendStatus.online = false;
+    TryOnState.backendStatus.hasApiKey = false;
+    TryOnState.backendStatus.provider = "local_photometric";
+    TryOnState.backendStatus.label = "VASTRAÉ Atelier Client Engine";
+    updateEngineBadgeUI();
   }
 
   function updateEngineBadgeUI() {
@@ -579,16 +614,14 @@
     // Check boutique localStorage profiles & active user
     let saved = null;
     try {
-      const activeUser = window.currentUser || JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
+      const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
       if (activeUser && activeUser.measurements) {
         saved = activeUser.measurements;
       } else if (window.vastraeMeasurementService && activeUser) {
         const profs = window.vastraeMeasurementService.getUserProfiles(activeUser.id || activeUser.username) || [];
         if (profs.length > 0) saved = profs[0];
-      }
-      if (!saved) {
-        const stored = localStorage.getItem("vastrae_measurements");
-        if (stored) saved = JSON.parse(stored);
       }
     } catch (e) {
       saved = null;
@@ -863,7 +896,7 @@
       TryOnState.favorites.push(productId);
       if (window.showToast) window.showToast("♥ Added to favourite looks!");
     }
-    localStorage.setItem("vastrae_tryon_favorites", JSON.stringify(TryOnState.favorites));
+    saveTryOnCollection("vastrae_tryon_favorites", TryOnState.favorites);
     renderOutfitCatalog();
   };
 
@@ -899,23 +932,21 @@
 
   // Add accessory to cart directly
   window.addTryOnAccessoryToCart = function (id, name, price, image) {
-    const activeUser = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
-    if (!activeUser) {
+    const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+      ? window.vastraeAuth.getCurrentUser()
+      : null;
+    if (!activeUser || activeUser.role !== "customer" || !activeUser.id || !window.vastraeCartService) {
       if (window.showToast) window.showToast("🔒 Please sign in or register to add items to your shopping bag.");
       if (window.openAuthModal) window.openAuthModal("login");
       return;
     }
-    if (!window.cart) window.cart = [];
-    window.cart.unshift({
+    window.vastraeCartService.addToCart({
       id: id,
       name: name,
       price: price,
       image: image,
-      quantity: 1,
-      size: "Free Size",
-      customization: "Stylist Matched Accessory"
-    });
-    localStorage.setItem("vastrae_cart", JSON.stringify(window.cart));
+      category: "accessories"
+    }, "Free Size", 1, { type: "Stylist Matched Accessory" });
     if (window.updateCartWishCounters) window.updateCartWishCounters();
     if (window.showToast) window.showToast(`✓ Added ${name} to your shopping bag!`);
   };
@@ -979,41 +1010,7 @@
       }
     }, 450);
 
-    // Try Backend AI Service Gateway first
-    let backendHandled = false;
-    if (TryOnState.backendStatus.online && TryOnState.backendStatus.hasApiKey) {
-      try {
-        const payload = {
-          customerImage: TryOnState.userPhotoUrl,
-          garmentImage: outfit.image,
-          garmentName: outfit.name,
-          category: getNormalizedCategory(outfit),
-          measurements: TryOnState.measurements,
-          colorVariant: TryOnState.selectedColorVariant
-        };
-
-        const resp = await fetch("/api/tryon", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        if (resp.ok) {
-          const resData = await resp.json();
-          if (resData.success && (resData.output || resData.predictionId)) {
-            backendHandled = true;
-            clearInterval(interval);
-            const finalImgUrl = resData.output || resData.predictionId;
-            displayVirtualTryOnResult(finalImgUrl, outfit, "Live Neural Diffusion Engine (Replicate / FASHN)");
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn("Backend AI gateway error; falling back to atelier photometric engine:", err);
-      }
-    }
-
-    // Client-side high-fidelity photometric engine
+    // Client-side high-fidelity photometric engine (Rule 6: No backend or API calls)
     setTimeout(() => {
       clearInterval(interval);
       renderCompositeRealisticCanvas(outfit);
@@ -1413,20 +1410,19 @@
     const outfit = ((window.VASTRAE_DATA && window.VASTRAE_DATA.products) || []).find(p => p.id === TryOnState.selectedOutfitId);
     if (!outfit) return;
 
-    if (!window.cart) window.cart = [];
     const colorLabel = GARMENT_COLOR_VARIANTS.find(v => v.id === TryOnState.selectedColorVariant)?.label || "Original Designer Weave";
 
-    window.cart.unshift({
+    if (!window.vastraeCartService) return;
+    window.vastraeCartService.addToCart({
       id: "TRYON-" + outfit.id + "-" + Date.now(),
       name: outfit.name,
       price: outfit.price,
       image: outfit.image,
-      quantity: 1,
-      size: `Custom Tailored (${TryOnState.measurements.height}cm / B:${TryOnState.measurements.bust}" W:${TryOnState.measurements.waist}")`,
-      customization: `Base Hue: ${colorLabel} · Drape Fit: ${TryOnState.measurements.fitPreference}`
+      category: "tryon"
+    }, `Custom Tailored (${TryOnState.measurements.height}cm / B:${TryOnState.measurements.bust}" W:${TryOnState.measurements.waist}")`, 1, {
+      baseHue: colorLabel,
+      fitPreference: TryOnState.measurements.fitPreference
     });
-
-    localStorage.setItem("vastrae_cart", JSON.stringify(window.cart));
     if (window.updateCartWishCounters) window.updateCartWishCounters();
     if (window.showToast) window.showToast(`✓ "${outfit.name}" added to your shopping bag!`);
     if (window.openCartDrawer) window.openCartDrawer();
@@ -1482,7 +1478,7 @@
 
     if (!TryOnState.styleBoard.some(item => item.outfitId === outfit.id)) {
       TryOnState.styleBoard.unshift(boardItem);
-      localStorage.setItem("vastrae_style_board", JSON.stringify(TryOnState.styleBoard));
+      saveTryOnCollection("vastrae_style_board", TryOnState.styleBoard);
       updateStyleBoardCounter();
       if (window.showToast) window.showToast(`📌 Saved "${outfit.name}" to My Style Board!`);
     } else {
@@ -1544,7 +1540,7 @@
 
   window.removeFromStyleBoard = function (index) {
     TryOnState.styleBoard.splice(index, 1);
-    localStorage.setItem("vastrae_style_board", JSON.stringify(TryOnState.styleBoard));
+    saveTryOnCollection("vastrae_style_board", TryOnState.styleBoard);
     updateStyleBoardCounter();
     window.openStyleBoardModal();
   };

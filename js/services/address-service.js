@@ -17,7 +17,9 @@
 
     getUserStorageKey: function (userId) {
       const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
-      const uid = userId || (activeUser ? activeUser.id : "guest");
+      const uid = activeUser && activeUser.role === "customer"
+        ? activeUser.id
+        : (userId || (activeUser ? activeUser.id : "guest"));
       return `${STORAGE_KEY}_${uid}`;
     },
 
@@ -34,21 +36,13 @@
         return [];
       }
 
-      // Purge fake demo addresses
-      const cleaned = stored.filter(function (a) {
-        return a.id !== "ADDR-101" && a.id !== "ADDR-102" &&
-               (a.fullName || "").indexOf("Ananya") === -1;
-      });
-
-      if (cleaned.length !== stored.length) {
-        if (window.vastraeStorage) window.vastraeStorage.set(key, cleaned);
-        try { localStorage.setItem(key, JSON.stringify(cleaned)); } catch (e) {}
-      }
-
-      return cleaned;
+      return stored;
     },
 
     saveAddress: function (userId, addressData) {
+      const activeUser = window.vastraeAuth ? window.vastraeAuth.getCurrentUser() : null;
+      const ownerId = activeUser && activeUser.role === "customer" ? activeUser.id : userId;
+      if (!ownerId) return null;
       const addresses = this.getAddresses(userId);
       const id = addressData.id || (window.vastraeStorage ? window.vastraeStorage.generateId("ADDR") : "ADDR-" + Date.now());
 
@@ -58,7 +52,7 @@
 
       const newAddress = Object.assign({}, addressData, {
         id: id,
-        userId: userId || "USR-101",
+        userId: ownerId,
         isDefault: addressData.isDefault || addresses.length === 0
       });
 

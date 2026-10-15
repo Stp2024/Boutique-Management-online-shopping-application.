@@ -7,10 +7,58 @@
 (function (window) {
   "use strict";
 
-  const STORAGE_KEY_USER = "vastrae_active_user";
-  const STORAGE_KEY_USER_ALT = "vastrae_current_user";
-  const STORAGE_KEY_USERS = "vastrae_users_database";
-  const STORAGE_KEY_USERS_ALT = "vastrae_users";
+  const STORAGE_KEY_SESSION = "vastrae_auth_session";
+  const STORAGE_KEY_USERS = "vastrae_users";
+  const STORAGE_KEY_USERS_ALT = "vastrae_users_database";
+  const PASSWORD_ITERATIONS = 210000;
+
+  ["vastrae_user", "vastrae_active_user", "vastrae_current_user", "vas_user"].forEach(function (key) {
+    localStorage.removeItem(key);
+  });
+
+  function cryptoApi() {
+    if (!window.crypto || !window.crypto.subtle || !window.crypto.getRandomValues) {
+      throw new Error("Secure password storage is unavailable in this browser context.");
+    }
+    return window.crypto;
+  }
+
+  function bytesToHex(bytes) {
+    return Array.from(new Uint8Array(bytes), function (byte) {
+      return byte.toString(16).padStart(2, "0");
+    }).join("");
+  }
+
+  function hexToBytes(hex) {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i += 1) {
+      bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+    }
+    return bytes;
+  }
+
+  async function hashPassword(password, salt) {
+    const crypto = cryptoApi();
+    const saltBytes = salt ? hexToBytes(salt) : crypto.getRandomValues(new Uint8Array(16));
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+    const bits = await crypto.subtle.deriveBits({
+      name: "PBKDF2",
+      salt: saltBytes,
+      iterations: PASSWORD_ITERATIONS,
+      hash: "SHA-256"
+    }, key, 256);
+    return { passwordHash: bytesToHex(bits), passwordSalt: bytesToHex(saltBytes), passwordIterations: PASSWORD_ITERATIONS };
+  }
+
+  function publicAccount(user) {
+    if (!user) return null;
+    const safeUser = Object.assign({}, user);
+    delete safeUser.password;
+    delete safeUser.passwordHash;
+    delete safeUser.passwordSalt;
+    delete safeUser.passwordIterations;
+    return safeUser;
+  }
 
   const ROLES = {
     CUSTOMER: "customer",
@@ -21,125 +69,157 @@
   const vastraeAuth = {
     ROLES: ROLES,
 
-    // Initial default user accounts database (Configured Admin & Tailor only - zero fake client data)
+    // Accounts are created through registration or the existing account administration flow.
     getInitialUsers: function () {
-      return [
-        {
-          id: "TAIL-101",
-          username: "tailor",
-          name: "Master Savitha Rao",
-          email: "tailor@vastrae.com",
-          phone: "+91 98860 54321",
-          password: "M@s123",
-          role: ROLES.TAILOR,
-          status: "Active",
-          specialization: "Bespoke Couture & Traditional Weaves",
-          activeAssignedCount: 0,
-          registeredAt: new Date().toISOString()
-        },
-        {
-          id: "ADM-101",
-          username: "admin",
-          name: "Vastraé Store Director",
-          email: "admin@vastrae.com",
-          phone: "+91 98860 99999",
-          password: "A@d123",
-          role: ROLES.ADMIN,
-          registeredAt: new Date().toISOString()
-        }
-      ];
+      return [];
     },
 
-    // Save users to both storage keys
+    // Save users to storage keys
     saveUsers: function (users) {
-      if (window.vastraeStorage) {
-        window.vastraeStorage.set(STORAGE_KEY_USERS, users);
-        window.vastraeStorage.set(STORAGE_KEY_USERS_ALT, users);
+      if (!Array.isArray(users) || users.some(function (user) { return user && typeof user.password === "string"; })) {
+        throw new Error("Refusing to persist accounts containing plaintext passwords.");
       }
-      try {
-        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
-        localStorage.setItem(STORAGE_KEY_USERS_ALT, JSON.stringify(users));
-      } catch (e) {}
+      localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+      localStorage.setItem(STORAGE_KEY_USERS_ALT, JSON.stringify(users));
     },
 
-    // Save current active user to both storage keys
-    setCurrentUser: function (user) {
-      if (window.vastraeStorage) {
-        window.vastraeStorage.set(STORAGE_KEY_USER, user);
-        window.vastraeStorage.set(STORAGE_KEY_USER_ALT, user);
+    generateCustomerId: function (users) {
+      const accounts = Array.isArray(users) ? users : this.getUsers();
+      const usedIds = new Set(accounts.map(function (user) { return String(user.id || ""); }));
+      let id;
+      do {
+        const token = window.crypto && window.crypto.randomUUID
+          ? window.crypto.randomUUID()
+          : Date.now().toString(36) + Math.random().toString(36).slice(2);
+        id = "CUST-" + token.toUpperCase();
+      } while (usedIds.has(id));
+      return id;
+    },
+
+    ensureCustomerIds: function (users) {
+      const accounts = Array.isArray(users) ? users : [];
+      const usedIds = new Set();
+      let changed = false;
+      accounts.forEach((user) => {
+        if (!user || user.role !== ROLES.CUSTOMER) return;
+        const id = String(user.id || "");
+        if (!id || usedIds.has(id)) {
+          user.id = this.generateCustomerId(accounts);
+          changed = true;
+        }
+        usedIds.add(String(user.id));
+      });
+      if (changed && !accounts.some(function (user) { return user && typeof user.password === "string"; })) {
+        this.saveUsers(accounts);
       }
-      try {
-        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
-        localStorage.setItem(STORAGE_KEY_USER_ALT, JSON.stringify(user));
-        localStorage.setItem("vastrae_active_user", JSON.stringify(user));
-      } catch (e) {}
+      return accounts;
+    },
+
+    // Keep the active identity in this tab only. Account data remains separate.
+    setCurrentUser: function (user) {
+      if (!user || !user.id) throw new Error("A valid account is required to start a session.");
+      sessionStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({ id: String(user.id) }));
     },
 
     // Get all registered users from localStorage
     getUsers: function () {
-      let stored = null;
-      if (window.vastraeStorage) {
-        stored = window.vastraeStorage.get(STORAGE_KEY_USERS, null) || window.vastraeStorage.get(STORAGE_KEY_USERS_ALT, null);
-      } else {
+      const parseAccounts = function (key) {
         try {
-          stored = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || JSON.parse(localStorage.getItem(STORAGE_KEY_USERS_ALT));
-        } catch (e) {
-          stored = null;
+          const stored = JSON.parse(localStorage.getItem(key) || "[]");
+          if (!Array.isArray(stored)) throw new Error(`Account storage "${key}" is not a list.`);
+          return stored.filter(Boolean);
+        } catch (error) {
+          console.error(`Could not read account storage "${key}".`, error);
+          throw error;
         }
-      }
+      };
+      const primary = parseAccounts(STORAGE_KEY_USERS);
+      const alternate = parseAccounts(STORAGE_KEY_USERS_ALT);
+      const accounts = primary.slice();
 
-      const initial = this.getInitialUsers();
-      if (!stored || !Array.isArray(stored) || stored.length === 0) {
-        this.saveUsers(initial);
-        return initial;
-      }
-
-      // Ensure critical predefined accounts (admin, tailor, client) are present
-      let changed = false;
-      initial.forEach(function (defUser) {
-        const exists = stored.find(function (u) {
-          return u.username.toLowerCase() === defUser.username.toLowerCase() ||
-                 (defUser.role === ROLES.ADMIN && (u.username.toLowerCase() === "adminmaster" || u.username.toLowerCase() === "admin"));
+      alternate.forEach(function (candidate) {
+        const candidateName = String(candidate.username || "").toLowerCase();
+        const candidateEmail = String(candidate.email || "").toLowerCase();
+        const existing = accounts.find(function (account) {
+          return (candidate.id && String(account.id) === String(candidate.id)) ||
+            (candidateName && String(account.username || "").toLowerCase() === candidateName) ||
+            (candidateEmail && String(account.email || "").toLowerCase() === candidateEmail);
         });
-        if (!exists) {
-          stored.push(defUser);
-          changed = true;
-        } else if (defUser.role === ROLES.ADMIN && exists.username.toLowerCase() === "adminmaster") {
-          exists.username = "admin";
-          changed = true;
+        if (!existing) {
+          accounts.push(candidate);
+          return;
+        }
+        Object.keys(candidate).forEach(function (key) {
+          if (existing[key] === undefined || existing[key] === null || existing[key] === "") {
+            existing[key] = candidate[key];
+          }
+        });
+        if (candidate.passwordHash && candidate.passwordSalt) {
+          existing.passwordHash = candidate.passwordHash;
+          existing.passwordSalt = candidate.passwordSalt;
+          existing.passwordIterations = candidate.passwordIterations;
+          delete existing.password;
         }
       });
-
-      if (changed) {
-        this.saveUsers(stored);
-      }
-
-      return stored;
+      return this.ensureCustomerIds(accounts);
     },
 
     // Get currently authenticated session user
     getCurrentUser: function () {
-      if (window.vastraeStorage) {
-        const user = window.vastraeStorage.get(STORAGE_KEY_USER, null) || window.vastraeStorage.get(STORAGE_KEY_USER_ALT, null);
-        if (user) return user;
-      }
       try {
-        return (
-          JSON.parse(localStorage.getItem(STORAGE_KEY_USER)) ||
-          JSON.parse(localStorage.getItem("vastrae_active_user")) ||
-          JSON.parse(localStorage.getItem(STORAGE_KEY_USER_ALT)) ||
-          null
-        );
+        const session = JSON.parse(sessionStorage.getItem(STORAGE_KEY_SESSION) || "null");
+        if (!session || !session.id) return null;
+        const user = this.getUsers().find(function (account) {
+          return String(account.id) === String(session.id);
+        });
+        if (!user) this.logout();
+        return publicAccount(user);
       } catch (e) {
         return null;
       }
+    },
+
+    hashPassword: hashPassword,
+
+    migratePlaintextPasswords: async function () {
+      const users = this.getUsers();
+      let changed = false;
+      for (const user of users) {
+        if (typeof user.password !== "string") continue;
+        const credentials = await hashPassword(user.password);
+        Object.assign(user, credentials);
+        delete user.password;
+        changed = true;
+      }
+      const beforeIds = users.map(function (user) { return user && user.id; }).join("|");
+      this.ensureCustomerIds(users);
+      if (changed || beforeIds !== users.map(function (user) { return user && user.id; }).join("|")) this.saveUsers(users);
+      return true;
+    },
+
+    verifyPassword: async function (user, password) {
+      if (!user || typeof password !== "string") return false;
+      if (typeof user.password === "string") {
+        if (user.password !== password) return false;
+        const users = this.getUsers();
+        const storedUser = users.find(function (account) { return String(account.id) === String(user.id); });
+        if (!storedUser) return false;
+        const credentials = await hashPassword(password);
+        Object.assign(storedUser, credentials);
+        delete storedUser.password;
+        this.saveUsers(users);
+        return true;
+      }
+      if (!user.passwordHash || !user.passwordSalt) return false;
+      const credentials = await hashPassword(password, user.passwordSalt);
+      return credentials.passwordHash === user.passwordHash;
     },
 
     // Register a new customer with strict validation
     register: function (formData) {
       return this.registerCustomer(formData);
     },
-    registerCustomer: function (formData) {
+    registerCustomer: async function (formData) {
       if (!window.vastraeValidation) return { success: false, message: "Validation service missing." };
 
       // 1. Full Name Validation (letters & spaces only)
@@ -178,48 +258,55 @@
         return { success: false, message: "An account with this email address already exists.", field: "email" };
       }
 
-      const newUser = {
-        id: window.vastraeStorage ? window.vastraeStorage.generateId("USR") : "USR-" + Date.now(),
+      const credentials = await hashPassword(pwdRes.value);
+      const newUser = Object.assign({
+        id: this.generateCustomerId(users),
         username: uRes.value,
         name: fRes.value,
         email: eRes.value,
         phone: pRes.formatted,
-        password: pwdRes.value,
         role: ROLES.CUSTOMER,
-        loyaltyTier: "Atelier Silver Privé",
-        loyaltyPoints: 100,
+        loyaltyTier: "Atelier Patron Member",
+        loyaltyPoints: 0,
         registeredAt: new Date().toISOString()
-      };
+      }, credentials);
 
       users.push(newUser);
       this.saveUsers(users);
       this.setCurrentUser(newUser);
-      return { success: true, user: newUser, message: "Account created successfully! Welcome to VASTRAÉ." };
+      return { success: true, user: publicAccount(newUser), message: "Account created successfully! Welcome to VASTRAÉ." };
     },
 
-    // Reset password for forgot password flow
-    resetPassword: function (email, newPassword) {
-      if (!window.vastraeValidation) return { success: false, message: "Validation service missing." };
-
-      const eRes = window.vastraeValidation.validateEmail(email);
-      if (!eRes.valid) return { success: false, message: eRes.message };
-
-      const pwdRes = window.vastraeValidation.validatePassword(newPassword);
-      if (!pwdRes.valid) return { success: false, message: pwdRes.message };
-
+    updateAccount: function (accountId, updates) {
       const users = this.getUsers();
-      const user = users.find(u => u.email && u.email.toLowerCase() === eRes.value.toLowerCase());
-      if (!user) {
-        return { success: false, message: "No account found with this email address. Please check your email or register." };
-      }
-
-      user.password = pwdRes.value;
+      const user = users.find(function (account) { return String(account.id) === String(accountId); });
+      if (!user) return { success: false, message: "Account not found." };
+      ["name", "email", "phone", "gender", "dob", "address", "city", "state", "pincode", "avatar",
+        "tier", "loyaltyTier", "loyaltyPoints", "familyProfiles", "addresses"].forEach(function (key) {
+        if (Object.prototype.hasOwnProperty.call(updates, key)) user[key] = updates[key];
+      });
       this.saveUsers(users);
-      return { success: true, message: "Password updated successfully! You can now sign in with your new password." };
+      return { success: true, user: publicAccount(user) };
+    },
+
+    changePassword: async function (accountId, currentPassword, newPassword) {
+      const users = this.getUsers();
+      const user = users.find(function (account) { return String(account.id) === String(accountId); });
+      if (!user) return { success: false, message: "Account not found." };
+      if (!(await this.verifyPassword(user, currentPassword))) {
+        return { success: false, message: "Current password does not match." };
+      }
+      if (!window.vastraeValidation) return { success: false, message: "Validation service missing." };
+      const validation = window.vastraeValidation.validatePassword(newPassword);
+      if (!validation.valid) return { success: false, message: validation.message };
+      Object.assign(user, await hashPassword(validation.value));
+      delete user.password;
+      this.saveUsers(users);
+      return { success: true, message: "Password updated successfully." };
     },
 
     // Login authenticating against stored users
-    login: function (usernameOrEmail, password) {
+    login: async function (usernameOrEmail, password) {
       if (!usernameOrEmail || !password) {
         return { success: false, message: "Please enter your username/email and password." };
       }
@@ -228,16 +315,12 @@
       const query = usernameOrEmail.trim().toLowerCase();
 
       // Find user by username or email
-      let found = users.find((u) => {
-        const uMatch = (u.username && u.username.toLowerCase() === query) ||
-                       (u.email && u.email.toLowerCase() === query);
-        // Also support admin alias
-        const adminMatch = (query === "admin" || query === "adminmaster") && u.role === ROLES.ADMIN;
-        const passOk = u.password === password || (u.role === ROLES.ADMIN && (password === "A@d123" || password === "Admin@123"));
-        return (uMatch || adminMatch) && passOk;
+      const found = users.find(function (user) {
+        return (user.username && user.username.toLowerCase() === query) ||
+          (user.email && user.email.toLowerCase() === query);
       });
 
-      if (!found) {
+      if (!found || !(await this.verifyPassword(found, password))) {
         return { success: false, message: "Invalid username/email or password credentials." };
       }
 
@@ -252,19 +335,13 @@
         }
       }
 
-      if (window.vastraeStorage) {
-        window.vastraeStorage.set(STORAGE_KEY_USER, found);
-      }
-      try {
-        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(found));
-        localStorage.setItem("vastrae_active_user", JSON.stringify(found));
-      } catch (e) {}
+      this.setCurrentUser(found);
 
-      return { success: true, user: found, role: found.role, message: `Welcome back, ${found.name}!` };
+      return { success: true, user: publicAccount(found), role: found.role, message: `Welcome back, ${found.name}!` };
     },
 
     // Reset password for forgot password flow
-    resetPassword: function (email, newPassword) {
+    resetPassword: async function (email, newPassword) {
       if (!window.vastraeValidation) return { success: false, message: "Validation service missing." };
 
       const eRes = window.vastraeValidation.validateEmail(email);
@@ -279,7 +356,9 @@
         return { success: false, message: "No account found with this email address. Please check your email or register." };
       }
 
-      user.password = pwdRes.value;
+      const credentials = await hashPassword(pwdRes.value);
+      Object.assign(user, credentials);
+      delete user.password;
       this.saveUsers(users);
       return { success: true, message: "Password updated successfully! You can now sign in with your new password." };
     },
@@ -300,7 +379,7 @@
     createTailorAccount: function (tailorData) {
       return this.addTailor(tailorData);
     },
-    addTailor: function (tailorData) {
+    addTailor: async function (tailorData) {
       if (!tailorData.name || !tailorData.username || !tailorData.password) {
         return { success: false, message: "Name, Username, and Password are required." };
       }
@@ -316,27 +395,27 @@
         return { success: false, message: `Username '${usernameClean}' is already taken. Please choose another.` };
       }
 
-      const newTailor = {
+      const credentials = await hashPassword(tailorData.password.trim());
+      const newTailor = Object.assign({
         id: "TAIL-" + Date.now().toString().slice(-6),
         username: usernameClean,
         name: tailorData.name.trim(),
         email: tailorData.email ? tailorData.email.trim() : (usernameClean.toLowerCase() + "@vastrae.com"),
         phone: tailorData.phone ? tailorData.phone.trim() : "98860 00000",
-        password: tailorData.password.trim(),
         role: ROLES.TAILOR,
         status: "Active",
         specialization: tailorData.specialization ? tailorData.specialization.trim() : "Bespoke Couture & Traditional Weaves",
         activeAssignedCount: 0,
         registeredAt: new Date().toISOString()
-      };
+      }, credentials);
 
       users.push(newTailor);
       this.saveUsers(users);
-      return { success: true, tailor: newTailor, message: `Master Tailor '${newTailor.name}' registered successfully.` };
+      return { success: true, tailor: publicAccount(newTailor), message: `Master Tailor '${newTailor.name}' registered successfully.` };
     },
 
     // Dynamic Tailor Management: Update tailor details
-    updateTailor: function (tailorId, updateData) {
+    updateTailor: async function (tailorId, updateData) {
       const users = this.getUsers();
       const idx = users.findIndex((u) => u.id === tailorId || u.username === tailorId);
       if (idx === -1) return { success: false, message: "Tailor account not found." };
@@ -346,12 +425,15 @@
       if (updateData.phone) t.phone = updateData.phone.trim();
       if (updateData.email) t.email = updateData.email.trim();
       if (updateData.specialization) t.specialization = updateData.specialization.trim();
-      if (updateData.password && updateData.password.length >= 6) t.password = updateData.password.trim();
+      if (updateData.password && updateData.password.length >= 6) {
+        Object.assign(t, await hashPassword(updateData.password.trim()));
+        delete t.password;
+      }
       if (updateData.status) t.status = updateData.status;
 
       users[idx] = t;
       this.saveUsers(users);
-      return { success: true, tailor: t, message: "Tailor details updated successfully." };
+      return { success: true, tailor: publicAccount(t), message: "Tailor details updated successfully." };
     },
 
     // Dynamic Tailor Management: Toggle Active / Inactive status
@@ -406,36 +488,16 @@
       return { success: true, message: "Tailor account removed." };
     },
 
-    // Quick 1-click login helper (strictly authentic configured accounts only)
+    // Direct role login bypasses password authentication and is intentionally disabled.
     quickLoginDemo: function (roleType) {
-      const users = this.getUsers();
-      let target = null;
-      if (roleType === "tailor") {
-        target = users.find((u) => u.role === ROLES.TAILOR && (u.status || "Active").toLowerCase() === "active");
-      } else if (roleType === "admin") {
-        target = users.find((u) => u.role === ROLES.ADMIN);
-      } else if (roleType === "client" || roleType === "customer") {
-        target = users.find((u) => u.role === ROLES.CUSTOMER && (u.name || "").indexOf("Ananya") === -1);
-      }
-
-      if (target) {
-        this.setCurrentUser(target);
-        return { success: true, user: target };
-      }
-      return { success: false, message: "No active profile found for this role." };
+      return { success: false, message: "Direct role sign-in is disabled. Please use your account credentials." };
     },
 
-    // Logout
     logout: function () {
-      if (window.vastraeStorage) {
-        window.vastraeStorage.remove(STORAGE_KEY_USER);
-        window.vastraeStorage.remove(STORAGE_KEY_USER_ALT);
-      }
-      try {
-        localStorage.removeItem(STORAGE_KEY_USER);
-        localStorage.removeItem(STORAGE_KEY_USER_ALT);
-        localStorage.removeItem("vastrae_active_user");
-      } catch (e) {}
+      sessionStorage.removeItem(STORAGE_KEY_SESSION);
+      ["vastrae_user", "vastrae_active_user", "vastrae_current_user", "vas_user"].forEach(function (key) {
+        localStorage.removeItem(key);
+      });
       return true;
     },
 

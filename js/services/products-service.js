@@ -10,12 +10,23 @@
   const STORAGE_KEY = "vastrae_products";
 
   const vastraeProductsService = {
-    // Retrieve complete product catalog
+    // Retrieve complete product catalog (Rule 5: seed once if empty, then use localStorage always)
     getProducts: function () {
-      const initial = (window.VASTRAE_DATA && window.VASTRAE_DATA.products) ? window.VASTRAE_DATA.products : [];
-      if (window.vastraeStorage && initial.length) {
-        window.vastraeStorage.set(STORAGE_KEY, initial);
-      }
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw !== null) {
+          const stored = JSON.parse(raw);
+          if (Array.isArray(stored)) {
+            return stored;
+          }
+        }
+      } catch (e) {}
+
+      // Seed once on first load
+      const initial = (window.VASTRAE_DATA && Array.isArray(window.VASTRAE_DATA.products)) ? window.VASTRAE_DATA.products : [];
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+      } catch (e) {}
       return initial;
     },
 

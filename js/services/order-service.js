@@ -38,35 +38,69 @@
         return [];
       }
 
-      // Filter out legacy demo order VST-ORD-1001 or Ananya Sharma demo order
-      const cleaned = stored.filter(function (o) {
-        return o.id !== "VST-ORD-1001" &&
-               (o.customerName || "").toLowerCase() !== "ananya sharma";
+      let changed = false;
+      const users = window.vastraeAuth && window.vastraeAuth.getUsers
+        ? window.vastraeAuth.getUsers().filter(function (user) { return user.role === "customer"; })
+        : [];
+      stored.forEach(function (order) {
+        if (order.customerId && users.some(function (user) { return String(user.id) === String(order.customerId); })) {
+          if (order.ownershipStatus !== "verified") {
+            order.ownershipStatus = "verified";
+            changed = true;
+          }
+          return;
+        }
+
+        const identityValues = [order.userId, order.customerId, order.customerEmail, order.email]
+          .filter(Boolean)
+          .map(function (value) { return String(value).trim().toLowerCase(); });
+        let matches = users.filter(function (user) {
+          return identityValues.some(function (value) {
+            return [user.id, user.username, user.email].some(function (accountValue) {
+              return accountValue && String(accountValue).trim().toLowerCase() === value;
+            });
+          });
+        });
+
+        if (matches.length === 1) {
+          order.customerId = matches[0].id;
+          order.ownershipStatus = "verified";
+          changed = true;
+        } else if (order.ownershipStatus !== "unknown") {
+          order.ownershipStatus = "unknown";
+          changed = true;
+        }
       });
 
-      if (cleaned.length !== stored.length) {
-        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, cleaned);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned)); } catch (e) {}
+      if (changed) {
+        if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, stored);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(stored)); } catch (e) {}
       }
 
-      return cleaned;
+      return stored;
     },
 
     getOrderById: function (orderId) {
       const all = this.getOrders();
-      return all.find(function (o) { return o.id === orderId || o.orderId === orderId; }) || null;
+      const order = all.find(function (o) { return o.id === orderId || o.orderId === orderId; }) || null;
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (user && user.role === "customer" && (!order || String(order.customerId || order.userId || "") !== String(user.id))) {
+        return null;
+      }
+      return order;
     },
 
     getCustomerOrders: function (userId, customerName) {
       const all = this.getOrders();
-      if (!userId && !customerName) return [];
-      const uLower = (userId || "").toString().toLowerCase();
-      const cLower = (customerName || "").toString().toLowerCase();
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || user.role !== "customer" || !user.id) return [];
+      const ownerId = String(user.id);
       return all.filter(function (o) {
-        const oUser = (o.userId || o.customerId || "").toString().toLowerCase();
-        const oName = (o.customerName || o.clientName || "").toString().toLowerCase();
-        return (uLower && (oUser === uLower || oUser.indexOf(uLower) !== -1 || uLower.indexOf(oUser) !== -1)) ||
-               (cLower && (oName === cLower || oName.indexOf(cLower) !== -1 || cLower.indexOf(oName) !== -1));
+        return String(o.customerId || o.userId || "") === ownerId;
       });
     },
 
@@ -84,20 +118,31 @@
 
     createOrder: function (orderData) {
       const all = this.getOrders();
-      const id = window.vastraeStorage ? window.vastraeStorage.generateId("VST-ORD") : "VST-ORD-" + Date.now();
+      const id = orderData.id || orderData.orderId || (window.vastraeStorage ? window.vastraeStorage.generateId("VST-ORD") : "VST-ORD-" + Date.now());
+      const totalAmount = orderData.totalAmount || orderData.total || 0;
+      const activeUser = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      const ownerId = activeUser && activeUser.role === "customer"
+        ? activeUser.id
+        : (orderData.customerId || orderData.userId || null);
 
       const newOrder = {
         id: id,
         orderId: id,
-        userId: orderData.userId || "GUEST",
+        customerId: ownerId,
+        userId: ownerId,
         customerName: orderData.customerName || "Customer",
         customerPhone: orderData.customerPhone || "",
+        customerEmail: orderData.customerEmail || "",
         items: orderData.items || [],
-        total: orderData.totalAmount || orderData.total || 0,
-        totalAmount: orderData.totalAmount || orderData.total || 0,
-        paymentStatus: orderData.paymentStatus || "Paid (UPI / Online)",
-        orderDate: new Date().toISOString(),
+        total: totalAmount,
+        totalAmount: totalAmount,
+        paymentStatus: orderData.paymentStatus || "Paid",
+        paymentMethod: orderData.paymentMethod || "Atelier Secure Payment",
+        orderDate: orderData.orderDate || new Date().toISOString(),
         currentStage: 1,
+        stageIndex: 1,
         stageTitle: STAGES[0].title,
         status: "Placed",
         assignedTailorId: orderData.assignedTailorId || "TAIL-101",
@@ -106,13 +151,48 @@
         wipImages: [],
         notes: orderData.notes || "Order placed. Fabric sourcing & inspection initiated.",
         measurements: orderData.measurements || null,
-        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        address: orderData.address || "Indiranagar, Bengaluru"
+        estimatedDelivery: orderData.estimatedDelivery || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        address: orderData.shippingAddress || orderData.address || "Indiranagar, Bengaluru"
       };
 
       all.unshift(newOrder);
       if (window.vastraeStorage) window.vastraeStorage.set(STORAGE_KEY, all);
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+
+      // Rule 3: Calculate points = totalAmount / 10, add to vastrae_user.loyaltyPoints
+      const earnedPoints = Math.floor(totalAmount / 10);
+      try {
+        let u = null;
+        if (window.vastraeAuth && typeof window.vastraeAuth.getCurrentUser === "function") {
+          u = window.vastraeAuth.getCurrentUser();
+        }
+        if (!u) {
+          const rawU = localStorage.getItem("vastrae_user");
+          if (rawU) u = JSON.parse(rawU);
+        }
+        if (u && u.id === newOrder.customerId) {
+          u.loyaltyPoints = (Number(u.loyaltyPoints) || 0) + earnedPoints;
+          if (u.loyaltyPoints >= 1000) {
+            u.tier = "Imperial Privé Diamond";
+          } else if (u.loyaltyPoints >= 500) {
+            u.tier = "Haute Privé Gold";
+          } else {
+            u.tier = "Atelier Patron Member";
+          }
+          if (window.vastraeAuth && typeof window.vastraeAuth.setCurrentUser === "function") {
+            window.vastraeAuth.setCurrentUser(u);
+          } else {
+            localStorage.setItem("vastrae_user", JSON.stringify(u));
+          }
+        }
+      } catch (e) {}
+
+      // Rule 3: Clear cart
+      if (window.vastraeCartService && typeof window.vastraeCartService.clearCart === "function") {
+        window.vastraeCartService.clearCart();
+      } else if (ownerId) {
+        try { localStorage.setItem(`vastrae_cart_${ownerId}`, JSON.stringify([])); } catch (e) {}
+      }
 
       if (window.vastraeNotificationService && newOrder.userId && newOrder.userId !== "GUEST") {
         window.vastraeNotificationService.addNotificationForUser(
@@ -134,9 +214,13 @@
       if (index === -1) return null;
 
       const order = all[index];
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || (user.role !== "admin" && user.role !== "tailor")) return null;
       order.currentStage = Math.min(6, Math.max(1, newStage));
       order.stageTitle = STAGES[order.currentStage - 1].title;
-      order.status = order.currentStage === 6 ? "Delivered" : (order.currentStage >= 4 ? "Ready" : "Tailoring");
+      order.status = order.currentStage === 6 ? "Dispatched" : (order.currentStage >= 4 ? "Ready" : "Tailoring");
       if (tailorNotes) order.notes = tailorNotes;
       if (wipImage) {
         if (!order.wipImages) order.wipImages = [];
@@ -162,6 +246,10 @@
     },
 
     assignTailorToOrder: function (orderId, tailorId, tailorName) {
+      const user = window.vastraeAuth && window.vastraeAuth.getCurrentUser
+        ? window.vastraeAuth.getCurrentUser()
+        : null;
+      if (!user || user.role !== "admin") return null;
       const all = this.getOrders();
       const index = all.findIndex(function (o) { return o.id === orderId || o.orderId === orderId; });
       if (index === -1) return null;
