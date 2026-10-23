@@ -2723,7 +2723,7 @@ const VASTRAE_DATA = {
     {
       "category": "Virtual Try-On",
       "question": "How does the AI Virtual Fashion Studio work?",
-      "answer": "Upload your full-length silhouette photo, select any outfit from our boutique collection, and our AI engine generates a realistic try-on view with an interactive draggable Before & After comparison slider."
+      "answer": "Virtual try-on is not currently available. The studio does not request or process customer photos; you can browse catalog looks and save favorites instead."
     },
     {
       "category": "Fabric Purity",

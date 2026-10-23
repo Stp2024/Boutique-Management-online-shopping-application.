@@ -59,7 +59,6 @@
           </button>
 
           <!-- Core Navigation Links (Exact Required Order: Home | About Us | Collections | Services | Contact Us | Login / Register) -->
-          <!-- Core Navigation Links (Exact Required Order: Home | About Us | Collections | Services | Contact Us | Login / Register) -->
           <nav class="vas-nav-menu" id="vasNavMenu">
             <a href="#home" class="vas-nav-link active" data-page="home"
               onclick="window.navigateToPage('home', event)">Home</a>
@@ -71,7 +70,6 @@
               onclick="window.navigateToPage('services', event)">Services</a>
             <a href="#contact" class="vas-nav-link" data-page="contact"
               onclick="window.navigateToPage('contact', event)">Contact Us</a>
-
           </nav>
 
           <!-- Navigation Actions -->
@@ -180,16 +178,19 @@
                 the pieces you love.
               </p>
 
-              <!-- Buttons: CONTACT US → and EXPLORE COLLECTION → -->
+              <!-- Hero CTA Buttons -->
               <div class="vas-hero-cta-group">
-                <a href="#contact" class="vas-hero-btn-primary" onclick="window.navigateToPage('contact', event)">
-                  <span>CONTACT US</span>
+                <a href="#customize" class="vas-hero-btn-primary" onclick="window.navigateToSection('customize', event)">
+                  <span>CUSTOMIZE YOUR WAY</span>
                   <span class="vas-btn-arrow">&rarr;</span>
                 </a>
                 <a href="#collection" class="vas-hero-btn-secondary"
                   onclick="window.navigateToPage('collection', event)">
                   <span>EXPLORE COLLECTION</span>
                   <span class="vas-btn-arrow">&rarr;</span>
+                </a>
+                <a href="#contact" class="vas-hero-btn-secondary" onclick="window.navigateToPage('contact', event)" style="background:rgba(255,255,255,0.12);">
+                  <span>CONTACT US</span>
                 </a>
               </div>
 
@@ -210,13 +211,13 @@
         <section class="vas-concept-bar" id="homeConcept">
           <div class="vas-container">
             <div class="vas-concept-grid">
-              <div class="vas-concept-item">
-                <h3>1. Design It</h3>
+              <div class="vas-concept-item" style="cursor:pointer;" onclick="window.navigateToSection('customize', event)" title="Open Customize Your Way Studio">
+                <h3>1. Design It <span style="font-size:0.9rem; color:var(--vas-gold-dark);">&rarr;</span></h3>
                 <p>Select your silhouette, neckline, sleeve length, pure silk fabric, and hand embroidery.</p>
               </div>
-              <div class="vas-concept-item">
-                <h3>2. Customize It</h3>
-                <p>Simulate on virtual models, input family measurements, or send your own heirloom saree.</p>
+              <div class="vas-concept-item" style="cursor:pointer;" onclick="window.navigateToSection('customize', event)" title="Open Customize Your Way Studio">
+                <h3>2. Customize It <span style="font-size:0.9rem; color:var(--vas-gold-dark);">&rarr;</span></h3>
+                <p>Simulate on virtual models, choose custom sleeves &amp; necklines, or customize on your photo.</p>
               </div>
               <div class="vas-concept-item">
                 <h3>3. Wear It</h3>
@@ -825,6 +826,23 @@
           </div>
         </section>
 
+        <!-- Section 3: Interactive Atelier Studio ("Customize Your Way") -->
+        <section class="vas-section vas-section-alt" id="customize">
+          <div class="vas-container">
+            <div class="vas-section-header vas-customizer-main-header">
+              <h2 class="vas-title vas-customizer-title">
+                <span class="vas-sparkle">✦</span> Customize Your Way <span class="vas-sparkle">✦</span>
+              </h2>
+              <p class="vas-subtitle vas-customizer-subtitle">Design &nbsp;·&nbsp; Choose &nbsp;·&nbsp; Preview &nbsp;·&nbsp; Order</p>
+              <p class="vas-customizer-tagline">Your style. Your choice. Our craftsmanship.</p>
+            </div>
+
+            <div id="vastraeCustomizerRoot" class="vas-customizer">
+              <!-- Dynamically rendered by js/customize-studio.js with Women, Men, Kids & Accessories workflows -->
+            </div>
+          </div>
+        </section>
+
         <!-- Anchor for AI Try-On Studio -->
         <div id="aiTryOnStudioAnchor"></div>
         <!-- Section 2B: VASTRAÉ AI Virtual Fashion Studio ("Your Style, Virtually!") -->
@@ -835,22 +853,19 @@
               <div class="vas-tryon-eyebrow">
                 <span>✨</span> VASTRAÉ DIGITAL FASHION STUDIO
               </div>
-              <h2 class="vas-tryon-title">Your Style, <em>Virtually!</em></h2>
-              <div class="vas-tryon-tagline">See It. Style It. Make It Yours.</div>
+              <h2 class="vas-tryon-title">Explore the <em>Atelier</em></h2>
+              <div class="vas-tryon-tagline">Browse. Compare. Save Your Favorites.</div>
               <p class="vas-tryon-desc">
-                Step inside our digital couture atelier. Upload your photo as an authentic identity reference,
-                select from handcrafted bridal lehengas, imperial anarkalis, and Pakistani suits, enter your
-                measurements for tailored
-                fit guidance, and experience a photorealistic virtual try-on with our interactive Before &amp; After
-                studio tools.
+                Browse boutique outfits, compare styles, and save your favorites. Virtual try-on is not available in
+                this version, so customer photos are not requested, uploaded, or processed here.
               </p>
 
               <!-- Engine Status Pill & Toolbar -->
               <div class="vas-tryon-toolbar">
-                <div id="tryOnEngineStatusBadge" class="vas-engine-status-pill local-active"
-                  onclick="window.openAiIntegrationModal()" title="Click to view AI Engine Status & Integration Guide">
+                <div id="tryOnEngineStatusBadge" class="vas-engine-status-pill"
+                  title="Virtual try-on is not connected">
                   <span class="vas-engine-dot local"></span>
-                  <span>Atelier Photometric Engine (Biometric Synthesis)</span>
+                  <span>Virtual Try-On Unavailable</span>
                 </div>
                 <button type="button" class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openStyleBoardModal()">
                   📌 My Style Board (<span id="styleBoardCount">0</span>)
@@ -859,8 +874,8 @@
                   ⚖️ Look Comparison
                 </button>
                 <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" onclick="window.openAiIntegrationModal()"
-                  title="AI API Integration Settings">
-                  ⚙️ AI Settings
+                  title="Virtual try-on availability">
+                  ℹ️ Try-On Status
                 </button>
               </div>
             </div>
@@ -870,8 +885,7 @@
               <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                 <span class="vas-lock-badge">🔒 STUDIO PREVIEW</span>
                 <span style="font-size:0.88rem; color:var(--vas-charcoal);">
-                  Explore boutique outfits, colourways &amp; fit guidance. <strong>Sign in to generate
-                    photorealistic AI Try-On looks and save to your style board.</strong>
+                  Explore boutique outfits, color preferences &amp; fit notes. Sign in to save looks to your style board.
                 </span>
               </div>
               <div style="display:flex; gap:10px;">
@@ -890,7 +904,7 @@
               <div class="vas-tryon-step-nav">
                 <div class="vas-tryon-step-nav-item">
                   <span class="step-num">1</span>
-                  <span>Photo &amp; Measurements</span>
+                  <span>Fit Profile</span>
                 </div>
                 <div class="vas-tryon-step-nav-item">
                   <span class="step-num">2</span>
@@ -898,7 +912,7 @@
                 </div>
                 <div class="vas-tryon-step-nav-item">
                   <span class="step-num">3</span>
-                  <span>Photorealistic Result</span>
+                  <span>Try-On Status</span>
                 </div>
               </div>
 
@@ -908,52 +922,16 @@
               <div class="vas-tryon-panel" id="tryOnStep1">
                 <div class="vas-tryon-panel-header">
                   <div>
-                    <h3><span>📸</span> Step 1 &mdash; Customer Photo &amp; Fit Profile</h3>
-                    <p>Upload a clear face or standing photo as your authentic identity reference. Your real facial
-                      features and skin tone will be preserved.</p>
+                    <h3><span>📏</span> Step 1 &mdash; Fit Profile</h3>
+                    <p>Use measurements as personal fit notes only. They do not generate a virtual fit or guarantee garment sizing.</p>
                   </div>
                 </div>
                 <div class="vas-tryon-step1-grid">
-                  <!-- Left: Customer Photo Upload & Identity Frame -->
+                  <!-- Photo-based try-on is unavailable; no customer photo is collected here. -->
                   <div class="vas-tryon-upload-col">
-                    <!-- Drag-and-Drop Dropzone -->
-                    <div class="vas-tryon-dropzone" id="tryOnDropZone"
-                      onclick="document.getElementById('tryOnPhotoInput').click()">
-                      <div class="vas-tryon-drop-icon">📸</div>
-                      <h4 style="font-size:1.15rem; margin-bottom:6px; color:var(--vas-mauve-dark);">Upload Your Real
-                        Photo</h4>
-                      <p style="font-size:0.86rem; color:var(--vas-muted); margin-bottom:16px;">
-                        Upload a clear face portrait or standing photo (JPG, PNG, WEBP up to 15MB).<br>
-                        <strong>We preserve your real face &amp; identity — no random AI avatars.</strong>
-                      </p>
-                      <button type="button" class="vas-btn vas-btn-rose vas-btn-sm"
-                        onclick="event.stopPropagation(); document.getElementById('tryOnPhotoInput').click()">
-                        📁 Choose Photo from Device
-                      </button>
-                      <input type="file" id="tryOnPhotoInput" accept="image/*" style="display:none;" />
-                    </div>
-
-                    <!-- Uploaded Photo Preview Frame -->
-                    <div class="vas-tryon-preview-wrap" id="tryOnPhotoPreviewWrap">
-                      <div class="vas-tryon-preview-frame">
-                        <img id="tryOnUserPreviewImg" src="" alt="Uploaded Customer Reference" />
-                        <span id="tryOnFaceDetectBadge" class="vas-tryon-preview-badge">✓ Real Face Reference
-                          Preserved</span>
-                        <div class="vas-tryon-tone-pill-tag">
-                          <span id="tryOnSkinSwatchDot" class="vas-skin-swatch-dot"></span>
-                          <span id="tryOnSkinToneBadge">Warm Ivory</span>
-                        </div>
-                      </div>
-                      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-                        <button type="button" class="vas-btn vas-btn-sm vas-btn-outline"
-                          onclick="document.getElementById('tryOnPhotoInput').click()">
-                          🔄 Replace Photo
-                        </button>
-                        <button type="button" class="vas-btn vas-btn-sm vas-btn-ghost" style="color:var(--vas-danger);"
-                          onclick="window.removeTryOnPhoto()">
-                          ✕ Remove Photo
-                        </button>
-                      </div>
+                    <div class="vas-tryon-unavailable-note" role="status">
+                      <strong>Photo try-on is not connected</strong>
+                      <p>No photo upload or virtual rendering is available. You can still browse and save catalog looks.</p>
                     </div>
                   </div>
 
@@ -967,7 +945,7 @@
                             📏 Body Measurements &amp; Fit Guidance
                           </h4>
                           <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">
-                            Calibrate garment proportions and drape contour to your body shape.
+                            Save personal measurements as fit notes for an atelier consultation.
                           </p>
                         </div>
                         <button type="button" class="vas-btn vas-btn-xs vas-btn-outline"
@@ -1013,13 +991,9 @@
                       <div class="vas-meas-disclaimer">
                         <span class="vas-disclaimer-icon">ℹ️</span>
                         <div class="vas-disclaimer-text">
-                          <strong>Boutique Fit Guidance Disclosure:</strong>
-                          Body measurements are utilized for digital drape guidance and silhouette contour calibration.
-                          The generated
-                          virtual try-on provides a realistic styling reference and does not guarantee exact millimeter
-                          physical
-                          garment fit or absolute bespoke proportions. Our Master Tailor conducts final stitch
-                          calibrations.
+                          <strong>Fit note disclosure:</strong>
+                          These measurements are not used to render or predict a garment fit. Confirm sizing and final
+                          measurements with the atelier before ordering.
                         </div>
                       </div>
                     </div>
@@ -1118,9 +1092,7 @@
                         🎨 Outfit Colourway &amp; Texture Customizer
                       </h4>
                       <p style="font-size:0.82rem; color:var(--vas-muted); margin:0;">
-                        Choose an alternate colorway. Our rendering preserves original gold zari, zardozi embroidery,
-                        and fabric
-                        texture intact.
+                        Record a preferred colorway for discussion. The catalog image is not recolored or altered.
                       </p>
                     </div>
                   </div>
@@ -1131,22 +1103,24 @@
               </div>
 
               <!-- ==========================================================
-                   STEP 3 – REALISTIC TRY-ON RESULT & COMPARISON (Requirements 3 & 6)
+                   STEP 3 – TRY-ON AVAILABILITY
                    ========================================================== -->
               <div class="vas-tryon-panel" id="tryOnStep3">
                 <div class="vas-tryon-panel-header"
                   style="text-align:center; justify-content:center; flex-direction:column; align-items:center;">
-                  <h3><span>✨</span> Step 3 &mdash; Generate Photorealistic Look</h3>
-                  <p>Generate a natural photograph of yourself in the selected outfit, preserving facial identity, skin
-                    tone, fabric
-                    folds, and lighting.</p>
+                  <h3><span>ℹ️</span> Step 3 &mdash; Virtual Try-On</h3>
+                  <p>Virtual try-on is currently unavailable. No generated or fit-accurate image can be created here.</p>
 
                   <div style="margin-top:16px;">
-                    <button type="button" id="tryOnGenerateBtn" class="vas-btn-tryon-gradient"
-                      onclick="window.generateVirtualTryOn()">
-                      ✨ Generate Realistic Try-On
+                    <button type="button" id="tryOnGenerateBtn" class="vas-btn-tryon-gradient" disabled>
+                      Virtual Try-On Unavailable
                     </button>
                   </div>
+                </div>
+
+                <div class="vas-tryon-unavailable-note" role="status">
+                  <strong>No virtual try-on service is connected</strong>
+                  <p>Browse the catalog and save looks, but do not upload a personal photo or treat catalog images as a preview of how a garment will fit or look on you.</p>
                 </div>
 
                 <!-- Stage 1: Ready State Notice -->
@@ -1312,161 +1286,6 @@
           </div>
         </section>
 
-        <!-- Section 3: Interactive Atelier Studio ("Customize Your Way" + Virtual Try-On) -->
-        <section class="vas-section vas-section-alt" id="customize">
-          <div class="vas-container">
-            <div class="vas-section-header">
-              <span class="vas-eyebrow">INTERACTIVE ATELIER STUDIO</span>
-              <h2 class="vas-title">Customize <em>Your Way</em></h2>
-              <p class="vas-subtitle">
-                Choose your category, neckline, sleeve, fabric, and hand embroidery. Experience our live visualizer and
-                AI Virtual Try-On.
-              </p>
-            </div>
-
-            <!-- Guest Preview Banner for Customizer -->
-            <div id="studioAuthLockOverlay" class="vas-service-lock-card">
-              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                <span class="vas-lock-badge">🔒 ATELIER PREVIEW</span>
-                <span style="font-size:0.88rem; color:var(--vas-charcoal);">
-                  Customize silhouettes, necklines, pure handloom fabrics &amp; live prices. <strong>Sign in when you
-                    are
-                    ready to commission this custom creation.</strong>
-                </span>
-              </div>
-              <div style="display:flex; gap:10px;">
-                <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="window.openAuthModal('login')">
-                  Sign In to Atelier
-                </button>
-                <button class="vas-btn vas-btn-sm vas-btn-outline" onclick="window.openAuthModal('register')">
-                  Register Profile &rarr;
-                </button>
-              </div>
-            </div>
-
-            <div class="vas-customize-studio">
-              <!-- Gender Selector (Women, Men, Kids) -->
-              <div class="vas-gender-selector">
-                <button type="button" class="vas-gender-btn active" data-gender="women"
-                  onclick="window.setCustomGender('women')">
-                  👩 Women's Couture
-                </button>
-                <button type="button" class="vas-gender-btn" data-gender="men" onclick="window.setCustomGender('men')">
-                  👨 Men's Sartorial
-                </button>
-                <button type="button" class="vas-gender-btn" data-gender="kids"
-                  onclick="window.setCustomGender('kids')">
-                  👧 Junior &amp; Kids
-                </button>
-              </div>
-
-              <div class="vas-studio-grid">
-                <!-- Left: Interactive Option Groups -->
-                <div class="vas-studio-controls" id="studioDynamicControls">
-                  <!-- Dynamically populated by js/app.js based on selected gender -->
-                </div>
-
-                <!-- Right: Live Preview Display + AI Virtual Try-On -->
-                <div class="vas-studio-preview">
-                  <!-- Visual Detail Zoom Studio Selector (Single Master Image) -->
-                  <div class="vas-studio-angle-bar" id="studioAngleBar">
-                    <button type="button" class="vas-studio-angle-btn active" data-angle="front"
-                      onclick="window.setStudioAngle('front', this)">
-                      <span>👗 Full Dress</span>
-                    </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="detail"
-                      onclick="window.setStudioAngle('detail', this)">
-                      <span>🔍 Embroidery Zoom</span>
-                    </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="upper"
-                      onclick="window.setStudioAngle('upper', this)">
-                      <span>👚 Blouse / Kurta</span>
-                    </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="sleeves"
-                      onclick="window.setStudioAngle('sleeves', this)">
-                      <span>🪡 Sleeves Detail</span>
-                    </button>
-                    <button type="button" class="vas-studio-angle-btn" data-angle="neckline"
-                      onclick="window.setStudioAngle('neckline', this)">
-                      <span>✨ Neckline &amp; Collar</span>
-                    </button>
-                  </div>
-
-                  <div class="vas-preview-display" id="studioPreviewDisplay">
-                    <img id="studioPreviewImg" src="images/products/women/ivory-anarkali-suit-front.jpg"
-                      alt="Customized Look" />
-                    <div class="vas-preview-overlay-tags" id="studioPreviewTags">
-                      <!-- Updated live -->
-                    </div>
-                  </div>
-
-                  <!-- AI / Virtual Try-On Controls -->
-                  <div class="vas-ai-panel" id="virtualTryOn">
-                    <div class="vas-ai-header">
-                      <strong>🪞 AI Virtual Try-On</strong>
-                      <span style="font-size:0.75rem; color:var(--vas-muted);">Studio Simulation</span>
-                    </div>
-
-                    <!-- Choose Virtual Model & Photo Upload -->
-                    <div style="margin-bottom:14px;">
-                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:6px;">Choose
-                        Virtual
-                        Model:</label>
-                      <div id="virtualModelSelect"
-                        style="display:flex; gap:10px; justify-content:space-between; margin-bottom:10px;">
-                        <!-- Populated by app.js / data.js -->
-                      </div>
-                      <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:4px;">Or Upload
-                        Your Photo
-                        for AI Virtual Try-On:</label>
-                      <input type="file" accept="image/*" class="vas-input" style="padding:6px; font-size:0.78rem;"
-                        onchange="window.handleCustomerPhotoUpload(event)" />
-                    </div>
-
-                    <!-- Privacy Message -->
-                    <div class="vas-privacy-note">
-                      🔒 <em>Client Privacy Guarantee:</em> Photos are processed client-side for virtual draping and
-                      never stored publicly.
-                    </div>
-                  </div>
-
-                  <!-- Price Summary Box -->
-                  <div class="vas-price-estimate-box">
-                    <div class="vas-price-estimate-row">
-                      <span>Base Master Cut &amp; Lining:</span>
-                      <span>Included</span>
-                    </div>
-                    <div class="vas-price-estimate-row">
-                      <span>Handloom Fabric &amp; Stitching:</span>
-                      <span id="studioFabricCost">Calculated Live</span>
-                    </div>
-                    <div class="vas-price-estimate-row total">
-                      <span>Estimated Tailoring Total:</span>
-                      <strong id="studioEstTotal">₹5,800</strong>
-                    </div>
-                  </div>
-
-                  <!-- Action Buttons -->
-                  <div style="display:flex; flex-direction:column; gap:10px;">
-                    <button class="vas-btn vas-btn-gold" style="width:100%;" onclick="window.orderCustomDesign()">
-                      🛍️ Add Custom Creation to Bag
-                    </button>
-                    <div style="display:flex; gap:8px;">
-                      <button class="vas-btn vas-btn-outline vas-btn-sm" style="flex:1;"
-                        onclick="window.saveCurrentDesign()">
-                        ♡ Save to Moodboard
-                      </button>
-                      <button class="vas-btn vas-btn-outline vas-btn-sm" style="flex:1;"
-                        onclick="window.resetCustomizeStudio()">
-                        ↺ Reset Options
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         <!-- Section 4: Saree Reborn Commission & Saree Quality & Transformation Studio -->
         <section class="vas-section" id="sareeReborn">
@@ -3353,8 +3172,7 @@
         <span class="vas-eyebrow" style="color:var(--vas-mauve);">VASTRAÉ ATELIER MOODBOARDS</span>
         <h2 style="font-size:1.5rem; margin:0; font-family:var(--vas-font-serif); color:var(--vas-charcoal);">My Style
           Board</h2>
-        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">Curated collection of your virtual try-on
-          looks and saved couture ensembles.</p>
+        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">Your saved catalog looks and couture ensembles.</p>
       </div>
       <div id="styleBoardItemsList">
         <!-- Rendered by tryon-service.js -->
@@ -3382,7 +3200,7 @@
   </div>
 
   <!-- ======================================================================
-       AI VIRTUAL TRY-ON BACKEND INTEGRATION & SETTINGS MODAL
+       AI VIRTUAL TRY-ON STATUS MODAL
        ====================================================================== -->
   <div class="vas-modal" id="tryOnAiIntegrationModal" style="display:none;">
     <div class="vas-modal-card" style="max-width:780px;">
@@ -3390,9 +3208,8 @@
       <div style="border-bottom:1px solid var(--vas-border); padding-bottom:14px; margin-bottom:18px;">
         <span class="vas-eyebrow" style="color:var(--vas-mauve);">ARCHITECTURE &amp; API SECURITY</span>
         <h2 style="font-size:1.5rem; margin:0; font-family:var(--vas-font-serif); color:var(--vas-charcoal);">AI Try-On
-          Service Gateway</h2>
-        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">Connect real diffusion-based Virtual
-          Try-On APIs with secure server-side key management.</p>
+          Status</h2>
+        <p style="font-size:0.85rem; color:var(--vas-muted); margin:4px 0 0;">There is no verified virtual try-on integration connected to this storefront.</p>
       </div>
 
       <div class="vas-ai-guide-content">
@@ -3400,10 +3217,10 @@
         <div class="vas-ai-alert-box">
           <span style="font-size:1.3rem;">🔒</span>
           <div>
-            <strong>Strict Frontend Security Guarantee:</strong>
+            <strong>No photo or AI service is active:</strong>
             <p style="margin:2px 0 0; font-size:0.82rem; color:var(--vas-ink);">
-              Secret AI API keys are stored solely on your secure local backend (<code>backend_config.json</code> or
-              server environment variables) and <strong>never exposed in frontend JavaScript</strong>.
+              Do not upload customer photos through the try-on studio. Gemini image generation can create or edit images,
+              but it is not a verified, fit-accurate garment try-on integration in this project.
             </p>
           </div>
         </div>
@@ -3411,55 +3228,46 @@
         <!-- Integration Status Overview -->
         <div class="vas-ai-status-card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span style="font-size:0.85rem; font-weight:700; color:var(--vas-charcoal);">Active Engine
-              Architecture:</span>
+            <span style="font-size:0.85rem; font-weight:700; color:var(--vas-charcoal);">Current status:</span>
             <span id="aiModalEngineBadge" class="vas-engine-status-pill local-active">
-              <span class="vas-engine-dot local"></span> Atelier Photometric Engine (Biometric Synthesis)
+              <span class="vas-engine-dot local"></span> Virtual try-on unavailable
             </span>
           </div>
           <p style="font-size:0.83rem; color:var(--vas-muted); margin:0 0 10px; line-height:1.5;">
-            The studio dynamically detects whether our Python backend (<code>backend_server.py</code>) has an active
-            Neural AI key (e.g. IDM-VTON on Replicate or FASHN.ai). When no cloud key is provided, the high-fidelity
-            <strong>VASTRAÉ Atelier Photometric Synthesis Engine</strong> executes client-side biometric calibration
-            without placeholder deception.
+            The storefront currently supports outfit browsing and saved style boards only. Its former browser-side
+            composite was not a virtual try-on and has been disabled. No customer image is uploaded or processed.
           </p>
         </div>
 
         <!-- Integration Steps -->
         <div style="margin-top:16px;">
-          <h4 style="font-size:0.95rem; margin:0 0 8px; color:var(--vas-charcoal);">How to Connect Real Neural AI
-            Diffusion Services:</h4>
+          <h4 style="font-size:0.95rem; margin:0 0 8px; color:var(--vas-charcoal);">Integration requirements:</h4>
           <div class="vas-ai-step-list">
             <div class="vas-ai-step-item">
               <span class="vas-ai-step-num">1</span>
               <div>
-                <strong>Launch the Secure Backend Gateway:</strong>
+                <strong>Use a verified garment try-on provider:</strong>
                 <p style="margin:2px 0 0; font-size:0.8rem; color:var(--vas-muted);">
-                  Run <code>python backend_server.py</code> in the project directory. The gateway runs on port 8080.
+                  A provider must return an actual generated garment try-on image. Local image compositing is not an acceptable substitute.
                 </p>
               </div>
             </div>
             <div class="vas-ai-step-item">
               <span class="vas-ai-step-num">2</span>
               <div>
-                <strong>Supported Neural VTON Providers:</strong>
+                <strong>Image generation is not automatically try-on:</strong>
                 <p style="margin:2px 0 0; font-size:0.8rem; color:var(--vas-muted);">
-                  <strong>IDM-VTON (Replicate):</strong> Diffusion-based virtual try-on preserving garment textures.<br>
-                  <strong>FASHN.ai:</strong> Commercial high-resolution fashion garment warp API.<br>
-                  <strong>Google Gemini Vision / Multimodal:</strong> Multimodal prompt-guided clothing synthesis.
+                  Gemini image generation and editing can produce images, but this project does not have a verified Gemini garment try-on workflow. No provider is currently connected to the storefront.
                 </p>
               </div>
             </div>
             <div class="vas-ai-step-item">
               <span class="vas-ai-step-num">3</span>
               <div>
-                <strong>Configure Secret API Key in <code>backend_config.json</code>:</strong>
-                <pre
-                  style="background:#221b1f; color:#f5d5de; padding:10px; border-radius:8px; font-size:0.78rem; overflow-x:auto; margin:6px 0 0;">
-{
-  "provider": "replicate_idm_vton",
-  "api_key": "r8_YourSecretTokenHere..."
-}</pre>
+                <strong>Keep photos and credentials protected:</strong>
+                <p style="margin:2px 0 0; font-size:0.8rem; color:var(--vas-muted);">
+                  Any future integration must be reviewed for accuracy, privacy, and secure server-side credential handling before photo uploads are enabled.
+                </p>
               </div>
             </div>
           </div>
@@ -3467,8 +3275,8 @@
 
         <div style="margin-top:18px; display:flex; justify-content:flex-end; gap:10px;">
           <button type="button" class="vas-btn vas-btn-sm vas-btn-outline"
-            onclick="window.vastraeTryOn.checkStatus(); if(window.showToast) window.showToast('Checked AI backend status.');">
-            🔄 Re-check Backend Connection
+            onclick="window.vastraeTryOn.checkStatus(); if(window.showToast) window.showToast('Virtual try-on is unavailable; no provider is connected.');">
+            🔄 Check Try-On Status
           </button>
           <button type="button" class="vas-btn vas-btn-sm vas-btn-mauve" onclick="window.closeAiIntegrationModal()">
             Close Settings
@@ -3549,6 +3357,7 @@
   <script src="js/services/notification-service.js"></script>
   <script src="js/services/tryon-service.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/customize-studio.js"></script>
 </body>
 
 </html>

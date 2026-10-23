@@ -220,15 +220,17 @@
     // Route to correct page based on URL hash
     const initialHash = (window.location.hash || "").replace("#", "");
     if (!currentUser) {
-      // Unauthenticated visitor: Home page is displayed first
+      // Unauthenticated visitor: Can view public pages and boutique services
       if (["dashboard", "admin", "tailor", "measurements", "profile"].includes(initialHash)) {
         window.navigateToPage("home");
-        showToast("Please log in to access your " + (initialHash === "measurements" ? "measurements." : initialHash === "profile" ? "profile details." : "dashboard."));
+        showToast(initialHash === "measurements" ? "Please log in to access your measurements." : initialHash === "profile" ? "Please log in to access your profile." : "Please log in to access your dashboard.");
         openAuthModal("login");
-      } else if (["about", "collection", "services", "contact", "login"].includes(initialHash)) {
-        window.navigateToPage(initialHash);
-      } else if (["customize", "sareeReborn", "ownFabric", "aiTryOnStudio", "accessories"].includes(initialHash)) {
+      } else if (["services", "customize", "virtualTryOn", "sareeReborn", "ownFabric", "aiTryOnStudio"].includes(initialHash)) {
         window.navigateToSection(initialHash);
+      } else if (["about", "collection", "contact", "login"].includes(initialHash)) {
+        window.navigateToPage(initialHash);
+      } else if (initialHash === "accessories") {
+        window.navigateToSection("accessories");
       } else {
         window.navigateToPage("home");
       }
@@ -628,14 +630,9 @@
 
     // Guard measurements and profile for authenticated patrons
     if ((target === "measurements" || target === "profile") && !currentUser) {
-      showToast("Please sign in or register to view your " + (target === "measurements" ? "measurements" : "profile") + ".");
+      showToast("Please sign in or register to view your " + (target === "measurements" ? "measurements." : "profile") + ".");
       openAuthModal("login");
       return;
-    }
-
-    // Show services page; if unauthenticated, show helpful toast about signing in first to use interactive features
-    if (target === "services" && !currentUser) {
-      showToast("🔒 Welcome to Boutique Services. Please sign in first to use the customizer or submit orders.");
     }
 
     document.body.classList.remove("vas-dashboard-active");
@@ -1218,7 +1215,9 @@
       const action = pendingAuthAction;
       pendingAuthAction = null;
       const p = VASTRAE_DATA.products.find(item => item.id === action.productId);
-      if (action.type === "cart" && p) {
+      if (action.type === "cart" && p && action.customConfig) {
+        window.addToCart(action.productId, action.size, action.customConfig);
+      } else if (action.type === "cart" && p) {
         cart.push({
           id: p.id,
           name: p.name,
@@ -1306,7 +1305,9 @@
       const p = VASTRAE_DATA.products.find(item => item.id === action.productId);
       updateAuthUI();
 
-      if (action.type === "cart" && p) {
+      if (action.type === "cart" && p && action.customConfig) {
+        window.addToCart(action.productId, action.size, action.customConfig);
+      } else if (action.type === "cart" && p) {
         const existing = cart.find(item => item.id === p.id);
         if (existing) {
           existing.quantity += 1;
@@ -1623,6 +1624,9 @@
       if (rebornForm) rebornForm.classList.remove("vas-service-content-locked");
       if (ownFabricForm) ownFabricForm.classList.remove("vas-service-content-locked");
       if (tryOnShell) tryOnShell.classList.remove("vas-service-content-locked");
+      if (window.vastraeCustomizer && typeof window.vastraeCustomizer.onAuthChanged === "function") {
+        window.vastraeCustomizer.onAuthChanged();
+      }
 
       // Dynamic notification badge
       if (window.vastraeNotificationService && typeof window.vastraeNotificationService.updateBadgeUI === "function") {
@@ -1645,11 +1649,14 @@
       if (ownFabricLockOverlay) ownFabricLockOverlay.style.display = "flex";
       if (tryOnLockOverlay) tryOnLockOverlay.style.display = "flex";
 
-      // Services remain fully viewable and interactive for guests; login required to order/submit
-      if (studioContent) studioContent.classList.remove("vas-service-content-locked");
-      if (rebornForm) rebornForm.classList.remove("vas-service-content-locked");
-      if (ownFabricForm) ownFabricForm.classList.remove("vas-service-content-locked");
-      if (tryOnShell) tryOnShell.classList.remove("vas-service-content-locked");
+      // Services and customizer locked for guests
+      if (studioContent) studioContent.classList.add("vas-service-content-locked");
+      if (rebornForm) rebornForm.classList.add("vas-service-content-locked");
+      if (ownFabricForm) ownFabricForm.classList.add("vas-service-content-locked");
+      if (tryOnShell) tryOnShell.classList.add("vas-service-content-locked");
+      if (window.vastraeCustomizer && typeof window.vastraeCustomizer.onAuthChanged === "function") {
+        window.vastraeCustomizer.onAuthChanged();
+      }
 
       if (nameSpan) nameSpan.textContent = "Login / Register";
 
@@ -2516,7 +2523,7 @@
               🛍️ Add to Shopping Bag
             </button>
             <button class="vas-btn vas-btn-rose" onclick="window.closeModal(); window.launchTryOnForProduct('${p.id}');" style="flex:1;">
-              ✦ Virtual Try-On
+              ✦ Browse in Style Studio
             </button>
             ${p.customizable ? `
               <button class="vas-btn vas-btn-gold" onclick="window.startCustomizeFromProduct('${p.id}'); window.closeModal();" style="flex:1;">
@@ -2535,6 +2542,10 @@
   // 7. CUSTOMIZE YOUR WAY STUDIO & AI / VIRTUAL TRY-ON (PART 8 & 9)
   // ------------------------------------------------------------------------
   function initCustomizeStudio() {
+    if (window.vastraeCustomizer) {
+      window.vastraeCustomizer.init();
+      return;
+    }
     renderStudioGenderControls();
     updateLivePreviewVisual();
   }
@@ -3012,34 +3023,12 @@
   }
 
   window.selectVirtualModel = function (modelId, imgUrl, el) {
-    if (!currentUser) {
-      showToast("🔒 Please sign in or register to use AI Virtual Try-On.");
-      openAuthModal("login");
-      return;
-    }
-    customState.customerPhoto = null;
-    if (imgUrl) {
-      document.getElementById("studioPreviewImg").src = imgUrl;
-      showToast(`✓ Applied Virtual Drape`);
-    }
+    showToast("Virtual try-on is unavailable; no model image was generated.");
   };
 
   window.handleCustomerPhotoUpload = function (event) {
-    if (!currentUser) {
-      showToast("🔒 Please sign in or register to upload photos for AI Try-On.");
-      openAuthModal("login");
-      return;
-    }
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        customState.customerPhoto = e.target.result;
-        document.getElementById("studioPreviewImg").src = e.target.result;
-        showToast("✓ Client photo uploaded securely for AI Try-On preview.");
-      };
-      reader.readAsDataURL(file);
-    }
+    if (event && event.target) event.target.value = "";
+    showToast("Photo try-on is unavailable; no photo was uploaded or processed.");
   };
 
   window.resetCustomizeStudio = function () {
@@ -3868,11 +3857,11 @@
   // ------------------------------------------------------------------------
   // 10. CART, WISHLIST & CHECKOUT MANAGEMENT (PART 13)
   // ------------------------------------------------------------------------
-  window.addToCart = function (productId, size = "M") {
+  window.addToCart = function (productId, size = "M", customConfig = null) {
     currentUser = getSyncUser();
     if (!currentUser) {
       closeModal();
-      pendingAuthAction = { type: "cart", productId: productId, size: size };
+      pendingAuthAction = { type: "cart", productId: productId, size: size, customConfig: customConfig };
       showToast("Please sign in or register to add this piece to your Shopping Bag.");
       openAuthModal("login");
       return;
@@ -3880,25 +3869,34 @@
     const p = VASTRAE_DATA.products.find(item => item.id === productId);
     if (!p) return;
 
-    const existing = cart.find(item => item.id === productId);
+    const existing = cart.find(item => item.id === productId && (
+      customConfig
+        ? item.customConfig && item.customConfig.id === customConfig.id
+        : !item.customConfig
+    ));
     if (existing) {
       existing.quantity += 1;
     } else {
       cart.push({
         id: p.id,
-        name: p.name,
+        name: customConfig && customConfig.name ? customConfig.name : p.name,
         price: p.price,
         image: p.image,
         size: size || (p.sizes ? p.sizes[0] : "M"),
-        color: p.color,
+        color: customConfig && customConfig.design ? customConfig.design.color : p.color,
         quantity: 1,
-        customization: p.customizable ? "Standard Atelier Fit" : "Ready-to-Wear"
+        customization: customConfig
+          ? `${customConfig.category} design brief · ${customConfig.summary || "Atelier review required"}`
+          : (p.customizable ? "Standard Atelier Fit" : "Ready-to-Wear"),
+        customConfig: customConfig
       });
     }
 
     saveUserCart();
     updateCartWishCounters();
-    showToast(`✓ Added "${p.name}" to Bag!`);
+    showToast(customConfig
+      ? `✓ Added the ${customConfig.category} design brief for "${p.name}" to Bag!`
+      : `✓ Added "${p.name}" to Bag!`);
   };
 
   window.toggleWishlist = function (productId) {
@@ -3979,6 +3977,7 @@
             <div style="font-size:0.75rem; color:var(--vas-muted); margin-bottom:6px;">
               ${item.size ? `Size: ${item.size}` : ''} ${item.customization ? `· ${item.customization}` : ''}
             </div>
+            ${item.customConfig && item.customConfig.priceNote ? `<div style="font-size:0.7rem; color:var(--vas-muted); margin-bottom:6px;">${item.customConfig.priceNote}</div>` : ''}
             <div style="font-weight:700; color:var(--vas-ink);">₹${item.price.toLocaleString()}</div>
           </div>
           <div style="text-align:right;">
@@ -4347,6 +4346,12 @@
         date: new Date().toISOString().split("T")[0],
         orderDate: new Date().toISOString(),
         items: cart.map(i => `${i.name} (x${i.quantity})`),
+        customizations: cart.filter(i => i.customConfig).map(i => ({
+          itemId: i.id,
+          name: i.name,
+          quantity: i.quantity,
+          configuration: i.customConfig
+        })),
         total: totalAmount,
         totalAmount: totalAmount,
         type: "Online Atelier Order",
@@ -4680,14 +4685,14 @@
             <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">CLIENT SANCTUARY · BESPOKE ATELIER WORKSPACE</span>
             <h2 style="font-family:'Playfair Display',serif; font-size:1.8rem; margin:6px 0 8px; color:#ffffff;">Welcome back, ${currentUser.name}</h2>
             <p style="font-size:0.88rem; color:rgba(255,255,255,0.8); max-width:600px; margin:0 0 16px;">
-              Access your personalized tailoring services, launch the 3D Customizer, test outfits in AI Virtual Try-On, or coordinate your private couture fitting.
+              Access your personalized tailoring services, explore the outfit lookbook, or coordinate your private couture fitting.
             </p>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
               <button class="vas-btn vas-btn-gold vas-btn-sm" onclick="window.switchDashboardTab('customize')" style="font-weight:700;">
                 🪡 Launch 3D Customizer →
               </button>
               <button class="vas-btn vas-btn-sm" onclick="window.switchDashboardTab('tryon')" style="font-weight:700; background:rgba(212,175,55,0.25) !important; color:#ffffff !important; border:1.5px solid var(--vas-champagne, #f2c46a) !important; backdrop-filter:blur(6px); box-shadow:0 0 16px rgba(212,175,55,0.35); text-shadow:0 1px 3px rgba(0,0,0,0.5); cursor:pointer;">
-                ✨ AI Virtual Try-On →
+                ✨ Browse Outfit Lookbook →
               </button>
             </div>
           </div>
@@ -4766,13 +4771,13 @@
             <div class="vas-dash-panel" style="margin-bottom:0; background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:22px; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.2s, box-shadow 0.2s;">
               <div>
                 <div style="font-size:2rem; margin-bottom:10px;">✨</div>
-                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">AI Virtual Try-On</h4>
+                <h4 style="margin:0 0 6px; font-size:1.1rem; color:#1a1412;">Outfit Lookbook</h4>
                 <p style="font-size:0.82rem; color:#7d7269; margin:0 0 16px; line-height:1.5;">
-                  Neural silhouette visualizer with 360° angle rotation, AI model body matching, and personal selfie mapping for realistic fabric drape preview.
+                  Browse boutique catalog styles and save your favorites. Virtual try-on is not available, and no personal photos are processed.
                 </p>
               </div>
               <button class="vas-btn vas-btn-sm vas-btn-gold" style="width:100%; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="window.switchDashboardTab('tryon')">
-                ✨ Try On Silhouettes →
+                ✨ Explore Outfit Styles →
               </button>
             </div>
 
@@ -4893,144 +4898,35 @@
       `;
     } else if (tabName === "customize") {
       pane.innerHTML = `
-        <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/ivory-anarkali-suit-front.jpg') center/cover;">
+        <div class="vas-dash-banner-box" style="margin-bottom:20px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/customizer/lehenga_front.jpg') center/cover;">
           <div>
-            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">ATELIER 3D CUSTOMIZER · CLIENT SUITE</span>
-            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Customize Your Bespoke Garment</h2>
-            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:580px; margin:0 0 16px;">
-              Select silhouettes, artisanal necklines, sleeve lengths, handloom pure silks, and hand embroidery. Save to your moodboard or stitch with our Master Tailors.
+            <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">ATELIER LIVE CUSTOMIZER · CLIENT SUITE</span>
+            <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Customize Your Way Studio</h2>
+            <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:680px; margin:0 0 10px;">
+              Craft your bespoke luxury ensemble with real-time silhouette updates. Choose custom sleeves, necklines, lengths, pure silks, and rich artisanal colorways with live model preview and personal photo fit.
             </p>
           </div>
         </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; align-items:start;">
-          <!-- Controls Form -->
-          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04);">
-            <div style="margin-bottom:20px;">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em;">1. Select Silhouette &amp; Garment</label>
-              <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <button class="vas-btn vas-btn-sm vas-btn-gold" id="custOptGarment1" onclick="window.selectClientCustomGarment('Blouse', this)">Bridal Blouse</button>
-                <button class="vas-btn vas-btn-sm vas-btn-outline" id="custOptGarment2" onclick="window.selectClientCustomGarment('Lehenga', this)">Royal Lehenga</button>
-                <button class="vas-btn vas-btn-sm vas-btn-outline" id="custOptGarment3" onclick="window.selectClientCustomGarment('Kurta', this)">Silk Kurta Suit</button>
-                <button class="vas-btn vas-btn-sm vas-btn-outline" id="custOptGarment4" onclick="window.selectClientCustomGarment('Sherwani', this)">Heritage Bandhgala</button>
-              </div>
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
-              <div>
-                <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:6px;">Front Neckline</label>
-                <select id="custClientNeck" class="vas-select" onchange="window.updateClientCustomEstimate()">
-                  <option value="Sweetheart Cut (Signature)">Sweetheart Cut (Signature)</option>
-                  <option value="Deep U-Arch with Latkans">Deep U-Arch with Latkans</option>
-                  <option value="High Mandarin Band">High Mandarin Band</option>
-                  <option value="Queen Anne Royal Arch">Queen Anne Royal Arch</option>
-                  <option value="Boat Neck with Zari Piping">Boat Neck with Zari Piping</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:6px;">Sleeve Length &amp; Cut</label>
-                <select id="custClientSleeve" class="vas-select" onchange="window.updateClientCustomEstimate()">
-                  <option value="Elbow Length (Signature)">Elbow Length (Signature)</option>
-                  <option value="Cap Sleeves with Zari Cuff">Cap Sleeves with Zari Cuff</option>
-                  <option value="Full Length Sheer Organza">Full Length Sheer Organza</option>
-                  <option value="Sleeveless Classic">Sleeveless Classic</option>
-                </select>
-              </div>
-            </div>
-
-            <div style="margin-bottom:20px;">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Pure Fabric Selection</label>
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
-                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid #d4af37; padding:10px; border-radius:8px; background:#fffcf6;">
-                  <input type="radio" name="custClientFabric" value="Pure Kanjeevaram Silk" checked onchange="window.updateClientCustomEstimate()">
-                  <span style="font-size:0.82rem; display:block; font-weight:600;">Kanjeevaram Silk</span>
-                  <small style="color:#7d7269; font-size:0.72rem;">Grade A+ Mulberry</small>
-                </label>
-                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid var(--vas-border); padding:10px; border-radius:8px;">
-                  <input type="radio" name="custClientFabric" value="Banarasi Katan Brocade" onchange="window.updateClientCustomEstimate()">
-                  <span style="font-size:0.82rem; display:block; font-weight:600;">Banarasi Brocade</span>
-                  <small style="color:#7d7269; font-size:0.72rem;">Fine Metallic Weave</small>
-                </label>
-                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid var(--vas-border); padding:10px; border-radius:8px;">
-                  <input type="radio" name="custClientFabric" value="Chanderi Handloom" onchange="window.updateClientCustomEstimate()">
-                  <span style="font-size:0.82rem; display:block; font-weight:600;">Chanderi Silk</span>
-                  <small style="color:#7d7269; font-size:0.72rem;">Lightweight Royal</small>
-                </label>
-                <label class="vas-custom-chip" style="cursor:pointer; display:block; border:1px solid var(--vas-border); padding:10px; border-radius:8px;">
-                  <input type="radio" name="custClientFabric" value="Italian Micro-Velvet 9000" onchange="window.updateClientCustomEstimate()">
-                  <span style="font-size:0.82rem; display:block; font-weight:600;">Micro-Velvet</span>
-                  <small style="color:#7d7269; font-size:0.72rem;">Plush Heavy Drape</small>
-                </label>
-              </div>
-            </div>
-
-            <div style="margin-bottom:20px;">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Atelier Hand Embroidery</label>
-              <select id="custClientEmbroidery" class="vas-select" onchange="window.updateClientCustomEstimate()">
-                <option value="Maggam Stone Work & Basra Pearls" data-price="1800">Maggam Stone Work &amp; Basra Pearls (+₹1,800)</option>
-                <option value="Antique Zardozi Gold Bullion Wire" data-price="2500">Antique Zardozi Gold Bullion Wire (+₹2,500)</option>
-                <option value="Resham Multi-Colored Needlework" data-price="1200">Resham Multi-Colored Needlework (+₹1,200)</option>
-                <option value="Minimalist Silk Piping & Latkans" data-price="600">Minimalist Silk Piping &amp; Latkans (+₹600)</option>
-              </select>
-            </div>
-
-            <div style="margin-bottom:10px;">
-              <label style="font-size:0.82rem; font-weight:700; color:#1a1412; display:block; margin-bottom:8px;">Atelier Color Swatch</label>
-              <div style="display:flex; gap:12px; align-items:center;">
-                <input type="color" id="custClientColor" value="#7a0c1e" style="width:44px; height:44px; border:none; cursor:pointer; border-radius:50%;" onchange="window.updateClientCustomEstimate()">
-                <span id="custClientColorLabel" style="font-size:0.85rem; font-weight:600; color:#1a1412;">Royal Crimson Silk</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Summary & Actions -->
-          <div style="background:#ffffff; border:1px solid var(--vas-border); border-radius:12px; padding:24px; box-shadow:0 4px 18px rgba(76,69,65,0.04); position:sticky; top:20px;">
-            <span style="font-size:0.7rem; letter-spacing:0.12em; color:var(--vas-gold-dark); text-transform:uppercase; font-weight:700;">SPECIFICATION SUMMARY</span>
-            <h3 id="custClientSummaryTitle" style="font-size:1.15rem; margin:6px 0 14px; color:#1a1412;">Bespoke Bridal Blouse</h3>
-            
-            <div style="border-top:1px solid #f0eae1; border-bottom:1px solid #f0eae1; padding:12px 0; margin-bottom:16px; font-size:0.82rem; color:#4c4541; display:flex; flex-direction:column; gap:6px;">
-              <div style="display:flex; justify-content:space-between;"><span>Master Tailoring:</span> <b>₹1,800</b></div>
-              <div style="display:flex; justify-content:space-between;"><span>Pure Silk Yardage:</span> <b>₹2,200</b></div>
-              <div style="display:flex; justify-content:space-between;"><span>Hand Embroidery:</span> <b id="custClientEmbPrice">₹1,800</b></div>
-              <div style="display:flex; justify-content:space-between; font-size:1rem; font-weight:700; color:#1a1412; border-top:1px dashed #e2d9cd; padding-top:8px; margin-top:4px;">
-                <span>Total Estimated:</span> <span id="custClientTotal" style="color:var(--vas-gold-dark);">₹5,800</span>
-              </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <button class="vas-btn vas-btn-gold" style="width:100%; font-weight:700;" onclick="window.saveCurrentClientCustomDesign(true)">
-                🛍️ Add Custom Outfit to Bag
-              </button>
-              <button class="vas-btn vas-btn-outline" style="width:100%; font-weight:600;" onclick="window.saveCurrentClientCustomDesign(false)">
-                💾 Save to My Moodboards
-              </button>
-              <button class="vas-btn vas-btn-outline" style="width:100%;" onclick="window.switchDashboardTab('tryon')">
-                ✨ Preview in AI Try-On
-              </button>
-              <button class="vas-btn vas-btn-sm" style="width:100%; color:#7d7269; background:transparent; border:none;" onclick="window.navigateToSection('customize')">
-                🔍 Open Fullscreen Atelier Studio →
-              </button>
-            </div>
-          </div>
-        </div>
+        <div id="dashCustomizerMount" class="vas-customizer-root vas-c-dash-embed"></div>
       `;
+      // Mount the full Customize Your Way studio into the dashboard mount
+      if (window.vastraeCustomizer && typeof window.vastraeCustomizer.mount === "function") {
+        window.vastraeCustomizer.mount("dashCustomizerMount");
+      }
     } else if (tabName === "tryon") {
       pane.innerHTML = `
         <div class="vas-dash-banner-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/products/women/emerald-pakistani-suit-front.jpg') center/cover;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
             <div>
               <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">VASTRAÉ DIGITAL FASHION STUDIO · CLIENT SANCTUARY</span>
-              <h2 style="font-family:'Playfair Display',serif; font-size:1.65rem; margin:6px 0 8px; color:#ffffff;">AI Virtual Try-On Studio</h2>
+              <h2 style="font-family:'Playfair Display',serif; font-size:1.65rem; margin:6px 0 8px; color:#ffffff;">Outfit Lookbook</h2>
               <p style="font-size:0.86rem; color:rgba(255,255,255,0.8); max-width:620px; margin:0;">
-                Experience the authentic 3-step digital atelier studio. Preserves your facial identity and skin tone across bridal lehengas, anarkalis, and Pakistani suits with interactive Before &amp; After analysis.
+                Browse boutique outfits and save your favorites. Virtual try-on is unavailable; customer photos are not requested or processed.
               </p>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="vas-btn vas-btn-sm vas-btn-gold" onclick="document.getElementById('tryOnPhotoInput').click()" style="font-weight:600;">
-                📸 Upload Photo
-              </button>
               <button class="vas-btn vas-btn-sm vas-btn-outline" style="color:#ffffff; border-color:rgba(255,255,255,0.45); font-weight:600;" onclick="window.syncSavedProfileMeasurements()">
-                📏 Sync Profile Sizing
+                📏 Sync Fit Notes
               </button>
             </div>
           </div>
@@ -5916,20 +5812,12 @@
   };
 
   window.updateClientTryonModel = function (modelInfo) {
-    const modelNameEl = document.getElementById('clientTryonModelName');
-    if (modelNameEl) modelNameEl.textContent = modelInfo;
-    showToast(`✓ AI model posture switched: ${modelInfo.split('·')[0]}`);
+    showToast("Virtual try-on is unavailable; model poses cannot be previewed.");
   };
 
   window.handleClientTryonUpload = function (event) {
-    const file = event.target.files && event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        showToast("✓ Analyzing uploaded photo: 33 facial landmarks and body mesh mapped.");
-      };
-      reader.readAsDataURL(file);
-    }
+    if (event && event.target) event.target.value = "";
+    showToast("Photo try-on is unavailable; no photo was uploaded or analyzed.");
   };
 
   window.addTriedGarmentToCart = function () {
@@ -9024,6 +8912,13 @@ window.handleCreateTailor = async function (event) {
   };
 
   window.addToCartFromModal = function (id, name, price, image) {
+    currentUser = getSyncUser();
+    if (!currentUser) {
+      closeModal();
+      showToast("🔒 Please sign in or register to add items to your Shopping Bag.");
+      openAuthModal("login");
+      return;
+    }
     if (window.vastraeCartService) {
       window.vastraeCartService.addToCart({ id: id, name: name, price: price, image: image, category: "accessory" }, "Free Size", 1);
     }

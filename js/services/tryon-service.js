@@ -1,16 +1,12 @@
 /* ==========================================================================
-   VASTRAÉ ATELIER — UPGRADED REALISTIC AI VIRTUAL TRY-ON STUDIO SERVICE
-   "Your Style, Virtually! See It. Style It. Make It Yours."
+   VASTRAÉ ATELIER — OUTFIT LOOKBOOK AND STYLE BOARD
+   Virtual try-on is disabled until a verified integration is connected.
    
    Features:
-   1. Real Customer Photo & Facial Identity Reference Preservation
-   2. Authentic Boutique Garment Reuse (Bridal Lehengas, Imperial Anarkalis, Pakistani Suits, Shararas)
-   3. Realistic Virtual Try-On Synthesis (Lighting, Shadows, Fabric Folds & Natural Blend)
-   4. Biometric Measurements & Tailoring Guidance (Height, Bust, Waist, Hips, Fit Preference)
-   5. Skin Tone Extraction, Tone-Based Recommendations & Texture-Preserving Recolor
-   6. Dual Comparison Modes: Draggable Before/After Slider & Side-by-Side Dual View
-   7. Real Backend AI Service Gateway (/api/tryon) with Transparent Engine Status
-   8. Complete Boutique Integration (Shopping Bag, Style Board, Look Comparison)
+   1. Browse and filter boutique outfits
+   2. Save favorites to a style board
+   3. Compare catalog products and record color preferences
+   4. Save measurements as personal fit notes
    ========================================================================== */
 
 (function () {
@@ -76,9 +72,9 @@
     sliderPos: 50,
     backendStatus: {
       online: false,
-      provider: "local_photometric",
+      provider: "unavailable",
       hasApiKey: false,
-      label: "VASTRAÉ Atelier Photometric Synthesis"
+      label: "Virtual try-on unavailable"
     }
   };
 
@@ -236,12 +232,12 @@
     ];
   }
 
-  // Check Backend AI API Status (Rule 6: Pure client-side localStorage architecture, zero backend/API calls)
+  // No verified virtual try-on provider is connected to this storefront.
   async function checkBackendAiStatus() {
     TryOnState.backendStatus.online = false;
     TryOnState.backendStatus.hasApiKey = false;
-    TryOnState.backendStatus.provider = "local_photometric";
-    TryOnState.backendStatus.label = "VASTRAÉ Atelier Client Engine";
+    TryOnState.backendStatus.provider = "unavailable";
+    TryOnState.backendStatus.label = "Virtual try-on unavailable";
     updateEngineBadgeUI();
   }
 
@@ -249,19 +245,11 @@
     const badge = document.getElementById("tryOnEngineStatusBadge");
     if (!badge) return;
 
-    if (TryOnState.backendStatus.online && TryOnState.backendStatus.hasApiKey) {
-      badge.innerHTML = `
-        <span class="vas-engine-dot live"></span>
-        <span>Neural AI Active: ${TryOnState.backendStatus.label}</span>
-      `;
-      badge.className = "vas-engine-status-pill neural-active";
-    } else {
-      badge.innerHTML = `
-        <span class="vas-engine-dot local"></span>
-        <span>Atelier Photometric Engine (Biometric Synthesis)</span>
-      `;
-      badge.className = "vas-engine-status-pill local-active";
-    }
+    badge.innerHTML = `
+      <span class="vas-engine-dot local"></span>
+      <span>${TryOnState.backendStatus.label}</span>
+    `;
+    badge.className = "vas-engine-status-pill";
   }
 
   // Initialize Try-On Studio
@@ -598,14 +586,9 @@
   window.selectDressColorVariant = function (variantId) {
     TryOnState.selectedColorVariant = variantId;
     renderColorVariantSwatches();
-    const selectedOutfit = ((window.VASTRAE_DATA && window.VASTRAE_DATA.products) || []).find(p => p.id === TryOnState.selectedOutfitId);
-    const variantName = GARMENT_COLOR_VARIANTS.find(v => v.id === variantId)?.label || "Selected Hue";
+    const variantName = GARMENT_COLOR_VARIANTS.find(v => v.id === variantId)?.label || "Selected colorway";
     if (window.showToast) {
-      window.showToast(`Applied ${variantName} (preserving embroidery & fabric weave).`);
-    }
-    // If a result is already visible, re-render realistic look
-    if (TryOnState.generatedCompositeUrl && selectedOutfit) {
-      renderCompositeRealisticCanvas(selectedOutfit);
+      window.showToast(`${variantName} preference saved; the catalog image is unchanged.`);
     }
   };
 
@@ -829,7 +812,7 @@
 
     const selectedProduct = ((window.VASTRAE_DATA && window.VASTRAE_DATA.products) || []).find(p => p.id === productId);
     if (selectedProduct && window.showToast) {
-      window.showToast(`Selected "${selectedProduct.name}" for virtual try-on.`);
+      window.showToast(`Selected "${selectedProduct.name}" in the outfit lookbook.`);
     }
 
     // Update Step 3 Preview Info if ready
@@ -952,69 +935,12 @@
   };
 
   // =========================================================================
-  // STEP 3: EXECUTE REALISTIC VIRTUAL TRY-ON
+  // STEP 3: Virtual try-on is disabled until a verified provider is connected.
   // =========================================================================
   window.generateVirtualTryOn = async function () {
-    // 0. Auth validation for using the AI synthesis engine
-    const activeUser = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
-    if (!activeUser) {
-      if (window.showToast) window.showToast("🔒 Please sign in or register to generate your realistic AI Virtual Try-On look.");
-      if (window.openAuthModal) window.openAuthModal("login");
-      return;
+    if (window.showToast) {
+      window.showToast("Virtual try-on is unavailable. No photo was uploaded or processed.");
     }
-
-    // 1. Photo validation
-    if (!TryOnState.userPhotoUrl) {
-      if (window.showToast) {
-        window.showToast("📸 Please upload your photo in Step 1 to begin virtual styling.");
-      }
-      const dropZone = document.getElementById("tryOnDropZone");
-      if (dropZone) dropZone.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-
-    // 2. Outfit validation
-    if (!TryOnState.selectedOutfitId) {
-      if (window.showToast) {
-        window.showToast("👗 Please select a dress from the collection in Step 2.");
-      }
-      const grid = document.getElementById("tryOnOutfitGrid");
-      if (grid) grid.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-
-    const outfit = ((window.VASTRAE_DATA && window.VASTRAE_DATA.products) || []).find(p => p.id === TryOnState.selectedOutfitId);
-    if (!outfit) return;
-
-    // Start Generation Flow
-    TryOnState.isGenerating = true;
-    showTryOnLoading();
-
-    const progressText = document.getElementById("tryOnProgressText");
-    const progressBar = document.getElementById("tryOnProgressBar");
-
-    const steps = [
-      { text: "Preserving customer facial identity & skin tone...", pct: 20 },
-      { text: `Extracting ${outfit.name.split(" ")[0]} embroidery, zari & fabric weave...`, pct: 45 },
-      { text: `Calibrating fit to height (${TryOnState.measurements.height}cm) & bust (${TryOnState.measurements.bust}")...`, pct: 70 },
-      { text: "Harmonizing ambient lighting, shadows & natural fabric drape...", pct: 90 },
-      { text: "Finalizing your photorealistic VASTRAÉ Virtual Look...", pct: 100 }
-    ];
-
-    let currentStep = 0;
-    const interval = setInterval(() => {
-      if (currentStep < steps.length) {
-        if (progressText) progressText.textContent = steps[currentStep].text;
-        if (progressBar) progressBar.style.width = steps[currentStep].pct + "%";
-        currentStep++;
-      }
-    }, 450);
-
-    // Client-side high-fidelity photometric engine (Rule 6: No backend or API calls)
-    setTimeout(() => {
-      clearInterval(interval);
-      renderCompositeRealisticCanvas(outfit);
-    }, 2400);
   };
 
   // Show Loading Animation
@@ -1039,11 +965,7 @@
     if (resultState) resultState.style.display = "none";
   }
 
-  // =========================================================================
-  // HIGH-FIDELITY ATELIER PHOTOMETRIC ENGINE (REQUIREMENTS 1, 3, 4, 5)
-  // Preserves real face identity, applies realistic fabric drape, lighting,
-  // shadows, and retains authentic product embroidery & zari.
-  // =========================================================================
+  // Legacy experimental compositor retained for reference; not used by the storefront.
   function renderCompositeRealisticCanvas(outfit) {
     const canvas = document.createElement("canvas");
     canvas.width = 1000;
@@ -1310,7 +1232,7 @@
     }
 
     if (window.showToast) {
-      window.showToast("✓ Realistic look generated! Compare with your original photo below.");
+      window.showToast("Virtual try-on is unavailable; no generated look can be shown.");
     }
   }
 
@@ -1401,7 +1323,8 @@
 
   // Shop This Look (Add selected outfit to cart)
   window.shopTryOnLook = function () {
-    const activeUser = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
+    const activeUser = (window.vastraeAuth && window.vastraeAuth.getCurrentUser && window.vastraeAuth.getCurrentUser()) ||
+                       (typeof currentUser !== "undefined" && currentUser);
     if (!activeUser) {
       if (window.showToast) window.showToast("🔒 Please sign in or register to add this look to your shopping bag.");
       if (window.openAuthModal) window.openAuthModal("login");
@@ -1410,7 +1333,8 @@
     const outfit = ((window.VASTRAE_DATA && window.VASTRAE_DATA.products) || []).find(p => p.id === TryOnState.selectedOutfitId);
     if (!outfit) return;
 
-    const colorLabel = GARMENT_COLOR_VARIANTS.find(v => v.id === TryOnState.selectedColorVariant)?.label || "Original Designer Weave";
+    const colorVariants = (typeof GARMENT_COLOR_VARIANTS !== "undefined" && Array.isArray(GARMENT_COLOR_VARIANTS)) ? GARMENT_COLOR_VARIANTS : [];
+    const colorLabel = (colorVariants.find(v => v.id === TryOnState.selectedColorVariant)?.label) || "Bespoke Royal Weave";
 
     if (!window.vastraeCartService) return;
     window.vastraeCartService.addToCart({
@@ -1430,7 +1354,8 @@
 
   // Download Look
   window.downloadTryOnLook = function () {
-    const activeUser = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
+    const activeUser = (window.vastraeAuth && window.vastraeAuth.getCurrentUser && window.vastraeAuth.getCurrentUser()) ||
+                       (typeof currentUser !== "undefined" && currentUser);
     if (!activeUser) {
       if (window.showToast) window.showToast("🔒 Please sign in or register to download high-resolution atelier looks.");
       if (window.openAuthModal) window.openAuthModal("login");
@@ -1456,7 +1381,8 @@
 
   // Save to Style Moodboard
   window.saveToStyleBoard = function () {
-    const activeUser = JSON.parse(localStorage.getItem("vastrae_active_user")) || JSON.parse(localStorage.getItem("vastrae_current_user"));
+    const activeUser = (window.vastraeAuth && window.vastraeAuth.getCurrentUser && window.vastraeAuth.getCurrentUser()) ||
+                       (typeof currentUser !== "undefined" && currentUser);
     if (!activeUser) {
       if (window.showToast) window.showToast("🔒 Please sign in or register to save looks to your Style Board.");
       if (window.openAuthModal) window.openAuthModal("login");
@@ -1502,7 +1428,7 @@
         <div style="text-align:center; padding:40px 20px;">
           <div style="font-size:2.4rem; margin-bottom:10px;">📌</div>
           <h4 style="font-size:1.15rem; margin-bottom:6px; color:var(--vas-mauve-dark);">Your Style Board is Empty</h4>
-          <p style="font-size:0.85rem; color:var(--vas-muted);">Save outfits and virtual try-on looks to build your personal boutique moodboard.</p>
+          <p style="font-size:0.85rem; color:var(--vas-muted);">Save catalog outfits to build your personal boutique moodboard.</p>
         </div>
       `;
     } else {

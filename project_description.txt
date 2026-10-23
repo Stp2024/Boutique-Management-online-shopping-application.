@@ -30,6 +30,10 @@ operations management (Customer, Master Tailor, Admin).
 - Custom Bespoke Studio (custom): Interactive visual custom outfit creator 
   allowing clients to select necklines, sleeve lengths, embroidery patterns, 
   fabric types, and embellishments.
+- Customize Your Way: Separate Women, Men, Kids, and Accessories workflows with
+  Gemini-generated full-design previews and on-demand close-up images for selected
+  garment or accessory details. No SVG garment previews are displayed. Generated
+  images are visual concepts, not fit- or construction-accurate previews.
 - "Stitch Your Own Fabric" Service (own-fabric): Allows clients to upload photos/
   details of their own fabric, request doorstep fabric pickup, specify stitching 
   instructions, and get automated price estimates.
@@ -85,6 +89,14 @@ operations management (Customer, Master Tailor, Admin).
 - State Management & Services: Modular service architecture (js/services/) with
   centralized data persistence, dynamic cart, wishlist, and session management,
   driven by the master controller (js/app.js) and product catalogue (js/data.js).
+- Gemini image generation: Set GEMINI_API_KEY in the backend server environment
+  before starting backend_server.py. The key is never stored in frontend code or
+  backend_config.json. The backend sends only supported design selections to the
+  Gemini Interactions API, requests stateless image generation, supports focused
+  garment/detail photos, and stores an opted-in generated image with the customer's
+  saved design or quote request.
+  In PowerShell, set $env:GEMINI_API_KEY = "<your key>" in the server's session,
+  then run .\.venv\Scripts\python.exe backend_server.py. Never commit the key.
 
 
 4. DIRECTORY & FILE STRUCTURE
