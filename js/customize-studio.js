@@ -1,17 +1,19 @@
 /**
  * ==============================================================================
- * VASTRAÉ DIGITAL COUTURE BOUTIQUE — "CUSTOMIZE YOUR WAY" STUDIO
- * Design • Choose • Preview • Order
- * Categories: Women, Men, Kids, Accessories
- * Features:
- *   - Numbered step-by-step visual options with custom fashion cutouts & swatches
- *   - High-resolution live multi-angle model preview (Front, Back, Side)
- *   - Dynamic colorway swatch selection with instant tint/preview feedback
- *   - "Customize for Everyone" category switcher cards (Women, Men, Kids)
- *   - "Complete Your Look" paired accessories drawer (Footwear, Jewellery, Accessories)
- *   - Interactive AI Try-On before/after studio with photo upload & safety badge
- *   - Bespoke Sizing & Tailoring measurements modal
- *   - Real-time shopping bag integration & toast notifications
+ * VASTRAÉ DIGITAL COUTURE BOUTIQUE — "CUSTOMIZE YOUR WAY" STUDIO (2026 MASTER)
+ * Designed to strictly match the 4-quadrant reference layout:
+ *   - Category Selector: Women, Men, Kids, Accessories
+ *   - 3-Panel Studio Layout:
+ *       • Left: 1. Select Outfit (Sub-categories & Mannequin Cards) + 2. Customization Options
+ *       • Center: Large Live Physical Boutique Mannequin (on stand, front/back angles, dynamic SVG & color tint overlays, detail strip)
+ *       • Right: "Your Design" Summary, Itemized Price Breakdown, Save Design, Add to Cart, Try On Yourself, Reset
+ *   - Real Physical Boutique Dress Mannequin Only (Tailor's dummy on stand, NO human models)
+ *   - Independent Option State: Changing sleeves NEVER resets neckline, fabric, color, or embroidery!
+ *   - Post-Customization "Try On Yourself" Modal:
+ *       • Option A: Upload My Photo (with requirements, privacy note, and simulated try-on)
+ *       • Option B: Create My Virtual Model (guided category & garment measurements + 3D avatar preview)
+ *   - 5-Step Customer Journey Ribbon (Choose Category -> Select Outfit -> Customize -> Live Preview -> Save, Try On & Order)
+ *   - Full Shopping Cart & Wishlist integration with vastraeCartService
  * ==============================================================================
  */
 
@@ -20,2353 +22,1756 @@
 
   // Palette of royal boutique colours
   const COLOR_PALETTE = [
-    { name: "Lavender Rose", hex: "#c8a2c8" },
+    { name: "Crimson Red", hex: "#b61827" },
     { name: "Royal Ocean Blue", hex: "#2458a6" },
     { name: "Emerald Teal", hex: "#187a70" },
     { name: "Mustard Gold", hex: "#e5b42d" },
     { name: "Imperial Purple", hex: "#794c9d" },
-    { name: "Crimson Red", hex: "#b61827" },
     { name: "Midnight Black", hex: "#1c1b20" },
     { name: "Ivory Cream", hex: "#f4ede2" },
     { name: "Pastel Blush", hex: "#e89ea8" }
   ];
 
-  // Studio configuration for all 4 categories: Women, Men, Kids, Accessories with MULTIPLE DRESSES each
+  // Men-specific curated palette
+  const MEN_COLOR_PALETTE = [
+    { name: "Sky Blue", hex: "#4a90e2" },
+    { name: "Navy Blue", hex: "#1e3a5f" },
+    { name: "Classic White", hex: "#f8f9fa" },
+    { name: "Ivory Cream", hex: "#f4ede2" },
+    { name: "Olive Green", hex: "#4a6b4a" },
+    { name: "Charcoal Grey", hex: "#333333" },
+    { name: "Wine Red", hex: "#721c24" },
+    { name: "Mustard Gold", hex: "#d49b28" }
+  ];
+
+  // Kids-specific curated palette
+  const KIDS_COLOR_PALETTE = [
+    { name: "Rose Pink", hex: "#e89ea8" },
+    { name: "Sky Blue", hex: "#64b5f6" },
+    { name: "Buttercup Yellow", hex: "#fff176" },
+    { name: "Mint Green", hex: "#81c784" },
+    { name: "Royal Crimson", hex: "#b61827" },
+    { name: "Royal Navy", hex: "#1e3a5f" }
+  ];
+
+  // Accessories curated palette
+  const ACC_COLOR_PALETTE = [
+    { name: "Dusty Rose", hex: "#d88a96" },
+    { name: "Tan Cognac", hex: "#965a38" },
+    { name: "Midnight Black", hex: "#1a1a1a" },
+    { name: "Crimson Red", hex: "#991b1b" },
+    { name: "Emerald Green", hex: "#065f46" },
+    { name: "Royal Ivory", hex: "#f5f0eb" }
+  ];
+
+  // STUDIO_DATA: Comprehensive catalog matching the reference layout
   const STUDIO_DATA = {
     women: {
       id: "women",
       label: "Women",
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l-2 5-4 2-4-2-2-5z"/><path d="M6 3L3 9l3 12h12l3-12-3-6"/><circle cx="12" cy="7" r="1.5"/></svg>`,
-      title: "Women's Bespoke Couture Collection",
-      basePrice: 18500,
-      images: {
-        front: "images/customizer/lehenga_front.jpg",
-        back: "images/customizer/lehenga_back.jpg",
-        side: "images/customizer/lehenga_side.jpg"
-      },
+      themeColor: "#7a1827",
+      subCategories: [
+        { id: "blouses", name: "Blouses" },
+        { id: "sarees", name: "Sarees" },
+        { id: "kurtis", name: "Kurtis" },
+        { id: "salwar_suits", name: "Salwar Suits" },
+        { id: "lehengas", name: "Lehengas" },
+        { id: "dresses", name: "Dresses" },
+        { id: "others", name: "Others" }
+      ],
       garments: [
         {
-          id: "lehenga",
-          name: "Royal Silk Lehenga Choli",
-          title: "Bespoke Royal Silk Lehenga Choli",
-          basePrice: 18500,
-          image: "images/customizer/lehenga_front.jpg",
-          images: {
-            front: "images/customizer/lehenga_front.jpg",
-            back: "images/customizer/lehenga_back.jpg",
-            side: "images/customizer/lehenga_side.jpg"
-          }
+          id: "classic_blouse",
+          subCategory: "blouses",
+          name: "Classic Blouse",
+          title: "Classic Tailored Silk Blouse",
+          basePrice: 1999,
+          mannequinImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          mannequinBackImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          defaultOptions: { neckline: "round", sleeves: "short", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "standard", fit: "tailored" }
         },
         {
-          id: "anarkali",
-          name: "Imperial Ivory Anarkali",
-          title: "Imperial Ivory Floor-Length Anarkali Suit",
-          basePrice: 14800,
-          image: "images/products/women/ivory-anarkali-suit-front.jpg",
-          images: {
-            front: "images/products/women/ivory-anarkali-suit-front.jpg",
-            back: "images/products/women/ivory-anarkali-suit-back.jpg",
-            side: "images/products/women/ivory-anarkali-suit-front.jpg"
-          }
+          id: "vneck_blouse",
+          subCategory: "blouses",
+          name: "V-Neck Blouse",
+          title: "Bespoke V-Neck Silk Blouse",
+          basePrice: 2499,
+          mannequinImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          mannequinBackImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          defaultOptions: { neckline: "v-neck", sleeves: "full", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "standard", fit: "tailored" }
         },
         {
-          id: "peplum",
-          name: "Emerald Peplum Sharara",
-          title: "Emerald Peplum Sharara & Gharara Set",
-          basePrice: 16200,
-          image: "images/products/women/emerald-pakistani-suit-front.jpg",
-          images: {
-            front: "images/products/women/emerald-pakistani-suit-front.jpg",
-            back: "images/products/women/emerald-pakistani-suit-back.jpg",
-            side: "images/products/women/emerald-pakistani-suit-side.jpg"
-          }
+          id: "boatneck_blouse",
+          subCategory: "blouses",
+          name: "Boat Neck Blouse",
+          title: "Royal Boat Neck Embroidered Blouse",
+          basePrice: 2299,
+          mannequinImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          mannequinBackImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          defaultOptions: { neckline: "boat", sleeves: "elbow", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "zari", length: "standard", fit: "tailored" }
         },
         {
-          id: "saree",
-          name: "Banarasi Silk Saree & Blouse",
-          title: "Banarasi Pure Silk Saree with Custom Blouse",
+          id: "backless_blouse",
+          subCategory: "blouses",
+          name: "Backless Blouse",
+          title: "Designer Backless Dori Blouse",
+          basePrice: 2699,
+          mannequinImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          mannequinBackImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          defaultOptions: { neckline: "backless", sleeves: "sleeveless", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "cropped", fit: "tailored" }
+        },
+        {
+          id: "puffsleeve_blouse",
+          subCategory: "blouses",
+          name: "Puff Sleeve Blouse",
+          title: "Vintage Puff Sleeve Maggam Blouse",
+          basePrice: 2399,
+          mannequinImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          mannequinBackImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          defaultOptions: { neckline: "sweetheart", sleeves: "puff", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "maggam", length: "standard", fit: "tailored" }
+        },
+        {
+          id: "longsleeve_blouse",
+          subCategory: "blouses",
+          name: "Long Sleeve Blouse",
+          title: "Full Sheer Sleeve Embroidered Blouse",
+          basePrice: 2599,
+          mannequinImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          mannequinBackImage: "images/customizer/mannequin_vneck_blouse.jpg",
+          defaultOptions: { neckline: "v-neck", sleeves: "full", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "standard", fit: "tailored" }
+        },
+        {
+          id: "banarasi_saree",
+          subCategory: "sarees",
+          name: "Banarasi Silk Saree",
+          title: "Pure Banarasi Katan Silk Saree with Blouse",
           basePrice: 21000,
-          image: "images/products/women/crimson-banarasi-saree-front.jpg",
-          images: {
-            front: "images/products/women/crimson-banarasi-saree-front.jpg",
-            back: "images/products/women/crimson-banarasi-saree-back.jpg",
-            side: "images/products/women/kanjeevaram-silk-saree-drape.jpg"
-          }
+          mannequinImage: "images/products/women/crimson-banarasi-saree-front.jpg",
+          mannequinBackImage: "images/products/women/crimson-banarasi-saree-back.jpg",
+          defaultOptions: { neckline: "boat", sleeves: "elbow", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "zari", length: "standard", fit: "tailored" }
+        },
+        {
+          id: "kanjeevaram_saree",
+          subCategory: "sarees",
+          name: "Kanjeevaram Saree",
+          title: "Bridal Pure Gold Zari Kanjeevaram Silk Saree",
+          basePrice: 24500,
+          mannequinImage: "images/products/women/crimson-banarasi-saree-front.jpg",
+          mannequinBackImage: "images/products/women/crimson-banarasi-saree-back.jpg",
+          defaultOptions: { neckline: "round", sleeves: "short", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "standard", fit: "tailored" }
+        },
+        {
+          id: "festive_kurti",
+          subCategory: "kurtis",
+          name: "Festive Kurti Set",
+          title: "Handcrafted Chanderi Silk Festive Kurti",
+          basePrice: 3499,
+          mannequinImage: "images/products/women/mustard-yellow-kurta-front.jpg",
+          mannequinBackImage: "images/products/women/mustard-yellow-kurta-front.jpg",
+          defaultOptions: { neckline: "round", sleeves: "threequarter", fabric: "cotton", colorHex: "#e5b42d", colorName: "Mustard Gold", embroidery: "zari", length: "knee", fit: "comfort" }
+        },
+        {
+          id: "anarkali_suit",
+          subCategory: "salwar_suits",
+          name: "Imperial Anarkali Suit",
+          title: "Floor-Length Silk Anarkali Suit with Dupatta",
+          basePrice: 14800,
+          mannequinImage: "images/products/women/ivory-anarkali-suit-front.jpg",
+          mannequinBackImage: "images/products/women/ivory-anarkali-suit-back.jpg",
+          defaultOptions: { neckline: "sweetheart", sleeves: "full", fabric: "georgette", colorHex: "#f4ede2", colorName: "Ivory Cream", embroidery: "maggam", length: "floor", fit: "tailored" }
+        },
+        {
+          id: "royal_lehenga",
+          subCategory: "lehengas",
+          name: "Royal Lehenga Choli",
+          title: "Hand Embroidered Raw Silk Bridal Lehenga Choli",
+          basePrice: 18500,
+          mannequinImage: "images/customizer/lehenga_front.jpg",
+          mannequinBackImage: "images/customizer/lehenga_back.jpg",
+          defaultOptions: { neckline: "v-neck", sleeves: "short", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "floor", fit: "tailored" }
         },
         {
           id: "velvet_gown",
-          name: "Midnight Velvet Haute Gown",
-          title: "Midnight Velvet Haute Couture Gown",
+          subCategory: "dresses",
+          name: "Velvet Haute Gown",
+          title: "Midnight Velvet Haute Couture Evening Gown",
           basePrice: 19500,
-          image: "images/products/women/black-velvet-suit-front.jpg",
-          images: {
-            front: "images/products/women/black-velvet-suit-front.jpg",
-            back: "images/products/women/black-velvet-suit-front.jpg",
-            side: "images/products/women/black-velvet-suit-front.jpg"
-          }
+          mannequinImage: "images/products/women/black-velvet-suit-front.jpg",
+          mannequinBackImage: "images/products/women/black-velvet-suit-front.jpg",
+          defaultOptions: { neckline: "v-neck", sleeves: "full", fabric: "velvet", colorHex: "#1c1b20", colorName: "Midnight Black", embroidery: "zari", length: "floor", fit: "tailored" }
         }
       ],
-      steps: [
-        {
-          id: "garment",
-          num: 1,
-          title: "Dress / Silhouette",
-          options: [
-            { id: "lehenga", name: "Royal Lehenga Choli", price: 18500, image: "images/customizer/lehenga_front.jpg" },
-            { id: "anarkali", name: "Imperial Anarkali Suit", price: 14800, image: "images/products/women/ivory-anarkali-suit-front.jpg" },
-            { id: "peplum", name: "Emerald Sharara Set", price: 16200, image: "images/products/women/emerald-pakistani-suit-front.jpg" },
-            { id: "saree", name: "Banarasi Silk Saree", price: 21000, image: "images/products/women/crimson-banarasi-saree-front.jpg" },
-            { id: "velvet_gown", name: "Velvet Haute Gown", price: 19500, image: "images/products/women/black-velvet-suit-front.jpg" }
-          ],
-          default: "lehenga"
-        },
-        {
-          id: "sleeves",
-          num: 2,
-          title: "Sleeves",
-          options: [
-            { id: "sleeveless", name: "Sleeveless", thumb: "sleeve-sleeveless" },
-            { id: "short", name: "Short Sleeve", thumb: "sleeve-short" },
-            { id: "puff", name: "Puff Sleeve", thumb: "sleeve-puff" },
-            { id: "full", name: "Full Sleeve", thumb: "sleeve-full" }
-          ],
-          default: "puff"
-        },
-        {
-          id: "neckline",
-          num: 3,
-          title: "Neckline",
-          options: [
-            { id: "round", name: "Round", thumb: "neckline-round" },
-            { id: "v-neck", name: "V-Neck", thumb: "neckline-vneck" },
-            { id: "square", name: "Square", thumb: "neckline-square" },
-            { id: "boat", name: "Boat Neck", thumb: "neckline-boat" },
-            { id: "sweetheart", name: "Sweetheart", thumb: "neckline-sweetheart" }
-          ],
-          default: "v-neck"
-        },
-        {
-          id: "length",
-          num: 4,
-          title: "Length & Flare",
-          options: [
-            { id: "knee", name: "Knee Length", thumb: "length-knee" },
-            { id: "midi", name: "Midi Length", thumb: "length-midi" },
-            { id: "maxi", name: "Maxi / Floor Length", thumb: "length-maxi" }
-          ],
-          default: "midi"
-        },
-        {
-          id: "fabric",
-          num: 5,
-          title: "Fabric",
-          options: [
-            { id: "silk", name: "Raw Silk", image: "images/customizer/fabric_silk.jpg" },
-            { id: "cotton", name: "Pure Handloom Cotton", image: "images/customizer/fabric_cotton.jpg" },
-            { id: "georgette", name: "Georgette", image: "images/customizer/fabric_georgette.jpg" },
-            { id: "velvet", name: "Micro Velvet", image: "images/customizer/fabric_silk.jpg" },
-            { id: "brocade", name: "Banarasi Brocade", image: "images/customizer/fabric_georgette.jpg" }
-          ],
-          default: "silk"
-        },
-        {
-          id: "color",
-          num: 6,
-          title: "Colour",
-          type: "color",
-          options: COLOR_PALETTE,
-          default: "#c8a2c8"
-        },
-        {
-          id: "embroidery",
-          num: 7,
-          title: "Embroidery",
-          options: [
-            { id: "floral", name: "Floral Zardozi", thumb: "embroidery-floral" },
-            { id: "zari", name: "Antique Gold Zari", thumb: "embroidery-zari" },
-            { id: "mirror", name: "Mirror Work", thumb: "embroidery-mirror" },
-            { id: "none", name: "Pure Minimal Silk", thumb: "embroidery-none" }
-          ],
-          default: "floral"
-        }
-      ]
+      options: {
+        neckline: [
+          { id: "v-neck", name: "V-Neck", iconSvg: "vneck" },
+          { id: "boat", name: "Boat Neck", iconSvg: "boat" },
+          { id: "round", name: "Round", iconSvg: "round" },
+          { id: "sweetheart", name: "Sweetheart", iconSvg: "sweetheart" },
+          { id: "square", name: "Square", iconSvg: "square" },
+          { id: "backless", name: "Backless", iconSvg: "backless" }
+        ],
+        sleeves: [
+          { id: "full", name: "Full Sleeve", extraPrice: 300, iconSvg: "full" },
+          { id: "short", name: "Short Sleeve", extraPrice: 0, iconSvg: "short" },
+          { id: "sleeveless", name: "Sleeveless", extraPrice: 0, iconSvg: "sleeveless" },
+          { id: "puff", name: "Puff Sleeve", extraPrice: 250, iconSvg: "puff" },
+          { id: "elbow", name: "Elbow Sleeve", extraPrice: 150, iconSvg: "elbow" }
+        ],
+        fabric: [
+          { id: "silk", name: "Silk", extraPrice: 300, img: "images/customizer/fabric_silk.jpg" },
+          { id: "cotton", name: "Cotton", extraPrice: 0, img: "images/customizer/fabric_cotton.jpg" },
+          { id: "georgette", name: "Georgette", extraPrice: 200, img: "images/customizer/fabric_georgette.jpg" },
+          { id: "velvet", name: "Velvet", extraPrice: 500, img: "images/customizer/fabric_silk.jpg" },
+          { id: "brocade", name: "Brocade", extraPrice: 400, img: "images/customizer/fabric_georgette.jpg" }
+        ],
+        colors: COLOR_PALETTE,
+        embroidery: [
+          { id: "gold", name: "Gold Embroidery", extraPrice: 200, iconSvg: "emb_gold" },
+          { id: "zari", name: "Zari Border", extraPrice: 300, iconSvg: "emb_zari" },
+          { id: "maggam", name: "Maggam Floral", extraPrice: 350, iconSvg: "emb_maggam" },
+          { id: "mirror", name: "Mirror Work", extraPrice: 250, iconSvg: "emb_mirror" },
+          { id: "none", name: "None", extraPrice: 0, iconSvg: "emb_none" }
+        ],
+        length: [
+          { id: "standard", name: "Standard" },
+          { id: "cropped", name: "Cropped" },
+          { id: "floor", name: "Floor Length" },
+          { id: "knee", name: "Knee Length" }
+        ],
+        fit: [
+          { id: "tailored", name: "Tailored Fit" },
+          { id: "comfort", name: "Comfort Fit" },
+          { id: "slim", name: "Slim Fit" }
+        ]
+      }
     },
+
     men: {
       id: "men",
       label: "Men",
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg>`,
-      title: "Men's Sartorial Atelier Collection",
-      basePrice: 24000,
-      images: {
-        front: "images/products/men/ivory-wedding-sherwani-front.jpg",
-        back: "images/products/men/black-sherwani-gold-front.jpg",
-        side: "images/customizer/card_men.jpg"
-      },
+      themeColor: "#1e3a5f",
+      subCategories: [
+        { id: "shirts", name: "Shirts" },
+        { id: "kurtas", name: "Kurtas" },
+        { id: "sherwanis", name: "Sherwanis" },
+        { id: "trousers", name: "Trousers" },
+        { id: "waistcoats", name: "Waistcoats" },
+        { id: "others", name: "Others" }
+      ],
       garments: [
         {
-          id: "sherwani",
-          name: "Imperial Zardozi Sherwani",
-          title: "Imperial Raw Silk Wedding Sherwani",
-          basePrice: 24000,
-          image: "images/products/men/ivory-wedding-sherwani-front.jpg",
-          images: {
-            front: "images/products/men/ivory-wedding-sherwani-front.jpg",
-            back: "images/products/men/black-sherwani-gold-front.jpg",
-            side: "images/customizer/card_men.jpg"
-          }
+          id: "formal_shirt",
+          subCategory: "shirts",
+          name: "Formal Shirt",
+          title: "Classic Bespoke Sky Blue Formal Shirt",
+          basePrice: 1999,
+          mannequinImage: "images/customizer/mannequin_men_shirt.jpg",
+          mannequinBackImage: "images/customizer/mannequin_men_shirt.jpg",
+          defaultOptions: { collar: "classic", sleeves: "full", fit: "regular", fabric: "cotton", colorHex: "#4a90e2", colorName: "Sky Blue", buttons: "wooden", embroidery: "none", length: "standard" }
         },
         {
-          id: "bandhgala",
-          name: "Black & Gold Bandhgala",
-          title: "Royal Black & Gold Bandhgala Achkan",
-          basePrice: 22500,
-          image: "images/products/men/black-sherwani-gold-front.jpg",
-          images: {
-            front: "images/products/men/black-sherwani-gold-front.jpg",
-            back: "images/products/men/charcoal-grey-suit-back.jpg",
-            side: "images/products/men/black-sherwani-gold-front.jpg"
-          }
+          id: "casual_shirt",
+          subCategory: "shirts",
+          name: "Casual Shirt",
+          title: "Relaxed Fit Cotton Casual Shirt",
+          basePrice: 1799,
+          mannequinImage: "images/customizer/mannequin_men_shirt.jpg",
+          mannequinBackImage: "images/customizer/mannequin_men_shirt.jpg",
+          defaultOptions: { collar: "button_down", sleeves: "folded", fit: "regular", fabric: "cotton", colorHex: "#4a90e2", colorName: "Sky Blue", buttons: "wooden", embroidery: "none", length: "standard" }
         },
         {
-          id: "kurta",
-          name: "Sage Chanderi Kurta Set",
-          title: "Sage Chanderi Silk Kurta & Pajama",
-          basePrice: 8900,
-          image: "images/products/men/sage-green-kurta-front.jpg",
-          images: {
-            front: "images/products/men/sage-green-kurta-front.jpg",
-            back: "images/products/men/sage-green-kurta-back.jpg",
-            side: "images/products/men/sage-green-kurta-front.jpg"
-          }
+          id: "printed_shirt",
+          subCategory: "shirts",
+          name: "Printed Shirt",
+          title: "Artisanal Motif Printed Summer Shirt",
+          basePrice: 2199,
+          mannequinImage: "images/customizer/mannequin_men_shirt.jpg",
+          mannequinBackImage: "images/customizer/mannequin_men_shirt.jpg",
+          defaultOptions: { collar: "cutaway", sleeves: "half", fit: "slim", fabric: "cotton", colorHex: "#4a90e2", colorName: "Sky Blue", buttons: "pearl", embroidery: "none", length: "standard" }
         },
         {
-          id: "indo_western",
-          name: "Maroon Indo-Western Jodhpuri",
-          title: "Asymmetric Maroon Indo-Western Jodhpuri",
-          basePrice: 18200,
-          image: "images/products/men/maroon-indo-western-front.jpg",
-          images: {
-            front: "images/products/men/maroon-indo-western-front.jpg",
-            back: "images/products/men/maroon-indo-western-back.jpg",
-            side: "images/products/men/maroon-indo-western-front.jpg"
-          }
+          id: "kurta_shirt",
+          subCategory: "shirts",
+          name: "Kurta Shirt",
+          title: "Mandarin Collar Kurta-Style Shirt",
+          basePrice: 2299,
+          mannequinImage: "images/customizer/mannequin_men_shirt.jpg",
+          mannequinBackImage: "images/customizer/mannequin_men_shirt.jpg",
+          defaultOptions: { collar: "mandarin", sleeves: "full", fit: "regular", fabric: "linen", colorHex: "#4a90e2", colorName: "Sky Blue", buttons: "wooden", embroidery: "placket", length: "standard" }
         },
         {
-          id: "suit",
-          name: "Royal Blue Sartorial Suit",
-          title: "Royal Blue Three-Piece Bespoke Suit",
-          basePrice: 26000,
-          image: "images/products/men/royal-blue-suit-front.jpg",
-          images: {
-            front: "images/products/men/royal-blue-suit-front.jpg",
-            back: "images/products/men/royal-blue-suit-back.jpg",
-            side: "images/products/men/royal-blue-suit-side.jpg"
-          }
+          id: "linen_shirt",
+          subCategory: "shirts",
+          name: "Linen Shirt",
+          title: "Pure Breathable Handwoven Linen Shirt",
+          basePrice: 2499,
+          mannequinImage: "images/customizer/mannequin_men_shirt.jpg",
+          mannequinBackImage: "images/customizer/mannequin_men_shirt.jpg",
+          defaultOptions: { collar: "band", sleeves: "full", fit: "relaxed", fabric: "linen", colorHex: "#4a90e2", colorName: "Sky Blue", buttons: "horn", embroidery: "none", length: "standard" }
         },
         {
-          id: "waistcoat",
-          name: "Heritage Bundi & Kurta Set",
-          title: "Cream Embroidered Bundi Waistcoat & Kurta Set",
-          basePrice: 11500,
-          image: "images/products/men/cream-waistcoat-set-front.jpg",
-          images: {
-            front: "images/products/men/cream-waistcoat-set-front.jpg",
-            back: "images/products/men/beige-nehru-jacket-front.jpg",
-            side: "images/products/men/cream-waistcoat-set-front.jpg"
-          }
+          id: "denim_shirt",
+          subCategory: "shirts",
+          name: "Denim Shirt",
+          title: "Western Style Lightweight Denim Shirt",
+          basePrice: 2399,
+          mannequinImage: "images/customizer/mannequin_men_shirt.jpg",
+          mannequinBackImage: "images/customizer/mannequin_men_shirt.jpg",
+          defaultOptions: { collar: "classic", sleeves: "full", fit: "slim", fabric: "denim", colorHex: "#1e3a5f", colorName: "Navy Blue", buttons: "brass", embroidery: "none", length: "standard" }
+        },
+        {
+          id: "silk_kurta",
+          subCategory: "kurtas",
+          name: "Classic Silk Kurta",
+          title: "Heritage Chanderi Silk Kurta Set",
+          basePrice: 3899,
+          mannequinImage: "images/products/men/ivory-wedding-sherwani-front.jpg",
+          mannequinBackImage: "images/products/men/ivory-wedding-sherwani-front.jpg",
+          defaultOptions: { collar: "mandarin", sleeves: "full", fit: "regular", fabric: "silk", colorHex: "#f4ede2", colorName: "Ivory Cream", buttons: "wooden", embroidery: "placket", length: "knee" }
+        },
+        {
+          id: "wedding_sherwani",
+          subCategory: "sherwanis",
+          name: "Royal Wedding Sherwani",
+          title: "Raw Silk Hand-Zardozi Groom Sherwani",
+          basePrice: 24999,
+          mannequinImage: "images/products/men/ivory-wedding-sherwani-front.jpg",
+          mannequinBackImage: "images/products/men/ivory-wedding-sherwani-front.jpg",
+          defaultOptions: { collar: "mandarin", sleeves: "full", fit: "tailored", fabric: "silk", colorHex: "#f4ede2", colorName: "Ivory Cream", buttons: "brass", embroidery: "chest_zari", length: "floor" }
+        },
+        {
+          id: "nehru_jacket",
+          subCategory: "waistcoats",
+          name: "Nehru Jacket",
+          title: "Beige Textured Raw Silk Nehru Bundi",
+          basePrice: 4499,
+          mannequinImage: "images/products/men/beige-nehru-jacket-front.jpg",
+          mannequinBackImage: "images/products/men/beige-nehru-jacket-front.jpg",
+          defaultOptions: { collar: "mandarin", sleeves: "sleeveless", fit: "tailored", fabric: "silk", colorHex: "#f4ede2", colorName: "Ivory Cream", buttons: "wooden", embroidery: "none", length: "standard" }
         }
       ],
-      steps: [
-        {
-          id: "garment",
-          num: 1,
-          title: "Outfit / Silhouette",
-          options: [
-            { id: "sherwani", name: "Royal Wedding Sherwani", price: 24000, image: "images/products/men/ivory-wedding-sherwani-front.jpg" },
-            { id: "bandhgala", name: "Black & Gold Bandhgala", price: 22500, image: "images/products/men/black-sherwani-gold-front.jpg" },
-            { id: "kurta", name: "Chanderi Kurta Pajama", price: 8900, image: "images/products/men/sage-green-kurta-front.jpg" },
-            { id: "indo_western", name: "Indo-Western Jodhpuri", price: 18200, image: "images/products/men/maroon-indo-western-front.jpg" },
-            { id: "suit", name: "Bespoke Three-Piece Suit", price: 26000, image: "images/products/men/royal-blue-suit-front.jpg" },
-            { id: "waistcoat", name: "Heritage Bundi Set", price: 11500, image: "images/products/men/cream-waistcoat-set-front.jpg" }
-          ],
-          default: "sherwani"
-        },
-        {
-          id: "sleeves",
-          num: 2,
-          title: "Sleeves & Cuffs",
-          options: [
-            { id: "full", name: "Full Sleeve (Cuff)", thumb: "sleeve-full" },
-            { id: "french", name: "French Double Cuffs", thumb: "sleeve-short" },
-            { id: "straight", name: "Straight Open Cut", thumb: "sleeve-full" },
-            { id: "threequarter", name: "Three-Quarter", thumb: "sleeve-short" },
-            { id: "sleeveless", name: "Sleeveless Vest", thumb: "sleeve-sleeveless" }
-          ],
-          default: "full"
-        },
-        {
-          id: "collar",
-          num: 3,
-          title: "Collar & Lapel",
-          options: [
-            { id: "mandarin", name: "Bandhgala Collar", thumb: "men-mandarin" },
-            { id: "nehru", name: "Nehru Stand Collar", thumb: "men-nehru" },
-            { id: "notched", name: "Notched Lapel", thumb: "men-classic" },
-            { id: "shawl", name: "Royal Shawl Lapel", thumb: "men-spread" },
-            { id: "shirt", name: "Classic Spread Collar", thumb: "men-classic" }
-          ],
-          default: "mandarin"
-        },
-        {
-          id: "length",
-          num: 4,
-          title: "Cut & Length",
-          options: [
-            { id: "knee", name: "Knee Length Achkan", thumb: "length-knee" },
-            { id: "calf", name: "Calf Length Traditional", thumb: "length-midi" },
-            { id: "hip", name: "Hip Length Modern", thumb: "length-knee" },
-            { id: "asymmetric", name: "Asymmetric High-Low", thumb: "length-midi" }
-          ],
-          default: "knee"
-        },
-        {
-          id: "fabric",
-          num: 5,
-          title: "Fabric",
-          options: [
-            { id: "silk", name: "Raw Silk", image: "images/customizer/fabric_silk.jpg" },
-            { id: "brocade", name: "Royal Brocade", image: "images/customizer/fabric_georgette.jpg" },
-            { id: "cotton", name: "Pure Cotton Silk", image: "images/customizer/fabric_cotton.jpg" },
-            { id: "linen", name: "Italian Linen", image: "images/customizer/fabric_cotton.jpg" }
-          ],
-          default: "silk"
-        },
-        {
-          id: "color",
-          num: 6,
-          title: "Colour",
-          type: "color",
-          options: [
-            { name: "Ivory Cream", hex: "#f4ede2" },
-            { name: "Royal Ocean Blue", hex: "#2458a6" },
-            { name: "Regal Maroon", hex: "#7a1a2b" },
-            { name: "Sage Green", hex: "#7a947c" },
-            { name: "Jet Black", hex: "#1c1b20" },
-            { name: "Antique Gold", hex: "#d5bd91" },
-            { name: "Mustard Gold", hex: "#e5b42d" }
-          ],
-          default: "#f4ede2"
-        },
-        {
-          id: "embroidery",
-          num: 7,
-          title: "Embroidery & Accents",
-          options: [
-            { id: "zari", name: "Zari Collar & Placket", thumb: "embroidery-zari" },
-            { id: "crest", name: "Pocket Crest Motif", thumb: "embroidery-floral" },
-            { id: "buttons", name: "Royal Metal Buttons", thumb: "embroidery-mirror" },
-            { id: "minimal", name: "Clean Sartorial Cut", thumb: "embroidery-none" }
-          ],
-          default: "zari"
-        }
-      ]
+      options: {
+        collar: [
+          { id: "classic", name: "Classic", iconSvg: "men_collar_classic" },
+          { id: "mandarin", name: "Mandarin", iconSvg: "men_collar_mandarin" },
+          { id: "band", name: "Band Collar", iconSvg: "men_collar_band" },
+          { id: "cutaway", name: "Cutaway", iconSvg: "men_collar_cutaway" },
+          { id: "button_down", name: "Button-Down", iconSvg: "men_collar_btn" }
+        ],
+        sleeves: [
+          { id: "full", name: "Full Sleeve", extraPrice: 0, iconSvg: "men_sleeve_full" },
+          { id: "half", name: "Half Sleeve", extraPrice: 0, iconSvg: "men_sleeve_half" },
+          { id: "folded", name: "Folded w/ Tab", extraPrice: 100, iconSvg: "men_sleeve_folded" },
+          { id: "french", name: "French Cuffs", extraPrice: 200, iconSvg: "men_sleeve_french" },
+          { id: "sleeveless", name: "Sleeveless", extraPrice: 0, iconSvg: "men_sleeve_none" }
+        ],
+        fit: [
+          { id: "regular", name: "Regular Fit" },
+          { id: "slim", name: "Slim Fit" },
+          { id: "relaxed", name: "Relaxed Fit" }
+        ],
+        fabric: [
+          { id: "cotton", name: "Cotton", extraPrice: 200, img: "images/customizer/fabric_cotton.jpg" },
+          { id: "linen", name: "Linen", extraPrice: 400, img: "images/customizer/fabric_cotton.jpg" },
+          { id: "silk", name: "Silk", extraPrice: 500, img: "images/customizer/fabric_silk.jpg" },
+          { id: "denim", name: "Denim", extraPrice: 300, img: "images/customizer/fabric_cotton.jpg" }
+        ],
+        colors: MEN_COLOR_PALETTE,
+        buttons: [
+          { id: "wooden", name: "Wooden", extraPrice: 100, iconSvg: "btn_wooden" },
+          { id: "pearl", name: "Mother of Pearl", extraPrice: 150, iconSvg: "btn_pearl" },
+          { id: "brass", name: "Metallic Brass", extraPrice: 120, iconSvg: "btn_brass" },
+          { id: "horn", name: "Classic Horn", extraPrice: 80, iconSvg: "btn_horn" }
+        ],
+        embroidery: [
+          { id: "none", name: "None", extraPrice: 0, iconSvg: "emb_none" },
+          { id: "placket", name: "Placket Thread Work", extraPrice: 200, iconSvg: "emb_maggam" },
+          { id: "collar_monogram", name: "Collar Monogram", extraPrice: 150, iconSvg: "emb_gold" },
+          { id: "chest_zari", name: "Chest Pocket Zari", extraPrice: 250, iconSvg: "emb_zari" }
+        ]
+      }
     },
+
     kids: {
       id: "kids",
       label: "Kids",
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 100 8 4 4 0 000-8zM4 20v-2a6 6 0 0112 0v2M18 10a3 3 0 100-6 3 3 0 000 6zM15 20v-1a4 4 0 014-4h1a4 4 0 014 4v1"/></svg>`,
-      title: "Junior Haute Couture & Festive Collection",
-      basePrice: 7500,
-      images: {
-        front: "images/products/kids/boys-brocade-sherwani-front.jpg",
-        back: "images/products/kids/boys-brocade-sherwani-front.jpg",
-        side: "images/products/kids/boys-brocade-sherwani-front.jpg"
-      },
+      themeColor: "#6b3a7d",
+      subCategories: [
+        { id: "girls", name: "Girls" },
+        { id: "boys", name: "Boys" },
+        { id: "ethnic_sets", name: "Ethnic Sets" },
+        { id: "frocks", name: "Frocks" },
+        { id: "dresses", name: "Dresses" },
+        { id: "shirts", name: "Shirts" },
+        { id: "others", name: "Others" }
+      ],
       garments: [
         {
-          id: "kids_sherwani",
-          name: "Boys Royal Brocade Sherwani",
-          title: "Boys Royal Brocade Sherwani & Dhoti Set",
-          basePrice: 7500,
-          image: "images/products/kids/boys-brocade-sherwani-front.jpg",
-          images: {
-            front: "images/products/kids/boys-brocade-sherwani-front.jpg",
-            back: "images/products/kids/boys-brocade-sherwani-front.jpg",
-            side: "images/products/kids/boys-brocade-sherwani-front.jpg"
-          }
+          id: "floral_frock",
+          subCategory: "girls",
+          name: "Floral Frock",
+          title: "Pink Floral Party Frock with Bow",
+          basePrice: 1299,
+          mannequinImage: "images/customizer/mannequin_kids_frock.jpg",
+          mannequinBackImage: "images/customizer/mannequin_kids_frock.jpg",
+          defaultOptions: { neckline: "round", sleeves: "puff", fabric: "cotton", colorHex: "#e89ea8", colorName: "Rose Pink", embroidery: "floral", length: "knee", fit: "comfort" }
         },
         {
-          id: "kids_frock",
-          name: "Girls Emerald Princess Frock",
-          title: "Girls Emerald Tiered Princess Party Frock",
-          basePrice: 6200,
-          image: "images/products/kids/emerald-green-girls-frock-front.jpg",
-          images: {
-            front: "images/products/kids/emerald-green-girls-frock-front.jpg",
-            back: "images/products/kids/emerald-green-girls-frock-front.jpg",
-            side: "images/products/kids/emerald-green-girls-frock-front.jpg"
-          }
+          id: "party_dress",
+          subCategory: "girls",
+          name: "Party Dress",
+          title: "Sparkling Tutu Ribbon Party Dress",
+          basePrice: 1499,
+          mannequinImage: "images/customizer/mannequin_kids_frock.jpg",
+          mannequinBackImage: "images/customizer/mannequin_kids_frock.jpg",
+          defaultOptions: { neckline: "round", sleeves: "sleeveless", fabric: "georgette", colorHex: "#e89ea8", colorName: "Rose Pink", embroidery: "floral", length: "knee", fit: "comfort" }
         },
         {
-          id: "kids_lehenga",
-          name: "Girls Silk Pattu Pavadai",
-          title: "Girls Traditional Silk Pattu Pavadai / Lehenga",
-          basePrice: 6800,
-          image: "images/customizer/card_kids.jpg",
-          images: {
-            front: "images/customizer/card_kids.jpg",
-            back: "images/customizer/card_kids.jpg",
-            side: "images/customizer/card_kids.jpg"
-          }
+          id: "festive_lehenga",
+          subCategory: "girls",
+          name: "Festive Lehenga",
+          title: "Junior Banarasi Brocade Lehenga Choli",
+          basePrice: 2499,
+          mannequinImage: "images/customizer/mannequin_kids_frock.jpg",
+          mannequinBackImage: "images/customizer/mannequin_kids_frock.jpg",
+          defaultOptions: { neckline: "round", sleeves: "short", fabric: "silk", colorHex: "#b61827", colorName: "Royal Crimson", embroidery: "zari", length: "ankle", fit: "comfort" }
         },
         {
-          id: "kids_kurta",
-          name: "Boys Kurta & Bundi Set",
-          title: "Boys Festive Kurta & Nehru Bundi Set",
-          basePrice: 5900,
-          image: "images/products/men/beige-nehru-jacket-front.jpg",
-          images: {
-            front: "images/products/men/beige-nehru-jacket-front.jpg",
-            back: "images/products/men/beige-nehru-jacket-front.jpg",
-            side: "images/products/men/beige-nehru-jacket-front.jpg"
-          }
+          id: "kurti_set",
+          subCategory: "girls",
+          name: "Kurti Set",
+          title: "Girls Peplum Kurti & Sharara Set",
+          basePrice: 1699,
+          mannequinImage: "images/customizer/mannequin_kids_frock.jpg",
+          mannequinBackImage: "images/customizer/mannequin_kids_frock.jpg",
+          defaultOptions: { neckline: "round", sleeves: "short", fabric: "cotton", colorHex: "#fff176", colorName: "Buttercup Yellow", embroidery: "floral", length: "knee", fit: "comfort" }
+        },
+        {
+          id: "top_skirt",
+          subCategory: "girls",
+          name: "Top & Skirt",
+          title: "Embroidered Crop Top & Flared Skirt",
+          basePrice: 1399,
+          mannequinImage: "images/customizer/mannequin_kids_frock.jpg",
+          mannequinBackImage: "images/customizer/mannequin_kids_frock.jpg",
+          defaultOptions: { neckline: "square", sleeves: "sleeveless", fabric: "cotton", colorHex: "#64b5f6", colorName: "Sky Blue", embroidery: "none", length: "knee", fit: "comfort" }
+        },
+        {
+          id: "ruffle_gown",
+          subCategory: "girls",
+          name: "Ruffle Gown",
+          title: "Fairytale Layered Ruffle Princess Gown",
+          basePrice: 1899,
+          mannequinImage: "images/customizer/mannequin_kids_frock.jpg",
+          mannequinBackImage: "images/customizer/mannequin_kids_frock.jpg",
+          defaultOptions: { neckline: "sweetheart", sleeves: "puff", fabric: "georgette", colorHex: "#e89ea8", colorName: "Rose Pink", embroidery: "floral", length: "ankle", fit: "comfort" }
+        },
+        {
+          id: "boys_sherwani",
+          subCategory: "boys",
+          name: "Brocade Sherwani",
+          title: "Junior Gold Brocade Royal Sherwani",
+          basePrice: 2899,
+          mannequinImage: "images/products/kids/boys-brocade-sherwani-front.jpg",
+          mannequinBackImage: "images/products/kids/boys-brocade-sherwani-front.jpg",
+          defaultOptions: { neckline: "mandarin", sleeves: "full", fabric: "silk", colorHex: "#b61827", colorName: "Royal Crimson", embroidery: "zari", length: "knee", fit: "regular" }
         }
       ],
-      steps: [
-        {
-          id: "garment",
-          num: 1,
-          title: "Junior Outfit",
-          options: [
-            { id: "kids_sherwani", name: "Royal Brocade Sherwani", price: 7500, image: "images/products/kids/boys-brocade-sherwani-front.jpg" },
-            { id: "kids_frock", name: "Emerald Princess Frock", price: 6200, image: "images/products/kids/emerald-green-girls-frock-front.jpg" },
-            { id: "kids_lehenga", name: "Girls Silk Pattu Pavadai", price: 6800, image: "images/customizer/card_kids.jpg" },
-            { id: "kids_kurta", name: "Boys Kurta & Bundi Set", price: 5900, image: "images/products/men/beige-nehru-jacket-front.jpg" }
-          ],
-          default: "kids_sherwani"
-        },
-        {
-          id: "age",
-          num: 2,
-          title: "Age & Fit",
-          options: [
-            { id: "0-2", name: "0–2 Years", thumb: "kids-age" },
-            { id: "2-4", name: "2–4 Years", thumb: "kids-age" },
-            { id: "4-6", name: "4–6 Years", thumb: "kids-age" },
-            { id: "6-8", name: "6–8 Years", thumb: "kids-age" },
-            { id: "8-12", name: "8–12 Years", thumb: "kids-age" }
-          ],
-          default: "4-6"
-        },
-        {
-          id: "sleeves",
-          num: 3,
-          title: "Sleeves",
-          options: [
-            { id: "puff", name: "Puff Sleeve", thumb: "sleeve-puff" },
-            { id: "short", name: "Short Sleeve", thumb: "sleeve-short" },
-            { id: "sleeveless", name: "Sleeveless", thumb: "sleeve-sleeveless" },
-            { id: "full", name: "Full Sleeve", thumb: "sleeve-full" }
-          ],
-          default: "puff"
-        },
-        {
-          id: "neckline",
-          num: 4,
-          title: "Neckline & Collar",
-          options: [
-            { id: "round", name: "Round Neck", thumb: "neckline-round" },
-            { id: "mandarin", name: "Mandarin Collar", thumb: "men-mandarin" },
-            { id: "sweetheart", name: "Sweetheart", thumb: "neckline-sweetheart" },
-            { id: "square", name: "Square Cut", thumb: "neckline-square" }
-          ],
-          default: "round"
-        },
-        {
-          id: "length",
-          num: 5,
-          title: "Length",
-          options: [
-            { id: "knee", name: "Knee Length", thumb: "length-knee" },
-            { id: "midi", name: "Mid-Calf Fit", thumb: "length-midi" },
-            { id: "floor", name: "Floor Length", thumb: "length-maxi" }
-          ],
-          default: "knee"
-        },
-        {
-          id: "fabric",
-          num: 6,
-          title: "Fabric (Gentle)",
-          options: [
-            { id: "cotton", name: "Pure Organic Cotton", image: "images/customizer/fabric_cotton.jpg" },
-            { id: "soft_silk", name: "Mulberry Soft Silk", image: "images/customizer/fabric_silk.jpg" },
-            { id: "georgette", name: "Airy Georgette", image: "images/customizer/fabric_georgette.jpg" }
-          ],
-          default: "soft_silk"
-        },
-        {
-          id: "color",
-          num: 7,
-          title: "Colour",
-          type: "color",
-          options: [
-            { name: "Princess Pink", hex: "#e89ea8" },
-            { name: "Sunshine Yellow", hex: "#e5b42d" },
-            { name: "Emerald Teal", hex: "#187a70" },
-            { name: "Sky Blue", hex: "#83b8c9" },
-            { name: "Pastel Lilac", hex: "#c8a2c8" },
-            { name: "Crimson Red", hex: "#b61827" },
-            { name: "Ivory Cream", hex: "#f4ede2" }
-          ],
-          default: "#e89ea8"
-        },
-        {
-          id: "embroidery",
-          num: 8,
-          title: "Embellishment",
-          options: [
-            { id: "floral", name: "Floral Resham", thumb: "embroidery-floral" },
-            { id: "brocade", name: "Zari Ribbon Border", thumb: "embroidery-zari" },
-            { id: "mirror", name: "Mirror Sparkle", thumb: "embroidery-mirror" },
-            { id: "none", name: "Minimal Soft", thumb: "embroidery-none" }
-          ],
-          default: "floral"
-        }
-      ]
+      options: {
+        neckline: [
+          { id: "round", name: "Round Neck", iconSvg: "kids_round" },
+          { id: "peter_pan", name: "Peter Pan", iconSvg: "kids_peterpan" },
+          { id: "v-neck", name: "V-Neck", iconSvg: "vneck" },
+          { id: "mandarin", name: "Mandarin", iconSvg: "men_collar_mandarin" },
+          { id: "square", name: "Square", iconSvg: "square" }
+        ],
+        sleeves: [
+          { id: "short", name: "Short Sleeve", extraPrice: 0, iconSvg: "short" },
+          { id: "puff", name: "Puff Sleeve", extraPrice: 100, iconSvg: "puff" },
+          { id: "sleeveless", name: "Sleeveless", extraPrice: 0, iconSvg: "sleeveless" },
+          { id: "full", name: "Full Sleeve", extraPrice: 150, iconSvg: "full" }
+        ],
+        fabric: [
+          { id: "cotton", name: "Cotton", extraPrice: 100, img: "images/customizer/fabric_cotton.jpg" },
+          { id: "silk", name: "Soft Silk", extraPrice: 250, img: "images/customizer/fabric_silk.jpg" },
+          { id: "georgette", name: "Georgette", extraPrice: 150, img: "images/customizer/fabric_georgette.jpg" },
+          { id: "velvet", name: "Velvet", extraPrice: 300, img: "images/customizer/fabric_silk.jpg" }
+        ],
+        colors: KIDS_COLOR_PALETTE,
+        embroidery: [
+          { id: "floral", name: "Floral Embroidery", extraPrice: 100, iconSvg: "emb_maggam" },
+          { id: "cartoon", name: "Star Motif", extraPrice: 120, iconSvg: "emb_gold" },
+          { id: "zari", name: "Zari Border", extraPrice: 150, iconSvg: "emb_zari" },
+          { id: "none", name: "None", extraPrice: 0, iconSvg: "emb_none" }
+        ],
+        length: [
+          { id: "knee", name: "Knee Length" },
+          { id: "calf", name: "Calf Length" },
+          { id: "ankle", name: "Ankle Length" }
+        ]
+      }
     },
+
     accessories: {
       id: "accessories",
       label: "Accessories",
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
-      title: "Artisanal Couture Accessories Atelier",
-      basePrice: 3850,
-      images: {
-        front: "images/products/accessories/bridal-potli-front.jpg",
-        back: "images/customizer/look_accessories.jpg",
-        side: "images/products/accessories/bridal-potli-front.jpg"
-      },
+      themeColor: "#185a4e",
+      subCategories: [
+        { id: "bags", name: "Bags" },
+        { id: "jewellery", name: "Jewellery" },
+        { id: "hair_accessories", name: "Hair Accessories" },
+        { id: "scarves", name: "Scarves" },
+        { id: "belts", name: "Belts" },
+        { id: "others", name: "Others" }
+      ],
       garments: [
         {
-          id: "acc_potli",
-          name: "Bridal Zardozi Potli Bag",
-          title: "Artisanal Royal Zardozi Potli Bag",
-          basePrice: 3850,
-          image: "images/products/accessories/bridal-potli-front.jpg",
-          images: {
-            front: "images/products/accessories/bridal-potli-front.jpg",
-            back: "images/customizer/look_accessories.jpg",
-            side: "images/products/accessories/bridal-potli-front.jpg"
-          }
+          id: "classic_handbag",
+          subCategory: "bags",
+          name: "Handbag",
+          title: "Classic Structured Leather Handbag",
+          basePrice: 2499,
+          mannequinImage: "images/customizer/display_accessories_bag.jpg",
+          mannequinBackImage: "images/customizer/display_accessories_bag.jpg",
+          defaultOptions: { material: "leather", colorHex: "#d88a96", colorName: "Dusty Rose", hardware: "gold", pattern: "plain", strap: "shoulder" }
         },
         {
-          id: "acc_jewellery",
-          name: "Kundan Jhumkas & Choker",
-          title: "Antique Polki Kundan Jhumkas & Necklace Set",
-          basePrice: 4500,
-          image: "images/customizer/look_jewellery.jpg",
-          images: {
-            front: "images/customizer/look_jewellery.jpg",
-            back: "images/customizer/look_jewellery.jpg",
-            side: "images/customizer/look_jewellery.jpg"
-          }
+          id: "shoulder_bag",
+          subCategory: "bags",
+          name: "Shoulder Bag",
+          title: "Artisanal Saddle Shoulder Bag",
+          basePrice: 2299,
+          mannequinImage: "images/customizer/display_accessories_bag.jpg",
+          mannequinBackImage: "images/customizer/display_accessories_bag.jpg",
+          defaultOptions: { material: "leather", colorHex: "#d88a96", colorName: "Dusty Rose", hardware: "gold", pattern: "plain", strap: "crossbody" }
         },
         {
-          id: "acc_footwear",
-          name: "Embroidered Velvet Mojaris",
-          title: "Hand-Embroidered Velvet Bridal Mojaris",
-          basePrice: 3200,
-          image: "images/customizer/look_footwear.jpg",
-          images: {
-            front: "images/customizer/look_footwear.jpg",
-            back: "images/customizer/look_footwear.jpg",
-            side: "images/customizer/look_footwear.jpg"
-          }
+          id: "clutch",
+          subCategory: "bags",
+          name: "Clutch",
+          title: "Hand-Embroidered Evening Minaudière Clutch",
+          basePrice: 1899,
+          mannequinImage: "images/customizer/display_accessories_bag.jpg",
+          mannequinBackImage: "images/customizer/display_accessories_bag.jpg",
+          defaultOptions: { material: "silk", colorHex: "#d88a96", colorName: "Dusty Rose", hardware: "gold", pattern: "floral", strap: "chain" }
         },
         {
-          id: "acc_dupatta",
-          name: "Chiffon Zari Dupatta",
-          title: "Hand-Dyed Chiffon Dupatta with Woven Zari Border",
-          basePrice: 2900,
-          image: "images/products/women/lavender-chiffon-dupatta-front.jpg",
-          images: {
-            front: "images/products/women/lavender-chiffon-dupatta-front.jpg",
-            back: "images/products/women/lavender-chiffon-dupatta-front.jpg",
-            side: "images/products/women/lavender-chiffon-dupatta-front.jpg"
-          }
+          id: "tote_bag",
+          subCategory: "bags",
+          name: "Tote Bag",
+          title: "Spacious Structured Leather Everyday Tote",
+          basePrice: 2699,
+          mannequinImage: "images/customizer/display_accessories_bag.jpg",
+          mannequinBackImage: "images/customizer/display_accessories_bag.jpg",
+          defaultOptions: { material: "leather", colorHex: "#965a38", colorName: "Tan Cognac", hardware: "brass", pattern: "plain", strap: "shoulder" }
+        },
+        {
+          id: "sling_bag",
+          subCategory: "bags",
+          name: "Sling Bag",
+          title: "Compact Travel Sling Bag with Chain",
+          basePrice: 1799,
+          mannequinImage: "images/customizer/display_accessories_bag.jpg",
+          mannequinBackImage: "images/customizer/display_accessories_bag.jpg",
+          defaultOptions: { material: "leather", colorHex: "#1a1a1a", colorName: "Midnight Black", hardware: "silver", pattern: "quilted", strap: "chain" }
+        },
+        {
+          id: "backpack",
+          subCategory: "bags",
+          name: "Backpack",
+          title: "Urban Chic Minimalist Leather Backpack",
+          basePrice: 2799,
+          mannequinImage: "images/customizer/display_accessories_bag.jpg",
+          mannequinBackImage: "images/customizer/display_accessories_bag.jpg",
+          defaultOptions: { material: "leather", colorHex: "#965a38", colorName: "Tan Cognac", hardware: "gold", pattern: "plain", strap: "shoulder" }
+        },
+        {
+          id: "bridal_potli",
+          subCategory: "bags",
+          name: "Bridal Potli Bag",
+          title: "Pearl Tassel Scalloped Bridal Potli",
+          basePrice: 1899,
+          mannequinImage: "images/customizer/acc_potli_pearl.jpg",
+          mannequinBackImage: "images/customizer/acc_potli_scalloped.jpg",
+          defaultOptions: { material: "silk", colorHex: "#f5f0eb", colorName: "Royal Ivory", hardware: "gold", pattern: "floral", strap: "handle" }
         }
       ],
-      steps: [
-        {
-          id: "garment",
-          num: 1,
-          title: "Accessory Item",
-          options: [
-            { id: "acc_potli", name: "Bridal Zardozi Potli", price: 3850, image: "images/products/accessories/bridal-potli-front.jpg" },
-            { id: "acc_jewellery", name: "Kundan Jhumkas & Choker", price: 4500, image: "images/customizer/look_jewellery.jpg" },
-            { id: "acc_footwear", name: "Embroidered Velvet Mojaris", price: 3200, image: "images/customizer/look_footwear.jpg" },
-            { id: "acc_dupatta", name: "Chiffon Zari Dupatta", price: 2900, image: "images/products/women/lavender-chiffon-dupatta-front.jpg" }
-          ],
-          default: "acc_potli"
-        },
-        {
-          id: "style",
-          num: 2,
-          title: "Style & Silhouette",
-          options: [
-            { id: "drawstring", name: "Drawstring Bag", thumb: "acc-potli-draw" },
-            { id: "clutch", name: "Box Clutch", thumb: "acc-clutch" },
-            { id: "bell", name: "Bell Dome", thumb: "acc-dome" },
-            { id: "pointed", name: "Pointed Mojari", thumb: "acc-leather" }
-          ],
-          default: "drawstring"
-        },
-        {
-          id: "detailing",
-          num: 3,
-          title: "Structure & Detailing",
-          options: [
-            { id: "tassels", name: "Pearl Tassels", thumb: "embroidery-floral" },
-            { id: "zardozi", name: "Heavy Zardozi", thumb: "embroidery-zari" },
-            { id: "latkans", name: "Mirror Latkans", thumb: "embroidery-mirror" },
-            { id: "gotapatti", name: "Gota Patti Edging", thumb: "embroidery-zari" }
-          ],
-          default: "tassels"
-        },
-        {
-          id: "fabric",
-          num: 4,
-          title: "Material & Base",
-          options: [
-            { id: "silk", name: "Raw Silk", image: "images/customizer/fabric_silk.jpg" },
-            { id: "velvet", name: "Imperial Velvet", image: "images/customizer/fabric_silk.jpg" },
-            { id: "brass", name: "Antique Brass", thumb: "acc-brass" },
-            { id: "chiffon", name: "Silk Chiffon", image: "images/customizer/fabric_georgette.jpg" }
-          ],
-          default: "silk"
-        },
-        {
-          id: "color",
-          num: 5,
-          title: "Colour",
-          type: "color",
-          options: [
-            { name: "Bridal Crimson", hex: "#b61827" },
-            { name: "Ivory Cream", hex: "#f4ede2" },
-            { name: "Mustard Gold", hex: "#e5b42d" },
-            { name: "Emerald Green", hex: "#187a70" },
-            { name: "Royal Ocean Blue", hex: "#2458a6" },
-            { name: "Midnight Black", hex: "#1c1b20" },
-            { name: "Lavender Rose", hex: "#c8a2c8" }
-          ],
-          default: "#b61827"
-        },
-        {
-          id: "embroidery",
-          num: 6,
-          title: "Hardware & Personalization",
-          options: [
-            { id: "zari_handle", name: "Zari & Bead Handle", thumb: "embroidery-zari" },
-            { id: "monogram", name: "Initials Monogram", thumb: "embroidery-floral" },
-            { id: "silver_polki", name: "Silver Polki Accents", thumb: "embroidery-mirror" },
-            { id: "giftbox", name: "Luxury Gift Box", thumb: "embroidery-none" }
-          ],
-          default: "zari_handle"
-        }
-      ]
+      options: {
+        material: [
+          { id: "leather", name: "Leather", extraPrice: 400, img: "images/customizer/fabric_silk.jpg" },
+          { id: "silk", name: "Raw Silk", extraPrice: 250, img: "images/customizer/fabric_silk.jpg" },
+          { id: "velvet", name: "Velvet", extraPrice: 200, img: "images/customizer/fabric_silk.jpg" },
+          { id: "brocade", name: "Brocade", extraPrice: 300, img: "images/customizer/fabric_georgette.jpg" }
+        ],
+        colors: ACC_COLOR_PALETTE,
+        hardware: [
+          { id: "gold", name: "Gold", extraPrice: 100, iconSvg: "btn_brass" },
+          { id: "silver", name: "Silver", extraPrice: 100, iconSvg: "btn_pearl" },
+          { id: "rosegold", name: "Rose Gold", extraPrice: 150, iconSvg: "btn_wooden" },
+          { id: "brass", name: "Antique Brass", extraPrice: 120, iconSvg: "btn_horn" }
+        ],
+        pattern: [
+          { id: "plain", name: "Plain", extraPrice: 0, iconSvg: "emb_none" },
+          { id: "quilted", name: "Quilted", extraPrice: 150, iconSvg: "emb_zari" },
+          { id: "croc", name: "Croc Embossed", extraPrice: 200, iconSvg: "emb_gold" },
+          { id: "floral", name: "Floral", extraPrice: 250, iconSvg: "emb_maggam" }
+        ],
+        strap: [
+          { id: "shoulder", name: "Shoulder Strap", iconSvg: "strap_shoulder" },
+          { id: "chain", name: "Chain Strap", extraPrice: 100, iconSvg: "strap_chain" },
+          { id: "crossbody", name: "Crossbody Strap", iconSvg: "strap_cross" },
+          { id: "handle", name: "Top Handle", iconSvg: "strap_handle" }
+        ]
+      }
     }
   };
 
-  // Check if current user is logged in
-  function isUserAuthenticated() {
-    const auth = window.vastraeAuth;
-    if (!auth || typeof auth.getCurrentUser !== "function") return false;
-    return !!auth.getCurrentUser();
-  }
-
-  // State management supporting Multi-Dress live preview across all categories
+  // Central Application State
   const state = {
     category: "women",
-    angle: "front",
-    viewMode: "model", // "model" (Atelier model) or "mypic" (Customize on my picture)
-    activeFocus: "garment", // Tracks active customized element: "garment", "sleeves", "neckline", "collar", "length", "color", "angle"
-    mountElement: null, // Optional custom mount container (e.g. sanctuary dashboard)
+    subCategory: {
+      women: "blouses",
+      men: "shirts",
+      kids: "girls",
+      accessories: "bags"
+    },
     selectedGarment: {
-      women: "lehenga",
-      men: "sherwani",
-      kids: "kids_sherwani",
-      accessories: "acc_potli"
+      women: "vneck_blouse",
+      men: "formal_shirt",
+      kids: "floral_frock",
+      accessories: "classic_handbag"
     },
-    selections: {},
-    measurements: {
-      bust: "34",
-      waist: "28",
-      hips: "38",
-      length: "42",
-      height: "5'5\"",
-      chest: "40",
-      shoulder: "18",
-      sleeve: "25",
-      childAge: "5 Years",
-      accSize: "UK 6 / Standard",
-      monogram: "V & A",
-      giftBox: "Included Royal Box",
-      notes: "Custom tailored with luxury silk lining and hand latkans"
+    selections: {
+      women: { neckline: "v-neck", sleeves: "full", fabric: "silk", colorHex: "#b61827", colorName: "Crimson Red", embroidery: "gold", length: "standard", fit: "tailored" },
+      men: { collar: "classic", sleeves: "full", fit: "regular", fabric: "cotton", colorHex: "#4a90e2", colorName: "Sky Blue", buttons: "wooden", embroidery: "none", length: "standard" },
+      kids: { neckline: "round", sleeves: "short", fabric: "cotton", colorHex: "#e89ea8", colorName: "Rose Pink", embroidery: "floral", length: "knee", fit: "comfort" },
+      accessories: { material: "leather", colorHex: "#d88a96", colorName: "Dusty Rose", hardware: "gold", pattern: "plain", strap: "shoulder" }
     },
+    angle: "front",
+    activeMacroDetail: "silhouette",
     tryOn: {
+      modalOpen: false,
+      tab: "photo", // "photo" | "avatar"
       userPhoto: null,
-      samplePhoto: "images/customizer/tryon_before.jpg",
-      isModel: true,
-      isProcessing: false
-    },
-    editModalOpen: false
+      beforeAfter: false,
+      isGeneratingAvatar: false,
+      measurements: {
+        height: "5'4\"",
+        bust: "34",
+        waist: "28",
+        hips: "38",
+        shoulder: "15",
+        sleeve: "22",
+        length: "38"
+      }
+    }
   };
 
-  // Initialize default selections for each category and garment
-  Object.keys(STUDIO_DATA).forEach(catKey => {
-    state.selections[catKey] = {};
-    if (STUDIO_DATA[catKey].garments && STUDIO_DATA[catKey].garments.length > 0) {
-      state.selections[catKey].garment = STUDIO_DATA[catKey].garments[0].id;
-    }
-    STUDIO_DATA[catKey].steps.forEach(step => {
-      state.selections[catKey][step.id] = step.default;
-    });
-  });
-
-  /**
-   * Helper: Return clean fashion-sketch SVG for each silhouette option
-   */
-  function renderThumbnailSvg(thumbId, activeColor) {
-    const skin = "#ebd5c5";
-    const gold = "#d4af37";
-    const baseColor = activeColor || "#af829f";
-
-    // Reusable gradients and definitions
-    const defs = `
-      <defs>
-        <linearGradient id="thGrad_${thumbId}" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#c59cb6"/>
-          <stop offset="100%" stop-color="${baseColor}"/>
-        </linearGradient>
-      </defs>`;
-
-    switch (thumbId) {
-      // Sleeves
-      case "sleeve-sleeveless":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M40 34 C42 46 58 46 60 34 Z" fill="${skin}"/>
-          <path d="M24 38 C28 44 28 60 22 74 L30 74 C34 58 34 46 32 38 Z" fill="${skin}"/>
-          <path d="M76 38 C72 44 72 60 78 74 L70 74 C66 58 66 46 68 38 Z" fill="${skin}"/>
-        </svg>`;
-
-      case "sleeve-short":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M24 38 C18 42 14 52 14 62 L28 64 C29 55 31 46 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M14 62 L28 64" stroke="${gold}" stroke-width="1.2"/>
-          <path d="M76 38 C82 42 86 52 86 62 L72 64 C71 55 69 46 68 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M86 62 L72 64" stroke="${gold}" stroke-width="1.2"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M40 34 C42 46 58 46 60 34 Z" fill="${skin}"/>
-        </svg>`;
-
-      case "sleeve-puff":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M26 38 C11 32 6 48 10 60 C12 66 22 66 26 62 C29 54 31 46 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M11 60 C16 63 22 63 26 61" stroke="${gold}" stroke-width="1.5" fill="none"/>
-          <path d="M74 38 C89 32 94 48 90 60 C88 66 78 66 74 62 C71 54 69 46 68 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M89 60 C84 63 78 63 74 61" stroke="${gold}" stroke-width="1.5" fill="none"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M40 34 C42 46 58 46 60 34 Z" fill="${skin}"/>
-        </svg>`;
-
-      case "sleeve-full":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M25 38 C18 45 12 65 14 88 L22 87 C24 70 28 52 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M14 86 L22 85" stroke="${gold}" stroke-width="1.5"/>
-          <path d="M75 38 C82 45 88 65 86 88 L78 87 C76 70 72 52 68 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M86 86 L78 85" stroke="${gold}" stroke-width="1.5"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M40 34 C42 46 58 46 60 34 Z" fill="${skin}"/>
-        </svg>`;
-
-      // Necklines
-      case "neckline-round":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M38 34 C38 52 62 52 62 34 Z" fill="${skin}"/>
-          <path d="M38 34 C38 52 62 52 62 34" stroke="${gold}" stroke-width="1.2" fill="none"/>
-        </svg>`;
-
-      case "neckline-vneck":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M38 34 L50 56 L62 34 Z" fill="${skin}"/>
-          <path d="M38 34 L50 56 L62 34" stroke="${gold}" stroke-width="1.2" fill="none"/>
-        </svg>`;
-
-      case "neckline-square":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M38 34 L38 50 L62 50 L62 34 Z" fill="${skin}"/>
-          <path d="M38 34 L38 50 L62 50 L62 34" stroke="${gold}" stroke-width="1.2" fill="none"/>
-        </svg>`;
-
-      case "neckline-boat":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M32 34 C40 40 60 40 68 34 Z" fill="${skin}"/>
-          <path d="M32 34 C40 40 60 40 68 34" stroke="${gold}" stroke-width="1.2" fill="none"/>
-        </svg>`;
-
-      case "neckline-sweetheart":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 18 L42 28 C42 34 58 34 58 28 L58 18 Z" fill="${skin}"/>
-          <path d="M32 38 C38 34 42 32 50 32 C58 32 62 34 68 38 C72 40 76 44 76 48 L70 75 C60 76 40 76 30 75 L24 48 C24 44 28 40 32 38 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M38 34 C41 44 47 48 50 52 C53 48 59 44 62 34 Z" fill="${skin}"/>
-          <path d="M38 34 C41 44 47 48 50 52 C53 48 59 44 62 34" stroke="${gold}" stroke-width="1.2" fill="none"/>
-        </svg>`;
-
-      // Skirt Lengths
-      case "length-knee":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <rect x="38" y="24" width="24" height="5" rx="2" fill="${gold}"/>
-          <path d="M40 29 L22 62 C36 65 64 65 78 62 L60 29 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M22 61 C36 64 64 64 78 61" stroke="${gold}" stroke-width="1.8" fill="none"/>
-          <path d="M45 29 L38 62 M55 29 L62 62" stroke="#8e637f" stroke-width="0.6" opacity="0.4"/>
-        </svg>`;
-
-      case "length-midi":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <rect x="38" y="22" width="24" height="5" rx="2" fill="${gold}"/>
-          <path d="M40 27 L16 75 C36 78 64 78 84 75 L60 27 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M16 74 C36 77 64 77 84 74" stroke="${gold}" stroke-width="2" fill="none"/>
-          <path d="M46 27 L36 75 M54 27 L64 75 M50 27 L50 76" stroke="#8e637f" stroke-width="0.6" opacity="0.4"/>
-        </svg>`;
-
-      case "length-maxi":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <rect x="38" y="20" width="24" height="5" rx="2" fill="${gold}"/>
-          <path d="M40 25 L8 88 C36 92 64 92 92 88 L60 25 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <path d="M8 87 C36 91 64 91 92 87" stroke="${gold}" stroke-width="2.5" fill="none"/>
-          <path d="M45 25 L30 88 M55 25 L70 88 M50 25 L50 90" stroke="#8e637f" stroke-width="0.6" opacity="0.4"/>
-        </svg>`;
-
-      // Embroidery patterns
-      case "embroidery-none":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="url(#thGrad_${thumbId})"/>
-          <text x="50" y="54" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="700" letter-spacing="1">PURE SILK</text>
-        </svg>`;
-
-      case "embroidery-floral":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="url(#thGrad_${thumbId})"/>
-          <g stroke="${gold}" fill="none" stroke-width="1.5">
-            <circle cx="50" cy="50" r="8" fill="#f4db89"/>
-            <path d="M50 42 C45 32 55 32 50 42 M58 46 C68 41 68 51 58 46 M58 54 C68 59 58 69 58 54 M42 54 C32 59 32 49 42 54 M42 46 C32 41 42 31 42 46"/>
-            <path d="M50 58 Q50 78 70 82 M50 42 Q50 22 30 18" stroke="#a6842c" stroke-width="1.2"/>
-            <circle cx="30" cy="18" r="4" fill="#f4db89"/>
-            <circle cx="70" cy="82" r="4" fill="#f4db89"/>
-          </g>
-        </svg>`;
-
-      case "embroidery-zari":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="url(#thGrad_${thumbId})"/>
-          <g stroke="${gold}" fill="none" stroke-width="1.3">
-            <path d="M0 25 L100 25 M0 50 L100 50 M0 75 L100 75"/>
-            <path d="M25 0 L25 100 M50 0 L50 100 M75 0 L75 100"/>
-            <path d="M0 0 L100 100 M100 0 L0 100"/>
-            <circle cx="50" cy="50" r="5" fill="#f8e49c"/>
-            <circle cx="25" cy="25" r="3" fill="#f8e49c"/>
-            <circle cx="75" cy="25" r="3" fill="#f8e49c"/>
-            <circle cx="25" cy="75" r="3" fill="#f8e49c"/>
-            <circle cx="75" cy="75" r="3" fill="#f8e49c"/>
-          </g>
-        </svg>`;
-
-      case "embroidery-mirror":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="url(#thGrad_${thumbId})"/>
-          <circle cx="50" cy="50" r="14" fill="#f2f5f8" stroke="${gold}" stroke-width="2"/>
-          <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.9"/>
-          <g stroke="${gold}" stroke-width="1.5">
-            <line x1="50" y1="32" x2="50" y2="28"/><line x1="50" y1="68" x2="50" y2="72"/>
-            <line x1="32" y1="50" x2="28" y2="50"/><line x1="68" y1="50" x2="72" y2="50"/>
-          </g>
-          <circle cx="20" cy="22" r="6" fill="#f2f5f8" stroke="${gold}" stroke-width="1.2"/>
-          <circle cx="80" cy="22" r="6" fill="#f2f5f8" stroke="${gold}" stroke-width="1.2"/>
-          <circle cx="20" cy="78" r="6" fill="#f2f5f8" stroke="${gold}" stroke-width="1.2"/>
-          <circle cx="80" cy="78" r="6" fill="#f2f5f8" stroke="${gold}" stroke-width="1.2"/>
-        </svg>`;
-
-      // Men Items
-      case "men-sherwani":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M44 14 L56 14 L56 22 L44 22 Z" fill="${skin}"/>
-          <path d="M42 22 L58 22 L57 28 L43 28 Z" fill="${gold}"/>
-          <path d="M30 28 L70 28 L76 75 L62 76 L52 76 L50 45 L48 76 L38 76 L24 75 Z" fill="url(#thGrad_${thumbId})" stroke="#6b574a" stroke-width="0.8"/>
-          <line x1="50" y1="28" x2="50" y2="76" stroke="${gold}" stroke-width="1.5"/>
-          <circle cx="50" cy="35" r="1.5" fill="${gold}"/>
-          <circle cx="50" cy="42" r="1.5" fill="${gold}"/>
-          <circle cx="50" cy="49" r="1.5" fill="${gold}"/>
-        </svg>`;
-
-      case "men-kurta":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M32 26 L68 26 L72 74 L60 74 L60 55 L40 55 L40 74 L28 74 Z" fill="url(#thGrad_${thumbId})" stroke="#6b574a" stroke-width="0.8"/>
-          <path d="M45 26 L55 26 L50 38 Z" fill="${skin}"/>
-          <line x1="50" y1="38" x2="50" y2="55" stroke="${gold}" stroke-width="1.2"/>
-        </svg>`;
-
-      case "men-indo":
-      case "men-waistcoat":
-      case "men-suit":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M32 24 L68 24 L74 68 L26 68 Z" fill="url(#thGrad_${thumbId})" stroke="#6b574a" stroke-width="0.8"/>
-          <path d="M44 24 L50 48 L56 24 Z" fill="#ffffff"/>
-          <line x1="50" y1="48" x2="50" y2="68" stroke="${gold}" stroke-width="1.5"/>
-        </svg>`;
-
-      case "men-mandarin":
-      case "men-nehru":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M42 22 L58 22 L58 32 L42 32 Z" fill="${skin}"/>
-          <rect x="41" y="30" width="18" height="8" rx="2" fill="${gold}"/>
-          <path d="M30 38 L70 38 L74 76 L26 76 Z" fill="url(#thGrad_${thumbId})"/>
-        </svg>`;
-
-      case "men-classic":
-      case "men-spread":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M30 36 L70 36 L74 76 L26 76 Z" fill="url(#thGrad_${thumbId})"/>
-          <path d="M40 32 L50 46 L38 48 Z" fill="#ffffff" stroke="${gold}" stroke-width="0.8"/>
-          <path d="M60 32 L50 46 L62 48 Z" fill="#ffffff" stroke="${gold}" stroke-width="0.8"/>
-        </svg>`;
-
-      // Kids Items
-      case "kids-sherwani":
-      case "kids-kurta":
-      case "kids-lehenga":
-      case "kids-frock":
-      case "kids-coord":
-      case "kids-age":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <circle cx="50" cy="24" r="10" fill="${skin}"/>
-          <path d="M34 38 L66 38 L74 76 L26 76 Z" fill="url(#thGrad_${thumbId})" stroke="#8e637f" stroke-width="0.8"/>
-          <circle cx="50" cy="50" r="3" fill="${gold}"/>
-          <circle cx="50" cy="60" r="3" fill="${gold}"/>
-        </svg>`;
-
-      // Accessories
-      case "acc-necklace":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <path d="M26 28 Q50 68 74 28" fill="none" stroke="${gold}" stroke-width="3"/>
-          <circle cx="50" cy="52" r="7" fill="${gold}"/>
-          <circle cx="50" cy="52" r="3.5" fill="#a72836"/>
-          <circle cx="38" cy="42" r="4" fill="${gold}"/>
-          <circle cx="62" cy="42" r="4" fill="${gold}"/>
-        </svg>`;
-
-      case "acc-bangles":
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="#fcf8f6"/>
-          <ellipse cx="40" cy="50" rx="14" ry="28" fill="none" stroke="${gold}" stroke-width="4"/>
-          <ellipse cx="50" cy="50" rx="14" ry="28" fill="none" stroke="url(#thGrad_${thumbId})" stroke-width="4"/>
-          <ellipse cx="60" cy="50" rx="14" ry="28" fill="none" stroke="${gold}" stroke-width="4"/>
-        </svg>`;
-
+  // Helper: Return SVG icon paths for visual option cards
+  function getVisualIconSvg(type) {
+    const stroke = "currentColor";
+    switch (type) {
+      case "vneck":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M10 8 L20 28 L30 8" stroke-linecap="round"/><path d="M6 10 L10 8 L13 14"/><path d="M34 10 L30 8 L27 14"/></svg>';
+      case "boat":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M8 12 Q20 20 32 12" stroke-linecap="round"/><path d="M5 14 L8 12 L10 18"/><path d="M35 14 L32 12 L30 18"/></svg>';
+      case "round":
+      case "kids_round":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M10 10 Q20 26 30 10" stroke-linecap="round"/><path d="M7 12 L10 10 L12 16"/><path d="M33 12 L30 10 L28 16"/></svg>';
+      case "sweetheart":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M10 10 Q15 18 20 22 Q25 18 30 10" stroke-linecap="round"/></svg>';
+      case "square":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M10 10 L10 22 L30 22 L30 10" stroke-linecap="round"/></svg>';
+      case "backless":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M8 10 Q20 32 32 10"/><path d="M14 26 L26 26" stroke-dasharray="2,2"/><circle cx="20" cy="30" r="1.5" fill="' + stroke + '"/></svg>';
+      case "kids_peterpan":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M10 10 Q16 18 20 12 Q24 18 30 10"/></svg>';
+      case "full":
+      case "men_sleeve_full":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 6 L8 34 L16 34 L18 12 Z"/><line x1="8" y1="31" x2="16" y2="31"/></svg>';
+      case "short":
+      case "men_sleeve_half":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 6 L9 18 L18 19 L19 12 Z"/><line x1="9" y1="16" x2="18" y2="17"/></svg>';
+      case "sleeveless":
+      case "men_sleeve_none":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M14 6 Q16 16 20 20"/><path d="M14 6 L20 6"/></svg>';
+      case "puff":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M14 8 C8 8 6 18 10 20 L16 18 Z"/><line x1="10" y1="19" x2="16" y2="17"/></svg>';
+      case "elbow":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 6 L8 24 L17 25 L18 12 Z"/><line x1="8" y1="22" x2="17" y2="23"/></svg>';
+      case "men_collar_classic":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 10 L20 18 L28 10"/><path d="M12 10 L15 22 L20 18 L25 22 L28 10"/></svg>';
+      case "men_collar_mandarin":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 14 L12 8 Q20 6 28 8 L28 14"/><line x1="20" y1="8" x2="20" y2="14"/></svg>';
+      case "men_collar_band":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M11 12 Q20 8 29 12"/><path d="M11 15 Q20 11 29 15"/></svg>';
+      case "men_collar_cutaway":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M10 10 L20 15 L30 10"/><path d="M10 10 L12 20 L20 15 L28 20 L30 10"/></svg>';
+      case "men_collar_btn":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 10 L20 18 L28 10"/><circle cx="16" cy="20" r="1.5" fill="' + stroke + '"/><circle cx="24" cy="20" r="1.5" fill="' + stroke + '"/></svg>';
+      case "men_sleeve_folded":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 6 L8 22 L17 23 L18 12 Z"/><rect x="7" y="19" width="11" height="5" rx="1"/><circle cx="12" cy="16" r="1" fill="' + stroke + '"/></svg>';
+      case "men_sleeve_french":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 6 L8 30 L16 30 L18 12 Z"/><rect x="6" y="27" width="12" height="6" rx="1"/><circle cx="12" cy="30" r="1.5" fill="' + stroke + '"/></svg>';
+      case "btn_wooden":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><circle cx="20" cy="20" r="12"/><circle cx="16" cy="16" r="1.5" fill="' + stroke + '"/><circle cx="24" cy="16" r="1.5" fill="' + stroke + '"/><circle cx="16" cy="24" r="1.5" fill="' + stroke + '"/><circle cx="24" cy="24" r="1.5" fill="' + stroke + '"/></svg>';
+      case "btn_pearl":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><circle cx="20" cy="20" r="12"/><circle cx="20" cy="20" r="8" stroke-dasharray="2,2"/><circle cx="20" cy="20" r="2" fill="' + stroke + '"/></svg>';
+      case "btn_brass":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="20" cy="20" r="12" fill="#faf0be"/><circle cx="20" cy="20" r="6" stroke="#b8860b"/></svg>';
+      case "btn_horn":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><circle cx="20" cy="20" r="12"/><path d="M14 14 Q20 22 26 26"/><circle cx="17" cy="22" r="1.5" fill="' + stroke + '"/></svg>';
+      case "emb_gold":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="#d4af37" stroke-width="1.8"><path d="M20 6 C28 14 28 26 20 34 C12 26 12 14 20 6 Z"/><circle cx="20" cy="20" r="3" fill="#d4af37"/></svg>';
+      case "emb_zari":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="#d4af37" stroke-width="2"><path d="M6 14 L13 26 L20 14 L27 26 L34 14"/><line x1="6" y1="28" x2="34" y2="28"/></svg>';
+      case "emb_maggam":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="1.6"><circle cx="20" cy="20" r="4"/><circle cx="20" cy="12" r="2"/><circle cx="28" cy="20" r="2"/><circle cx="20" cy="28" r="2"/><circle cx="12" cy="20" r="2"/><path d="M20 16 L20 24 M16 20 L24 20"/></svg>';
+      case "emb_mirror":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><circle cx="20" cy="20" r="10"/><circle cx="20" cy="20" r="6" fill="#e0e0e0"/><circle cx="20" cy="20" r="3" fill="#ffffff"/></svg>';
+      case "emb_none":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="#999" stroke-width="2"><circle cx="20" cy="20" r="12" stroke-dasharray="3,3"/><line x1="12" y1="12" x2="28" y2="28"/></svg>';
+      case "strap_shoulder":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 32 C12 12 28 12 28 32"/></svg>';
+      case "strap_chain":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="#d4af37" stroke-width="2"><ellipse cx="16" cy="16" rx="4" ry="6"/><ellipse cx="24" cy="24" rx="4" ry="6"/></svg>';
+      case "strap_cross":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><line x1="8" y1="8" x2="32" y2="32"/><rect x="18" y="18" width="4" height="4" fill="' + stroke + '"/></svg>';
+      case "strap_handle":
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M14 26 C14 16 26 16 26 26"/></svg>';
       default:
-        return `<svg viewBox="0 0 100 100" width="100%" height="100%">${defs}
-          <rect width="100" height="100" rx="8" fill="url(#thGrad_${thumbId})"/>
-          <circle cx="50" cy="50" r="12" fill="${gold}"/>
-        </svg>`;
+        return '<svg viewBox="0 0 40 40" fill="none" stroke="' + stroke + '" stroke-width="2"><circle cx="20" cy="20" r="8"/></svg>';
     }
   }
 
-  /**
-   * Photorealistic Dress Colour Transformation Engine
-   * Calculates realistic color tone & lighting filters applied directly to the model's dress
-   * without drawing artificial vector cloth over the model.
-   */
-  function getDressColorFilter(hex) {
-    if (!hex) return "none";
-    const cleanHex = hex.toLowerCase().trim();
-    switch (cleanHex) {
-      case "#187a70": // Emerald Teal
-        return "hue-rotate(235deg) saturate(1.25) brightness(0.92)";
-      case "#e5b42d": // Mustard Gold
-        return "hue-rotate(115deg) saturate(1.45) brightness(1.06) contrast(1.05)";
-      case "#794c9d": // Imperial Purple
-        return "hue-rotate(-12deg) saturate(1.3) brightness(0.88)";
-      case "#b61827": // Crimson Red
-        return "hue-rotate(72deg) saturate(1.4) brightness(0.9) contrast(1.08)";
-      case "#1c1b20": // Midnight Black
-        return "grayscale(0.88) brightness(0.68) contrast(1.28)";
-      case "#f4ede2": // Ivory Cream
-        return "sepia(0.25) brightness(1.18) contrast(0.96) saturate(0.85)";
-      case "#e89ea8": // Pastel Blush
-        return "hue-rotate(62deg) saturate(0.95) brightness(1.06)";
-      case "#c8a2c8": // Signature Royal Lavender Lilac
-      default:
-        return "none";
+  // Calculate dynamic price breakdown for active garment and selections
+  function calculateCustomizerPrice(categoryKey, garment, selections) {
+    const catData = STUDIO_DATA[categoryKey] || STUDIO_DATA.women;
+    let basePrice = (garment && garment.basePrice) || catData.garments[0].basePrice || 1999;
+    let fabricSurcharge = 0;
+    let embroiderySurcharge = 0;
+    let otherSurcharge = 0;
+
+    // Fabric surcharge
+    const fabricList = catData.options.fabric || catData.options.material || [];
+    const chosenFabricId = selections.fabric || selections.material;
+    const fabricObj = fabricList.find(f => f.id === chosenFabricId);
+    if (fabricObj && fabricObj.extraPrice) fabricSurcharge = fabricObj.extraPrice;
+
+    // Embroidery / Buttons surcharge
+    const embList = catData.options.embroidery || catData.options.buttons || [];
+    const chosenEmbId = selections.embroidery || selections.buttons;
+    const embObj = embList.find(e => e.id === chosenEmbId);
+    if (embObj && embObj.extraPrice) embroiderySurcharge = embObj.extraPrice;
+
+    // Sleeves surcharge
+    const sleeveList = catData.options.sleeves || [];
+    const chosenSleeveId = selections.sleeves;
+    const sleeveObj = sleeveList.find(s => s.id === chosenSleeveId);
+    if (sleeveObj && sleeveObj.extraPrice) otherSurcharge += sleeveObj.extraPrice;
+
+    // Hardware / Strap surcharge (Accessories)
+    if (categoryKey === "accessories") {
+      const hwList = catData.options.hardware || [];
+      const hwObj = hwList.find(h => h.id === selections.hardware);
+      if (hwObj && hwObj.extraPrice) otherSurcharge += hwObj.extraPrice;
     }
+
+    const totalPrice = basePrice + fabricSurcharge + embroiderySurcharge + otherSurcharge;
+    return {
+      basePrice: basePrice,
+      fabricSurcharge: fabricSurcharge,
+      embroiderySurcharge: embroiderySurcharge,
+      otherSurcharge: otherSurcharge,
+      totalPrice: totalPrice,
+      fabricName: fabricObj ? fabricObj.name : "Silk",
+      embroideryName: embObj ? embObj.name : "Gold Embroidery"
+    };
   }
 
-  function renderLiveGarmentOverlay() {
-    return "";
-  }
-
-  function _legacyUnusedOverlay(categoryKey, selections, viewMode, angle) {
-    if (categoryKey === "accessories") return "";
-
-    const color = selections.colorHex || selections.color || "#c8a2c8";
-    const sleeve = String(selections.sleeves || "puff").toLowerCase();
-    const neckline = String(selections.neckline || selections.collar || "v-neck").toLowerCase();
-    const embroidery = String(selections.embroidery || "floral").toLowerCase();
-    const length = String(selections.length || "midi").toLowerCase();
-    const isMenswear = categoryKey === "men";
+  // Dynamic SVG Overlay generator for the physical boutique mannequin
+  function renderMannequinSvgOverlay(categoryKey, garment, selections, angle) {
+    const isWomen = categoryKey === "women";
+    const isMen = categoryKey === "men";
     const isKids = categoryKey === "kids";
-    const isMyPic = viewMode === "mypic";
+    const isAcc = categoryKey === "accessories";
 
-    // Deterministic unique ID for gradients
-    const colorClean = color.replace(/[^a-zA-Z0-9]/g, "");
-    const gradId = "vasLiveGarmentGrad_" + colorClean;
+    if (isAcc) {
+      // Accessories vector overlay (hardware clasp, strap, buckle)
+      const hwColor = selections.hardware === "silver" ? "#d0d4dc" : (selections.hardware === "brass" ? "#b8860b" : "#d4af37");
+      return (
+        '<svg class="vas-c-mannequin-svg-overlay" viewBox="0 0 500 500">' +
+          '<circle cx="250" cy="270" r="16" fill="' + hwColor + '" stroke="#ffffff" stroke-width="2" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))"/>' +
+          '<circle cx="250" cy="270" r="8" fill="#222" opacity="0.3"/>' +
+          '<ellipse cx="180" cy="180" rx="8" ry="14" fill="none" stroke="' + hwColor + '" stroke-width="4"/>' +
+          '<ellipse cx="320" cy="180" rx="8" ry="14" fill="none" stroke="' + hwColor + '" stroke-width="4"/>' +
+        '</svg>'
+      );
+    }
 
-    // Dynamic Sleeve Path and Styling
+    // Garment neck / collar & sleeve overlays on the boutique tailor dummy
+    const neck = (selections.neckline || selections.collar || "").toLowerCase();
+    const sleeve = (selections.sleeves || "").toLowerCase();
+    const emb = (selections.embroidery || "").toLowerCase();
+    const goldColor = "#d4af37";
+
+    let neckSvg = "";
+    if (isWomen) {
+      if (neck.includes("v-neck")) {
+        neckSvg = (
+          '<path d="M190 145 L250 255 L310 145" fill="none" stroke="' + goldColor + '" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.25))"/>' +
+          '<path d="M198 145 L250 240 L302 145" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="3,3"/>'
+        );
+      } else if (neck.includes("boat")) {
+        neckSvg = (
+          '<path d="M165 145 Q250 178 335 145" fill="none" stroke="' + goldColor + '" stroke-width="4.5" stroke-linecap="round"/>' +
+          '<path d="M172 152 Q250 184 328 152" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="4,3"/>'
+        );
+      } else if (neck.includes("sweetheart")) {
+        neckSvg = '<path d="M185 145 Q215 195 250 215 Q285 195 315 145" fill="none" stroke="' + goldColor + '" stroke-width="4" stroke-linecap="round"/>';
+      } else if (neck.includes("square")) {
+        neckSvg = '<path d="M185 145 L185 220 L315 220 L315 145" fill="none" stroke="' + goldColor + '" stroke-width="4" stroke-linecap="round"/>';
+      } else if (neck.includes("backless") && angle === "back") {
+        neckSvg = (
+          '<path d="M170 150 Q250 340 330 150" fill="none" stroke="' + goldColor + '" stroke-width="3.5"/>' +
+          '<path d="M220 280 L280 280 M230 310 L270 310" stroke="#f5c242" stroke-width="2"/>' +
+          '<circle cx="225" cy="340" r="5" fill="' + goldColor + '"/>' +
+          '<circle cx="275" cy="340" r="5" fill="' + goldColor + '"/>'
+        );
+      } else {
+        // Classic Round Scoop
+        neckSvg = '<path d="M185 145 Q250 225 315 145" fill="none" stroke="' + goldColor + '" stroke-width="4" stroke-linecap="round"/>';
+      }
+    } else if (isMen) {
+      if (neck.includes("mandarin") || neck.includes("nehru")) {
+        neckSvg = (
+          '<path d="M195 155 Q250 148 305 155 L305 130 Q250 122 195 130 Z" fill="#ffffff" fill-opacity="0.15" stroke="' + goldColor + '" stroke-width="3"/>' +
+          '<line x1="250" y1="155" x2="250" y2="380" stroke="' + goldColor + '" stroke-width="2" stroke-dasharray="6,4"/>'
+        );
+      } else {
+        // Classic spread shirt collar
+        neckSvg = (
+          '<path d="M195 150 L225 195 L250 165 L275 195 L305 150 L250 135 Z" fill="#ffffff" fill-opacity="0.2" stroke="#ffffff" stroke-width="2"/>' +
+          '<line x1="250" y1="165" x2="250" y2="400" stroke="#ffffff" stroke-width="2"/>'
+        );
+      }
+    } else if (isKids) {
+      neckSvg = '<path d="M190 145 Q250 210 310 145" fill="none" stroke="' + goldColor + '" stroke-width="3.5"/>';
+    }
+
+    // Dynamic Sleeves Cutout Overlays
     let sleeveSvg = "";
-    if (!isMenswear && !isKids) {
-      if (sleeve.includes("sleeveless")) {
-        // Sleeveless: Refined armhole gold piping + bare arm contours
-        sleeveSvg = `
-          <!-- Sleeveless Tailored Armhole Piping & Straps -->
-          <path d="M372 295 Q350 330 355 385 Q372 380 392 345 Z" fill="url(#vasGoldGrad)" stroke="#aa8323" stroke-width="1.8" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.2))"/>
-          <path d="M628 295 Q650 330 645 385 Q628 380 608 345 Z" fill="url(#vasGoldGrad)" stroke="#aa8323" stroke-width="1.8" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.2))"/>
-          <!-- Delicate lace stitching -->
-          <path d="M362 315 Q352 345 358 375" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.9"/>
-          <path d="M638 315 Q648 345 642 375" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.9"/>
-        `;
-      } else if (sleeve.includes("short")) {
-        // Short Sleeve: Tailored mid-bicep fitted sleeve with gold border
-        sleeveSvg = `
-          <!-- Left Short Sleeve -->
-          <g filter="drop-shadow(0 4px 8px rgba(0,0,0,0.26))">
-            <path d="M382 288 Q335 305 315 425 L372 436 Q385 365 402 340 Z" fill="url(#${gradId})" stroke="#7a4a63" stroke-width="1.2"/>
-            <path d="M382 288 Q335 305 315 425 L372 436 Q385 365 402 340 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-            <!-- Gold Hem Cuff -->
-            <path d="M315 425 L372 436 L370 448 L312 437 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1"/>
-            <path d="M314 431 L371 442" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,3" opacity="0.8"/>
-          </g>
-          <!-- Right Short Sleeve -->
-          <g filter="drop-shadow(0 4px 8px rgba(0,0,0,0.26))">
-            <path d="M618 288 Q665 305 685 425 L628 436 Q615 365 598 340 Z" fill="url(#${gradId})" stroke="#7a4a63" stroke-width="1.2"/>
-            <path d="M618 288 Q665 305 685 425 L628 436 Q615 365 598 340 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-            <!-- Gold Hem Cuff -->
-            <path d="M685 425 L628 436 L630 448 L688 437 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1"/>
-            <path d="M686 431 L629 442" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,3" opacity="0.8"/>
-          </g>
-        `;
-      } else if (sleeve.includes("puff")) {
-        // Puff Sleeve: Royal gathered balloon volume at shoulders + ornate gold cuff band
-        sleeveSvg = `
-          <!-- Left Royal Puff Sleeve -->
-          <g filter="drop-shadow(0 6px 14px rgba(0,0,0,0.32))">
-            <path d="M385 278 Q280 265 265 345 Q255 425 320 460 L372 468 Q360 385 398 325 Z" fill="url(#${gradId})" stroke="#7a4a63" stroke-width="1.3"/>
-            <path d="M385 278 Q280 265 265 345 Q255 425 320 460 L372 468 Q360 385 398 325 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-            <!-- Pleating Creases & Specular Folds -->
-            <path d="M345 278 Q295 330 315 455 M320 295 Q280 355 325 460 M365 285 Q335 365 350 465" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.8"/>
-            <!-- Gold Pleated Cuff Band -->
-            <path d="M320 460 L372 468 L369 482 L317 474 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1.2"/>
-            <circle cx="345" cy="471" r="2.5" fill="#ffffff" opacity="0.9"/>
-          </g>
-          <!-- Right Royal Puff Sleeve -->
-          <g filter="drop-shadow(0 6px 14px rgba(0,0,0,0.32))">
-            <path d="M615 278 Q720 265 735 345 Q745 425 680 460 L628 468 Q640 385 602 325 Z" fill="url(#${gradId})" stroke="#7a4a63" stroke-width="1.3"/>
-            <path d="M615 278 Q720 265 735 345 Q745 425 680 460 L628 468 Q640 385 602 325 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-            <!-- Pleating Creases & Specular Folds -->
-            <path d="M655 278 Q705 330 685 455 M680 295 Q720 355 675 460 M635 285 Q665 365 650 465" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.8"/>
-            <!-- Gold Pleated Cuff Band -->
-            <path d="M680 460 L628 468 L631 482 L683 474 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1.2"/>
-            <circle cx="655" cy="471" r="2.5" fill="#ffffff" opacity="0.9"/>
-          </g>
-        `;
-      } else {
-        // Full Sleeve: Regal fitted sleeve down past elbow to wrists with zardozi cuffs
-        sleeveSvg = `
-          <!-- Left Full Sleeve -->
-          <g filter="drop-shadow(0 5px 12px rgba(0,0,0,0.3))">
-            <path d="M382 288 Q335 305 315 425 Q300 520 310 618 L330 715 L372 708 Q355 590 370 480 Q388 380 402 340 Z" fill="url(#${gradId})" stroke="#7a4a63" stroke-width="1.2"/>
-            <path d="M382 288 Q335 305 315 425 Q300 520 310 618 L330 715 L372 708 Q355 590 370 480 Q388 380 402 340 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-            <!-- Left Wrist Zardozi Cuff -->
-            <path d="M330 715 L372 708 L370 730 L328 737 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1.2"/>
-            <path d="M332 723 L371 716" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,3"/>
-          </g>
-          <!-- Right Full Sleeve -->
-          <g filter="drop-shadow(0 5px 12px rgba(0,0,0,0.3))">
-            <path d="M618 288 Q665 305 685 425 Q700 520 690 618 L670 715 L628 708 Q645 590 630 480 Q612 380 598 340 Z" fill="url(#${gradId})" stroke="#7a4a63" stroke-width="1.2"/>
-            <path d="M618 288 Q665 305 685 425 Q700 520 690 618 L670 715 L628 708 Q645 590 630 480 Q612 380 598 340 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-            <!-- Right Wrist Zardozi Cuff -->
-            <path d="M670 715 L628 708 L630 730 L672 737 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1.2"/>
-            <path d="M668 723 L629 716" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,3"/>
-          </g>
-        `;
-      }
-    }
-
-    // Dynamic Neckline Architecture
-    let necklineSvg = "";
-    if (!isMenswear && !isKids) {
-      if (neckline.includes("sweetheart")) {
-        necklineSvg = `
-          <path d="M422 308 Q460 338 500 382 Q540 338 578 308" fill="none" stroke="url(#vasGoldGrad)" stroke-width="3.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
-          <path d="M422 308 Q460 338 500 382 Q540 338 578 308 L500 270 Z" fill="rgba(243,223,209,0.35)"/>
-        `;
-      } else if (neckline.includes("v-neck")) {
-        necklineSvg = `
-          <path d="M428 305 L500 415 L572 305" fill="none" stroke="url(#vasGoldGrad)" stroke-width="3.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
-          <path d="M428 305 L500 415 L572 305 Z" fill="rgba(243,223,209,0.35)"/>
-        `;
-      } else if (neckline.includes("square")) {
-        necklineSvg = `
-          <path d="M432 305 L432 382 L568 382 L568 305" fill="none" stroke="url(#vasGoldGrad)" stroke-width="3.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
-          <path d="M432 305 L432 382 L568 382 L568 305 Z" fill="rgba(243,223,209,0.35)"/>
-        `;
-      } else if (neckline.includes("boat")) {
-        necklineSvg = `
-          <path d="M395 300 Q500 335 605 300" fill="none" stroke="url(#vasGoldGrad)" stroke-width="3.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
-        `;
-      } else {
-        // Round
-        necklineSvg = `
-          <path d="M425 305 Q500 372 575 305" fill="none" stroke="url(#vasGoldGrad)" stroke-width="3.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"/>
-          <path d="M425 305 Q500 372 575 305 Z" fill="rgba(243,223,209,0.35)"/>
-        `;
-      }
-    }
-
-    // Dynamic Embroidery Motifs
-    let embroiderySvg = "";
-    if (embroidery.includes("mirror")) {
-      embroiderySvg = `
-        <g fill="#ffffff" stroke="url(#vasGoldGrad)" stroke-width="1.8" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.2))">
-          <circle cx="470" cy="410" r="6" opacity="0.95"/>
-          <circle cx="530" cy="410" r="6" opacity="0.95"/>
-          <circle cx="500" cy="430" r="7" opacity="0.95"/>
-          <circle cx="445" cy="430" r="5" opacity="0.9"/>
-          <circle cx="555" cy="430" r="5" opacity="0.9"/>
-          <circle cx="485" cy="480" r="5" opacity="0.9"/>
-          <circle cx="515" cy="480" r="5" opacity="0.9"/>
-        </g>
-      `;
-    } else if (embroidery.includes("zari")) {
-      embroiderySvg = `
-        <g stroke="url(#vasGoldGrad)" stroke-width="1.4" opacity="0.88">
-          <path d="M420 340 L580 440 M420 380 L580 480 M420 420 L580 520"/>
-          <path d="M580 340 L420 440 M580 380 L420 480 M580 420 L420 520"/>
-          <circle cx="500" cy="430" r="3.5" fill="#f8e49c"/>
-          <circle cx="460" cy="410" r="3" fill="#f8e49c"/>
-          <circle cx="540" cy="410" r="3" fill="#f8e49c"/>
-        </g>
-      `;
-    } else if (embroidery.includes("floral")) {
-      embroiderySvg = `
-        <g stroke="url(#vasGoldGrad)" fill="none" stroke-width="1.5">
-          <path d="M475 425 Q500 405 525 425 Q500 445 475 425 Z" fill="#f9e79f" opacity="0.85"/>
-          <path d="M445 420 Q465 405 480 420 M520 420 Q535 405 555 420" stroke-width="1.2"/>
-          <circle cx="500" cy="425" r="3.5" fill="#ffffff"/>
-        </g>
-      `;
-    }
-
-    // Dynamic Skirt / Length
-    const skirtBottom = length === "knee" ? 780 : length === "midi" ? 960 : 1240;
-    const skirtSvg = `
-      <!-- Flared Silk Lehenga Skirt -->
-      <g filter="drop-shadow(0 8px 16px rgba(0,0,0,0.3))">
-        <path d="M405 490 L595 490 L${680 + (skirtBottom - 780) * 0.18} ${skirtBottom} Q500 ${skirtBottom + 35} ${320 - (skirtBottom - 780) * 0.18} ${skirtBottom} Z" fill="url(#${gradId})" opacity="0.92"/>
-        <path d="M405 490 L595 490 L${680 + (skirtBottom - 780) * 0.18} ${skirtBottom} Q500 ${skirtBottom + 35} ${320 - (skirtBottom - 780) * 0.18} ${skirtBottom} Z" fill="url(#vasFabricWeave)" opacity="0.32"/>
-        <!-- Gold Border Hem -->
-        <path d="M${320 - (skirtBottom - 780) * 0.18} ${skirtBottom - 25} Q500 ${skirtBottom + 10} ${680 + (skirtBottom - 780) * 0.18} ${skirtBottom - 25} L${680 + (skirtBottom - 780) * 0.18} ${skirtBottom} Q500 ${skirtBottom + 35} ${320 - (skirtBottom - 780) * 0.18} ${skirtBottom} Z" fill="url(#vasGoldGrad)"/>
-      </g>
-    `;
-
-    // Menswear / Sartorial Overlay
-    if (isMenswear) {
-      return `
-        <svg class="vas-c-live-overlay-svg" viewBox="0 0 1000 1333" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <defs>
-            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
-              <stop offset="35%" stop-color="${color}"/>
-              <stop offset="100%" stop-color="#181318" stop-opacity="0.6"/>
-            </linearGradient>
-            <linearGradient id="vasGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#c59b27"/>
-              <stop offset="50%" stop-color="#fdf0b4"/>
-              <stop offset="100%" stop-color="#a67c1e"/>
-            </linearGradient>
-          </defs>
-          <g filter="drop-shadow(0 6px 16px rgba(0,0,0,0.32))">
-            <path d="M360 260 L440 250 L440 280 L560 280 L560 250 L640 260 L670 780 L560 800 L500 520 L440 800 L330 780 Z" fill="url(#${gradId})" opacity="0.88"/>
-            <line x1="500" y1="280" x2="500" y2="790" stroke="url(#vasGoldGrad)" stroke-width="4"/>
-            <circle cx="500" cy="360" r="4" fill="url(#vasGoldGrad)"/>
-            <circle cx="500" cy="420" r="4" fill="url(#vasGoldGrad)"/>
-            <circle cx="500" cy="480" r="4" fill="url(#vasGoldGrad)"/>
-            <circle cx="500" cy="540" r="4" fill="url(#vasGoldGrad)"/>
-            <circle cx="500" cy="600" r="4" fill="url(#vasGoldGrad)"/>
-          </g>
-        </svg>
-      `;
-    }
-
-    // Women's Couture Overlay (Blouse, Dynamic Sleeves, Neckline, Skirt, Gold Accents)
-    return `
-      <svg class="vas-c-live-overlay-svg" viewBox="0 0 1000 1333" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <defs>
-          <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
-            <stop offset="30%" stop-color="${color}"/>
-            <stop offset="100%" stop-color="#241420" stop-opacity="0.55"/>
-          </linearGradient>
-          <linearGradient id="vasGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#b8861b"/>
-            <stop offset="40%" stop-color="#fdf2be"/>
-            <stop offset="70%" stop-color="#ffd700"/>
-            <stop offset="100%" stop-color="#9a6e14"/>
-          </linearGradient>
-          <pattern id="vasFabricWeave" width="8" height="8" patternUnits="userSpaceOnUse">
-            <path d="M0 0 L8 8 M8 0 L0 8" stroke="#ffffff" stroke-width="0.75" opacity="0.25"/>
-          </pattern>
-        </defs>
-
-        <!-- Lower Lehenga Skirt (only rendered when on 'my pic' or customized) -->
-        ${isMyPic ? skirtSvg : ""}
-
-        <!-- Fitted Choli / Blouse Bodice -->
-        <g filter="drop-shadow(0 6px 12px rgba(0,0,0,0.28))">
-          <path d="M382 288 L428 305 Q500 372 572 305 L618 288 L608 440 Q500 458 392 440 Z" fill="url(#${gradId})" opacity="0.88"/>
-          <path d="M382 288 L428 305 Q500 372 572 305 L618 288 L608 440 Q500 458 392 440 Z" fill="url(#vasFabricWeave)" opacity="0.35"/>
-          <!-- Gold Waistband Border -->
-          <path d="M392 440 Q500 458 608 440 L606 456 Q500 472 394 456 Z" fill="url(#vasGoldGrad)" stroke="#8e6a17" stroke-width="1"/>
-        </g>
-
-        <!-- Dynamic Live Sleeves Architecture -->
-        ${sleeveSvg}
-
-        <!-- Dynamic Live Neckline Cut -->
-        ${necklineSvg}
-
-        <!-- Dynamic Embroidery Sparkles -->
-        ${embroiderySvg}
-      </svg>
-    `;
-  }
-
-  function renderGarmentDetailSvg(category, selections) {
-    if (category.id === "accessories") {
-      const selectedType = category.steps.find(step => step.id === "productType")?.options.find(option => option.id === selections.productType);
-      if (selectedType && selectedType.image) {
-        return `<img class="vas-c-garment-detail-svg" src="${selectedType.image}" alt="${selectedType.name} design preview">`;
-      }
-      const previewThumb = selectedType && selectedType.thumb ? selectedType.thumb : "acc-potli-bucket";
-      return renderThumbnailSvg(previewThumb, selections.colorHex || selections.color || "#c8a2c8")
-        .replace("<svg ", '<svg class="vas-c-garment-detail-svg" ');
-    }
-
-    const isMenswear = category.id === "men";
-    const color = selections.colorHex || selections.color || "#c8a2c8";
-    const sleeve = String(selections.sleeves || "full").toLowerCase();
-    const neckline = String(selections.neckline || selections.collar || "round").toLowerCase();
-    const embroidery = String(selections.embroidery || "floral").toLowerCase();
-    const sleevePaths = sleeve.includes("sleeveless")
-      ? ""
-      : sleeve.includes("short")
-        ? `<path d="M30 30 Q20 31 17 43 L22 52 Q29 49 34 41 M70 30 Q80 31 83 43 L78 52 Q71 49 66 41"/>`
-        : sleeve.includes("puff")
-          ? `<path d="M31 29 Q17 23 14 37 Q13 47 22 52 Q29 48 34 40 M69 29 Q83 23 86 37 Q87 47 78 52 Q71 48 66 40"/>`
-          : `<path d="M31 29 Q21 34 17 50 L13 78 L23 81 L30 52 L35 40 M69 29 Q79 34 83 50 L87 78 L77 81 L70 52 L65 40"/>`;
-    const neckOpening = isMenswear
-      ? neckline.includes("classic") || neckline.includes("spread")
-        ? `<path d="M41 23 L50 39 L46 43 L38 28 M59 23 L50 39 L54 43 L62 28" fill="#f3dfd1"/>`
-        : `<path d="M44 22 L44 31 Q50 35 56 31 L56 22 Z" fill="#f3dfd1"/><path d="M42 22 L42 31 Q50 38 58 31 L58 22" fill="none" stroke="#ead6bd" stroke-width="1.5"/>`
-      : neckline.includes("v-neck")
-        ? `<path d="M39 26 L50 46 L61 26 Z" fill="#f3dfd1"/>`
-        : neckline.includes("square")
-          ? `<path d="M39 25 L39 40 Q50 43 61 40 L61 25 Z" fill="#f3dfd1"/>`
-          : neckline.includes("boat")
-            ? `<path d="M35 25 Q50 34 65 25 L61 31 Q50 36 39 31 Z" fill="#f3dfd1"/>`
-            : neckline.includes("sweetheart")
-              ? `<path d="M39 25 Q43 22 50 29 Q57 22 61 25 Q61 40 50 44 Q39 40 39 25 Z" fill="#f3dfd1"/>`
-              : `<path d="M40 25 Q40 42 50 43 Q60 42 60 25 Z" fill="#f3dfd1"/>`;
-    const decorativeStitches = embroidery.includes("none") || embroidery.includes("minimal")
-      ? ""
-      : embroidery.includes("mirror")
-        ? `<g fill="#f7f2e7" stroke="#c6a35d" stroke-width="1"><circle cx="43" cy="56" r="2.1"/><circle cx="57" cy="56" r="2.1"/><circle cx="50" cy="65" r="2.1"/></g>`
-        : `<path d="M43 56 Q50 49 57 56 Q50 63 43 56 M47 67 Q50 63 53 67" fill="none" stroke="#d8bd79" stroke-width="1.1" opacity=".9"/>`;
-
-    return `<svg class="vas-c-garment-detail-svg" viewBox="0 0 100 100" role="img" aria-label="${isMenswear ? "Garment" : "Blouse"} detail preview">
-      <defs>
-        <linearGradient id="vasGarmentSheen" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#fff" stop-opacity=".5"/>
-          <stop offset=".45" stop-color="${color}"/>
-          <stop offset="1" stop-color="#241722" stop-opacity=".32"/>
-        </linearGradient>
-        <pattern id="vasGarmentWeave" width="5" height="5" patternUnits="userSpaceOnUse">
-          <path d="M0 0L5 5M5 0L0 5" stroke="#fff" stroke-opacity=".12" stroke-width=".45"/>
-        </pattern>
-      </defs>
-      <path d="M44 13 Q50 17 56 13 L58 23 Q66 24 70 29 L80 36 L74 46 L68 41 L72 77 Q50 82 28 77 L32 41 L26 46 L20 36 L30 29 Q34 24 42 23 Z" fill="#f3dfd1"/>
-      ${sleevePaths ? `<path d="${sleevePaths.match(/<path d="([^"]+)"/)?.[1] || ""}" fill="url(#vasGarmentSheen)" stroke="#8c6476" stroke-width="1"/>` : ""}
-      <path d="M30 29 Q37 24 42 23 L44 27 Q50 31 56 27 L58 23 Q65 24 70 29 L68 41 L72 77 Q50 82 28 77 L32 41 Z" fill="url(#vasGarmentSheen)" stroke="#8c6476" stroke-width="1.2"/>
-      <path d="M30 29 Q37 24 42 23 L44 27 Q50 31 56 27 L58 23 Q65 24 70 29 L68 41 L72 77 Q50 82 28 77 L32 41 Z" fill="url(#vasGarmentWeave)"/>
-      ${neckOpening}
-      <path d="M31 73 Q50 78 69 73" fill="none" stroke="#d8bd79" stroke-width="1.5"/>
-      ${decorativeStitches}
-      ${isMenswear ? `<path d="M50 37 L50 72" stroke="#e5d19d" stroke-width="1"/><circle cx="50" cy="48" r="1" fill="#f8e9bd"/><circle cx="50" cy="56" r="1" fill="#f8e9bd"/><circle cx="50" cy="64" r="1" fill="#f8e9bd"/>` : ""}
-    </svg>`;
-  }
-
-  function getOptionLabel(category, key, value) {
-    if (!category || !category.steps) return value || "Signature";
-    const step = category.steps.find(item => item.id === key);
-    if (!step) return value || "Signature";
-    const option = step.options.find(item => item.id === value || item.hex === value || item.name === value);
-    return option ? option.name : value || "Signature";
-  }
-
-  /**
-   * Helper: Return category-specific sizing measurement input fields
-   */
-  function renderMeasurementFields(category) {
-    if (category === "men") {
-      return `
-        <div class="vas-c-form-grid">
-          <label>
-            <span>Chest (in)</span>
-            <input type="number" class="vas-input" data-field="chest" value="${state.measurements.chest || '40'}">
-          </label>
-          <label>
-            <span>Waist (in)</span>
-            <input type="number" class="vas-input" data-field="waist" value="${state.measurements.waist || '34'}">
-          </label>
-          <label>
-            <span>Shoulder Width (in)</span>
-            <input type="number" class="vas-input" data-field="shoulder" value="${state.measurements.shoulder || '18'}">
-          </label>
-          <label>
-            <span>Sleeve Length (in)</span>
-            <input type="number" class="vas-input" data-field="sleeve" value="${state.measurements.sleeve || '25'}">
-          </label>
-          <label>
-            <span>Height (ft / in)</span>
-            <input type="text" class="vas-input" data-field="height" value="${state.measurements.height || '5\'10"'}">
-          </label>
-        </div>
-      `;
-    }
-    if (category === "kids") {
-      return `
-        <div class="vas-c-form-grid">
-          <label>
-            <span>Child Age (Years)</span>
-            <input type="text" class="vas-input" data-field="childAge" value="${state.measurements.childAge || '5 Years'}">
-          </label>
-          <label>
-            <span>Chest / Bust (in)</span>
-            <input type="number" class="vas-input" data-field="chest" value="${state.measurements.chest || '24'}">
-          </label>
-          <label>
-            <span>Waist (in)</span>
-            <input type="number" class="vas-input" data-field="waist" value="${state.measurements.waist || '22'}">
-          </label>
-          <label>
-            <span>Total Height (cm / in)</span>
-            <input type="text" class="vas-input" data-field="height" value="${state.measurements.height || '110 cm'}">
-          </label>
-        </div>
-      `;
-    }
-    if (category === "accessories") {
-      return `
-        <div class="vas-c-form-grid">
-          <label>
-            <span>Footwear / Wrist Size</span>
-            <input type="text" class="vas-input" data-field="accSize" value="${state.measurements.accSize || 'UK 6 / Standard'}">
-          </label>
-          <label>
-            <span>Custom Monogram Initials</span>
-            <input type="text" class="vas-input" data-field="monogram" value="${state.measurements.monogram || 'V & A'}">
-          </label>
-          <label>
-            <span>Luxury Velvet Gift Box</span>
-            <input type="text" class="vas-input" data-field="giftBox" value="${state.measurements.giftBox || 'Included Royal Box'}">
-          </label>
-        </div>
-      `;
-    }
-    // Women (default)
-    return `
-      <div class="vas-c-form-grid">
-        <label>
-          <span>Bust (in)</span>
-          <input type="number" class="vas-input" data-field="bust" value="${state.measurements.bust || '34'}">
-        </label>
-        <label>
-          <span>Waist (in)</span>
-          <input type="number" class="vas-input" data-field="waist" value="${state.measurements.waist || '28'}">
-        </label>
-        <label>
-          <span>Hips (in)</span>
-          <input type="number" class="vas-input" data-field="hips" value="${state.measurements.hips || '38'}">
-        </label>
-        <label>
-          <span>Garment Length (in)</span>
-          <input type="number" class="vas-input" data-field="length" value="${state.measurements.length || '42'}">
-        </label>
-        <label>
-          <span>Height (ft / in)</span>
-          <input type="text" class="vas-input" data-field="height" value="${state.measurements.height || '5\'5"'}">
-        </label>
-      </div>
-    `;
-  }
-
-  /**
-   * Target Root Containers for Customize Your Way studio
-   * Supports both public website (#vastraeCustomizerRoot) and client dashboard (#dashCustomizerMount)
-   */
-  function getRoots() {
-    const targets = [];
-    const mainRoot = document.getElementById("vastraeCustomizerRoot");
-    if (mainRoot) targets.push(mainRoot);
-    if (state.mountElement && state.mountElement !== mainRoot && document.body.contains(state.mountElement)) {
-      targets.push(state.mountElement);
-    }
-    const dashMount = document.getElementById("dashCustomizerMount");
-    if (dashMount && !targets.includes(dashMount)) targets.push(dashMount);
-    return targets;
-  }
-
-  /**
-   * Main Render Controller: Renders the entire Customize Your Way UI with Multi-Dress Live Preview
-   */
-  function render() {
-    const targets = getRoots();
-    if (targets.length === 0) return;
-
-    const loggedIn = isUserAuthenticated();
-    const currentCat = STUDIO_DATA[state.category] || STUDIO_DATA.women;
-    const catSelections = state.selections[state.category] || {};
-    const garmentId = catSelections.garment || state.selectedGarment[state.category] || (currentCat.garments && currentCat.garments[0].id) || "lehenga";
-    const currentGarment = (currentCat.garments && currentCat.garments.find(g => g.id === garmentId)) || (currentCat.garments && currentCat.garments[0]) || {
-      id: "default",
-      name: currentCat.title,
-      title: currentCat.title,
-      basePrice: currentCat.basePrice,
-      images: currentCat.images
-    };
-    const currentPrice = currentGarment ? currentGarment.basePrice : currentCat.basePrice;
-
-    const isMyPic = state.viewMode === "mypic";
-    const sleeve = String(catSelections.sleeves || "puff").toLowerCase();
-    const neckline = String(catSelections.neckline || catSelections.collar || "sweetheart").toLowerCase();
-    const length = String(catSelections.length || "midi").toLowerCase();
-    const garmentColor = catSelections.colorHex || catSelections.color || "#c8a2c8";
-
-    // Active Base Image calculation:
-    // Transforms the model dress directly based on chosen garment, sleeves, neckline, length, or color
-    let activeBaseImg = (currentGarment.images && currentGarment.images[state.angle]) || currentGarment.images.front;
-
-    if (isMyPic) {
-      if (state.tryOn.userPhoto) {
-        activeBaseImg = state.tryOn.userPhoto;
-      } else {
-        if (state.category === "women" && currentGarment.id === "lehenga") {
-          if (sleeve.includes("sleeveless")) {
-            activeBaseImg = "images/customizer/tryon_sleeveless.jpg";
-          } else if (sleeve.includes("short")) {
-            activeBaseImg = "images/customizer/tryon_short.jpg";
-          } else if (sleeve.includes("full")) {
-            activeBaseImg = "images/customizer/tryon_full.jpg";
-          } else {
-            activeBaseImg = "images/customizer/tryon_after.jpg";
-          }
-        } else {
-          activeBaseImg = state.tryOn.samplePhoto || "images/customizer/tryon_before.jpg";
-        }
-      }
-    } else {
-      if (state.angle === "side" && currentGarment.images.side) {
-        activeBaseImg = currentGarment.images.side;
-      } else if (state.angle === "back" && currentGarment.images.back) {
-        activeBaseImg = currentGarment.images.back;
-      } else {
-        // Front view:
-        if (state.category === "women" && currentGarment.id === "lehenga") {
-          if (state.activeFocus === "neckline") {
-            if (neckline.includes("v-neck")) {
-              activeBaseImg = "images/customizer/lehenga_vneck.jpg";
-            } else if (neckline.includes("square")) {
-              activeBaseImg = "images/customizer/lehenga_square.jpg";
-            } else if (neckline.includes("boat")) {
-              activeBaseImg = "images/customizer/lehenga_boat.jpg";
-            } else if (neckline.includes("round")) {
-              activeBaseImg = "images/customizer/lehenga_round.jpg";
-            } else {
-              activeBaseImg = "images/customizer/lehenga_front.jpg";
-            }
-          } else if (state.activeFocus === "length") {
-            if (length.includes("knee")) {
-              activeBaseImg = "images/customizer/lehenga_knee.jpg";
-            } else if (length.includes("maxi")) {
-              activeBaseImg = "images/customizer/lehenga_maxi.jpg";
-            } else {
-              activeBaseImg = "images/customizer/lehenga_front.jpg";
-            }
-          } else if (state.activeFocus === "color" && (garmentColor === "#b61827" || garmentColor.toLowerCase().includes("crimson"))) {
-            activeBaseImg = "images/customizer/lehenga_crimson.jpg";
-          } else {
-            // Sleeves or default
-            if (sleeve.includes("sleeveless")) {
-              activeBaseImg = "images/customizer/lehenga_sleeveless.jpg";
-            } else if (sleeve.includes("short")) {
-              activeBaseImg = "images/customizer/lehenga_short.jpg";
-            } else if (sleeve.includes("full")) {
-              activeBaseImg = "images/customizer/lehenga_full.jpg";
-            } else {
-              activeBaseImg = "images/customizer/lehenga_front.jpg";
-            }
-          }
-        } else {
-          activeBaseImg = currentGarment.images.front;
-        }
-      }
-    }
-
-    const colorOption = currentCat.steps.find(step => step.id === "color")?.options.find(option => option.hex === garmentColor);
-    const garmentColorLabel = catSelections.colorName || (colorOption && colorOption.name) || garmentColor;
-    const sleeveOptionLabel = catSelections.sleeves ? getOptionLabel(currentCat, "sleeves", catSelections.sleeves) : "";
-
-    // Live overlay tint calculation for all garments & categories
-    const isBaseCrimson = activeBaseImg.includes("lehenga_crimson") || (garmentColor.toLowerCase() === "#b61827" && activeBaseImg.includes("crimson"));
-    const isDefaultNoTint = (garmentColor.toLowerCase() === "#c8a2c8" && currentGarment.id === "lehenga") || isBaseCrimson;
-    const tintOpacity = isDefaultNoTint ? "0" : "0.78";
-    const dressColorFilter = getDressColorFilter(garmentColor);
-
-    let activeBadgeText = currentGarment.name;
-    if (state.activeFocus === "neckline" && catSelections.neckline) {
-      activeBadgeText = `${currentGarment.name} · ${getOptionLabel(currentCat, "neckline", catSelections.neckline)} Neckline`;
-    } else if (state.activeFocus === "collar" && catSelections.collar) {
-      activeBadgeText = `${currentGarment.name} · ${getOptionLabel(currentCat, "collar", catSelections.collar)} Collar`;
-    } else if (state.activeFocus === "length" && catSelections.length) {
-      activeBadgeText = `${currentGarment.name} · ${getOptionLabel(currentCat, "length", catSelections.length)}`;
-    } else if (state.activeFocus === "color") {
-      activeBadgeText = `${currentGarment.name} · ${garmentColorLabel}`;
-    } else if (state.activeFocus === "sleeves" && catSelections.sleeves) {
-      activeBadgeText = `${currentGarment.name} · ${sleeveOptionLabel}`;
-    }
-
-    // Compute corresponding dress preview for the AI Try-On widget on the right
-    let tryonAfterSrc = "images/customizer/tryon_after.jpg";
     if (sleeve.includes("sleeveless")) {
-      tryonAfterSrc = "images/customizer/tryon_sleeveless.jpg";
-    } else if (sleeve.includes("short")) {
-      tryonAfterSrc = "images/customizer/tryon_short.jpg";
-    } else if (sleeve.includes("full")) {
-      tryonAfterSrc = "images/customizer/tryon_full.jpg";
+      // Armhole seams cleanly sculpted to mannequin shoulders
+      sleeveSvg = (
+        '<path d="M150 160 Q160 210 175 250" fill="none" stroke="' + goldColor + '" stroke-width="3.5" stroke-linecap="round"/>' +
+        '<path d="M350 160 Q340 210 325 250" fill="none" stroke="' + goldColor + '" stroke-width="3.5" stroke-linecap="round"/>'
+      );
+    } else if (sleeve.includes("short") || sleeve.includes("half")) {
+      sleeveSvg = (
+        '<path d="M125 250 L170 260" stroke="' + goldColor + '" stroke-width="4" stroke-linecap="round"/>' +
+        '<path d="M375 250 L330 260" stroke="' + goldColor + '" stroke-width="4" stroke-linecap="round"/>'
+      );
+    } else if (sleeve.includes("puff")) {
+      sleeveSvg = (
+        '<path d="M150 150 Q115 130 115 190 Q120 240 160 235" fill="none" stroke="' + goldColor + '" stroke-width="3"/>' +
+        '<path d="M350 150 Q385 130 385 190 Q380 240 340 235" fill="none" stroke="' + goldColor + '" stroke-width="3"/>'
+      );
+    } else {
+      // Full / Elbow sleeve cuffs
+      sleeveSvg = (
+        '<path d="M100 375 L135 385" stroke="' + goldColor + '" stroke-width="4.5" stroke-linecap="round"/>' +
+        '<path d="M400 375 L365 385" stroke="' + goldColor + '" stroke-width="4.5" stroke-linecap="round"/>'
+      );
     }
 
-    const htmlContent = `
-      <!-- Top Category Tabs (Women, Men, Kids, Accessories) - High Visibility Atelier Switcher -->
-      <nav class="vas-c-nav-categories" aria-label="Customization Category Tabs">
-        <button type="button" class="vas-c-nav-tab ${state.category === 'women' ? 'active' : ''}" data-action="set-category" data-cat="women" id="catBtn_women">
-          <span class="vas-c-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l-2 5-4 2-4-2-2-5z"/><path d="M6 3L3 9l3 12h12l3-12-3-6"/><circle cx="12" cy="7" r="1.5"/></svg></span>
-          <span class="vas-c-nav-label">👩 Women's Couture</span>
-        </button>
-        <button type="button" class="vas-c-nav-tab ${state.category === 'men' ? 'active' : ''}" data-action="set-category" data-cat="men" id="catBtn_men">
-          <span class="vas-c-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></span>
-          <span class="vas-c-nav-label">👨 Men's Bespoke</span>
-        </button>
-        <button type="button" class="vas-c-nav-tab ${state.category === 'kids' ? 'active' : ''}" data-action="set-category" data-cat="kids" id="catBtn_kids">
-          <span class="vas-c-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 100 8 4 4 0 000-8zM4 20v-2a6 6 0 0112 0v2M18 10a3 3 0 100-6 3 3 0 000 6zM15 20v-1a4 4 0 014-4h1a4 4 0 014 4v1"/></svg></span>
-          <span class="vas-c-nav-label">🧒 Kids Festive</span>
-        </button>
-        <button type="button" class="vas-c-nav-tab ${state.category === 'accessories' ? 'active' : ''}" data-action="set-category" data-cat="accessories" id="catBtn_accessories">
-          <span class="vas-c-nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-          <span class="vas-c-nav-label">💎 Accessories</span>
-        </button>
-      </nav>
+    // Embroidery and Buttons Overlays
+    let detailSvg = "";
+    if (emb.includes("gold") || emb.includes("zari") || emb.includes("maggam")) {
+      detailSvg = (
+        '<circle cx="215" cy="205" r="3.5" fill="' + goldColor + '"/>' +
+        '<circle cx="285" cy="205" r="3.5" fill="' + goldColor + '"/>' +
+        '<circle cx="230" cy="255" r="3.5" fill="' + goldColor + '"/>' +
+        '<circle cx="270" cy="255" r="3.5" fill="' + goldColor + '"/>' +
+        '<path d="M175 320 Q250 335 325 320" stroke="' + goldColor + '" stroke-width="4" fill="none"/>'
+      );
+    }
 
-      <!-- Unauthenticated Member Notice / Lock Banner -->
-      ${!loggedIn ? `
-        <div class="vas-c-auth-banner" role="alert">
-          <div class="vas-c-auth-banner-content">
-            <span class="vas-lock-badge">🔒 ATELIER PATRON EXCLUSIVE</span>
-            <p>Please sign in or register to customize your outfit, select sleeves, try on your photo, and order bespoke tailoring.</p>
-          </div>
-          <button type="button" class="vas-btn vas-btn-sm vas-btn-gold" data-action="require-login">
-            Sign In / Register &rarr;
-          </button>
-        </div>
-      ` : ''}
+    // Buttons on men's placket
+    if (isMen) {
+      const btnColor = selections.buttons === "brass" ? "#d4af37" : (selections.buttons === "pearl" ? "#ffffff" : "#6e473b");
+      detailSvg += (
+        '<circle cx="250" cy="190" r="3.5" fill="' + btnColor + '" stroke="#333" stroke-width="1"/>' +
+        '<circle cx="250" cy="230" r="3.5" fill="' + btnColor + '" stroke="#333" stroke-width="1"/>' +
+        '<circle cx="250" cy="270" r="3.5" fill="' + btnColor + '" stroke="#333" stroke-width="1"/>' +
+        '<circle cx="250" cy="310" r="3.5" fill="' + btnColor + '" stroke="#333" stroke-width="1"/>'
+      );
+    }
 
-      <!-- Main Studio 3-Column Grid -->
-      <div class="vas-c-studio-grid ${!loggedIn ? 'vas-c-grid-locked' : ''}">
-
-        <!-- Column 1: Step-by-Step Options with Horizontal Carousels -->
-        <aside class="vas-c-options-col" aria-label="Customization Steps">
-          ${currentCat.steps.map(step => {
-            const selectedVal = catSelections[step.id];
-
-            if (step.type === "color") {
-              // Color Swatches Step
-              return `
-                <div class="vas-c-step">
-                  <div class="vas-c-step-header">
-                    <span class="vas-c-step-num">${step.num}</span>
-                    <h3 class="vas-c-step-title">${step.title}</h3>
-                  </div>
-                  <div class="vas-c-carousel-wrap">
-                    <div class="vas-c-swatches-row" id="swatchesList_${step.id}">
-                      ${step.options.map(col => {
-                        const isColActive = (selectedVal === col.hex || selectedVal === col.name);
-                        return `
-                          <button type="button" class="vas-c-swatch ${isColActive ? 'active' : ''}" style="background-color: ${col.hex}" title="${col.name}" data-action="set-color" data-step="${step.id}" data-hex="${col.hex}" data-name="${col.name}" aria-label="${col.name}">
-                          </button>
-                        `;
-                      }).join('')}
-                    </div>
-                    <button type="button" class="vas-c-carousel-arrow" data-action="scroll-carousel" data-target="swatchesList_${step.id}" aria-label="Next colors">›</button>
-                  </div>
-                </div>
-              `;
-            }
-
-            // Standard Option Cards Step (Garment, Sleeves, Neckline/Collar, Fabric, Length, Embroidery)
-            const isGarmentStep = step.id === "garment";
-            return `
-              <div class="vas-c-step">
-                <div class="vas-c-step-header">
-                  <span class="vas-c-step-num">${step.num}</span>
-                  <h3 class="vas-c-step-title">${step.title}</h3>
-                </div>
-                <div class="vas-c-carousel-wrap">
-                  <div class="vas-c-carousel-row" id="carousel_${step.id}">
-                    ${step.options.map(opt => {
-                      const isOptActive = (selectedVal === opt.id || selectedVal === opt.name);
-                      return `
-                        <button type="button" class="vas-c-card ${isGarmentStep ? 'vas-c-card-dress' : ''} ${isOptActive ? 'active' : ''}" data-action="set-option" data-step="${step.id}" data-val="${opt.id}" aria-label="${opt.name}">
-                          <div class="vas-c-card-thumb">
-                            ${opt.image ? `<img src="${opt.image}" alt="${opt.name}">` : renderThumbnailSvg(opt.thumb, catSelections.colorHex || catSelections.color)}
-                          </div>
-                          <span class="vas-c-card-label">${opt.name}</span>
-                          ${opt.price ? `<span class="vas-c-card-price">₹${opt.price.toLocaleString('en-IN')}</span>` : ''}
-                        </button>
-                      `;
-                    }).join('')}
-                  </div>
-                  <button type="button" class="vas-c-carousel-arrow" data-action="scroll-carousel" data-target="carousel_${step.id}" aria-label="Next ${step.title}">›</button>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </aside>
-
-        <!-- Column 2: Center Live Preview Canvas & Multi-Angle Thumbnails -->
-        <section class="vas-c-preview-col" aria-label="Live Preview Studio">
-          <div class="vas-c-preview-card">
-
-            <!-- Top View Mode Switcher Pill -->
-            <div class="vas-c-mode-switcher-bar">
-              <button type="button" class="vas-c-mode-btn ${!isMyPic ? 'active' : ''}" data-action="set-view-mode" data-mode="model">
-                ✨ Atelier Model
-              </button>
-              <button type="button" class="vas-c-mode-btn ${isMyPic ? 'active' : ''}" data-action="set-view-mode" data-mode="mypic">
-                📸 Customize on My Pic
-              </button>
-            </div>
-
-            <div class="vas-c-preview-image-wrap" id="customizerCanvasWrap">
-              <!-- Floating Live Pulse Badge Row & Quick Add to Bag -->
-              <div class="vas-c-live-badge-row">
-                <div class="vas-c-live-badge">
-                  <span class="vas-c-live-dot"></span>
-                  <span class="vas-c-live-badge-text">Live Preview · ${activeBadgeText}</span>
-                </div>
-                <button type="button" class="vas-c-quick-bag-btn" data-action="add-to-cart" title="Add this custom ensemble to your shopping bag">
-                  🛍️ Add to Bag
-                </button>
-              </div>
-
-              <!-- Perspective Switcher on Right Edge (when in Model view) -->
-              ${!isMyPic ? `
-                <div class="vas-c-perspectives" aria-label="Perspective view angles">
-                  <button type="button" class="vas-c-perspective-btn ${state.angle === 'front' ? 'active' : ''}" data-action="set-angle" data-angle="front" title="Front View">
-                    <img src="${currentGarment.images.front}" alt="Front view">
-                    <span>Front</span>
-                  </button>
-                  ${currentGarment.images.back ? `
-                  <button type="button" class="vas-c-perspective-btn ${state.angle === 'back' ? 'active' : ''}" data-action="set-angle" data-angle="back" title="Back View">
-                    <img src="${currentGarment.images.back}" alt="Back view">
-                    <span>Back</span>
-                  </button>` : ''}
-                  ${currentGarment.images.side ? `
-                  <button type="button" class="vas-c-perspective-btn ${state.angle === 'side' ? 'active' : ''}" data-action="set-angle" data-angle="side" title="Side View">
-                    <img src="${currentGarment.images.side}" alt="Side view">
-                    <span>Side</span>
-                  </button>` : ''}
-                </div>
-              ` : `
-                <!-- My Pic Controls Bar on Canvas -->
-                <div class="vas-c-mypic-chip-wrap">
-                  <label class="vas-c-mypic-chip" title="Upload your photo to customize live">
-                    <input type="file" id="studioMyPicInput" accept="image/*" style="display:none;" data-action="upload-mypic">
-                    📷 Upload Your Photo
-                  </label>
-                  <button type="button" class="vas-c-mypic-chip" data-action="sample-mypic" title="Switch to reference patron photo">
-                    🔄 Sample Photo
-                  </button>
-                </div>
-              `}
-
-              <!-- Main High-Resolution Preview Image with Model Wearing Authentic Dress -->
-              <img id="customizerMainImg" class="vas-c-main-img" src="${activeBaseImg}" alt="${currentGarment.title}">
-              <!-- Dynamic Colorway Tint Overlay over the Authentic Dress -->
-              <div class="vas-c-color-tint-overlay" id="customizerColorTint" style="background-color: ${garmentColor}; opacity: ${tintOpacity};" aria-hidden="true"></div>
-            </div>
-
-            <!-- Garment Live Specs Architecture Bar -->
-            <div class="vas-c-garment-preview" aria-live="polite">
-              <div class="vas-c-garment-art">
-                ${renderGarmentDetailSvg(currentCat, catSelections)}
-              </div>
-              <div class="vas-c-garment-copy">
-                <span class="vas-c-garment-eyebrow">Design architecture · live preview</span>
-                <strong>${currentGarment.title} · ${isMyPic ? 'Fitted on Your Photo' : 'Atelier Silhouette'}</strong>
-                <div class="vas-c-garment-specs">
-                  <span class="vas-spec-highlight"><b>✨ Outfit:</b> ${currentGarment.name}</span>
-                  ${catSelections.sleeves ? `<span class="vas-spec-highlight"><b>🪡 Sleeves:</b> ${getOptionLabel(currentCat, "sleeves", catSelections.sleeves)}</span>` : ""}
-                  ${catSelections.neckline || catSelections.collar ? `<span><b>${catSelections.neckline ? "Neckline" : "Collar"}:</b> ${getOptionLabel(currentCat, catSelections.neckline ? "neckline" : "collar", catSelections.neckline || catSelections.collar)}</span>` : ""}
-                  ${catSelections.fabric || catSelections.material ? `<span><b>Fabric:</b> ${getOptionLabel(currentCat, "fabric", catSelections.fabric || catSelections.material)}</span>` : ""}
-                  <span><b>Colour:</b> <i class="vas-c-garment-color" style="--garment-color:${garmentColor}" aria-hidden="true"></i>${garmentColorLabel}</span>
-                  ${catSelections.embroidery ? `<span><b>Detail:</b> ${getOptionLabel(currentCat, "embroidery", catSelections.embroidery)}</span>` : ""}
-                </div>
-              </div>
-            </div>
-
-            <!-- Bottom Action Controls Bar with High-Visibility Add to Bag -->
-            <div class="vas-c-preview-actions">
-              <button type="button" class="vas-c-btn-cart" data-action="add-to-cart" id="studioAddToCartBtn" title="Add this bespoke ensemble to your shopping bag">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span>Add to Bag · ₹${currentPrice.toLocaleString('en-IN')}</span>
-              </button>
-              <div class="vas-c-preview-actions-row">
-                <button type="button" class="vas-c-btn-secondary" data-action="open-edit" title="Refine sizing & custom instructions">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                  Edit Measurements
-                </button>
-                <button type="button" class="vas-c-btn-secondary" data-action="reset-design" title="Reset all choices to signature default">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                  Reset Design
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Column 3: Right Stack Widgets -->
-        <aside class="vas-c-right-col" aria-label="Boutique Services and Accessories">
-
-          <!-- Widget 1: Customize for Everyone (All 4 Categories) -->
-          <div class="vas-c-widget">
-            <h4 class="vas-c-widget-title">Customize for Everyone</h4>
-            <div class="vas-c-everyone-grid">
-              <div class="vas-c-everyone-card ${state.category === 'women' ? 'active' : ''}" data-action="set-category" data-cat="women" title="Switch to Women's Couture">
-                <img src="images/customizer/lehenga_front.jpg" alt="Women Couture">
-                <span>Women Couture</span>
-                ${state.category === 'women' ? '<span class="vas-c-active-pill">Selected</span>' : ''}
-              </div>
-              <div class="vas-c-everyone-card ${state.category === 'men' ? 'active' : ''}" data-action="set-category" data-cat="men" title="Switch to Men's Bespoke">
-                <img src="images/products/men/ivory-wedding-sherwani-front.jpg" alt="Men Sartorial">
-                <span>Men Bespoke</span>
-                ${state.category === 'men' ? '<span class="vas-c-active-pill">Selected</span>' : ''}
-              </div>
-              <div class="vas-c-everyone-card ${state.category === 'kids' ? 'active' : ''}" data-action="set-category" data-cat="kids" title="Switch to Kids Festive">
-                <img src="images/products/kids/boys-brocade-sherwani-front.jpg" alt="Kids Festive">
-                <span>Kids Festive</span>
-                ${state.category === 'kids' ? '<span class="vas-c-active-pill">Selected</span>' : ''}
-              </div>
-              <div class="vas-c-everyone-card ${state.category === 'accessories' ? 'active' : ''}" data-action="set-category" data-cat="accessories" title="Switch to Accessories Atelier">
-                <img src="images/products/accessories/bridal-potli-front.jpg" alt="Accessories Atelier">
-                <span>Accessories</span>
-                ${state.category === 'accessories' ? '<span class="vas-c-active-pill">Selected</span>' : ''}
-              </div>
-            </div>
-          </div>
-
-          <!-- Widget 2: Complete Your Look -->
-          <div class="vas-c-widget">
-            <h4 class="vas-c-widget-title">Complete Your Look</h4>
-            <div class="vas-c-look-grid">
-              <div class="vas-c-look-item" data-action="pair-item" data-item="footwear">
-                <img src="images/customizer/look_footwear.jpg" alt="Handcrafted Juttis">
-                <span>Footwear <span class="vas-c-chevron">›</span></span>
-              </div>
-              <div class="vas-c-look-item" data-action="pair-item" data-item="jewellery">
-                <img src="images/customizer/look_jewellery.jpg" alt="Antique Jhumkas">
-                <span>Jewellery <span class="vas-c-chevron">›</span></span>
-              </div>
-              <div class="vas-c-look-item" data-action="pair-item" data-item="accessories">
-                <img src="images/customizer/look_accessories.jpg" alt="Embroidered Potli">
-                <span>Accessories <span class="vas-c-chevron">›</span></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Widget 3: AI Try-On Studio with Safety Box -->
-          <div class="vas-c-widget vas-c-tryon-widget">
-            <h4 class="vas-c-widget-title">✦ AI Try-On</h4>
-            <p class="vas-c-widget-desc">Upload your photo or use our virtual model to see your custom outfit on you!</p>
-
-            <div class="vas-c-tryon-compare">
-              <div class="vas-c-tryon-card">
-                <div class="vas-c-tryon-img-wrap">
-                  <img id="tryonBeforeImg" src="${state.tryOn.userPhoto || 'images/customizer/tryon_before.jpg'}" alt="Customer photo before try-on">
-                </div>
-                <span class="vas-c-tryon-tag">${state.tryOn.userPhoto ? 'Your Photo' : 'Reference Patron'}<br><small>(Before)</small></span>
-              </div>
-              <div class="vas-c-tryon-arrow">→</div>
-              <div class="vas-c-tryon-card vas-c-tryon-after">
-                <div class="vas-c-tryon-img-wrap">
-                  <img id="tryonAfterImg" src="${tryonAfterSrc}" alt="Customized look after AI fitting" style="filter: ${dressColorFilter};">
-                </div>
-                <span class="vas-c-tryon-tag">Customized Look<br><small>(${currentGarment.name})</small></span>
-              </div>
-            </div>
-
-            <!-- Try-on Action Buttons -->
-            <div class="vas-c-tryon-actions">
-              <label class="vas-c-tryon-upload-btn">
-                <input type="file" id="tryonFileInput" accept="image/*" style="display:none;" data-action="upload-photo">
-                📷 Upload Your Photo
-              </label>
-              <button type="button" class="vas-c-tryon-toggle-btn" data-action="toggle-model">
-                ✨ Virtual Model
-              </button>
-            </div>
-
-            <!-- Safety Box -->
-            <div class="vas-c-safety-box">
-              <div class="vas-c-safety-icon">🛡</div>
-              <div class="vas-c-safety-content">
-                <strong>Your Photo Safety Matters</strong>
-                <p>We keep your photos safe and secure. They are only used for your try-on preview and not stored.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Widget 4: Shipping & Pickup -->
-          <div class="vas-c-widget vas-c-shipping-widget">
-            <h4 class="vas-c-widget-title">🚚 Shipping &amp; Pickup</h4>
-            <p class="vas-c-shipping-sub">We also offer:</p>
-            <ul class="vas-c-shipping-list">
-              <li><a href="#ownFabric" onclick="if(window.navigateToSection){window.navigateToSection('ownFabric', event);}">✓ Own fabric shipping</a></li>
-              <li>✓ Pickup service for distant customers</li>
-              <li>✓ Secure &amp; hassle-free delivery</li>
-            </ul>
-            <div class="vas-c-shipping-script">
-              Custom outfits made easy! ♥
-            </div>
-          </div>
-
-        </aside>
-      </div>
-
-      <!-- Bottom Workflow Steps Banner -->
-      <footer class="vas-c-bottom-banner" aria-label="Boutique Craftsmanship Workflow">
-        <div class="vas-c-flow-steps">
-          <div class="vas-c-flow-step">
-            <div class="vas-c-flow-icon">👗</div>
-            <span>Your Design</span>
-          </div>
-          <div class="vas-c-flow-arrow">→</div>
-          <div class="vas-c-flow-step">
-            <div class="vas-c-flow-icon">🧵</div>
-            <span>Our Craftsmanship</span>
-          </div>
-          <div class="vas-c-flow-arrow">→</div>
-          <div class="vas-c-flow-step">
-            <div class="vas-c-flow-icon">♥</div>
-            <span>Your Perfect Outfit</span>
-          </div>
-        </div>
-        <div class="vas-c-banner-ribbon">
-          Because every detail is you ♥
-        </div>
-      </footer>
-
-      <!-- Sizing / Edit Modal with Category-Specific Fields -->
-      <div id="vasCustomizerEditModal" class="vas-c-modal ${state.editModalOpen ? 'active' : ''}">
-        <div class="vas-c-modal-overlay" data-action="close-edit"></div>
-        <div class="vas-c-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="customizerEditTitle">
-          <div class="vas-c-modal-header">
-            <h3 id="customizerEditTitle" class="vas-c-modal-title">Refine Sizing &amp; Tailoring Specifications (${currentCat.label})</h3>
-            <button type="button" class="vas-c-modal-close" data-action="close-edit" aria-label="Close dialog">&times;</button>
-          </div>
-          <div class="vas-c-modal-body">
-            <p class="vas-c-modal-desc">
-              Provide your exact biometric measurements. Our Master Tailor will calibrate every seam and cut specifically for your silhouette.
-            </p>
-            ${renderMeasurementFields(state.category)}
-            <label class="vas-c-form-notes">
-              <span>Special Tailoring Instructions</span>
-              <textarea class="vas-textarea" rows="3" data-field="notes" placeholder="e.g. Modest neckline, extra ease around shoulders, custom lining, gold tassel accents">${state.measurements.notes}</textarea>
-            </label>
-          </div>
-          <div class="vas-c-modal-footer">
-            <button type="button" class="vas-btn vas-btn-outline" data-action="close-edit">Cancel</button>
-            <button type="button" class="vas-btn vas-btn-gold" data-action="save-measurements">Save Specifications</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Inject rendered studio into all active target containers and bind events
-    targets.forEach(targetEl => {
-      targetEl.innerHTML = htmlContent;
-      bindRootEvents(targetEl);
-    });
+    return (
+      '<svg class="vas-c-mannequin-svg-overlay" viewBox="0 0 500 650">' +
+        neckSvg +
+        sleeveSvg +
+        detailSvg +
+      '</svg>'
+    );
   }
 
-  /**
-   * Helper: Show toast notification to the user
-   */
+  // Toast notification system
   function showStudioToast(msg) {
-    if (typeof window.showToast === "function") {
-      window.showToast(msg);
-      return;
-    }
+    const existing = document.getElementById("vasStudioToast");
+    if (existing && typeof existing.remove === "function") existing.remove();
     const toast = document.createElement("div");
-    toast.className = "vas-toast active";
-    toast.style.cssText = "position:fixed; bottom:28px; right:28px; z-index:99999; background:#1c1517; color:#fff; padding:14px 22px; border-radius:999px; box-shadow:0 8px 30px rgba(0,0,0,0.3); font-size:0.88rem; font-weight:600; display:flex; align-items:center; gap:8px;";
+    toast.id = "vasStudioToast";
     toast.innerHTML = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transition = "opacity 0.4s ease";
-      setTimeout(() => toast.remove(), 400);
-    }, 3200);
+    if (toast.style) {
+      toast.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999999;background:#24191c;color:#ffffff;padding:14px 22px;border-radius:999px;font-size:0.88rem;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.15);";
+    }
+    if (document.body && typeof document.body.appendChild === "function") {
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        if (toast.style) {
+          toast.style.opacity = "0";
+          toast.style.transition = "opacity 0.3s";
+        }
+        setTimeout(() => { if (typeof toast.remove === "function") toast.remove(); }, 300);
+      }, 3800);
+    }
   }
 
-  /**
-   * Add currently customized ensemble to boutique shopping bag
-   */
-  function handleAddToCart() {
-    const currentCat = STUDIO_DATA[state.category] || STUDIO_DATA.women;
-    const selections = state.selections[state.category] || {};
-    const garmentId = selections.garment || state.selectedGarment[state.category] || (currentCat.garments && currentCat.garments[0].id) || "lehenga";
-    const currentGarment = (currentCat.garments && currentCat.garments.find(g => g.id === garmentId)) || (currentCat.garments && currentCat.garments[0]) || {
-      id: "default",
-      name: currentCat.title,
-      title: currentCat.title,
-      basePrice: currentCat.basePrice,
-      images: currentCat.images
+  // Save customized design to localStorage
+  function handleSaveDesign() {
+    const catData = STUDIO_DATA[state.category];
+    const garmentId = state.selectedGarment[state.category];
+    const currentGarment = catData.garments.find(g => g.id === garmentId) || catData.garments[0];
+    const selections = state.selections[state.category];
+    const priceCalc = calculateCustomizerPrice(state.category, currentGarment, selections);
+
+    const savedItem = {
+      id: "design_" + Date.now(),
+      category: state.category,
+      garmentId: currentGarment.id,
+      garmentName: currentGarment.name,
+      selections: Object.assign({}, selections),
+      price: priceCalc.totalPrice,
+      image: currentGarment.mannequinImage,
+      date: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
     };
 
-    const summaryParts = [];
-    if (currentGarment.name) summaryParts.push(currentGarment.name);
-    if (selections.sleeves) summaryParts.push(selections.sleeves + " sleeves");
-    if (selections.neckline || selections.collar) summaryParts.push((selections.neckline || selections.collar) + " neckline");
-    if (selections.fabric) summaryParts.push(selections.fabric + " fabric");
-    if (selections.colorName || selections.color) summaryParts.push(selections.colorName || selections.color);
-    if (selections.embroidery) summaryParts.push(selections.embroidery + " embroidery");
-
-    const itemTitle = currentGarment.title || currentGarment.name || currentCat.title;
-    const itemPrice = currentGarment.basePrice || currentCat.basePrice;
-    const itemImage = (currentGarment.images && currentGarment.images.front) || currentGarment.image || currentCat.images.front;
-
-    // Tailored size label for bespoke ensemble
-    let sizeLabel = "Custom Bespoke";
-    if (state.category === "women" && state.measurements.bust) {
-      sizeLabel = `Custom Bespoke (${state.measurements.bust}" Bust)`;
-    } else if (state.category === "men" && state.measurements.chest) {
-      sizeLabel = `Custom Bespoke (${state.measurements.chest}" Chest)`;
-    } else if (state.category === "kids") {
-      sizeLabel = `Junior Bespoke (${selections.age || '4-6 Years'})`;
-    } else if (state.category === "accessories") {
-      sizeLabel = `Artisanal Size (${state.measurements.accSize || 'Standard'})`;
+    try {
+      const storage = window.localStorage || (typeof localStorage !== "undefined" ? localStorage : null);
+      if (storage) {
+        const existing = JSON.parse(storage.getItem("vastrae_saved_designs") || "[]");
+        existing.unshift(savedItem);
+        storage.setItem("vastrae_saved_designs", JSON.stringify(existing.slice(0, 20)));
+      }
+      showStudioToast("✨ <b>" + currentGarment.name + "</b> saved to your Studio Designs!");
+    } catch (e) {
+      console.warn("Storage error:", e);
+      showStudioToast("✨ Design captured for your current session!");
     }
+  }
 
-    const customItem = {
-      id: "bespoke_" + state.category + "_" + (currentGarment.id || "dress") + "_" + Date.now(),
-      name: itemTitle,
-      price: itemPrice,
-      image: itemImage,
+  // Add customized ensemble to shopping cart
+  function handleAddToCart() {
+    const catData = STUDIO_DATA[state.category];
+    const garmentId = state.selectedGarment[state.category];
+    const currentGarment = catData.garments.find(g => g.id === garmentId) || catData.garments[0];
+    const selections = state.selections[state.category];
+    const priceCalc = calculateCustomizerPrice(state.category, currentGarment, selections);
+
+    const specsSummary = [
+      currentGarment.name,
+      selections.fabric || selections.material,
+      selections.colorName,
+      selections.neckline ? (selections.neckline + " neck") : (selections.collar ? (selections.collar + " collar") : ""),
+      selections.sleeves ? (selections.sleeves + " sleeve") : ""
+    ].filter(Boolean).join(" · ");
+
+    const cartItem = {
+      id: "custom_" + state.category + "_" + currentGarment.id + "_" + Date.now(),
+      name: currentGarment.name + " (Custom Tailored)",
+      price: priceCalc.totalPrice,
+      image: currentGarment.mannequinImage,
       category: "Bespoke Couture",
-      size: sizeLabel,
+      size: "Custom Fit (" + (state.tryOn.measurements.bust || state.tryOn.measurements.height) + ")",
       quantity: 1,
       customConfig: {
         category: state.category,
         garmentId: currentGarment.id,
         garmentName: currentGarment.name,
         selections: JSON.parse(JSON.stringify(selections)),
-        measurements: JSON.parse(JSON.stringify(state.measurements)),
-        summary: summaryParts.join(", ")
+        priceBreakdown: priceCalc,
+        measurements: JSON.parse(JSON.stringify(state.tryOn.measurements)),
+        summary: specsSummary
       }
     };
 
-    // Strictly require patron authentication before adding bespoke outfit to shopping bag
-    if (!isUserAuthenticated()) {
-      showStudioToast("🔒 Please sign in or register to add your custom outfit to your Shopping Bag.");
-      if (typeof window.openAuthModal === "function") {
-        window.openAuthModal("login");
-      }
-      return;
-    }
-
-    // Integrate with vastraeCartService or direct session cart
+    // Push into vastraeCartService
     let added = false;
     if (window.vastraeCartService && typeof window.vastraeCartService.addToCart === "function") {
       try {
-        const result = window.vastraeCartService.addToCart(customItem, customItem.size, 1, customItem.customConfig);
-        if (result) added = true;
+        window.vastraeCartService.addToCart(cartItem, cartItem.size, 1, cartItem.customConfig);
+        added = true;
       } catch (e) {
-        console.warn("vastraeCartService addToCart error:", e);
+        console.warn("Cart service error:", e);
       }
     }
 
     if (!added) {
-      showStudioToast("🔒 Please sign in or register to add this bespoke ensemble to your Shopping Bag.");
-      if (typeof window.openAuthModal === "function") {
-        window.openAuthModal("login");
-      }
-      return;
+      try {
+        const storage = window.localStorage || (typeof localStorage !== "undefined" ? localStorage : null);
+        if (storage) {
+          const stored = JSON.parse(storage.getItem("vastrae_cart") || "[]");
+          stored.push(cartItem);
+          storage.setItem("vastrae_cart", JSON.stringify(stored));
+        }
+        added = true;
+      } catch (e) {}
     }
 
-    // Refresh UI cart badge
     if (typeof window.updateCartWishCounters === "function") {
       window.updateCartWishCounters();
     }
 
-    showStudioToast(`✨ Added <b>${itemTitle}</b> to your shopping bag!`);
+    showStudioToast("🛍️ Added <b>" + currentGarment.name + "</b> to your Shopping Bag (₹" + priceCalc.totalPrice.toLocaleString("en-IN") + ")");
 
-    // If openCartDrawer exists, open it after slight delay
     if (typeof window.openCartDrawer === "function") {
-      setTimeout(() => window.openCartDrawer(), 500);
+      setTimeout(() => window.openCartDrawer(), 400);
     }
   }
 
-  /**
-   * Bind DOM Events on a specific Customizer Container Root
-   */
-  function bindRootEvents(root) {
-    if (!root || root.dataset.bound === "true") return;
-    root.dataset.bound = "true";
+  // Reset current garment options to defaults
+  function handleResetOptions() {
+    const catData = STUDIO_DATA[state.category];
+    const garmentId = state.selectedGarment[state.category];
+    const currentGarment = catData.garments.find(g => g.id === garmentId) || catData.garments[0];
+    if (currentGarment.defaultOptions) {
+      state.selections[state.category] = Object.assign({}, currentGarment.defaultOptions);
+      state.angle = "front";
+      render();
+      showStudioToast("↺ Restored original boutique defaults for <b>" + currentGarment.name + "</b>.");
+    }
+  }
 
-    // Click handler for all buttons and interactive elements
-    root.addEventListener("click", function (event) {
-      const target = event.target.closest("[data-action]");
-      if (!target) return;
+  // Main Render Function
+  function render() {
+    const root = document.getElementById("vastraeCustomizerRoot");
+    if (!root) return;
 
-      const action = target.dataset.action;
+    const catData = STUDIO_DATA[state.category] || STUDIO_DATA.women;
+    root.setAttribute("data-studio-cat", state.category);
 
-      // Handle direct require-login action
-      if (action === "require-login") {
-        if (typeof window.openAuthModal === "function") {
-          window.openAuthModal("login");
+    const activeSubCat = state.subCategory[state.category] || catData.subCategories[0].id;
+    const garmentsForSubCat = catData.garments.filter(g => g.subCategory === activeSubCat);
+    const visibleGarments = garmentsForSubCat.length > 0 ? garmentsForSubCat : catData.garments;
+
+    const activeGarmentId = state.selectedGarment[state.category];
+    const currentGarment = catData.garments.find(g => g.id === activeGarmentId) || visibleGarments[0] || catData.garments[0];
+    const selections = state.selections[state.category];
+    const priceCalc = calculateCustomizerPrice(state.category, currentGarment, selections);
+
+    // Active Base Mannequin Image (Wooden Stand, Headless Tailor Dummy)
+    let mannequinImgSrc = state.angle === "back" && currentGarment.mannequinBackImage
+      ? currentGarment.mannequinBackImage
+      : currentGarment.mannequinImage;
+
+    // Build Subcategory Pills
+    const subtabsHtml = catData.subCategories.map(sub => {
+      const isActive = sub.id === activeSubCat;
+      return '<button type="button" class="vas-c-subtab-pill ' + (isActive ? 'active' : '') + '" data-action="set-subcat" data-sub="' + sub.id + '">' + sub.name + '</button>';
+    }).join("");
+
+    // Build Outfit Gallery Cards (Mannequin Thumbnails)
+    const outfitsGridHtml = visibleGarments.map(g => {
+      const isSelected = g.id === currentGarment.id;
+      return (
+        '<div class="vas-c-outfit-card ' + (isSelected ? 'active' : '') + '" data-action="select-garment" data-id="' + g.id + '">' +
+          '<div class="vas-c-outfit-thumb">' +
+            '<img src="' + g.mannequinImage + '" alt="' + g.name + '" loading="lazy"/>' +
+          '</div>' +
+          '<span class="vas-c-outfit-name" title="' + g.name + '">' + g.name + '</span>' +
+          '<span class="vas-c-outfit-price">₹' + g.basePrice.toLocaleString("en-IN") + '</span>' +
+        '</div>'
+      );
+    }).join("");
+
+    // Build Customization Options Controls (Grouped by Category Type)
+    let optionsHtml = "";
+
+    // 1. Neckline (or Collar for Men)
+    if (catData.options.neckline || catData.options.collar) {
+      const isCollar = !!catData.options.collar;
+      const optKey = isCollar ? "collar" : "neckline";
+      const optList = isCollar ? catData.options.collar : catData.options.neckline;
+      const currentVal = selections[optKey] || optList[0].id;
+      const currentObj = optList.find(o => o.id === currentVal) || optList[0];
+
+      optionsHtml += (
+        '<div class="vas-c-option-group">' +
+          '<div class="vas-c-option-label-bar">' +
+            '<span class="vas-c-option-name">' + (isCollar ? 'Collar Style' : 'Neckline') + '</span>' +
+            '<span class="vas-c-option-selected-badge">' + currentObj.name + '</span>' +
+          '</div>' +
+          '<div class="vas-c-visual-options-row">' +
+            optList.map(opt => (
+              '<button type="button" class="vas-c-visual-btn ' + (opt.id === currentVal ? 'active' : '') + '" data-action="set-option" data-group="' + optKey + '" data-val="' + opt.id + '" title="' + opt.name + '">' +
+                '<div class="vas-c-visual-icon">' + getVisualIconSvg(opt.iconSvg) + '</div>' +
+                '<span class="vas-c-visual-label">' + opt.name + '</span>' +
+              '</button>'
+            )).join("") +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    // 2. Sleeves (or Sleeve Length for Men)
+    if (catData.options.sleeves) {
+      const currentVal = selections.sleeves || catData.options.sleeves[0].id;
+      const currentObj = catData.options.sleeves.find(s => s.id === currentVal) || catData.options.sleeves[0];
+
+      optionsHtml += (
+        '<div class="vas-c-option-group">' +
+          '<div class="vas-c-option-label-bar">' +
+            '<span class="vas-c-option-name">' + (state.category === 'men' ? 'Sleeve Length' : 'Sleeves') + '</span>' +
+            '<span class="vas-c-option-selected-badge">' + currentObj.name + '</span>' +
+          '</div>' +
+          '<div class="vas-c-visual-options-row">' +
+            catData.options.sleeves.map(opt => (
+              '<button type="button" class="vas-c-visual-btn ' + (opt.id === currentVal ? 'active' : '') + '" data-action="set-option" data-group="sleeves" data-val="' + opt.id + '" title="' + opt.name + '">' +
+                '<div class="vas-c-visual-icon">' + getVisualIconSvg(opt.iconSvg) + '</div>' +
+                '<span class="vas-c-visual-label">' + opt.name + '</span>' +
+              '</button>'
+            )).join("") +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    // 3. Fabric (or Material for Accessories)
+    if (catData.options.fabric || catData.options.material) {
+      const optKey = catData.options.material ? "material" : "fabric";
+      const fabricList = catData.options.material || catData.options.fabric;
+      const currentVal = selections[optKey] || fabricList[0].id;
+      const currentObj = fabricList.find(f => f.id === currentVal) || fabricList[0];
+
+      optionsHtml += (
+        '<div class="vas-c-option-group">' +
+          '<div class="vas-c-option-label-bar">' +
+            '<span class="vas-c-option-name">' + (optKey === 'material' ? 'Material' : 'Fabric') + '</span>' +
+            '<span class="vas-c-option-selected-badge">' + currentObj.name + '</span>' +
+          '</div>' +
+          '<div class="vas-c-swatch-list">' +
+            fabricList.map(fab => (
+              '<button type="button" class="vas-c-fabric-card ' + (fab.id === currentVal ? 'active' : '') + '" data-action="set-option" data-group="' + optKey + '" data-val="' + fab.id + '">' +
+                '<img src="' + fab.img + '" alt="' + fab.name + '"/>' +
+                '<span>' + fab.name + '</span>' +
+                (fab.extraPrice ? '<small>(+₹' + fab.extraPrice + ')</small>' : '') +
+              '</button>'
+            )).join("") +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    // 4. Colour Palette Dots
+    if (catData.options.colors) {
+      const currentColorHex = selections.colorHex || catData.options.colors[0].hex;
+      const currentColorName = selections.colorName || catData.options.colors[0].name;
+
+      optionsHtml += (
+        '<div class="vas-c-option-group">' +
+          '<div class="vas-c-option-label-bar">' +
+            '<span class="vas-c-option-name">Colour</span>' +
+            '<span class="vas-c-option-selected-badge" style="display:inline-flex; align-items:center; gap:5px;">' +
+              '<span style="width:9px; height:9px; border-radius:50%; background:' + currentColorHex + '; display:inline-block; border:1px solid rgba(0,0,0,0.2);"></span>' +
+              currentColorName +
+            '</span>' +
+          '</div>' +
+          '<div class="vas-c-swatch-list">' +
+            catData.options.colors.map(col => (
+              '<button type="button" class="vas-c-dot-swatch ' + (col.hex === currentColorHex ? 'active' : '') + '" style="background-color: ' + col.hex + ';" data-action="set-color" data-hex="' + col.hex + '" data-name="' + col.name + '" title="' + col.name + '">' +
+              '</button>'
+            )).join("") +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    // 5. Embroidery (or Buttons for Men, Hardware for Accessories)
+    if (catData.options.embroidery || catData.options.buttons || catData.options.hardware) {
+      const optKey = catData.options.hardware ? "hardware" : (catData.options.buttons ? "buttons" : "embroidery");
+      const list = catData.options.hardware || catData.options.buttons || catData.options.embroidery;
+      const currentVal = selections[optKey] || list[0].id;
+      const currentObj = list.find(e => e.id === currentVal) || list[0];
+
+      optionsHtml += (
+        '<div class="vas-c-option-group">' +
+          '<div class="vas-c-option-label-bar">' +
+            '<span class="vas-c-option-name">' + (optKey === 'hardware' ? 'Hardware' : (optKey === 'buttons' ? 'Buttons' : 'Embroidery')) + '</span>' +
+            '<span class="vas-c-option-selected-badge">' + currentObj.name + '</span>' +
+          '</div>' +
+          '<div class="vas-c-visual-options-row">' +
+            list.map(opt => (
+              '<button type="button" class="vas-c-visual-btn ' + (opt.id === currentVal ? 'active' : '') + '" data-action="set-option" data-group="' + optKey + '" data-val="' + opt.id + '" title="' + opt.name + '">' +
+                '<div class="vas-c-visual-icon">' + getVisualIconSvg(opt.iconSvg) + '</div>' +
+                '<span class="vas-c-visual-label">' + opt.name + '</span>' +
+              '</button>'
+            )).join("") +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    // 6. Length / Strap Type
+    if (catData.options.length || catData.options.strap) {
+      const optKey = catData.options.strap ? "strap" : "length";
+      const list = catData.options.strap || catData.options.length;
+      const currentVal = selections[optKey] || list[0].id;
+      const currentObj = list.find(l => l.id === currentVal) || list[0];
+
+      optionsHtml += (
+        '<div class="vas-c-option-group">' +
+          '<div class="vas-c-option-label-bar">' +
+            '<span class="vas-c-option-name">' + (optKey === 'strap' ? 'Strap Type' : 'Length') + '</span>' +
+            '<span class="vas-c-option-selected-badge">' + currentObj.name + '</span>' +
+          '</div>' +
+          '<div class="vas-c-subtabs-bar" style="margin-bottom:0; border-bottom:none;">' +
+            list.map(item => (
+              '<button type="button" class="vas-c-subtab-pill ' + (item.id === currentVal ? 'active' : '') + '" data-action="set-option" data-group="' + optKey + '" data-val="' + item.id + '">' +
+                item.name +
+              '</button>'
+            )).join("") +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    // Build the Entire 3-Panel Master Studio HTML
+    root.innerHTML = (
+      '<!-- Category Switcher Tabs (Women, Men, Kids, Accessories) -->' +
+      '<nav class="vas-c-nav-categories" aria-label="Fashion Category">' +
+        '<button type="button" class="vas-c-nav-tab ' + (state.category === 'women' ? 'active' : '') + '" data-action="set-cat" data-cat="women">' +
+          '<span>👗</span> Women' +
+        '</button>' +
+        '<button type="button" class="vas-c-nav-tab ' + (state.category === 'men' ? 'active' : '') + '" data-action="set-cat" data-cat="men">' +
+          '<span>👔</span> Men' +
+        '</button>' +
+        '<button type="button" class="vas-c-nav-tab ' + (state.category === 'kids' ? 'active' : '') + '" data-action="set-cat" data-cat="kids">' +
+          '<span>👶</span> Kids' +
+        '</button>' +
+        '<button type="button" class="vas-c-nav-tab ' + (state.category === 'accessories' ? 'active' : '') + '" data-action="set-cat" data-cat="accessories">' +
+          '<span>👜</span> Accessories' +
+        '</button>' +
+      '</nav>' +
+
+      '<!-- Main 3-Panel Studio Layout -->' +
+      '<div class="vas-studio-main-grid">' +
+
+        '<!-- PANEL 1: Left Column (1. Select Outfit + 2. Customization Options) -->' +
+        '<aside class="vas-studio-left-panel">' +
+          '<!-- Step 1: Select Your Outfit -->' +
+          '<div class="vas-studio-box">' +
+            '<div class="vas-studio-box-title">' +
+              '<span class="vas-studio-box-num">1.</span> Select Your ' + (state.category === 'accessories' ? 'Accessory' : 'Outfit') +
+            '</div>' +
+            '<div class="vas-c-subtabs-bar">' +
+              subtabsHtml +
+            '</div>' +
+            '<div class="vas-c-outfit-grid">' +
+              outfitsGridHtml +
+            '</div>' +
+          '</div>' +
+
+          '<!-- Step 2: Customization Options -->' +
+          '<div class="vas-studio-box">' +
+            '<div class="vas-studio-box-title">' +
+              '<span class="vas-studio-box-num">2.</span> Customization Options' +
+            '</div>' +
+            optionsHtml +
+          '</div>' +
+        '</aside>' +
+
+        '<!-- PANEL 2: Center Column (Large Physical Boutique Mannequin Live Preview) -->' +
+        '<section class="vas-studio-center-panel">' +
+          '<div class="vas-c-mannequin-studio-card">' +
+            '<div class="vas-c-angle-bar">' +
+              '<div class="vas-c-angle-group">' +
+                '<button type="button" class="vas-c-angle-pill ' + (state.angle === 'front' ? 'active' : '') + '" data-action="set-angle" data-angle="front">Front</button>' +
+                '<button type="button" class="vas-c-angle-pill ' + (state.angle === 'back' ? 'active' : '') + '" data-action="set-angle" data-angle="' + (state.category === 'accessories' ? 'side' : 'back') + '">' + (state.category === 'accessories' ? 'Side' : 'Back') + '</button>' +
+              '</div>' +
+              '<div class="vas-c-mannequin-badge">' +
+                '<span class="vas-c-live-indicator"></span>' +
+                '<span>Boutique Mannequin Live</span>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="vas-c-mannequin-stage" id="mannequinCanvasStage">' +
+              '<img src="' + mannequinImgSrc + '" alt="' + currentGarment.name + '" class="vas-c-mannequin-base-img" id="mannequinBaseImg"/>' +
+              '<div class="vas-c-color-tint-layer" style="background-color: ' + (selections.colorHex || '#b61827') + ';"></div>' +
+              renderMannequinSvgOverlay(state.category, currentGarment, selections, state.angle) +
+            '</div>' +
+
+            '<div class="vas-c-detail-strip">' +
+              '<div class="vas-c-detail-thumb-card ' + (state.activeMacroDetail === 'silhouette' ? 'active' : '') + '" data-action="set-macro" data-macro="silhouette" title="Full Silhouette View">' +
+                '<img src="' + currentGarment.mannequinImage + '" alt="Silhouette"/>' +
+              '</div>' +
+              '<div class="vas-c-detail-thumb-card ' + (state.activeMacroDetail === 'neckline' ? 'active' : '') + '" data-action="set-macro" data-macro="neckline" title="Neckline / Collar Detail">' +
+                getVisualIconSvg(selections.neckline || selections.collar || 'vneck') +
+              '</div>' +
+              '<div class="vas-c-detail-thumb-card ' + (state.activeMacroDetail === 'sleeves' ? 'active' : '') + '" data-action="set-macro" data-macro="sleeves" title="Sleeve & Cuff Detail">' +
+                getVisualIconSvg(selections.sleeves || 'full') +
+              '</div>' +
+              '<div class="vas-c-detail-thumb-card ' + (state.activeMacroDetail === 'fabric' ? 'active' : '') + '" data-action="set-macro" data-macro="fabric" title="Fabric & Weave Swatch" style="background:' + (selections.colorHex || '#b61827') + ';">' +
+                '<span style="font-size:0.6rem; color:#fff; font-weight:700; text-shadow:0 1px 2px #000;">' + (selections.colorName || 'Silk') + '</span>' +
+              '</div>' +
+              '<div class="vas-c-detail-thumb-card ' + (state.activeMacroDetail === 'border' ? 'active' : '') + '" data-action="set-macro" data-macro="border" title="Back / Hem Border">' +
+                getVisualIconSvg(selections.embroidery || 'emb_gold') +
+              '</div>' +
+            '</div>' +
+
+            '<div class="vas-c-live-caption-bar">' +
+              '✦ This is a live preview of your design on boutique mannequin' +
+            '</div>' +
+          '</div>' +
+        '</section>' +
+
+        '<!-- PANEL 3: Right Column (Your Design Summary + Price Breakdown + Actions) -->' +
+        '<aside class="vas-studio-right-panel">' +
+          '<div class="vas-c-design-card">' +
+            '<div class="vas-c-design-card-header">Your Design</div>' +
+
+            '<div class="vas-c-design-summary-box">' +
+              '<div class="vas-c-design-thumb">' +
+                '<img src="' + currentGarment.mannequinImage + '" alt="' + currentGarment.name + '"/>' +
+              '</div>' +
+              '<div class="vas-c-design-info">' +
+                '<div class="vas-c-design-name">' + currentGarment.name + '</div>' +
+                '<div class="vas-c-design-specs">' +
+                  (selections.fabric || selections.material) + ' | ' + selections.colorName + ' | ' + priceCalc.embroideryName +
+                '</div>' +
+                '<div class="vas-c-design-price-tag">₹ ' + priceCalc.totalPrice.toLocaleString("en-IN") + '</div>' +
+              '</div>' +
+              '<button type="button" class="vas-c-design-edit-btn" data-action="scroll-to-options">Edit</button>' +
+            '</div>' +
+
+            '<div class="vas-c-price-breakdown">' +
+              '<div class="vas-c-price-breakdown-title">Price Breakdown</div>' +
+              '<div class="vas-c-price-table">' +
+                '<div class="vas-c-price-row">' +
+                  '<span>Base Price</span>' +
+                  '<span>₹ ' + priceCalc.basePrice.toLocaleString("en-IN") + '</span>' +
+                '</div>' +
+                '<div class="vas-c-price-row">' +
+                  '<span>Fabric (' + priceCalc.fabricName + ')</span>' +
+                  '<span>+ ₹ ' + priceCalc.fabricSurcharge.toLocaleString("en-IN") + '</span>' +
+                '</div>' +
+                '<div class="vas-c-price-row">' +
+                  '<span>Embroidery / Detailing</span>' +
+                  '<span>+ ₹ ' + priceCalc.embroiderySurcharge.toLocaleString("en-IN") + '</span>' +
+                '</div>' +
+                (priceCalc.otherSurcharge ? (
+                  '<div class="vas-c-price-row">' +
+                    '<span>Sleeves / Hardware</span>' +
+                    '<span>+ ₹ ' + priceCalc.otherSurcharge.toLocaleString("en-IN") + '</span>' +
+                  '</div>'
+                ) : '') +
+                '<div class="vas-c-price-row total">' +
+                  '<span>Total Price</span>' +
+                  '<span>₹ ' + priceCalc.totalPrice.toLocaleString("en-IN") + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="vas-c-actions-stack">' +
+              '<button type="button" class="vas-c-btn-save" data-action="save-design">' +
+                '<span>💾</span> Save Design' +
+              '</button>' +
+              '<button type="button" class="vas-c-btn-cart-secondary" data-action="add-to-cart">' +
+                '<span>🛍️</span> Add to Cart' +
+              '</button>' +
+              '<button type="button" class="vas-c-btn-tryon-pill" data-action="open-tryon-modal">' +
+                '<span>✨</span> Try On Yourself' +
+              '</button>' +
+              '<button type="button" class="vas-c-btn-reset-link" data-action="reset-options">' +
+                '<span>↺</span> Reset to Defaults' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</aside>' +
+      '</div>' +
+
+      '<!-- 5-Step Customer Journey Banner (Matching Bottom of Screenshot) -->' +
+      '<div class="vas-c-journey-container">' +
+        '<div class="vas-c-journey-ribbon">' +
+          '<div class="vas-c-journey-step">' +
+            '<div class="vas-c-journey-icon">👗</div>' +
+            '<div class="vas-c-journey-text">' +
+              '<strong>Choose Your Category</strong>' +
+              '<span>Women | Men | Kids | Accessories</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="vas-c-journey-arrow">→</div>' +
+          '<div class="vas-c-journey-step">' +
+            '<div class="vas-c-journey-icon">✨</div>' +
+            '<div class="vas-c-journey-text">' +
+              '<strong>Select Your Outfit</strong>' +
+              '<span>Browse from multiple designs</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="vas-c-journey-arrow">→</div>' +
+          '<div class="vas-c-journey-step">' +
+            '<div class="vas-c-journey-icon">🎨</div>' +
+            '<div class="vas-c-journey-text">' +
+              '<strong>Customize Your Way</strong>' +
+              '<span>Neckline, sleeves, fabric, colour & more</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="vas-c-journey-arrow">→</div>' +
+          '<div class="vas-c-journey-step">' +
+            '<div class="vas-c-journey-icon">🪞</div>' +
+            '<div class="vas-c-journey-text">' +
+              '<strong>See Live Preview</strong>' +
+              '<span>On real mannequin (not just buttons)</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="vas-c-journey-arrow">→</div>' +
+          '<div class="vas-c-journey-step">' +
+            '<div class="vas-c-journey-icon">🛍️</div>' +
+            '<div class="vas-c-journey-text">' +
+              '<strong>Save, Try On & Order</strong>' +
+              '<span>Save your design or try it on yourself</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="vas-c-journey-tagline">' +
+          'Your Style &nbsp;·&nbsp; Your Design &nbsp;·&nbsp; Your Way' +
+        '</div>' +
+      '</div>' +
+
+      renderTryOnModal(currentGarment, selections)
+    );
+  }
+
+  // Render Virtual Try-On Modal (triggered by "Try On Yourself")
+  function renderTryOnModal(currentGarment, selections) {
+    if (!state.tryOn.modalOpen) return "";
+
+    const isTabPhoto = state.tryOn.tab === "photo";
+    const userPhoto = state.tryOn.userPhoto;
+
+    return (
+      '<div class="vas-c-modal-backdrop" id="vasTryOnModalBackdrop">' +
+        '<div class="vas-c-tryon-dialog" role="dialog" aria-modal="true">' +
+          '<div class="vas-c-tryon-dialog-header">' +
+            '<h3 class="vas-c-tryon-dialog-title">✨ Virtual Try-On — ' + currentGarment.name + '</h3>' +
+            '<button type="button" class="vas-c-tryon-close-btn" data-action="close-tryon-modal" aria-label="Close">&times;</button>' +
+          '</div>' +
+
+          '<div class="vas-c-tryon-tabs">' +
+            '<button type="button" class="vas-c-tryon-tab ' + (isTabPhoto ? 'active' : '') + '" data-action="set-tryon-tab" data-tab="photo">' +
+              '📸 Option A — Upload My Photo' +
+            '</button>' +
+            '<button type="button" class="vas-c-tryon-tab ' + (!isTabPhoto ? 'active' : '') + '" data-action="set-tryon-tab" data-tab="avatar">' +
+              '📏 Option B — Create My Virtual Model' +
+            '</button>' +
+          '</div>' +
+
+          '<div class="vas-c-tryon-body">' +
+            (isTabPhoto ? (
+              '<div class="vas-c-privacy-notice">' +
+                '<span>🔒</span>' +
+                '<div>' +
+                  '<strong>Session Privacy Protected</strong>' +
+                  '<div>Personal photos are processed securely within your browser for silhouette fit. Photos are never stored on public servers or shared without permission.</div>' +
+                '</div>' +
+              '</div>' +
+
+              (!userPhoto ? (
+                '<div class="vas-c-dropzone" data-action="trigger-photo-upload">' +
+                  '<div class="vas-c-dropzone-icon">📷</div>' +
+                  '<div style="font-weight:700; color:#24191c; font-size:0.95rem; margin-bottom:4px;">Upload Your Photo to Try On</div>' +
+                  '<div style="font-size:0.75rem; color:#7a666b; margin-bottom:12px;">Supported: JPG, PNG · Standing front pose with good lighting recommended</div>' +
+                  '<button type="button" class="vas-c-btn-save" style="display:inline-block; width:auto; padding:8px 20px; font-size:0.8rem;">Browse Photo</button>' +
+                  '<input type="file" id="tryonFileInput" accept="image/*" style="display:none;" data-action="handle-photo-file"/>' +
+                '</div>'
+              ) : (
+                '<div style="position:relative; width:100%; height:320px; border-radius:16px; overflow:hidden; margin-bottom:14px; background:#f4ece7;">' +
+                  '<img src="' + userPhoto + '" alt="User Photo" style="width:100%; height:100%; object-fit:contain;"/>' +
+                  '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">' +
+                    '<img src="' + currentGarment.mannequinImage + '" alt="Outfit Overlay" style="height:85%; object-fit:contain; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.3)); mix-blend-mode:multiply; opacity:0.88;"/>' +
+                  '</div>' +
+                  '<div style="position:absolute; bottom:12px; left:12px; background:rgba(0,0,0,0.7); color:#fff; padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700;">' +
+                    '✓ ' + currentGarment.name + ' Fitted Live' +
+                  '</div>' +
+                '</div>' +
+                '<div style="display:flex; gap:10px; justify-content:flex-end;">' +
+                  '<button type="button" class="vas-c-btn-cart-secondary" style="width:auto; padding:8px 16px; font-size:0.8rem;" data-action="remove-user-photo">Remove Photo</button>' +
+                  '<button type="button" class="vas-c-btn-save" style="width:auto; padding:8px 22px; font-size:0.8rem;" data-action="add-to-cart">Order This Bespoke Fit</button>' +
+                '</div>'
+              ))
+            ) : (
+              '<p style="font-size:0.82rem; color:#554448; margin-top:0; margin-bottom:14px;">' +
+                'Enter your body measurements to generate an accurately scaled 3D virtual mannequin fitted with your customized <b>' + currentGarment.name + '</b>.' +
+              '</p>' +
+
+              '<div class="vas-c-avatar-stage">' +
+                '<svg viewBox="0 0 200 240" style="height:100%; max-width:100%;">' +
+                  '<circle cx="100" cy="30" r="14" fill="#eddcd7" stroke="#b89a92" stroke-width="1.5"/>' +
+                  '<path d="M100 44 L100 56 M85 56 L115 56" stroke="#b89a92" stroke-width="2"/>' +
+                  '<path d="M75 60 Q100 70 125 60 L135 150 Q100 160 65 150 Z" fill="' + (selections.colorHex || '#b61827') + '" stroke="#d4af37" stroke-width="2" opacity="0.9"/>' +
+                  '<line x1="100" y1="150" x2="100" y2="225" stroke="#6e473b" stroke-width="4"/>' +
+                  '<ellipse cx="100" cy="225" rx="30" ry="8" fill="#6e473b"/>' +
+                '</svg>' +
+                '<div style="position:absolute; bottom:10px; right:12px; font-size:0.7rem; color:#6b555a; background:rgba(255,255,255,0.85); padding:2px 8px; border-radius:999px;">' +
+                  'Bust: ' + state.tryOn.measurements.bust + '" · Waist: ' + state.tryOn.measurements.waist + '" · Height: ' + state.tryOn.measurements.height +
+                '</div>' +
+              '</div>' +
+
+              '<div class="vas-c-measure-grid">' +
+                '<label>' +
+                  '<span>Height</span>' +
+                  '<input type="text" class="vas-c-measure-input" data-field="height" value="' + state.tryOn.measurements.height + '" placeholder="e.g. 5\'4\\"" />' +
+                '</label>' +
+                '<label>' +
+                  '<span>' + (state.category === 'men' ? 'Chest (inches)' : 'Bust (inches)') + '</span>' +
+                  '<input type="number" class="vas-c-measure-input" data-field="bust" value="' + state.tryOn.measurements.bust + '" placeholder="e.g. 34" />' +
+                '</label>' +
+                '<label>' +
+                  '<span>Waist (inches)</span>' +
+                  '<input type="number" class="vas-c-measure-input" data-field="waist" value="' + state.tryOn.measurements.waist + '" placeholder="e.g. 28" />' +
+                '</label>' +
+                '<label>' +
+                  '<span>Hips (inches)</span>' +
+                  '<input type="number" class="vas-c-measure-input" data-field="hips" value="' + state.tryOn.measurements.hips + '" placeholder="e.g. 38" />' +
+                '</label>' +
+                '<label>' +
+                  '<span>Shoulder Width (inches)</span>' +
+                  '<input type="number" class="vas-c-measure-input" data-field="shoulder" value="' + state.tryOn.measurements.shoulder + '" placeholder="e.g. 15" />' +
+                '</label>' +
+                '<label>' +
+                  '<span>Sleeve Length (inches)</span>' +
+                  '<input type="number" class="vas-c-measure-input" data-field="sleeve" value="' + state.tryOn.measurements.sleeve + '" placeholder="e.g. 22" />' +
+                '</label>' +
+              '</div>' +
+
+              '<div style="display:flex; gap:10px; justify-content:flex-end;">' +
+                '<button type="button" class="vas-c-btn-save" style="width:auto; padding:10px 24px; font-size:0.84rem;" data-action="update-measurements">' +
+                  'Update &amp; Fit Virtual Model' +
+                '</button>' +
+              '</div>'
+            )) +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // Global Event Delegation for Studio Actions
+  function setupEvents() {
+    const root = document.getElementById("vastraeCustomizerRoot");
+    if (!root) return;
+
+    root.addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+
+      const action = btn.getAttribute("data-action");
+
+      // 1. Category Switch (Women, Men, Kids, Accessories)
+      if (action === "set-cat") {
+        const cat = btn.getAttribute("data-cat");
+        if (STUDIO_DATA[cat] && state.category !== cat) {
+          state.category = cat;
+          state.angle = "front";
+          render();
         }
         return;
       }
 
-      // Client activities that strictly require authentication:
-      // Guests can preview sleeves, necklines, lengths, colors and explore freely,
-      // but ordering, adding to bag, saving measurements, and uploading photos require login.
-      if (["add-to-cart", "open-edit", "save-measurements", "upload-mypic", "upload-photo"].includes(action)) {
-        if (!isUserAuthenticated()) {
-          showStudioToast("🔒 Please sign in or register to complete bespoke tailoring activities.");
-          if (typeof window.openAuthModal === "function") {
-            window.openAuthModal("login");
+      // 2. Subcategory Switch (Blouses, Sarees, Kurtis...)
+      if (action === "set-subcat") {
+        const sub = btn.getAttribute("data-sub");
+        state.subCategory[state.category] = sub;
+        // Auto-select first garment of subcategory if needed
+        const catData = STUDIO_DATA[state.category];
+        const matching = catData.garments.filter(g => g.subCategory === sub);
+        if (matching.length > 0) {
+          state.selectedGarment[state.category] = matching[0].id;
+          if (matching[0].defaultOptions) {
+            state.selections[state.category] = Object.assign({}, matching[0].defaultOptions);
           }
-          return;
         }
-      }
-
-      switch (action) {
-        case "set-view-mode": {
-          const mode = target.dataset.mode;
-          state.viewMode = mode;
-          render();
-          showStudioToast(mode === "mypic"
-            ? "📸 Switched to <b>Customize on My Pic</b> live preview."
-            : "✨ Switched to <b>Atelier Model</b> live preview.");
-          break;
-        }
-
-        case "sample-mypic": {
-          state.viewMode = "mypic";
-          state.tryOn.userPhoto = "images/customizer/tryon_before.jpg";
-          render();
-          showStudioToast("📸 Reference patron photo loaded. Live outfit fitted!");
-          break;
-        }
-
-        case "set-category": {
-          const cat = target.dataset.cat;
-          if (STUDIO_DATA[cat]) {
-            state.category = cat;
-            state.angle = "front";
-            render();
-            showStudioToast(`Switched to <b>${STUDIO_DATA[cat].label}</b> Customizer.`);
-          }
-          break;
-        }
-
-        case "set-option": {
-          const stepId = target.dataset.step;
-          const val = target.dataset.val;
-          if (!state.selections[state.category]) state.selections[state.category] = {};
-          state.selections[state.category][stepId] = val;
-          if (stepId === "garment") {
-            state.selectedGarment[state.category] = val;
-            state.angle = "front";
-          }
-          state.activeFocus = stepId; // Record active customized element!
-          render();
-
-          const currentCat = STUDIO_DATA[state.category] || STUDIO_DATA.women;
-          const label = getOptionLabel(currentCat, stepId, val);
-          if (stepId === "garment") {
-            showStudioToast(`👗 Silhouette updated: <b>${label}</b> · Live preview active!`);
-          } else if (stepId === "sleeves") {
-            showStudioToast(`✨ Sleeves updated: <b>${label}</b> · Live preview active!`);
-          } else if (stepId === "neckline" || stepId === "collar") {
-            showStudioToast(`🪡 ${stepId === "collar" ? "Collar" : "Neckline"} updated: <b>${label}</b> · Live preview active!`);
-          } else if (stepId === "length") {
-            showStudioToast(`📏 Length updated: <b>${label}</b> · Live preview active!`);
-          } else {
-            showStudioToast(`✨ ${stepId.charAt(0).toUpperCase() + stepId.slice(1)} updated: <b>${label}</b>`);
-          }
-          break;
-        }
-
-        case "set-color": {
-          const stepId = target.dataset.step;
-          const hex = target.dataset.hex;
-          const name = target.dataset.name;
-          if (!state.selections[state.category]) state.selections[state.category] = {};
-          state.selections[state.category][stepId] = hex;
-          state.selections[state.category].colorName = name;
-          state.selections[state.category].colorHex = hex;
-          state.activeFocus = "color"; // Record active customized colorway!
-          render();
-          showStudioToast(`🎨 Colour updated: <b>${name}</b> · Live preview tinted!`);
-          break;
-        }
-
-        case "set-angle": {
-          const angle = target.dataset.angle;
-          if (["front", "back", "side"].includes(angle)) {
-            state.angle = angle;
-            state.activeFocus = "angle";
-            render();
-          }
-          break;
-        }
-
-        case "scroll-carousel": {
-          const targetId = target.dataset.target;
-          const el = document.getElementById(targetId);
-          if (el) {
-            el.scrollBy({ left: 160, behavior: "smooth" });
-          }
-          break;
-        }
-
-        case "pair-item": {
-          const itemKey = target.dataset.item;
-          state.category = "accessories";
-          if (itemKey === "footwear") {
-            state.selectedGarment.accessories = "acc_footwear";
-            if (!state.selections.accessories) state.selections.accessories = {};
-            state.selections.accessories.garment = "acc_footwear";
-            state.angle = "side";
-          } else if (itemKey === "jewellery") {
-            state.selectedGarment.accessories = "acc_jewellery";
-            if (!state.selections.accessories) state.selections.accessories = {};
-            state.selections.accessories.garment = "acc_jewellery";
-            state.angle = "back";
-          } else {
-            state.selectedGarment.accessories = "acc_potli";
-            if (!state.selections.accessories) state.selections.accessories = {};
-            state.selections.accessories.garment = "acc_potli";
-            state.angle = "front";
-          }
-          state.activeFocus = "garment";
-          render();
-          showStudioToast(`Loaded <b>${itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}</b> Customization.`);
-          break;
-        }
-
-        case "toggle-model": {
-          state.tryOn.userPhoto = null;
-          state.tryOn.isModel = true;
-          state.viewMode = "model";
-          render();
-          showStudioToast("Showing atelier virtual model fitting.");
-          break;
-        }
-
-        case "open-edit": {
-          state.editModalOpen = true;
-          const modal = document.getElementById("vasCustomizerEditModal");
-          if (modal) modal.classList.add("active");
-          break;
-        }
-
-        case "close-edit": {
-          state.editModalOpen = false;
-          const modal = document.getElementById("vasCustomizerEditModal");
-          if (modal) modal.classList.remove("active");
-          break;
-        }
-
-        case "save-measurements": {
-          const modal = document.getElementById("vasCustomizerEditModal");
-          if (modal) {
-            modal.querySelectorAll("[data-field]").forEach(input => {
-              state.measurements[input.dataset.field] = input.value;
-            });
-          }
-          state.editModalOpen = false;
-          if (modal) modal.classList.remove("active");
-          showStudioToast("✨ Bespoke measurements saved successfully!");
-          break;
-        }
-
-        case "reset-design": {
-          const currentCat = STUDIO_DATA[state.category];
-          if (currentCat.garments && currentCat.garments[0]) {
-            state.selectedGarment[state.category] = currentCat.garments[0].id;
-            state.selections[state.category].garment = currentCat.garments[0].id;
-          }
-          currentCat.steps.forEach(step => {
-            state.selections[state.category][step.id] = step.default;
-          });
-          state.angle = "front";
-          state.activeFocus = "garment";
-          render();
-          showStudioToast("↻ Design reset to signature default.");
-          break;
-        }
-
-        case "add-to-cart": {
-          handleAddToCart();
-          break;
-        }
-      }
-    });
-
-    // File input change listener for Try-On & Customize on My Pic upload
-    root.addEventListener("change", function (event) {
-      const action = event.target && event.target.dataset.action;
-      if (action === "upload-photo" || action === "upload-mypic") {
-        if (!isUserAuthenticated()) {
-          showStudioToast("🔒 Please sign in or register to customize on your photo.");
-          if (typeof window.openAuthModal === "function") {
-            window.openAuthModal("login");
-          }
-          event.target.value = "";
-          return;
-        }
-
-        const file = event.target.files && event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            state.tryOn.userPhoto = e.target.result;
-            state.viewMode = "mypic";
-            render();
-            showStudioToast("✨ Your photo loaded! Live bespoke preview active with your custom sleeves & design.");
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-    });
-  }
-
-  /**
-   * Bind DOM Events on all active roots
-   */
-  function bindEvents() {
-    getRoots().forEach(target => bindRootEvents(target));
-  }
-
-  // Public Studio API exposed on window
-  const studio = {
-    init: function () {
-      render();
-      bindEvents();
-    },
-    mount: function (target) {
-      const el = typeof target === "string" ? document.getElementById(target) : target;
-      if (el) {
-        state.mountElement = el;
         render();
-        bindRootEvents(el);
+        return;
       }
-    },
-    onAuthChanged: function () {
+
+      // 3. Outfit Card Selection
+      if (action === "select-garment") {
+        const gId = btn.getAttribute("data-id");
+        state.selectedGarment[state.category] = gId;
+        const catData = STUDIO_DATA[state.category];
+        const gObj = catData.garments.find(g => g.id === gId);
+        if (gObj && gObj.defaultOptions) {
+          state.selections[state.category] = Object.assign({}, gObj.defaultOptions);
+        }
+        state.angle = "front";
+        render();
+        return;
+      }
+
+      // 4. Customization Option Change (Neckline, Sleeves, Fabric, Length, Buttons, etc.)
+      // CRITICAL: Changing sleeves MUST NEVER reset neckline, fabric, color, or embroidery!
+      if (action === "set-option") {
+        const group = btn.getAttribute("data-group");
+        const val = btn.getAttribute("data-val");
+        if (group && val) {
+          state.selections[state.category][group] = val;
+          render();
+        }
+        return;
+      }
+
+      // 5. Colour Swatch Selection
+      if (action === "set-color") {
+        const hex = btn.getAttribute("data-hex");
+        const name = btn.getAttribute("data-name");
+        state.selections[state.category].colorHex = hex;
+        state.selections[state.category].colorName = name;
+        render();
+        return;
+      }
+
+      // 6. Mannequin Angle Toggle (Front / Back / Side)
+      if (action === "set-angle") {
+        const angle = btn.getAttribute("data-angle");
+        state.angle = angle;
+        render();
+        return;
+      }
+
+      // 7. Detail Strip Macro Click
+      if (action === "set-macro") {
+        const macro = btn.getAttribute("data-macro");
+        state.activeMacroDetail = macro;
+        render();
+        return;
+      }
+
+      // 8. Save Design
+      if (action === "save-design") {
+        handleSaveDesign();
+        return;
+      }
+
+      // 9. Add to Cart
+      if (action === "add-to-cart") {
+        handleAddToCart();
+        return;
+      }
+
+      // 10. Reset Options
+      if (action === "reset-options") {
+        handleResetOptions();
+        return;
+      }
+
+      // 11. Open Virtual Try-On Modal
+      if (action === "open-tryon-modal") {
+        state.tryOn.modalOpen = true;
+        render();
+        return;
+      }
+
+      // 12. Close Virtual Try-On Modal
+      if (action === "close-tryon-modal") {
+        state.tryOn.modalOpen = false;
+        render();
+        return;
+      }
+
+      // 13. Switch Try-On Tab (Photo vs Virtual Model)
+      if (action === "set-tryon-tab") {
+        const tab = btn.getAttribute("data-tab");
+        state.tryOn.tab = tab;
+        render();
+        return;
+      }
+
+      // 14. Trigger Photo Upload Input
+      if (action === "trigger-photo-upload") {
+        const inp = document.getElementById("tryonFileInput");
+        if (inp) inp.click();
+        return;
+      }
+
+      // 15. Remove User Photo
+      if (action === "remove-user-photo") {
+        state.tryOn.userPhoto = null;
+        render();
+        return;
+      }
+
+      // 16. Update Virtual Model Measurements
+      if (action === "update-measurements") {
+        const inputs = root.querySelectorAll(".vas-c-measure-input");
+        inputs.forEach(inp => {
+          const field = inp.getAttribute("data-field");
+          if (field && inp.value) {
+            state.tryOn.measurements[field] = inp.value.trim();
+          }
+        });
+        showStudioToast("✓ Virtual model updated with your custom biometric measurements!");
+        render();
+        return;
+      }
+
+      // 17. Scroll to Options from Edit link
+      if (action === "scroll-to-options") {
+        const target = root.querySelector(".vas-studio-box:nth-child(2)");
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        return;
+      }
+    });
+
+    // Handle File Input Change for Personal Photo
+    root.addEventListener("change", function (e) {
+      if (e.target && e.target.id === "tryonFileInput" && e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          state.tryOn.userPhoto = evt.target.result;
+          render();
+          showStudioToast("✓ Personal photo uploaded securely for try-on simulation.");
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Initial Bootstrapping
+  function init() {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setupEvents();
+        render();
+      });
+    } else {
+      setupEvents();
       render();
-      bindEvents();
-    },
+    }
+  }
+
+  init();
+
+  // Expose global methods for external triggers if necessary
+  window.vastraeCustomizeStudio = {
+    render: render,
     setCategory: function (cat) {
       if (STUDIO_DATA[cat]) {
         state.category = cat;
-        state.angle = "front";
-        render();
-      }
-    },
-    setViewMode: function (mode) {
-      if (["model", "mypic"].includes(mode)) {
-        state.viewMode = mode;
-        render();
-      }
-    },
-    reset: function () {
-      const currentCat = STUDIO_DATA[state.category];
-      if (currentCat) {
-        currentCat.steps.forEach(step => {
-          state.selections[state.category][step.id] = step.default;
-        });
-        state.angle = "front";
-        state.activeFocus = "sleeves";
         render();
       }
     },
@@ -2374,26 +1779,5 @@
       return JSON.parse(JSON.stringify(state));
     }
   };
-
-  // Expose globally
-  window.vastraeCustomizer = studio;
-  window.setCustomGender = function (cat) { studio.setCategory(cat); };
-  window.setStudioAngle = function (angle) {
-    state.angle = angle;
-    const mainImg = document.getElementById("customizerMainImg");
-    if (mainImg) {
-      const currentCat = STUDIO_DATA[state.category] || STUDIO_DATA.women;
-      mainImg.src = currentCat.images[angle] || currentCat.images.front;
-    }
-  };
-
-  // Auto-initialize when DOM is ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      studio.init();
-    });
-  } else {
-    studio.init();
-  }
 
 })(window, document);

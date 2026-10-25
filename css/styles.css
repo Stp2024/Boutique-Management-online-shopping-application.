@@ -8769,17 +8769,65 @@ body.vas-role-customer.vas-dashboard-active #topHeader {
   transform: translateY(-1px);
 }
 
-/* Dynamic Dress Colour Tint Overlay */
+/* Dynamic Dress Colour Tint Overlay - Frame tint disabled so canvas frame stays pristine */
 .vas-c-color-tint-overlay {
-  position: absolute;
-  inset: 0;
+  display: none !important;
+  opacity: 0 !important;
   pointer-events: none;
-  mix-blend-mode: color;
-  opacity: 0.88;
-  transition: background-color 0.35s ease, opacity 0.35s ease;
-  z-index: 2;
-  mask-image: radial-gradient(ellipse 72% 82% at 50% 64%, black 50%, transparent 88%);
-  -webkit-mask-image: radial-gradient(ellipse 72% 82% at 50% 64%, black 50%, transparent 88%);
+}
+
+/* Floating Live Customization Tags Bar on Preview Canvas */
+.vas-c-live-tags-bar {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+.vas-c-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--vas-c-ink, #222);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  pointer-events: auto;
+  transition: all 0.25s ease;
+}
+
+.vas-c-pill-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.vas-c-pill-tag strong {
+  font-weight: 700;
+  color: var(--vas-c-rose-dark, #8c1d40);
+}
+
+.vas-c-tag-icon {
+  font-size: 0.85rem;
+}
+
+.vas-c-color-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: inline-block;
 }
 
 /* Dashboard Embedded Customizer Studio Tuning */
@@ -9178,9 +9226,6 @@ body.vas-role-customer.vas-dashboard-active #topHeader {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-  color: var(--vas-c-ink);
-  padding: 5px 2px;
-}
 
 /* Widget 2: Complete Your Look */
 .vas-c-look-grid {
@@ -9197,12 +9242,21 @@ body.vas-role-customer.vas-dashboard-active #topHeader {
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .vas-c-look-item:hover {
   border-color: var(--vas-c-rose);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(216, 90, 127, 0.15);
+}
+
+.vas-c-look-item.active {
+  border-color: var(--vas-c-rose);
+  box-shadow: 0 0 0 2px var(--vas-c-rose), 0 4px 14px rgba(216, 90, 127, 0.25);
+  background: #fff8f9;
 }
 
 .vas-c-look-item img {
@@ -9212,20 +9266,92 @@ body.vas-role-customer.vas-dashboard-active #topHeader {
   display: block;
 }
 
-.vas-c-look-item span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.vas-c-look-name {
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--vas-c-ink);
-  padding: 4px 2px;
+  padding: 4px 2px 1px;
+  line-height: 1.2;
 }
 
-.vas-c-chevron {
-  color: var(--vas-c-rose);
-  font-size: 0.85rem;
+.vas-c-look-price {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--vas-c-rose-dark);
+  padding: 0 2px 4px;
+}
+
+.vas-c-look-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  margin: 0 auto 5px;
+  background: #eddcd8;
+  color: var(--vas-c-sub);
+  transition: all 0.2s ease;
+}
+
+.vas-c-look-item.active .vas-c-look-badge {
+  background: #d85a7f;
+  color: #ffffff;
+}
+
+/* Dynamic Price Breakdown */
+.vas-c-price-breakdown {
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: #fffaf8;
+  border: 1px solid #f1deda;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.77rem;
+}
+
+.vas-c-price-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vas-c-rose-dark);
+  margin-bottom: 2px;
+}
+
+.vas-c-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--vas-c-sub);
+}
+
+.vas-c-price-row b {
+  font-weight: 600;
+  color: var(--vas-c-ink);
+}
+
+.vas-c-price-acc-row {
+  color: #a84865;
+  font-weight: 500;
+}
+
+.vas-c-price-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  padding-top: 7px;
+  border-top: 1px dashed #e4d0cb;
+  font-size: 0.88rem;
+  color: var(--vas-c-ink);
+}
+
+.vas-c-price-total-row strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--vas-c-rose-dark);
 }
 
 /* Widget 3: AI Try-On */
@@ -10175,3 +10301,1115 @@ body.vas-role-customer.vas-dashboard-active #topHeader {
     display: grid;
   }
 }
+
+/* ==============================================================================
+   VASTRAÉ "CUSTOMIZE YOUR WAY" BOUTIQUE STUDIO — 2026 MASTER STYLES
+   - 3-Panel Studio matching reference screenshot (Left: Outfits & Options, Center: Live Mannequin, Right: Design Summary & Cart)
+   - Real Physical Boutique Dress Mannequin Only (Tailor Dummy on Wooden Stand)
+   - Dynamic Multi-Dress Live Preview with Layered Color Tint & SVG Details
+   - Post-Customization Virtual Try-On Modal (Option A Photo + Option B Virtual Avatar)
+   - 5-Step Customer Journey Ribbon
+   ============================================================================== */
+
+/* Category-specific theme variables */
+.vas-customizer[data-studio-cat="women"] {
+  --cat-accent: #7a1827;
+  --cat-accent-hover: #962234;
+  --cat-accent-light: #fbf1f3;
+  --cat-accent-border: #f2cbd2;
+  --cat-accent-rgb: 122, 24, 39;
+}
+
+.vas-customizer[data-studio-cat="men"] {
+  --cat-accent: #1e3a5f;
+  --cat-accent-hover: #2b4f7d;
+  --cat-accent-light: #f0f4f9;
+  --cat-accent-border: #cadbe9;
+  --cat-accent-rgb: 30, 58, 95;
+}
+
+.vas-customizer[data-studio-cat="kids"] {
+  --cat-accent: #6b3a7d;
+  --cat-accent-hover: #834b97;
+  --cat-accent-light: #f8f1fb;
+  --cat-accent-border: #e4d0eb;
+  --cat-accent-rgb: 107, 58, 125;
+}
+
+.vas-customizer[data-studio-cat="accessories"] {
+  --cat-accent: #185a4e;
+  --cat-accent-hover: #227566;
+  --cat-accent-light: #edf6f4;
+  --cat-accent-border: #c8dfd9;
+  --cat-accent-rgb: 24, 90, 78;
+}
+
+/* Category Navigation Pills (Women, Men, Kids, Accessories) */
+.vas-c-nav-categories {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 26px;
+  flex-wrap: wrap;
+}
+
+.vas-c-nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1.5px solid #e5d8d3;
+  background: #ffffff;
+  color: #3b2a2e;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.vas-c-nav-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+.vas-c-nav-tab[data-cat="women"].active {
+  background: #7a1827 !important;
+  border-color: #7a1827 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(122, 24, 39, 0.35) !important;
+}
+
+.vas-c-nav-tab[data-cat="men"].active {
+  background: #1e3a5f !important;
+  border-color: #1e3a5f !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(30, 58, 95, 0.35) !important;
+}
+
+.vas-c-nav-tab[data-cat="kids"].active {
+  background: #6b3a7d !important;
+  border-color: #6b3a7d !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(107, 58, 125, 0.35) !important;
+}
+
+.vas-c-nav-tab[data-cat="accessories"].active {
+  background: #185a4e !important;
+  border-color: #185a4e !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(24, 90, 78, 0.35) !important;
+}
+
+/* Studio 3-Panel Grid */
+.vas-studio-main-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.15fr) minmax(420px, 1.45fr) minmax(280px, 0.95fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* Left Panel: 1. Select Outfit + 2. Customization Options */
+.vas-studio-left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.vas-studio-box {
+  background: #ffffff;
+  border: 1px solid #ebdcd7;
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 18px rgba(50, 30, 35, 0.04);
+}
+
+.vas-studio-box-title {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: #24191c;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+}
+
+.vas-studio-box-num {
+  color: var(--cat-accent, #7a1827);
+  font-weight: 800;
+}
+
+/* Sub-category Pills (Blouses, Sarees, Kurtis...) */
+.vas-c-subtabs-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f2e6e2;
+}
+
+.vas-c-subtabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.vas-c-subtab-pill {
+  flex: 0 0 auto;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid #e8dbd7;
+  background: #fbf7f5;
+  color: #554448;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.vas-c-subtab-pill:hover {
+  border-color: var(--cat-accent, #7a1827);
+  color: var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+}
+
+.vas-c-subtab-pill.active {
+  background: var(--cat-accent, #7a1827);
+  color: #ffffff;
+  border-color: var(--cat-accent, #7a1827);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* Outfit Selection Grid (Mannequin thumbnails) */
+.vas-c-outfit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.vas-c-outfit-card {
+  border: 1.5px solid #ebdcd7;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.22s ease;
+  padding: 5px 4px 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.vas-c-outfit-card:hover {
+  border-color: var(--cat-accent, #7a1827);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.vas-c-outfit-card.active {
+  border: 2px solid var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+  box-shadow: 0 0 0 2px rgba(var(--cat-accent-rgb, 122, 24, 39), 0.2), 0 6px 18px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.vas-c-outfit-thumb {
+  width: 100%;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f7eee9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vas-c-outfit-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vas-c-outfit-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #24191c;
+  margin-top: 5px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.vas-c-outfit-price {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #b7791f;
+  margin-top: 2px;
+}
+
+/* Customization Options Groups (Neckline, Sleeves, Fabric, Colour, Embroidery...) */
+.vas-c-option-group {
+  margin-bottom: 14px;
+}
+
+.vas-c-option-group:last-child {
+  margin-bottom: 0;
+}
+
+.vas-c-option-label-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.vas-c-option-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #24191c;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vas-c-option-selected-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--cat-accent-border, #f2cbd2);
+}
+
+/* Horizontal Visual Option Cards */
+.vas-c-visual-options-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+}
+
+.vas-c-visual-options-row::-webkit-scrollbar {
+  display: none;
+}
+
+.vas-c-visual-btn {
+  flex: 0 0 62px;
+  width: 62px;
+  border: 1.5px solid #ebdcd7;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 5px 3px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vas-c-visual-btn:hover {
+  border-color: var(--cat-accent, #7a1827);
+  transform: translateY(-1px);
+}
+
+.vas-c-visual-btn.active {
+  border: 2px solid var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+  box-shadow: 0 0 0 2px rgba(var(--cat-accent-rgb, 122, 24, 39), 0.2);
+}
+
+.vas-c-visual-icon {
+  width: 100%;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #fdfaf8;
+  overflow: hidden;
+}
+
+.vas-c-visual-icon svg,
+.vas-c-visual-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.vas-c-visual-label {
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: #3b2a2e;
+  margin-top: 4px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Swatches Rows (Fabric, Color) */
+.vas-c-swatch-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 2px;
+}
+
+.vas-c-swatch-list::-webkit-scrollbar {
+  display: none;
+}
+
+.vas-c-dot-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #d6ccc5;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.vas-c-dot-swatch:hover {
+  transform: scale(1.15);
+}
+
+.vas-c-dot-swatch.active {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4.5px var(--cat-accent, #7a1827);
+  transform: scale(1.18);
+}
+
+.vas-c-fabric-card {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #ebdcd7;
+  background: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #3b2a2e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-c-fabric-card.active {
+  border-color: var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+  color: var(--cat-accent, #7a1827);
+  font-weight: 700;
+}
+
+.vas-c-fabric-card img {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* Center Panel: Large Boutique Mannequin Live Preview */
+.vas-studio-center-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: sticky;
+  top: 90px;
+}
+
+.vas-c-mannequin-studio-card {
+  background: #ffffff;
+  border: 1.5px solid #ebdcd7;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(50, 30, 35, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Angle Switcher Bar (Front / Back / Side) */
+.vas-c-angle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #fbf5f3;
+  border-bottom: 1px solid #ebdcd7;
+}
+
+.vas-c-angle-group {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.vas-c-angle-pill {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid #e0d0cb;
+  background: #ffffff;
+  color: #554448;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-c-angle-pill:hover {
+  border-color: var(--cat-accent, #7a1827);
+  color: var(--cat-accent, #7a1827);
+}
+
+.vas-c-angle-pill.active {
+  background: var(--cat-accent, #7a1827);
+  color: #ffffff;
+  border-color: var(--cat-accent, #7a1827);
+}
+
+.vas-c-mannequin-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #3b2a2e;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vas-c-live-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #24a148;
+  box-shadow: 0 0 0 2px rgba(36, 161, 72, 0.25);
+  animation: vasPulseLive 2s infinite ease-in-out;
+}
+
+/* Large Mannequin Stage & Composite Layers */
+.vas-c-mannequin-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(420px, 50vh, 520px);
+  background: radial-gradient(circle at 50% 30%, #fffbf8 0%, #f6eae5 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vas-c-mannequin-base-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: opacity 0.25s ease;
+}
+
+/* Precision SVG Composite Layer on Top of Mannequin */
+.vas-c-mannequin-svg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Real-time Dynamic Fabric Color Tint Layer */
+.vas-c-color-tint-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+  opacity: 0.65;
+  transition: background-color 0.3s ease;
+}
+
+/* Bottom Variation Thumbnails Strip (5 Cards) */
+.vas-c-detail-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 10px 14px;
+  background: #fbf5f3;
+  border-top: 1px solid #ebdcd7;
+}
+
+.vas-c-detail-thumb-card {
+  border: 1px solid #ebdcd7;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  height: 52px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.vas-c-detail-thumb-card:hover {
+  border-color: var(--cat-accent, #7a1827);
+  transform: translateY(-1px);
+}
+
+.vas-c-detail-thumb-card.active {
+  border: 2px solid var(--cat-accent, #7a1827);
+  box-shadow: 0 0 0 1px var(--cat-accent, #7a1827);
+}
+
+.vas-c-detail-thumb-card img,
+.vas-c-detail-thumb-card svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vas-c-live-caption-bar {
+  padding: 8px 14px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #7a666b;
+  font-weight: 600;
+  background: #ffffff;
+  border-top: 1px solid #f2e5e1;
+}
+
+/* Right Panel: Your Design + Price Breakdown + Action Buttons */
+.vas-studio-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.vas-c-design-card {
+  background: #ffffff;
+  border: 1px solid #ebdcd7;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 4px 18px rgba(50, 30, 35, 0.04);
+}
+
+.vas-c-design-card-header {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #24191c;
+  margin: 0 0 12px;
+}
+
+.vas-c-design-summary-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fbf6f4;
+  border: 1px solid #ebdcd7;
+  margin-bottom: 14px;
+}
+
+.vas-c-design-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0e6e2;
+  flex-shrink: 0;
+}
+
+.vas-c-design-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vas-c-design-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vas-c-design-name {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #24191c;
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vas-c-design-specs {
+  font-size: 0.7rem;
+  color: #6b555a;
+  line-height: 1.25;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vas-c-design-price-tag {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--cat-accent, #7a1827);
+}
+
+.vas-c-design-edit-btn {
+  font-size: 0.72rem;
+  color: var(--cat-accent, #7a1827);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* Price Breakdown Section */
+.vas-c-price-breakdown {
+  margin-bottom: 16px;
+}
+
+.vas-c-price-breakdown-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #24191c;
+  margin: 0 0 10px;
+}
+
+.vas-c-price-table {
+  width: 100%;
+  font-size: 0.76rem;
+}
+
+.vas-c-price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #554448;
+}
+
+.vas-c-price-row.total {
+  border-top: 1.5px dashed #ebdcd7;
+  padding-top: 8px;
+  margin-top: 6px;
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: #24191c;
+}
+
+.vas-c-price-row.total span:last-child {
+  color: var(--cat-accent, #7a1827);
+}
+
+/* Action Buttons Stack (Save, Cart, Try On, Reset) */
+.vas-c-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.vas-c-btn-save {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: none;
+  background: var(--cat-accent, #7a1827);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 14px rgba(var(--cat-accent-rgb, 122, 24, 39), 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vas-c-btn-save:hover {
+  background: var(--cat-accent-hover, #962234);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(var(--cat-accent-rgb, 122, 24, 39), 0.45);
+}
+
+.vas-c-btn-cart-secondary {
+  width: 100%;
+  padding: 11px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--cat-accent, #7a1827);
+  background: #ffffff;
+  color: var(--cat-accent, #7a1827);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vas-c-btn-cart-secondary:hover {
+  background: var(--cat-accent-light, #fbf1f3);
+  transform: translateY(-1px);
+}
+
+.vas-c-btn-tryon-pill {
+  width: 100%;
+  padding: 11px 18px;
+  border-radius: 999px;
+  border: 1.5px solid #ebdcd7;
+  background: linear-gradient(135deg, #ffffff, #fff7f5);
+  color: #3b2a2e;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vas-c-btn-tryon-pill:hover {
+  border-color: var(--cat-accent, #7a1827);
+  color: var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+}
+
+.vas-c-btn-reset-link {
+  background: none;
+  border: none;
+  color: #7a666b;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  padding: 4px;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.vas-c-btn-reset-link:hover {
+  color: #24191c;
+}
+
+/* 5-Step Customer Journey Ribbon (Matching Bottom of Screenshot) */
+.vas-c-journey-container {
+  margin-top: 32px;
+  padding: 20px 24px 16px;
+  background: #ffffff;
+  border: 1px solid #ebdcd7;
+  border-radius: 20px;
+  box-shadow: 0 4px 18px rgba(50, 30, 35, 0.04);
+}
+
+.vas-c-journey-ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vas-c-journey-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 160px;
+}
+
+.vas-c-journey-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--cat-accent-light, #fbf1f3);
+  border: 1px solid var(--cat-accent-border, #f2cbd2);
+  color: var(--cat-accent, #7a1827);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.vas-c-journey-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.vas-c-journey-text strong {
+  font-size: 0.84rem;
+  color: #24191c;
+  font-weight: 800;
+}
+
+.vas-c-journey-text span {
+  font-size: 0.7rem;
+  color: #7a666b;
+}
+
+.vas-c-journey-arrow {
+  color: var(--cat-accent, #7a1827);
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.vas-c-journey-tagline {
+  text-align: center;
+  font-family: var(--vas-font-serif, "Playfair Display", Georgia, serif);
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--cat-accent, #7a1827);
+  margin-top: 14px;
+  letter-spacing: 0.04em;
+}
+
+/* Post-Customization Virtual Try-On Modal (Option A Photo + Option B Avatar) */
+.vas-c-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(24, 16, 18, 0.68);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: vasFadeIn 0.25s ease;
+}
+
+@keyframes vasFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.vas-c-tryon-dialog {
+  background: #ffffff;
+  border: 1px solid #ebdcd7;
+  border-radius: 24px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: vasSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vasSlideUp {
+  from { transform: translateY(20px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.vas-c-tryon-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f2e5e1;
+}
+
+.vas-c-tryon-dialog-title {
+  font-family: var(--vas-font-serif, "Playfair Display", Georgia, serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #24191c;
+  margin: 0;
+}
+
+.vas-c-tryon-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: #7a666b;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.vas-c-tryon-tabs {
+  display: flex;
+  border-bottom: 1px solid #f2e5e1;
+  background: #fdf9f7;
+}
+
+.vas-c-tryon-tab {
+  flex: 1;
+  padding: 12px 16px;
+  text-align: center;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #7a666b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.vas-c-tryon-tab.active {
+  color: var(--cat-accent, #7a1827);
+  border-bottom-color: var(--cat-accent, #7a1827);
+  background: #ffffff;
+}
+
+.vas-c-tryon-body {
+  padding: 20px 24px;
+}
+
+/* Option A Photo Dropzone */
+.vas-c-dropzone {
+  border: 2px dashed #e5d2cd;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  background: #fdfbf9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.vas-c-dropzone:hover {
+  border-color: var(--cat-accent, #7a1827);
+  background: var(--cat-accent-light, #fbf1f3);
+}
+
+.vas-c-dropzone-icon {
+  font-size: 2.2rem;
+  color: var(--cat-accent, #7a1827);
+  margin-bottom: 8px;
+}
+
+.vas-c-privacy-notice {
+  background: #fff8f9;
+  border: 1px solid #f5d8df;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.74rem;
+  color: #6b4a52;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Option B Measurement Inputs Grid */
+.vas-c-measure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.vas-c-measure-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vas-c-measure-grid span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #24191c;
+}
+
+.vas-c-measure-input {
+  padding: 8px 12px;
+  border: 1.5px solid #ebdcd7;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: #24191c;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.vas-c-measure-input:focus {
+  border-color: var(--cat-accent, #7a1827);
+}
+
+/* Parametric Avatar Canvas Preview */
+.vas-c-avatar-stage {
+  border: 1px solid #ebdcd7;
+  border-radius: 16px;
+  height: 240px;
+  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #f7ece8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .vas-studio-main-grid {
+    grid-template-columns: minmax(280px, 1fr) minmax(340px, 1.25fr);
+  }
+  .vas-studio-right-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .vas-studio-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .vas-studio-right-panel {
+    grid-template-columns: 1fr;
+  }
+  .vas-c-outfit-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .vas-c-journey-ribbon {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .vas-c-journey-arrow {
+    text-align: center;
+    transform: rotate(90deg);
+  }
+}
+
