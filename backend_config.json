@@ -1,0 +1,7 @@
+{
+  "provider": "local_photometric",
+  "api_key": "",
+  "replicate_model_version": "c871bb9b046607b680449ecbae55fd8c6d815e0f7f55c44166def7868fb36343",
+  "fashn_model": "tryon-v1.5",
+  "note": "Secret API keys are stored here on your private backend and NEVER sent to browser client JS."
+}
