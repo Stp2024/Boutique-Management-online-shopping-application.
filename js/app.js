@@ -4898,12 +4898,12 @@
       `;
     } else if (tabName === "customize") {
       pane.innerHTML = `
-        <div class="vas-dash-banner-box" style="margin-bottom:20px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/customizer/lehenga_front.jpg') center/cover;">
+        <div class="vas-dash-banner-box" style="margin-bottom:20px; background:linear-gradient(135deg, rgba(26,20,17,0.96), rgba(46,38,33,0.92)), url('images/customizer_v2/women/lehenga_ruby_velvet.jpg') center/cover;">
           <div>
             <span style="font-size:0.72rem; letter-spacing:0.16em; color:var(--vas-champagne); text-transform:uppercase; font-weight:700;">ATELIER LIVE CUSTOMIZER · CLIENT SUITE</span>
             <h2 style="font-family:'Playfair Display',serif; font-size:1.6rem; margin:6px 0 8px; color:#ffffff;">Customize Your Way Studio</h2>
             <p style="font-size:0.86rem; color:rgba(255,255,255,0.78); max-width:680px; margin:0 0 10px;">
-              Craft your bespoke luxury ensemble with real-time silhouette updates. Choose custom sleeves, necklines, lengths, pure silks, and rich artisanal colorways with live model preview and personal photo fit.
+              Craft your bespoke luxury ensemble with real-time silhouette updates. Choose custom sleeves, necklines, lengths, pure silks, and rich artisanal colorways with live mannequin preview.
             </p>
           </div>
         </div>

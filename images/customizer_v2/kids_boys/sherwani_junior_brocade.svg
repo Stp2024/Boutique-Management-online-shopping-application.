@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="65%" stop-color="#f5efe6"/>
+      <stop offset="100%" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="wood_stand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3d2314"/>
+      <stop offset="40%" stop-color="#6e3f22"/>
+      <stop offset="100%" stop-color="#24140a"/>
+    </linearGradient>
+    <linearGradient id="mannequin_body" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ded4c5"/>
+      <stop offset="50%" stop-color="#faf5ec"/>
+      <stop offset="100%" stop-color="#c9bead"/>
+    </linearGradient>
+    <linearGradient id="gold_brocade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="40%" stop-color="#fde047"/>
+      <stop offset="70%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#3a2518" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg_grad)"/>
+  <ellipse cx="300" cy="740" rx="160" ry="24" fill="#000000" opacity="0.12"/>
+  <ellipse cx="300" cy="730" rx="90" ry="18" fill="url(#wood_stand)" filter="url(#shadow)"/>
+  <rect x="294" y="440" width="12" height="286" fill="url(#wood_stand)"/>
+  <path d="M 293 160 Q 300 135 307 160 Z" fill="url(#wood_stand)"/>
+  <ellipse cx="300" cy="135" rx="9" ry="9" fill="url(#wood_stand)"/>
+
+  <!-- Mannequin -->
+  <g filter="url(#shadow)">
+    <path d="M 280 175 L 320 175 L 318 205 L 282 205 Z" fill="url(#mannequin_body)"/>
+    <path d="M 282 205 Q 220 220 210 250 Q 230 340 248 440 L 352 440 Q 370 340 390 250 Q 380 220 318 205 Z" fill="url(#mannequin_body)"/>
+  </g>
+
+  <!-- Garment: Boys Junior Brocade Sherwani & Maroon Dhoti -->
+  <g filter="url(#shadow)">
+    <!-- Maroon Dhoti / Churidar Pants -->
+    <path d="M 250 450 L 225 610 L 285 615 L 295 480 Z" fill="#7f1d1d"/>
+    <path d="M 350 450 L 375 610 L 315 615 L 305 480 Z" fill="#7f1d1d"/>
+    <!-- Dhoti Pleat Drape center -->
+    <path d="M 285 450 Q 300 540 290 610 L 310 610 Q 300 540 315 450 Z" fill="#991b1b"/>
+
+    <!-- Royal Gold Brocade Sherwani Coat -->
+    <path d="M 230 225 Q 300 235 370 225 L 360 480 Q 300 495 240 480 Z" fill="url(#gold_brocade)"/>
+    
+    <!-- Mandarin Stand Collar (Ruby Velvet with Gold Border) -->
+    <path d="M 275 220 Q 300 216 325 220 L 325 200 Q 300 196 275 200 Z" fill="#7f1d1d"/>
+    <path d="M 275 220 Q 300 216 325 220" stroke="#fbbf24" stroke-width="3" fill="none"/>
+
+    <!-- Front Placket & Metallic Buttons -->
+    <line x1="300" y1="220" x2="300" y2="480" stroke="#7f1d1d" stroke-width="4"/>
+    <circle cx="300" cy="245" r="4" fill="#ffffff" stroke="#92400e" stroke-width="1.5"/>
+    <circle cx="300" cy="275" r="4" fill="#ffffff" stroke="#92400e" stroke-width="1.5"/>
+    <circle cx="300" cy="305" r="4" fill="#ffffff" stroke="#92400e" stroke-width="1.5"/>
+    <circle cx="300" cy="335" r="4" fill="#ffffff" stroke="#92400e" stroke-width="1.5"/>
+    <circle cx="300" cy="365" r="4" fill="#ffffff" stroke="#92400e" stroke-width="1.5"/>
+    <circle cx="300" cy="395" r="4" fill="#ffffff" stroke="#92400e" stroke-width="1.5"/>
+
+    <!-- Velvet Pocket Square -->
+    <rect x="250" y="275" width="28" height="6" rx="2" fill="#7f1d1d"/>
+    <path d="M 256 275 L 264 260 L 272 275 Z" fill="#b91c1c"/>
+
+    <!-- Full Sleeves with Velvet Cuffs -->
+    <path d="M 230 225 L 200 370 L 225 375 L 245 270 Z" fill="url(#gold_brocade)"/>
+    <path d="M 370 225 L 400 370 L 375 375 L 355 270 Z" fill="url(#gold_brocade)"/>
+    <rect x="198" y="360" width="28" height="15" rx="3" fill="#7f1d1d"/>
+    <rect x="374" y="360" width="28" height="15" rx="3" fill="#7f1d1d"/>
+  </g>
+  <text x="300" y="780" font-family="'Playfair Display', serif" font-size="12" fill="#8c786a" text-anchor="middle" letter-spacing="3">VASTRAÉ ATELIER · JUNIOR SHERWANI</text>
+</svg>

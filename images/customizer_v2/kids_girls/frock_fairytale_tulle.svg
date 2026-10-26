@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="65%" stop-color="#f5efe6"/>
+      <stop offset="100%" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="wood_stand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3d2314"/>
+      <stop offset="40%" stop-color="#6e3f22"/>
+      <stop offset="70%" stop-color="#4a2a17"/>
+      <stop offset="100%" stop-color="#24140a"/>
+    </linearGradient>
+    <linearGradient id="mannequin_body" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ded4c5"/>
+      <stop offset="50%" stop-color="#faf5ec"/>
+      <stop offset="100%" stop-color="#c9bead"/>
+    </linearGradient>
+    <linearGradient id="frock_skirt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fce7f3"/>
+      <stop offset="50%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="gold_accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#fff0aa"/>
+      <stop offset="100%" stop-color="#aa820a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#3a2518" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Background Atelier -->
+  <rect width="600" height="800" fill="url(#bg_grad)"/>
+  <ellipse cx="300" cy="740" rx="160" ry="24" fill="#000000" opacity="0.12"/>
+
+  <!-- Mannequin Wooden Stand -->
+  <g id="stand">
+    <!-- Base -->
+    <ellipse cx="300" cy="730" rx="90" ry="18" fill="url(#wood_stand)" filter="url(#shadow)"/>
+    <ellipse cx="300" cy="725" rx="75" ry="12" fill="url(#wood_stand)"/>
+    <!-- Pole -->
+    <rect x="294" y="440" width="12" height="286" fill="url(#wood_stand)"/>
+    <!-- Brass Connector ring -->
+    <rect x="291" y="460" width="18" height="8" rx="2" fill="url(#gold_accent)"/>
+    <!-- Finial Neck Top -->
+    <path d="M 293 160 Q 300 135 307 160 Z" fill="url(#wood_stand)"/>
+    <ellipse cx="300" cy="135" rx="9" ry="9" fill="url(#wood_stand)"/>
+    <rect x="296" y="160" width="8" height="15" fill="url(#gold_accent)"/>
+  </g>
+
+  <!-- Mannequin Form (Child Proportions) -->
+  <g id="mannequin_torso" filter="url(#shadow)">
+    <!-- Neck -->
+    <path d="M 282 175 L 318 175 L 316 205 L 284 205 Z" fill="url(#mannequin_body)"/>
+    <!-- Torso -->
+    <path d="M 284 205 Q 230 220 220 250 Q 240 330 255 420 L 345 420 Q 360 330 380 250 Q 370 220 316 205 Z" fill="url(#mannequin_body)"/>
+  </g>
+
+  <!-- Garment: Girls Fairytale Tulle Floral Party Frock -->
+  <g id="dress_frock" filter="url(#shadow)">
+    <!-- Bodice -->
+    <path d="M 240 235 Q 300 248 360 235 L 350 330 Q 300 338 250 330 Z" fill="#f472b6"/>
+    <!-- Satin Waistband & Big Bow -->
+    <rect x="246" y="325" width="108" height="18" rx="4" fill="#db2777"/>
+    <!-- Bow center -->
+    <circle cx="300" cy="334" r="8" fill="#be185d"/>
+    <path d="M 300 334 Q 275 320 270 334 Q 275 348 300 334 Z" fill="#db2777"/>
+    <path d="M 300 334 Q 325 320 330 334 Q 325 348 300 334 Z" fill="#db2777"/>
+    <path d="M 295 338 L 280 375 L 295 365 L 300 338 Z" fill="#be185d"/>
+    <path d="M 305 338 L 320 375 L 305 365 L 300 338 Z" fill="#be185d"/>
+    
+    <!-- Sleeves: Puff Ruffle Sleeves -->
+    <path d="M 242 235 Q 215 230 215 260 Q 230 275 248 265 Z" fill="#fbcfe8"/>
+    <path d="M 358 235 Q 385 230 385 260 Q 370 275 352 265 Z" fill="#fbcfe8"/>
+
+    <!-- Flared Layered Tulle Skirt -->
+    <!-- Under layer -->
+    <path d="M 246 342 Q 300 348 354 342 L 415 540 Q 300 575 185 540 Z" fill="url(#frock_skirt)" opacity="0.9"/>
+    <!-- Mid Tulle frills -->
+    <path d="M 235 375 Q 300 385 365 375 L 400 480 Q 300 510 200 480 Z" fill="#fce7f3" opacity="0.6"/>
+    <!-- Floral lace overlay accents -->
+    <g fill="#ffffff" opacity="0.8">
+      <circle cx="280" cy="270" r="4"/><circle cx="320" cy="270" r="4"/>
+      <circle cx="300" cy="290" r="5"/><circle cx="265" cy="305" r="4"/>
+      <circle cx="335" cy="305" r="4"/>
+      <!-- Skirt Sparkles -->
+      <path d="M 250 420 Q 255 425 250 430 Q 245 425 250 420 Z"/>
+      <path d="M 350 440 Q 355 445 350 450 Q 345 445 350 440 Z"/>
+      <path d="M 300 470 Q 305 475 300 480 Q 295 475 300 470 Z"/>
+      <path d="M 220 500 Q 225 505 220 510 Q 215 505 220 500 Z"/>
+      <path d="M 380 510 Q 385 515 380 520 Q 375 515 380 510 Z"/>
+    </g>
+    <!-- Scalloped Hem Ruffle -->
+    <path d="M 185 540 Q 220 560 260 550 Q 300 570 340 550 Q 380 560 415 540 Q 300 575 185 540 Z" fill="#ffffff" opacity="0.85"/>
+  </g>
+
+  <!-- Tag / Watermark -->
+  <text x="300" y="780" font-family="'Playfair Display', serif" font-size="12" fill="#8c786a" text-anchor="middle" letter-spacing="3">VASTRAÉ ATELIER · JUNIOR COUTURE</text>
+</svg>

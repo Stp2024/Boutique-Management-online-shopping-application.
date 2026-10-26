@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="65%" stop-color="#f5efe6"/>
+      <stop offset="100%" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="wood_stand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3d2314"/>
+      <stop offset="40%" stop-color="#6e3f22"/>
+      <stop offset="100%" stop-color="#24140a"/>
+    </linearGradient>
+    <linearGradient id="mannequin_body" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ded4c5"/>
+      <stop offset="50%" stop-color="#faf5ec"/>
+      <stop offset="100%" stop-color="#c9bead"/>
+    </linearGradient>
+    <linearGradient id="gold_accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#fff0aa"/>
+      <stop offset="100%" stop-color="#aa820a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#3a2518" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg_grad)"/>
+  <ellipse cx="300" cy="740" rx="160" ry="24" fill="#000000" opacity="0.12"/>
+  <ellipse cx="300" cy="730" rx="90" ry="18" fill="url(#wood_stand)" filter="url(#shadow)"/>
+  <rect x="294" y="440" width="12" height="286" fill="url(#wood_stand)"/>
+  <path d="M 293 160 Q 300 135 307 160 Z" fill="url(#wood_stand)"/>
+  <ellipse cx="300" cy="135" rx="9" ry="9" fill="url(#wood_stand)"/>
+
+  <!-- Mannequin -->
+  <g filter="url(#shadow)">
+    <path d="M 282 175 L 318 175 L 316 205 L 284 205 Z" fill="url(#mannequin_body)"/>
+    <path d="M 284 205 Q 230 220 220 250 Q 240 330 255 420 L 345 420 Q 360 330 380 250 Q 370 220 316 205 Z" fill="url(#mannequin_body)"/>
+  </g>
+
+  <!-- Garment: Mustard Yellow Peplum Kurti & Sharara -->
+  <g filter="url(#shadow)">
+    <!-- Sharara Pants Flare (Teal/Emerald) -->
+    <path d="M 250 430 L 210 590 L 285 595 L 295 440 Z" fill="#0d9488"/>
+    <path d="M 350 430 L 390 590 L 315 595 L 305 440 Z" fill="#0d9488"/>
+    <!-- Sharara Gota Patti Rings -->
+    <path d="M 225 530 Q 250 535 280 532" stroke="url(#gold_accent)" stroke-width="4" fill="none"/>
+    <path d="M 375 530 Q 350 535 320 532" stroke="url(#gold_accent)" stroke-width="4" fill="none"/>
+    <path d="M 215 570 Q 250 575 282 572" stroke="url(#gold_accent)" stroke-width="4" fill="none"/>
+    <path d="M 385 570 Q 350 575 318 572" stroke="url(#gold_accent)" stroke-width="4" fill="none"/>
+
+    <!-- Peplum Kurti Top (Mustard Gold) -->
+    <path d="M 240 230 Q 300 240 360 230 L 350 330 Q 300 338 250 330 Z" fill="#eab308"/>
+    <!-- Flared Peplum Hem -->
+    <path d="M 250 330 Q 300 338 350 330 L 380 435 Q 300 455 220 435 Z" fill="#ca8a04"/>
+    <path d="M 220 435 Q 300 455 380 435" stroke="url(#gold_accent)" stroke-width="5" fill="none"/>
+
+    <!-- Neckline & Placket Work -->
+    <path d="M 275 235 Q 300 258 325 235" stroke="url(#gold_accent)" stroke-width="5" fill="none"/>
+    <line x1="300" y1="258" x2="300" y2="330" stroke="url(#gold_accent)" stroke-width="3"/>
+    <circle cx="300" cy="275" r="3" fill="#ffffff"/>
+    <circle cx="300" cy="295" r="3" fill="#ffffff"/>
+    <circle cx="300" cy="315" r="3" fill="#ffffff"/>
+
+    <!-- Three-quarter sleeves with gota patti cuffs -->
+    <path d="M 240 230 L 210 320 L 230 325 L 250 260 Z" fill="#eab308"/>
+    <path d="M 360 230 L 390 320 L 370 325 L 350 260 Z" fill="#eab308"/>
+    <line x1="210" y1="320" x2="230" y2="325" stroke="url(#gold_accent)" stroke-width="4"/>
+    <line x1="390" y1="320" x2="370" y2="325" stroke="url(#gold_accent)" stroke-width="4"/>
+  </g>
+  <text x="300" y="780" font-family="'Playfair Display', serif" font-size="12" fill="#8c786a" text-anchor="middle" letter-spacing="3">VASTRAÉ ATELIER · PEPLUM SHARARA</text>
+</svg>

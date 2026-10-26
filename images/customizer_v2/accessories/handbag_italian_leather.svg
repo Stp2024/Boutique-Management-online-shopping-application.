@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="70%" stop-color="#f5efe6"/>
+      <stop offset="100%" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="tan_leather" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="35%" stop-color="#b45309"/>
+      <stop offset="70%" stop-color="#92400e"/>
+      <stop offset="100%" stop-color="#582106"/>
+    </linearGradient>
+    <linearGradient id="gold_hw" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#fff0aa"/>
+      <stop offset="100%" stop-color="#aa820a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#3a2518" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg_grad)"/>
+  <!-- Display Pedestal -->
+  <polygon points="120,680 480,680 520,740 80,740" fill="#e2d8cc"/>
+  <rect x="80" y="740" width="440" height="30" fill="#c4b5a3"/>
+
+  <!-- Top Handle -->
+  <g filter="url(#shadow)">
+    <path d="M 230 380 Q 230 200 300 200 Q 370 200 370 380" stroke="url(#tan_leather)" stroke-width="18" stroke-linecap="round" fill="none"/>
+    <path d="M 230 380 Q 230 200 300 200 Q 370 200 370 380" stroke="#fde68a" stroke-width="2" stroke-dasharray="6,4" fill="none"/>
+    <!-- Handle Brass Loops -->
+    <rect x="222" y="370" width="16" height="24" rx="4" fill="url(#gold_hw)"/>
+    <rect x="362" y="370" width="16" height="24" rx="4" fill="url(#gold_hw)"/>
+  </g>
+
+  <!-- Structured Handbag Body -->
+  <g filter="url(#shadow)">
+    <!-- Trapezoid Body -->
+    <path d="M 200 380 L 400 380 L 440 640 L 160 640 Z" fill="url(#tan_leather)"/>
+    <!-- Perimeter Tailored Stitching -->
+    <path d="M 206 388 L 394 388 L 432 632 L 168 632 Z" stroke="#fde68a" stroke-width="2" stroke-dasharray="5,4" fill="none"/>
+
+    <!-- Front Flap -->
+    <path d="M 205 380 L 395 380 L 375 510 L 225 510 Z" fill="#92400e"/>
+    <path d="M 212 386 L 388 386 L 370 504 L 230 504 Z" stroke="#fde68a" stroke-width="2" stroke-dasharray="5,4" fill="none"/>
+
+    <!-- Luxury Gold Turn-lock Clasp -->
+    <rect x="280" y="490" width="40" height="32" rx="6" fill="url(#gold_hw)"/>
+    <ellipse cx="300" cy="506" rx="8" ry="12" fill="#78350f"/>
+    <rect x="296" y="498" width="8" height="16" rx="2" fill="url(#gold_hw)"/>
+
+    <!-- Key Bell Clochette Charm Hanging from Handle -->
+    <path d="M 238 390 L 245 460" stroke="#78350f" stroke-width="4"/>
+    <path d="M 240 460 L 254 460 L 258 480 L 236 480 Z" fill="#78350f"/>
+    <circle cx="247" cy="470" r="3" fill="url(#gold_hw)"/>
+
+    <!-- Protective Brass Bottom Studs -->
+    <ellipse cx="180" cy="640" rx="8" ry="3" fill="url(#gold_hw)"/>
+    <ellipse cx="420" cy="640" rx="8" ry="3" fill="url(#gold_hw)"/>
+  </g>
+  <text x="300" y="780" font-family="'Playfair Display', serif" font-size="12" fill="#8c786a" text-anchor="middle" letter-spacing="3">VASTRAÉ ATELIER · BESPOKE LEATHER</text>
+</svg>

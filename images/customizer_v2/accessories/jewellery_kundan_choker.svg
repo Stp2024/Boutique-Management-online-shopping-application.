@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="70%" stop-color="#f5efe6"/>
+      <stop offset="100%" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="velvet_bust" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="50%" stop-color="#27272a"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="gold_hw" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#fff0aa"/>
+      <stop offset="100%" stop-color="#aa820a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#3a2518" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg_grad)"/>
+  <!-- Velvet Jewellery Display Bust -->
+  <g filter="url(#shadow)">
+    <!-- Base -->
+    <ellipse cx="300" cy="710" rx="140" ry="24" fill="#18181b"/>
+    <!-- Bust -->
+    <path d="M 285 240 L 315 240 L 325 320 Q 420 370 450 680 L 150 680 Q 180 370 275 320 Z" fill="url(#velvet_bust)"/>
+  </g>
+
+  <!-- Kundan Polki Choker & Emerald Drops -->
+  <g filter="url(#shadow)">
+    <!-- Choker Collar Band -->
+    <path d="M 240 330 Q 300 370 360 330 Q 370 365 300 405 Q 230 365 240 330 Z" fill="url(#gold_hw)"/>
+
+    <!-- Polki Gemstone Grid -->
+    <g fill="#ffffff" stroke="#d4af37" stroke-width="2">
+      <circle cx="260" cy="350" r="7"/><circle cx="280" cy="360" r="8"/><circle cx="300" cy="365" r="9"/>
+      <circle cx="320" cy="360" r="8"/><circle cx="340" cy="350" r="7"/>
+      <circle cx="250" cy="340" r="6"/><circle cx="350" cy="340" r="6"/>
+      <circle cx="270" cy="378" r="7"/><circle cx="290" cy="385" r="8"/><circle cx="310" cy="385" r="8"/><circle cx="330" cy="378" r="7"/>
+    </g>
+
+    <!-- Emerald Gem Drops -->
+    <g fill="#059669" stroke="url(#gold_hw)" stroke-width="2">
+      <ellipse cx="260" cy="405" rx="6" ry="12"/>
+      <ellipse cx="280" cy="420" rx="7" ry="14"/>
+      <ellipse cx="300" cy="430" rx="8" ry="16"/>
+      <ellipse cx="320" cy="420" rx="7" ry="14"/>
+      <ellipse cx="340" cy="405" rx="6" ry="12"/>
+    </g>
+    <!-- Pearl Seed Accents -->
+    <g fill="#ffffff">
+      <circle cx="260" cy="420" r="3"/><circle cx="280" cy="438" r="3.5"/><circle cx="300" cy="450" r="4"/><circle cx="320" cy="438" r="3.5"/><circle cx="340" cy="420" r="3"/>
+    </g>
+
+    <!-- Matching Jhumka Earrings -->
+    <!-- Left Earring -->
+    <circle cx="210" cy="280" r="8" fill="#ffffff" stroke="url(#gold_hw)" stroke-width="2"/>
+    <path d="M 195 320 Q 210 295 225 320 Z" fill="url(#gold_hw)"/>
+    <ellipse cx="210" cy="335" rx="5" ry="10" fill="#059669"/>
+    <!-- Right Earring -->
+    <circle cx="390" cy="280" r="8" fill="#ffffff" stroke="url(#gold_hw)" stroke-width="2"/>
+    <path d="M 375 320 Q 390 295 405 320 Z" fill="url(#gold_hw)"/>
+    <ellipse cx="390" cy="335" rx="5" ry="10" fill="#059669"/>
+  </g>
+  <text x="300" y="780" font-family="'Playfair Display', serif" font-size="12" fill="#8c786a" text-anchor="middle" letter-spacing="3">VASTRAÉ ATELIER · HERITAGE JEWELLERY</text>
+</svg>

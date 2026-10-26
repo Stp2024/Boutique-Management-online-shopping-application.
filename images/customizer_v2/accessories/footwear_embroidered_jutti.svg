@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="70%" stop-color="#f5efe6"/>
+      <stop offset="100%" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="jutti_velvet" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#831843"/>
+      <stop offset="50%" stop-color="#be185d"/>
+      <stop offset="100%" stop-color="#701a75"/>
+    </linearGradient>
+    <linearGradient id="gold_hw" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#fff0aa"/>
+      <stop offset="100%" stop-color="#aa820a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#3a2518" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg_grad)"/>
+  <!-- Velvet Display Base -->
+  <ellipse cx="300" cy="650" rx="200" ry="60" fill="#18181b" opacity="0.18"/>
+  <ellipse cx="300" cy="640" rx="180" ry="50" fill="#27272a"/>
+
+  <!-- Left Jutti -->
+  <g filter="url(#shadow)">
+    <!-- Sole -->
+    <path d="M 180 500 Q 140 420 180 340 Q 220 300 240 310 Q 240 400 220 520 Q 200 550 180 500 Z" fill="#b45309"/>
+    <!-- Upper Velvet -->
+    <path d="M 190 490 Q 150 420 190 350 Q 225 315 240 325 Q 235 410 220 510 Q 205 530 190 490 Z" fill="url(#jutti_velvet)"/>
+    <!-- Pointed Curled Toe (Nok) -->
+    <path d="M 240 325 Q 260 290 250 280 Q 235 290 240 325 Z" fill="url(#gold_hw)"/>
+    <!-- Gold Zari Embroidery -->
+    <path d="M 195 440 Q 220 400 235 340" stroke="url(#gold_hw)" stroke-width="4" stroke-dasharray="6,3" fill="none"/>
+    <circle cx="215" cy="410" r="5" fill="#ffffff" stroke="url(#gold_hw)" stroke-width="2"/>
+    <circle cx="225" cy="370" r="4" fill="#ffffff" stroke="url(#gold_hw)" stroke-width="2"/>
+  </g>
+
+  <!-- Right Jutti (Slightly Angled) -->
+  <g filter="url(#shadow)">
+    <!-- Sole -->
+    <path d="M 360 480 Q 420 400 390 320 Q 350 280 330 290 Q 330 380 340 500 Q 355 530 360 480 Z" fill="#b45309"/>
+    <!-- Upper Velvet -->
+    <path d="M 355 470 Q 410 400 385 330 Q 345 295 330 305 Q 335 390 345 490 Q 352 510 355 470 Z" fill="url(#jutti_velvet)"/>
+    <!-- Pointed Curled Toe -->
+    <path d="M 330 305 Q 310 270 320 260 Q 335 270 330 305 Z" fill="url(#gold_hw)"/>
+    <!-- Gold Zari Embroidery -->
+    <path d="M 365 420 Q 350 380 335 320" stroke="url(#gold_hw)" stroke-width="4" stroke-dasharray="6,3" fill="none"/>
+    <circle cx="355" cy="390" r="5" fill="#ffffff" stroke="url(#gold_hw)" stroke-width="2"/>
+    <circle cx="345" cy="350" r="4" fill="#ffffff" stroke="url(#gold_hw)" stroke-width="2"/>
+  </g>
+  <text x="300" y="780" font-family="'Playfair Display', serif" font-size="12" fill="#8c786a" text-anchor="middle" letter-spacing="3">VASTRAÉ ATELIER · EMBROIDERED JUTTIS</text>
+</svg>
