@@ -1,0 +1,94 @@
+<!-- =====================================================
+SHOP SECTION
+===================================================== -->
+<section class="shop" id="shop">
+ <div class="heading">
+  <small>
+   VASTRAÉ COLLECTION
+  </small>
+  <h2>
+   Curated Boutique
+  </h2>
+  <p>
+   Shop by style, collection, occasion or simply search for something
+         that feels like you.
+  </p>
+ </div>
+ <div class="shop-tools">
+  <input class="search" id="search" oninput="renderProducts()" placeholder="Search dresses, sarees, suits, kurtas..."/>
+  <select id="gender" onchange="renderProducts()">
+   <option value="all">
+    Everyone
+   </option>
+   <option value="women">
+    Women
+   </option>
+   <option value="men">
+    Men
+   </option>
+   <option value="family">
+    Family
+   </option>
+  </select>
+  <select id="styleFilter" onchange="renderProducts()">
+   <option value="all">
+    All Styles
+   </option>
+   <option value="modern">
+    Modern
+   </option>
+   <option value="traditional">
+    Traditional
+   </option>
+   <option value="formal">
+    Formal
+   </option>
+   <option value="semi-formal">
+    Semi-Formal
+   </option>
+   <option value="semi-modern">
+    Semi-Modern
+   </option>
+   <option value="casual">
+    Casual
+   </option>
+   <option value="ethnic">
+    Ethnic
+   </option>
+   <option value="festive">
+    Festive
+   </option>
+   <option value="party">
+    Party
+   </option>
+   <option value="wedding">
+    Wedding
+   </option>
+   <option value="luxury">
+    Luxury
+   </option>
+   <option value="office">
+    Office
+   </option>
+   <option value="designer">
+    Designer
+   </option>
+  </select>
+  <select id="sort" onchange="renderProducts()">
+   <option value="featured">
+    Featured
+   </option>
+   <option value="low">
+    Price: Low to High
+   </option>
+   <option value="high">
+    Price: High to Low
+   </option>
+   <option value="name">
+    Name
+   </option>
+  </select>
+ </div>
+ <div class="product-grid" id="productGrid">
+ </div>
+</section>

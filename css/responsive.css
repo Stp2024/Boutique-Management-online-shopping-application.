@@ -1,0 +1,227 @@
+#vasToast {
+  top: 24px;
+  right: 24px;
+  bottom: auto;
+}
+
+body:not(.vas-authenticated) #authNavActions,
+body:not(.vas-authenticated) #vasUserDropdown,
+body:not(.vas-authenticated) #navNotifBtn,
+body:not(.vas-authenticated) #vasNotifDropdown,
+body:not(.vas-authenticated) #navWishBtn {
+  display: none !important;
+}
+
+body:not(.vas-authenticated) .vas-card-add-to-bag {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  #topHeader .vas-nav-wrapper {
+    gap: 12px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  #topHeader .vas-mobile-toggle {
+    display: block;
+    flex: 0 0 auto;
+    color: var(--evora-ink, #191817);
+    z-index: 1001;
+  }
+
+  #topHeader .vas-nav-menu {
+    position: fixed;
+    top: 0;
+    right: -310px;
+    width: min(290px, 85vw);
+    height: 100vh;
+    padding: 100px 28px 40px;
+    background: #fff;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.16);
+    z-index: 1000;
+  }
+
+  #topHeader .vas-nav-menu.open {
+    right: 0;
+  }
+
+  #topHeader .vas-nav-menu .vas-nav-link {
+    color: #4b4742 !important;
+  }
+
+  #topHeader .vas-nav-menu .vas-mobile-only-link {
+    display: block !important;
+  }
+
+  #topHeader .vas-nav-actions {
+    margin-left: auto;
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  #topHeader .vas-nav-utilities {
+    gap: 6px;
+  }
+
+  #topHeader .vas-icon-btn.vas-icon-glass {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  #topHeader .vas-nav-divider {
+    margin: 0 2px;
+  }
+
+  #topHeader .vas-nav-user-pill {
+    max-width: 150px;
+    padding-right: 9px;
+  }
+
+  #topHeader .vas-nav-username {
+    max-width: 76px;
+    color: #191817 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #topHeader {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  #topHeader .vas-nav-wrapper {
+    gap: 4px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  #topHeader .vas-brand {
+    flex: 0 1 112px;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  #topHeader .vas-brand-emblem {
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+  }
+
+  #topHeader .vas-brand-text {
+    min-width: 0;
+  }
+
+  #topHeader .vas-brand-name {
+    font-size: 1rem;
+  }
+
+  #topHeader .vas-brand-sub {
+    display: none;
+  }
+
+  #topHeader .vas-nav-utilities .vas-nav-item-rel,
+  #topHeader .vas-nav-utilities #navWishBtn,
+  #topHeader .vas-nav-utilities #navGuideBtn,
+  #topHeader .vas-nav-divider {
+    display: none !important;
+  }
+
+  #topHeader .vas-nav-user-pill {
+    max-width: 120px;
+    gap: 5px;
+    padding-left: 4px;
+  }
+
+  #topHeader .vas-nav-username {
+    max-width: 62px;
+  }
+
+  #topHeader .vas-nav-actions {
+    flex: 0 0 auto;
+    gap: 5px;
+  }
+
+  #topHeader .vas-nav-wrapper {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  #topHeader .vas-nav-wrapper {
+    gap: 2px;
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+
+  #topHeader .vas-nav-user-pill {
+    max-width: 104px;
+  }
+
+  #topHeader .vas-nav-username {
+    max-width: 48px;
+  }
+
+  #topHeader #navCartBtn {
+    display: none !important;
+  }
+}
+
+.vai-mode-nav {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.vai-mode-btn {
+  justify-content: center;
+  flex: 1 1 300px;
+  min-width: 0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.vai-mode-btn > span:last-child {
+  min-width: 0;
+}
+
+.vai-designer-controls > div[style*="display:flex"] {
+  align-items: stretch;
+}
+
+.vai-designer-controls > div[style*="display:flex"] .vai-btn-primary,
+.vai-designer-controls > div[style*="display:flex"] .vai-btn-secondary {
+  justify-content: center;
+  min-height: 48px;
+  line-height: 1.35;
+}
+
+.vai-launch-banner {
+  align-items: center;
+}
+
+.vai-launch-banner > div {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.vai-launch-banner .vai-launch-button {
+  flex: 0 0 auto;
+  white-space: normal;
+}
+
+@media (max-width: 640px) {
+  .vai-mode-btn {
+    flex: 0 1 auto;
+    min-height: 68px;
+    justify-content: flex-start;
+  }
+
+  .vai-launch-banner .vai-launch-button {
+    width: 100%;
+  }

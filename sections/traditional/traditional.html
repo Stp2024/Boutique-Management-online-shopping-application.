@@ -1,0 +1,143 @@
+<!-- =====================================================
+SACRED TRADITIONAL PAVILION (TEMPLE THEME) SECTION
+===================================================== -->
+<section class="traditional-sanctum-section" id="traditionalSection">
+ <!-- Ambient Temple Visual Layers -->
+ <div class="temple-ambient-auras">
+  <div class="temple-aura aura-left"></div>
+  <div class="temple-aura aura-center"></div>
+  <div class="temple-aura aura-right"></div>
+ </div>
+ <div class="temple-petals-container" id="templePetalsContainer"></div>
+
+ <!-- Hanging Temple Brass Bells (Interactive) -->
+ <div class="temple-bells-canopy">
+  <div class="temple-bell-string">
+   <div class="temple-bell-chain"></div>
+   <div class="temple-bell-body" onclick="ringTempleBell(this)" title="Ring Sacred Bell">
+    🔔
+   </div>
+  </div>
+  <div class="temple-bell-string">
+   <div class="temple-bell-chain"></div>
+   <div class="temple-bell-body" onclick="ringTempleBell(this)" title="Ring Sacred Bell">
+    🔔
+   </div>
+  </div>
+  <div class="temple-bell-string bell-hero">
+   <div class="temple-bell-chain"></div>
+   <div class="temple-bell-body main-bell" onclick="ringTempleBell(this)" title="Ring Grand Mandapam Bell">
+    🔔
+   </div>
+  </div>
+  <div class="temple-bell-string">
+   <div class="temple-bell-chain"></div>
+   <div class="temple-bell-body" onclick="ringTempleBell(this)" title="Ring Sacred Bell">
+    🔔
+   </div>
+  </div>
+  <div class="temple-bell-string">
+   <div class="temple-bell-chain"></div>
+   <div class="temple-bell-body" onclick="ringTempleBell(this)" title="Ring Sacred Bell">
+    🔔
+   </div>
+  </div>
+ </div>
+
+ <!-- Temple Torana Arch & Sacred Header -->
+ <div class="temple-mandapam-header">
+  <div class="temple-torana-arch">
+   <div class="torana-line"></div>
+   <div class="torana-emblem">
+    <span class="torana-symbol">ॐ</span>
+   </div>
+   <div class="torana-line"></div>
+  </div>
+
+  <div class="temple-kicker-wrap">
+   <span>🪔</span>
+   <small class="temple-kicker">
+    SACRED HERITAGE COUTURE &middot; TEMPLE SANCTUM EDITION
+   </small>
+   <span>🪔</span>
+  </div>
+
+  <h2 class="temple-heading">
+   The Sacred Mandapam Collection
+  </h2>
+
+  <p class="temple-lead">
+   Woven in holy temple corridors and historic royal ateliers. Discover pure Kanjeevaram mulberry silks, real 24K gold zari kadwa brocades, royal bridal lehengas, classical Bharatanatyam &amp; Kathak dance costumes, Gujarati mirror-work ensembles, and sanctified temple ritual dhotis.
+  </p>
+
+  <!-- Temple Atmosphere Action Bar -->
+  <div class="temple-action-bar">
+   <button class="temple-btn" onclick="ringTempleBell(this)">
+    <span>🔔</span> Ring Sanctum Bell
+   </button>
+   <button class="temple-btn" id="blessDiyaBtn" onclick="toggleTempleDiyas()">
+    <span>🪔</span> <span id="diyaBtnLabel">Bless With Diyas</span>
+   </button>
+   <button class="temple-btn temple-btn-outline" onclick="window.scrollToId('catalogue')">
+    <span>← Back to Collections</span>
+   </button>
+   <div class="temple-pill-badge" id="templeThemePill">
+    <span class="status-dot"></span> Temple Ambiance Active
+   </div>
+  </div>
+ </div>
+
+ <!-- Traditional Category Filter Tabs -->
+ <div class="traditional-category-tabs">
+  <button class="trad-cat-btn active" data-subcat="all" onclick="filterTraditionalCategory('all', this)">
+   <span>All Sacred Couture</span> <b>(24)</b>
+  </button>
+  <button class="trad-cat-btn" data-subcat="costume" onclick="filterTraditionalCategory('costume', this)">
+   <span>Traditional Costumes &amp; Folk Regalia</span> <b>(5)</b>
+  </button>
+  <button class="trad-cat-btn" data-subcat="saree" onclick="filterTraditionalCategory('saree', this)">
+   <span>Kanjeevaram &amp; Banarasi Sarees</span> <b>(5)</b>
+  </button>
+  <button class="trad-cat-btn" data-subcat="lehenga" onclick="filterTraditionalCategory('lehenga', this)">
+   <span>Royal Bridal Lehengas</span> <b>(3)</b>
+  </button>
+  <button class="trad-cat-btn" data-subcat="sherwani" onclick="filterTraditionalCategory('sherwani', this)">
+   <span>Heritage Sherwanis &amp; Kurtas</span> <b>(4)</b>
+  </button>
+  <button class="trad-cat-btn" data-subcat="temple" onclick="filterTraditionalCategory('temple', this)">
+   <span>Temple Dhotis &amp; Ritual Sets</span> <b>(4)</b>
+  </button>
+  <button class="trad-cat-btn" data-subcat="anarkali" onclick="filterTraditionalCategory('anarkali', this)">
+   <span>Royal Flared Anarkalis</span> <b>(3)</b>
+  </button>
+ </div>
+
+ <!-- Traditional Outfits Grid -->
+ <div class="traditional-outfits-grid" id="traditionalGrid">
+  <!-- Dynamic Traditional Cards Rendered by JS -->
+ </div>
+
+ <!-- Sacred Temple Weaving & Purity Assurance Banner -->
+ <div class="temple-heritage-banner">
+  <div class="heritage-item">
+   <div class="heritage-icon">⚜️</div>
+   <h4>100% Pure Silk Mark Certified</h4>
+   <p>Every Kanjeevaram and Banarasi warp &amp; weft is tested for genuine silk purity.</p>
+  </div>
+  <div class="heritage-item">
+   <div class="heritage-icon">🪔</div>
+   <h4>Authentic 24K Gold Zari</h4>
+   <p>Hand-drawn silver-electroplated copper and 24-karat gold dipped threads woven by master craftsmen.</p>
+  </div>
+  <div class="heritage-item">
+   <div class="heritage-icon">🏛️</div>
+   <h4>Temple Motif Lineage</h4>
+   <p>Ancient gopuram, mayil (peacock), rudraksha, and kalash temple borders preserved for generations.</p>
+  </div>
+  <div class="heritage-item">
+   <div class="heritage-icon">🪡</div>
+   <h4>Couture Digital Tailoring</h4>
+   <p>Complimentary custom blouse stitching, fall/pico finish, and personal made-to-measure fitting.</p>
+  </div>
+ </div>
+</section>

@@ -1,0 +1,1188 @@
+/* ==========================================================================
+   VASTRAÉ HAUTE COUTURE DYNAMIC PAYMENT GATEWAY STYLES
+   World-class luxury checkout & multi-method payment gateway
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. GATEWAY MODAL OVERLAY & SHELL
+   -------------------------------------------------------------------------- */
+.vas-gateway-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(12, 8, 5, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  overflow-y: auto;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vas-gateway-modal.active {
+  display: flex;
+  opacity: 1;
+}
+
+.vas-gateway-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 940px;
+  max-height: 92vh;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(212, 175, 105, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: gatewaySlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes gatewaySlideUp {
+  0% { transform: translateY(28px) scale(0.97); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   2. GATEWAY TOP BAR (BRAND & ENCRYPTION BADGE)
+   -------------------------------------------------------------------------- */
+.vas-gw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  background: linear-gradient(135deg, #18120c 0%, #251b12 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(212, 175, 105, 0.25);
+}
+
+.vas-gw-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vas-gw-brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f3d49b 0%, #c99846 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  color: #1a1208;
+  box-shadow: 0 4px 12px rgba(201, 152, 70, 0.35);
+}
+
+.vas-gw-brand-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff9f0;
+  line-height: 1.1;
+}
+
+.vas-gw-brand-sub {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #dfb776;
+}
+
+.vas-gw-security {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vas-gw-ssl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #55e6a5;
+  letter-spacing: 0.04em;
+}
+
+.vas-gw-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-close-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: rotate(90deg);
+}
+
+/* --------------------------------------------------------------------------
+   3. PROGRESS STEPPER
+   -------------------------------------------------------------------------- */
+.vas-gw-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: #faf8f5;
+  border-bottom: 1px solid #ebe5dc;
+}
+
+.vas-gw-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #8c8378;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-step.active {
+  color: #1a1612;
+}
+
+.vas-gw-step.completed {
+  color: #1b8554;
+}
+
+.vas-gw-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e2dbcf;
+  color: #5a5247;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.vas-gw-step.active .vas-gw-step-num {
+  background: #1a1612;
+  color: #f8e5c2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.vas-gw-step.completed .vas-gw-step-num {
+  background: #1b8554;
+  color: #ffffff;
+}
+
+.vas-gw-step-line {
+  flex: 1;
+  height: 2px;
+  background: #e2dbcf;
+  margin: 0 16px;
+}
+
+.vas-gw-step-line.completed {
+  background: #1b8554;
+}
+
+/* --------------------------------------------------------------------------
+   4. TWO-COLUMN MAIN CONTENT (CHECKOUT CONSOLE + ORDER SUMMARY)
+   -------------------------------------------------------------------------- */
+.vas-gw-body {
+  display: grid;
+  grid-template-columns: 1.25fr 0.95fr;
+  flex: 1;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.vas-gw-left-col {
+  padding: 28px 32px;
+  overflow-y: auto;
+  border-right: 1px solid #ebe5dc;
+}
+
+.vas-gw-right-col {
+  padding: 28px 30px;
+  background: #faf8f5;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   5. STEP 1: DELIVERY & BILLING ADDRESS FORM
+   -------------------------------------------------------------------------- */
+.vas-gw-form-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a1612;
+  margin: 0 0 6px;
+}
+
+.vas-gw-form-sub {
+  font-size: 0.84rem;
+  color: #7a7167;
+  margin: 0 0 22px;
+}
+
+.vas-gw-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.vas-gw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.vas-gw-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #4a4237;
+}
+
+.vas-gw-field input,
+.vas-gw-field select {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #dcd4c7;
+  background: #ffffff;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: #1a1612;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.vas-gw-field input:focus,
+.vas-gw-field select:focus {
+  border-color: #c99846;
+  box-shadow: 0 0 0 3px rgba(201, 152, 70, 0.15);
+}
+
+.vas-gw-delivery-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.vas-gw-delivery-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid #e0d8cb;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-delivery-card.active {
+  border-color: #c99846;
+  background: #fdfaf3;
+  box-shadow: 0 4px 14px rgba(201, 152, 70, 0.1);
+}
+
+.vas-gw-delivery-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vas-gw-radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #b5ab9e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vas-gw-delivery-card.active .vas-gw-radio-dot {
+  border-color: #c99846;
+}
+
+.vas-gw-delivery-card.active .vas-gw-radio-dot::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #c99846;
+}
+
+.vas-gw-delivery-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1a1612;
+}
+
+.vas-gw-delivery-sub {
+  font-size: 0.75rem;
+  color: #7a7167;
+}
+
+.vas-gw-delivery-price {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1b8554;
+}
+
+/* --------------------------------------------------------------------------
+   6. STEP 2: DYNAMIC PAYMENT TABS
+   -------------------------------------------------------------------------- */
+.vas-gw-payment-tabs {
+  display: flex;
+  gap: 6px;
+  background: #ede6dc;
+  padding: 5px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.vas-gw-pay-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6a6155;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.22s ease;
+}
+
+.vas-gw-pay-tab.active {
+  background: #ffffff;
+  color: #1a1612;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.vas-gw-tab-panel {
+  display: none;
+  animation: fadeInTab 0.25s ease forwards;
+}
+
+.vas-gw-tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeInTab {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   7. UPI & DYNAMIC QR CODE PANEL
+   -------------------------------------------------------------------------- */
+.vas-gw-upi-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.vas-gw-qr-box {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  padding: 14px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 2px dashed #c99846;
+  box-shadow: 0 10px 30px rgba(201, 152, 70, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.vas-gw-qr-svg {
+  width: 130px;
+  height: 130px;
+}
+
+.vas-gw-qr-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b33924;
+  background: #fdf0ed;
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.vas-gw-upi-apps {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.vas-gw-upi-app-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid #e0d8cb;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 78px;
+}
+
+.vas-gw-upi-app-btn:hover {
+  border-color: #c99846;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.vas-gw-app-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.app-gpay { background: #e8f0fe; color: #1a73e8; }
+.app-phonepe { background: #f3e8fd; color: #5f259f; }
+.app-paytm { background: #e1f5fe; color: #00b9f1; }
+.app-cred { background: #1c1c1c; color: #ffffff; }
+
+.vas-gw-vpa-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.vas-gw-vpa-row input {
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   8. INTERACTIVE 3D CREDIT/DEBIT CARD
+   -------------------------------------------------------------------------- */
+.vas-3d-card-stage {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 380px;
+  height: 215px;
+  margin: 0 auto 24px;
+}
+
+.vas-3d-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 16px 40px rgba(26, 18, 12, 0.28);
+}
+
+.vas-3d-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.vas-card-front,
+.vas-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  padding: 22px 26px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.vas-card-front {
+  background: linear-gradient(135deg, #1f1812 0%, #3a2b1c 50%, #15100c 100%);
+  color: #fffaf0;
+  border: 1px solid rgba(240, 205, 140, 0.3);
+}
+
+.vas-card-back {
+  background: linear-gradient(135deg, #15100c 0%, #2b2014 100%);
+  color: #ffffff;
+  transform: rotateY(180deg);
+  padding: 0;
+  justify-content: flex-start;
+  border: 1px solid rgba(240, 205, 140, 0.3);
+}
+
+.vas-card-glow {
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(circle at 70% 20%, rgba(243, 212, 155, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.vas-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.vas-card-chip {
+  width: 44px;
+  height: 32px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #e5c382 0%, #aa7e35 100%);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.vas-card-chip::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.vas-card-brand-logo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #fce8c4;
+}
+
+.vas-card-num {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 2;
+  margin: 12px 0 6px;
+}
+
+.vas-card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.vas-card-lbl {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #c99846;
+  margin-bottom: 2px;
+}
+
+.vas-card-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f7ede1;
+}
+
+.vas-card-expiry {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.vas-card-mag-stripe {
+  width: 100%;
+  height: 42px;
+  background: #000000;
+  margin-top: 22px;
+}
+
+.vas-card-cvv-panel {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.vas-card-cvv-white {
+  width: 100%;
+  height: 36px;
+  background: #ffffff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1612;
+  letter-spacing: 0.15em;
+}
+
+.vas-autofill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #fdf4e4;
+  border: 1px solid #e7c78d;
+  border-radius: 20px;
+  color: #8c5d17;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
+}
+
+.vas-autofill-btn:hover {
+  background: #faebd0;
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   9. NET BANKING & EMI GRIDS
+   -------------------------------------------------------------------------- */
+.vas-gw-bank-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.vas-gw-bank-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #e0d8cb;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #2b2319;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-bank-card.active {
+  border-color: #c99846;
+  background: #fdfaf3;
+  box-shadow: 0 4px 12px rgba(201, 152, 70, 0.12);
+}
+
+.vas-gw-emi-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.vas-gw-emi-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid #e0d8cb;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-emi-option.active {
+  border-color: #c99846;
+  background: #fdfaf3;
+}
+
+.vas-gw-emi-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #e2f5ea;
+  color: #1b8554;
+}
+
+/* --------------------------------------------------------------------------
+   10. ORDER SUMMARY SIDEBAR (RIGHT COLUMN)
+   -------------------------------------------------------------------------- */
+.vas-gw-summary-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1612;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vas-gw-item-count-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #ece4d8;
+  color: #5d5345;
+}
+
+.vas-gw-items-list {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vas-gw-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ebe5dc;
+}
+
+.vas-gw-item-img {
+  width: 50px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #e0d8cb;
+}
+
+.vas-gw-item-info {
+  flex: 1;
+}
+
+.vas-gw-item-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1612;
+  margin-bottom: 3px;
+  line-height: 1.25;
+}
+
+.vas-gw-item-meta {
+  font-size: 0.75rem;
+  color: #8c8378;
+}
+
+.vas-gw-item-price {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1612;
+}
+
+/* Coupon Box */
+.vas-gw-coupon-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.vas-gw-coupon-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #dcd4c7;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.vas-gw-coupon-btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+  background: #1a1612;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-coupon-btn:hover {
+  background: #c99846;
+  color: #1a1208;
+}
+
+.vas-gw-applied-coupon {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: #edf8f2;
+  border: 1px solid #b7e4ce;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1b8554;
+  margin-bottom: 16px;
+}
+
+.vas-gw-applied-coupon.show {
+  display: flex;
+}
+
+/* Totals Table */
+.vas-gw-calc-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.vas-gw-calc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: #5d5345;
+}
+
+.vas-gw-calc-row.discount {
+  color: #1b8554;
+  font-weight: 600;
+}
+
+.vas-gw-calc-divider {
+  height: 1px;
+  background: #e2dbcf;
+  margin: 6px 0;
+}
+
+.vas-gw-calc-row.grand-total {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1612;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Pay CTA */
+.vas-gw-pay-cta-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #1f1812 0%, #3a2b1c 100%);
+  color: #fffaf0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(26, 18, 12, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: auto;
+}
+
+.vas-gw-pay-cta-btn:hover {
+  background: linear-gradient(135deg, #c99846 0%, #a8782a 100%);
+  color: #1a1208;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(201, 152, 70, 0.35);
+}
+
+.vas-gw-pay-lock-icon {
+  font-size: 1.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   11. 3D SECURE OTP SIMULATION MODAL
+   -------------------------------------------------------------------------- */
+.vas-gw-otp-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 12, 8, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeInOtp 0.25s ease forwards;
+}
+
+.vas-gw-otp-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeInOtp {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.vas-gw-otp-card {
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 440px;
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.vas-gw-bank-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ebe5dc;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+
+.vas-gw-bank-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1612;
+}
+
+.vas-gw-otp-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1612;
+  margin: 0 0 6px;
+}
+
+.vas-gw-otp-sub {
+  font-size: 0.84rem;
+  color: #7a7167;
+  margin: 0 0 22px;
+}
+
+.vas-gw-otp-digits {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.vas-gw-otp-input {
+  width: 46px;
+  height: 52px;
+  border-radius: 12px;
+  border: 2px solid #dcd4c7;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-otp-input:focus {
+  border-color: #c99846;
+  box-shadow: 0 0 0 3px rgba(201, 152, 70, 0.15);
+}
+
+.vas-gw-otp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vas-gw-approve-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #1b8554;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vas-gw-approve-btn:hover {
+  background: #156d44;
+}
+
+.vas-gw-decline-btn {
+  background: transparent;
+  border: 1px solid #e0d8cb;
+  color: #9c2818;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   12. SUCCESS SCREEN WITH CONFETTI & GST INVOICE
+   -------------------------------------------------------------------------- */
+.vas-gw-success-screen {
+  padding: 40px 32px;
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInTab 0.35s ease forwards;
+}
+
+.vas-gw-success-screen.active {
+  display: flex;
+}
+
+.vas-gw-success-icon-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1b8554 0%, #2ec47c 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+  margin-bottom: 20px;
+  box-shadow: 0 12px 30px rgba(27, 133, 84, 0.35);
+  animation: popSuccess 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popSuccess {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.vas-gw-success-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1612;
+  margin: 0 0 6px;
+}
+
+.vas-gw-success-ref {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #c99846;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.vas-gw-success-lead {
+  max-width: 540px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6a6155;
+  margin: 0 auto 28px;
+}
+
+.vas-gw-receipt-card {
+  width: 100%;
+  max-width: 580px;
+  background: #faf8f5;
+  border-radius: 18px;
+  border: 1px solid #ebe5dc;
+  padding: 22px 24px;
+  text-align: left;
+  margin-bottom: 28px;
+}
+
+.vas-gw-receipt-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0ebe2;
+  font-size: 0.88rem;
+  color: #5d5345;
+}
+
+.vas-gw-receipt-row:last-child {
+  border-bottom: none;
+}
+
+.vas-gw-receipt-row strong {
+  color: #1a1612;
+  font-weight: 600;
+}
+
+.vas-gw-success-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .vas-gw-body {
+    grid-template-columns: 1fr;
+  }
+  .vas-gw-left-col {
+    border-right: none;
+    border-bottom: 1px solid #ebe5dc;
+  }
+  .vas-gw-stepper {
+    padding: 12px 18px;
+  }
+  .vas-3d-card-stage {
+    max-width: 320px;
+    height: 185px;
+  }
+}

@@ -1,0 +1,612 @@
+<!-- =====================================================
+AI MIRROR + DIGITAL FASHION TWIN SECTION
+===================================================== -->
+<section class="digital" id="aiMirror">
+ <div class="heading">
+  <small>
+   AI MIRROR &middot; DIGITAL FASHION TWIN
+  </small>
+  <h2>
+   Scan. Measure. Style. Visualize.
+  </h2>
+  <p>
+   A guided 3-way scan workflow that turns measurements and styling
+         choices into a personalized digital fashion twin.
+  </p>
+ </div>
+ <div class="mirror-shell">
+  <div class="mirror-steps">
+   <span class="mirror-step active" id="mirrorStep1">
+    01 Scan
+   </span>
+   <span class="mirror-step" id="mirrorStep2">
+    02 Measurements
+   </span>
+   <span class="mirror-step" id="mirrorStep3">
+    03 Digital Twin
+   </span>
+   <span class="mirror-step" id="mirrorStep4">
+    04 Couture
+   </span>
+   <span class="mirror-step" id="mirrorStep5">
+    05 Final
+   </span>
+  </div>
+  <div id="mirrorPane1">
+   <div class="mirror-grid">
+    <div>
+     <h3>
+      3-Way Face Scan
+     </h3>
+     <p class="muted">
+      Frontend simulation &mdash; no camera data is uploaded.
+     </p>
+     <div class="mirror-choices">
+      <button class="mirror-choice active" onclick="mirrorMode(1, this)">
+       Front
+      </button>
+      <button class="mirror-choice" onclick="mirrorMode(2, this)">
+       Side
+      </button>
+      <button class="mirror-choice" onclick="mirrorMode(3, this)">
+       360&deg;
+      </button>
+     </div>
+     <div class="mirror-scan">
+      <div class="mirror-face">
+      </div>
+      <div class="mirror-scanline">
+      </div>
+      <b id="mirrorScanText">
+       Center your face
+      </b>
+     </div>
+     <button class="btn btn-dark" onclick="captureMirror()">
+      Capture Scan
+     </button>
+     <div class="result" id="mirrorScanMsg">
+      ● Ready
+     </div>
+    </div>
+    <div>
+     <h3>
+      Scan Guide
+     </h3>
+     <p class="muted">
+      &checkmark; Good lighting
+      <br/>
+      &checkmark; Face visible
+      <br/>
+      &checkmark; Neutral expression
+      <br/>
+      &checkmark; Stand comfortably
+      <br/>
+      &checkmark; Turn slowly in 360&deg; mode
+     </p>
+     <div class="result">
+      After the scan, confirm your measurements and create your
+               Digital Fashion Twin.
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="hidden" id="mirrorPane2">
+   <div class="mirror-grid">
+    <div>
+     <h3>
+      Confirm Digital Measurements
+     </h3>
+     <p class="muted">
+      Review and adjust your measurements before creating your
+               Digital Fashion Twin.
+     </p>
+     <div class="mirror-profile-grid">
+      <div>
+       <label>
+        NAME
+       </label>
+       <input id="mirrorName" placeholder="Your name"/>
+      </div>
+      <div>
+       <label>
+        HEIGHT (CM)
+       </label>
+       <input id="mirrorHeight" type="number" value="170"/>
+      </div>
+      <div>
+       <label>
+        CHEST / BUST
+       </label>
+       <input id="mirrorChest" type="number" value="92"/>
+      </div>
+      <div>
+       <label>
+        WAIST
+       </label>
+       <input id="mirrorWaist" type="number" value="78"/>
+      </div>
+      <div>
+       <label>
+        HIP
+       </label>
+       <input id="mirrorHip" type="number" value="94"/>
+      </div>
+      <div>
+       <label>
+        SHOULDER
+       </label>
+       <input id="mirrorShoulder" type="number" value="43"/>
+      </div>
+      <div>
+       <label>
+        SLEEVE
+       </label>
+       <input id="mirrorSleeve" type="number" value="60"/>
+      </div>
+      <div>
+       <label>
+        INSEAM
+       </label>
+       <input id="mirrorInseam" type="number" value="78"/>
+      </div>
+     </div>
+     <br/>
+     <button class="mirror-choice" onclick="adjustMirrorWaist(-1)">
+      &minus; 1 cm waist
+     </button>
+     <button class="mirror-choice" onclick="adjustMirrorWaist(1)">
+      + 1 cm waist
+     </button>
+     <br/>
+     <button class="btn btn-dark" onclick="generateMirrorTwin()">
+      Generate Digital Twin ✨
+     </button>
+    </div>
+    <div>
+     <h3>
+      Measurement Profile
+     </h3>
+     <div class="result" id="mirrorMeasureSummary">
+      Enter your measurements to continue.
+     </div>
+     <div class="result">
+      &checkmark; Measurements remain in your browser for this prototype.
+      <br/>
+      &checkmark;
+               Production deployments should securely process personal
+               measurement data.
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="hidden" id="mirrorPane3">
+   <div class="mirror-grid">
+    <div>
+     <h3>
+      Personalized Digital Twin
+     </h3>
+     <div class="twin-preview">
+      <div class="twin-avatar">
+       <div class="twin-hair">
+       </div>
+       <div class="twin-head">
+       </div>
+       <div class="twin-body" id="mirrorTwinBody">
+       </div>
+       <div class="twin-legs">
+       </div>
+      </div>
+     </div>
+    </div>
+    <div>
+     <h3>
+      Profile Status
+     </h3>
+     <div class="result">
+      &checkmark; Face scan complete
+      <br/>
+      &checkmark; Measurements confirmed
+      <br/>
+      &checkmark; Digital profile created
+     </div>
+     <button class="btn btn-dark" onclick="mirrorStep(4)">
+      Enter Digital Couture &rarr;
+     </button>
+    </div>
+   </div>
+  </div>
+  <div class="hidden" id="mirrorPane4">
+   <div class="mirror-grid">
+    <div>
+     <h3>
+      Digital Couture Studio
+     </h3>
+     <p class="muted">
+      Customize every part of your Digital Fashion Twin.
+     </p>
+     <b>
+      Style
+     </b>
+     <div class="mirror-choices">
+      <button class="mirror-choice active" onclick="mirrorPick(this, 'style')">
+       Modern
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'style')">
+       Traditional
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'style')">
+       Formal
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'style')">
+       Semi-Formal
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'style')">
+       Semi-Modern
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'style')">
+       Custom Couture
+      </button>
+     </div>
+     <b>
+      Occasion
+     </b>
+     <select id="mirrorOccasion" onchange="mirrorChoice.occasion = this.value">
+      <option>
+       Wedding
+      </option>
+      <option>
+       Office
+      </option>
+      <option>
+       Party
+      </option>
+      <option>
+       Traditional
+      </option>
+      <option>
+       Casual
+      </option>
+      <option>
+       College
+      </option>
+      <option>
+       Date Night
+      </option>
+     </select>
+     <b>
+      Garment
+     </b>
+     <div class="mirror-choices">
+      <button class="mirror-choice active" onclick="mirrorPick(this, 'garment')">
+       Dress
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'garment')">
+       Suit
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'garment')">
+       Kurta
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'garment')">
+       Shirt
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'garment')">
+       Saree
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'garment')">
+       Lehenga
+      </button>
+     </div>
+     <b>
+      Material
+     </b>
+     <div class="mirror-choices">
+      <button class="mirror-choice active" onclick="mirrorPick(this, 'fabric')">
+       Silk
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'fabric')">
+       Cotton
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'fabric')">
+       Linen
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'fabric')">
+       Velvet
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'fabric')">
+       Denim
+      </button>
+      <button class="mirror-choice" onclick="mirrorPick(this, 'fabric')">
+       Own Fabric
+      </button>
+     </div>
+     <div class="mirror-own-fabric">
+      <label>
+       UPLOAD OWN FABRIC
+      </label>
+      <input accept="image/*" onchange="mirrorOwnFabric(this)" type="file"/>
+      <div class="result hidden" id="mirrorFabricMsg">
+      </div>
+     </div>
+     <b>
+      Colour
+     </b>
+     <div class="mirror-color-row">
+      <button class="mirror-color" onclick="mirrorColour('#263b59', this)" style="background: #263b59" title="Navy">
+      </button>
+      <button class="mirror-color" onclick="mirrorColour('#171313', this)" style="background: #171313" title="Black">
+      </button>
+      <button class="mirror-color" onclick="mirrorColour('#7a1f35', this)" style="background: #7a1f35" title="Wine">
+      </button>
+      <button class="mirror-color" onclick="mirrorColour('#b99a64', this)" style="background: #b99a64" title="Gold">
+      </button>
+      <button class="mirror-color" onclick="mirrorColour('#eee2cf', this)" style="background: #eee2cf" title="Ivory">
+      </button>
+     </div>
+     <b>
+      Design Details
+     </b>
+     <div class="mirror-design-grid">
+      <div>
+       <label>
+        NECK
+       </label>
+       <select onchange="mirrorChoice.neck = this.value">
+        <option>
+         Round
+        </option>
+        <option>
+         V-Neck
+        </option>
+        <option>
+         Boat
+        </option>
+        <option>
+         Mandarin
+        </option>
+        <option>
+         Square
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        SLEEVES
+       </label>
+       <select onchange="mirrorChoice.sleeves = this.value">
+        <option>
+         Full
+        </option>
+        <option>
+         Half
+        </option>
+        <option>
+         Sleeveless
+        </option>
+        <option>
+         Puff
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        FIT
+       </label>
+       <select onchange="mirrorChoice.fit = this.value">
+        <option>
+         Regular
+        </option>
+        <option>
+         Slim
+        </option>
+        <option>
+         Relaxed
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        LENGTH
+       </label>
+       <select onchange="mirrorChoice.length = this.value">
+        <option>
+         Medium
+        </option>
+        <option>
+         Short
+        </option>
+        <option>
+         Long
+        </option>
+       </select>
+      </div>
+     </div>
+     <b>
+      Accessories
+     </b>
+     <div class="mirror-choices">
+      <button class="mirror-choice" onclick="mirrorAcc('g', this)">
+       🕶 Glasses
+      </button>
+      <button class="mirror-choice" onclick="mirrorAcc('w', this)">
+       ⌚ Watch
+      </button>
+      <button class="mirror-choice" onclick="mirrorAcc('b', this)">
+       ... Bag
+      </button>
+      <button class="mirror-choice" onclick="mirrorAcc('j', this)">
+       💎 Jewellery
+      </button>
+      <button class="mirror-choice" onclick="mirrorAcc('s', this)">
+       👟 Shoes
+      </button>
+     </div>
+    </div>
+    <div>
+     <h3>
+      My Digital Twin
+     </h3>
+     <div class="twin-preview">
+      <div class="twin-avatar" id="mirrorRotatable">
+       <div class="twin-hair">
+       </div>
+       <div class="twin-head">
+       </div>
+       <div class="twin-body" id="mirrorCoutureBody">
+       </div>
+       <div class="twin-legs">
+       </div>
+       <div class="twin-acc twin-g" id="mirrorAccG">
+        🕶
+       </div>
+       <div class="twin-acc twin-w" id="mirrorAccW">
+        ⌚
+       </div>
+       <div class="twin-acc twin-b" id="mirrorAccB">
+        👜
+       </div>
+       <div class="twin-acc twin-j" id="mirrorAccJ">
+        💎
+       </div>
+       <div class="twin-acc twin-s" id="mirrorAccS">
+        👟
+       </div>
+      </div>
+     </div>
+     <input class="mirror-rotate" max="25" min="-25" oninput="
+                 document.getElementById('mirrorRotatable').style.transform =
+                   'rotateY(' + this.value + 'deg)'
+               " type="range" value="0"/>
+     <div id="traditionalDrapeCard" class="traditional-drape-card" style="display:none; align-items:center; gap:14px; margin:14px 0; padding:12px 14px; background:rgba(35,22,16,0.95); border:1px solid #ffd978; border-radius:12px; backdrop-filter:blur(10px); box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+      <img id="twinPreviewImg" src="" alt="Draped Outfit" style="width:58px; height:74px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,217,120,0.4); flex-shrink:0;">
+      <div style="flex:1; min-width:0; text-align:left;">
+       <span id="drapeBadge" style="font-size:9px; font-weight:700; color:#ffd978; letter-spacing:1px; text-transform:uppercase; display:block;">SACRED SANCTUM</span>
+       <h4 id="drapeTitle" style="margin:2px 0 4px; font-size:13px; color:#fff9f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:'Playfair Display', serif;">Heritage Ensemble</h4>
+       <p id="drapeDesc" style="margin:0; font-size:11px; color:#c9b9a6; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">Draped onto your digital fashion twin.</p>
+      </div>
+     </div>
+     <button class="btn btn-dark" onclick="mirrorAI()">
+       AI Style My Look
+     </button>
+     <button class="btn btn-light" onclick="mirrorStep(5)">
+      View Final Look &rarr;
+     </button>
+    </div>
+   </div>
+  </div>
+  <div class="hidden" id="mirrorPane5">
+   <div class="mirror-grid">
+    <div>
+     <h3 id="mirrorFinalTitle">
+      Your Final Digital Look
+     </h3>
+     <div class="twin-preview">
+      <div class="twin-avatar">
+       <div class="twin-hair">
+       </div>
+       <div class="twin-head">
+       </div>
+       <div class="twin-body" id="mirrorFinalBody">
+       </div>
+       <div class="twin-legs">
+       </div>
+       <div class="twin-acc twin-g" id="mirrorFinalAccG">
+        🕶
+       </div>
+       <div class="twin-acc twin-w" id="mirrorFinalAccW">
+        ⌚
+       </div>
+       <div class="twin-acc twin-b" id="mirrorFinalAccB">
+        👜
+       </div>
+       <div class="twin-acc twin-j" id="mirrorFinalAccJ">
+        💎
+       </div>
+       <div class="twin-acc twin-s" id="mirrorFinalAccS">
+        👟
+       </div>
+      </div>
+     </div>
+     <div class="mirror-choices">
+      <span class="mirror-choice" id="mirrorStyleTag">
+       Modern
+      </span>
+      <span class="mirror-choice" id="mirrorGarmentTag">
+       Dress
+      </span>
+      <span class="mirror-choice" id="mirrorFabricTag">
+       Silk
+      </span>
+      <span class="mirror-choice" id="mirrorOccasionTag">
+       Wedding
+      </span>
+     </div>
+    </div>
+    <div>
+     <h3>
+      AI Style Report
+     </h3>
+     <div class="result">
+      <b>
+       Style Compatibility:
+       <span id="mirrorScore">
+        94
+       </span>
+       %
+      </b>
+      <p class="muted">
+       A concept score based on style, occasion, garment, material,
+                 colour and accessories.
+      </p>
+     </div>
+     <h3>
+      Complete My Look
+     </h3>
+     <div class="product-grid">
+      <div class="product-card">
+       <div class="product-image">
+        👞
+       </div>
+       <b>
+        Classic Shoes
+       </b>
+       <div class="price">
+        ₹2,499
+       </div>
+      </div>
+      <div class="product-card">
+       <div class="product-image">
+        ⌚
+       </div>
+       <b>
+        Signature Watch
+       </b>
+       <div class="price">
+        ₹3,999
+       </div>
+      </div>
+      <div class="product-card">
+       <div class="product-image">
+        👜
+       </div>
+       <b>
+        Leather Bag
+       </b>
+       <div class="price">
+        ₹4,499
+       </div>
+      </div>
+     </div>
+     <button class="btn btn-dark" onclick="saveMirrorLook()">
+      &hearts; Save to Moodboard
+     </button>
+     <button class="btn btn-dark" onclick="addMirrorLookToCart()">
+      🛒 Add to Cart
+     </button>
+     <button class="btn btn-light" onclick="window.print()">
+      🖨 Print Look
+     </button>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>

@@ -1,0 +1,46 @@
+<!-- =====================================================
+TAILOR WORKSPACE SECTION
+===================================================== -->
+<div class="tailor-panel" id="tailorPanel">
+ <div class="tailor-head" style="
+        max-width: 1200px;
+        margin: 0 auto 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      ">
+  <div>
+   <h1 style="font-family: Georgia; margin: 0">
+    VASTRAÉ &middot; Tailor Workspace
+   </h1>
+   <p class="muted">
+    Assigned custom clothing, measurements, fabric and stitching
+          management.
+   </p>
+  </div>
+  <button class="tool" onclick="tailorLogout()">
+   Exit
+  </button>
+ </div>
+ <div class="tailor-layout">
+  <aside class="tailor-side">
+   <button onclick="tailorPage('requests')">
+    ✂ Tailoring Requests
+   </button>
+   <button onclick="tailorPage('profile')">
+    ◉ Profile Card
+   </button>
+   <button onclick="tailorPage('measurements')">
+    📏 Measurements
+   </button>
+   <button onclick="tailorPage('fabric')">
+    🧵 Fabric &amp; Design
+   </button>
+   <button onclick="tailorPage('status')">
+    📦 Stitching Status
+   </button>
+  </aside>
+  <main class="tailor-main-card" id="tailorContent">
+  </main>
+ </div>
+</div>

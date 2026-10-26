@@ -1,0 +1,118 @@
+<!-- =====================================================
+     CONTACT SECTION · VASTRAÉ BOUTIQUE (BENGALURU)
+     ===================================================== -->
+<section class="nak-section" id="contact" style="background:#fff;">
+  <div class="nak-section-header">
+    <div class="nak-section-eyebrow">VISIT THE ATELIER &middot; BENGALURU</div>
+    <h2 class="nak-section-title">Come See Us in <em>Bengaluru.</em></h2>
+    <p class="nak-section-lead">
+      We are open Mon–Sat from 10:00, and by appointment on Sundays. Walk in for fabric consultation, or reserve a dedicated fitting slot with our master stylists.
+    </p>
+  </div>
+
+  <div class="nak-contact-grid">
+    <!-- Left: Boutique Address & Facts -->
+    <div class="nak-contact-card">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="font-size:24px;">🏛️</span>
+        <h3 style="font-family:'Playfair Display',serif; font-size:24px; color:#4a0d17; margin:0;">VASTRAÉ Boutique &middot; Flagship Atelier</h3>
+      </div>
+      <p style="font-size:13.5px; color:#7c6f62; line-height:1.6; margin:0 0 20px;">
+        Located in the heart of Rajarajeshwari Nagar, Bengaluru. Our studio houses over 100+ raw silk rolls, handloom swatch cards, an active aari embroidery loom, and private trial salons.
+      </p>
+
+      <ul class="nak-contact-facts">
+        <li class="nak-contact-item">
+          <div class="nak-contact-icon">📍</div>
+          <div>
+            <strong>Atelier Address</strong>
+            <address>
+              No. 10, KK Arcade, Channasandra,<br>
+              Rajarajeshwari Nagar (RR Nagar),<br>
+              Bengaluru, Karnataka &mdash; <b>560098</b>
+            </address>
+          </div>
+        </li>
+
+        <li class="nak-contact-item">
+          <div class="nak-contact-icon">🕒</div>
+          <div>
+            <strong>Atelier Hours</strong>
+            <p>
+              Monday &ndash; Saturday: <b>10:00 AM &ndash; 08:00 PM</b><br>
+              Sunday: <b>By Private Appointment Only</b>
+            </p>
+          </div>
+        </li>
+
+        <li class="nak-contact-item">
+          <div class="nak-contact-icon">📞</div>
+          <div>
+            <strong>Direct Inquiries &amp; WhatsApp</strong>
+            <p>
+              Phone: <a href="tel:+919886012345">+91 98860 12345</a><br>
+              WhatsApp: <a href="https://wa.me/919886012345" target="_blank" rel="noreferrer">+91 98860 12345 (Chat 24/7)</a><br>
+              Email: <a href="mailto:concierge@vastrae.com">concierge@vastrae.com</a>
+            </p>
+          </div>
+        </li>
+      </ul>
+
+      <div style="display:flex; gap:12px; margin-top:28px; flex-wrap:wrap;">
+        <a href="https://wa.me/919108703981" target="_blank" class="nak-btn nak-btn-primary" style="text-decoration:none;">
+          💬 WhatsApp the Boutique
+        </a>
+        <button class="nak-btn nak-btn-outline" style="color:#4a0d17; border-color:#d4af37;" onclick="window.openBookConsultationModal()">
+          📅 Book Fitting Slot
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Message & Fitting Request Form -->
+    <div class="nak-contact-form-card">
+      <h3 style="font-family:'Playfair Display',serif; font-size:22px; color:#4a0d17; margin:0 0 6px;">Send Message &middot; Request Callback</h3>
+      <p style="font-size:13px; color:#7c6f62; margin:0 0 20px;">
+        Leave your styling inquiry, bridal timeline or alteration request. Our concierge responds within 30 minutes.
+      </p>
+
+      <form onsubmit="window.submitContactInquiry(event)">
+        <div class="nak-form-group">
+          <label>Full Name *</label>
+          <input type="text" id="contactName" required placeholder="e.g. Ananya Sharma" class="nak-form-control">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="nak-form-group">
+            <label>Mobile Number (WhatsApp) *</label>
+            <input type="tel" id="contactPhone" required placeholder="+91 98860 12345" class="nak-form-control">
+          </div>
+          <div class="nak-form-group">
+            <label>Email Address</label>
+            <input type="email" id="contactEmail" placeholder="your@email.com" class="nak-form-control">
+          </div>
+        </div>
+
+        <div class="nak-form-group">
+          <label>Service Requirement</label>
+          <select id="contactServiceSelect" class="nak-form-control">
+            <option>Bridal Maggam Work Blouse</option>
+            <option>Hand &amp; Machine Embroidery / Aari Work</option>
+            <option>Own-Fabric Tailoring &amp; Pickup</option>
+            <option>Cotton Frocks &amp; Mother-Daughter Twinning</option>
+            <option>Bridal Trousseau Consultation</option>
+            <option>General Fitting / Alteration</option>
+          </select>
+        </div>
+
+        <div class="nak-form-group">
+          <label>Your Message or Event Date Notes</label>
+          <textarea id="contactMessage" rows="3" placeholder="Tell us about your wedding date, saree color, or design requirement..." class="nak-form-control"></textarea>
+        </div>
+
+        <button type="submit" class="nak-btn nak-btn-primary" style="width:100%; justify-content:center;">
+          ✉️ Send Message to Atelier Concierge
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

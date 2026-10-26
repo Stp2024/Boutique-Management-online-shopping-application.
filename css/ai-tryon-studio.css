@@ -1,0 +1,1303 @@
+/* ==========================================================================
+   VASTRAÉ AI VIRTUAL TRY-ON STUDIO & BESPOKE DESIGNER STYLESHEET
+   Adheres to Section 12 Specification:
+   - Palette: #FFFFFF, #F5F6FC, #DCD6F7, #A6B1E1, #6875C5, #1F2937, #374151, #E5E7EB
+   - Light Luxury Theme · Haute Couture Aesthetic · Zero Dark Theme
+   ========================================================================== */
+
+:root {
+  --v-bg-main: #FFFFFF;
+  --v-bg-soft: #F5F6FC;
+  --v-lavender: #DCD6F7;
+  --v-accent-sec: #A6B1E1;
+  --v-primary-btn: #6875C5;
+  --v-primary-hover: #5462b5;
+  --v-text-heading: #1F2937;
+  --v-text-body: #374151;
+  --v-text-muted: #6B7280;
+  --v-border: #E5E7EB;
+  --v-gold: #B38738;
+  --v-gold-light: #F9F4EB;
+  --v-rose: #C27D7D;
+  --v-shadow-sm: 0 2px 6px rgba(104, 117, 197, 0.08);
+  --v-shadow-md: 0 8px 24px rgba(104, 117, 197, 0.12);
+  --v-shadow-lg: 0 16px 40px rgba(104, 117, 197, 0.16);
+  --v-radius-sm: 8px;
+  --v-radius-md: 14px;
+  --v-radius-lg: 20px;
+  --v-font-serif: 'Playfair Display', Georgia, serif;
+  --v-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Studio Section Container */
+.vai-studio-section {
+  background-color: var(--v-bg-main);
+  color: var(--v-text-body);
+  font-family: var(--v-font-sans);
+  padding: 40px 0 80px;
+}
+
+.vai-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Hero Header */
+.vai-header {
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto 36px;
+}
+
+.vai-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--v-primary-btn);
+  background: var(--v-bg-soft);
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--v-lavender);
+  margin-bottom: 14px;
+}
+
+.vai-title {
+  font-family: var(--v-font-serif);
+  font-size: 2.75rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.vai-title em {
+  font-style: italic;
+  color: var(--v-primary-btn);
+}
+
+.vai-subtitle {
+  font-size: 1.05rem;
+  color: var(--v-text-muted);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+/* Engine Status Bar */
+.vai-engine-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.vai-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--v-bg-soft);
+  border: 1px solid var(--v-lavender);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vai-status-chip:hover {
+  background: #edeef9;
+  border-color: var(--v-accent-sec);
+}
+
+.vai-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #10B981;
+}
+
+.vai-status-dot.needs-config {
+  background-color: #F59E0B;
+}
+
+/* Primary Mode Switcher (Mode A vs Mode B) */
+.vai-mode-nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.vai-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  border-radius: var(--v-radius-md);
+  border: 2px solid var(--v-border);
+  background: var(--v-bg-soft);
+  color: var(--v-text-heading);
+  font-family: var(--v-font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--v-shadow-sm);
+}
+
+.vai-mode-btn:hover {
+  border-color: var(--v-accent-sec);
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.vai-mode-btn.active {
+  background: #ffffff;
+  border-color: var(--v-primary-btn);
+  color: var(--v-primary-btn);
+  box-shadow: var(--v-shadow-md);
+}
+
+.vai-mode-icon {
+  font-size: 1.25rem;
+}
+
+/* Category Navigation Pills (Men, Women, Children) */
+.vai-cat-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.vai-cat-tab-btn {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--v-border);
+  background: var(--v-bg-soft);
+  color: var(--v-text-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vai-cat-tab-btn:hover {
+  border-color: var(--v-accent-sec);
+}
+
+.vai-cat-tab-btn.active {
+  background: var(--v-primary-btn);
+  color: #ffffff;
+  border-color: var(--v-primary-btn);
+}
+
+/* Subcategory Pills Row */
+.vai-subcat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  padding: 12px;
+  background: var(--v-bg-soft);
+  border-radius: var(--v-radius-md);
+  border: 1px solid var(--v-border);
+}
+
+.vai-subcat-pill {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #ffffff;
+  color: var(--v-text-body);
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vai-subcat-pill:hover {
+  border-color: var(--v-accent-sec);
+  color: var(--v-primary-btn);
+}
+
+.vai-subcat-pill.active {
+  background: var(--v-lavender);
+  color: var(--v-text-heading);
+  font-weight: 700;
+  border-color: var(--v-accent-sec);
+}
+
+/* Product Cards Grid (Mode A) */
+.vai-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+  margin-bottom: 48px;
+}
+
+.vai-product-card {
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  overflow: hidden;
+  box-shadow: var(--v-shadow-sm);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.vai-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--v-shadow-md);
+  border-color: var(--v-accent-sec);
+}
+
+.vai-product-card.selected-outfit {
+  border: 2px solid var(--v-primary-btn);
+  box-shadow: 0 0 0 3px rgba(104, 117, 197, 0.2);
+}
+
+.vai-card-media {
+  position: relative;
+  aspect-ratio: 3/4;
+  background: var(--v-bg-soft);
+  overflow: hidden;
+}
+
+.vai-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.vai-product-card:hover .vai-card-img {
+  transform: scale(1.04);
+}
+
+.vai-card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--v-primary-btn);
+  border: 1px solid var(--v-lavender);
+}
+
+.vai-card-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.vai-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--v-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.vai-card-title {
+  font-family: var(--v-font-serif);
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+
+.vai-card-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--v-text-heading);
+  margin-bottom: 12px;
+}
+
+.vai-card-sizes, .vai-card-colors {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--v-text-muted);
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.vai-size-pill {
+  padding: 2px 7px;
+  background: var(--v-bg-soft);
+  border-radius: 4px;
+  border: 1px solid var(--v-border);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--v-text-body);
+}
+
+.vai-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  display: inline-block;
+}
+
+.vai-card-desc {
+  font-size: 0.82rem;
+  color: var(--v-text-muted);
+  line-height: 1.45;
+  margin: 0 0 16px;
+  flex-grow: 1;
+}
+
+.vai-card-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--v-primary-btn);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--v-radius-sm);
+  font-family: var(--v-font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vai-card-btn:hover {
+  background: var(--v-primary-hover);
+  box-shadow: 0 4px 12px rgba(104, 117, 197, 0.28);
+}
+
+/* =========================================================================
+   MODE B: CREATE YOUR OWN OUTFIT
+   ========================================================================= */
+
+/* Three Large Selection Cards */
+.vai-creator-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.vai-creator-card {
+  background: var(--v-bg-soft);
+  border: 2px solid var(--v-border);
+  border-radius: var(--v-radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--v-shadow-sm);
+}
+
+.vai-creator-card:hover {
+  background: #ffffff;
+  border-color: var(--v-accent-sec);
+  transform: translateY(-4px);
+  box-shadow: var(--v-shadow-md);
+}
+
+.vai-creator-card.active {
+  background: #ffffff;
+  border-color: var(--v-primary-btn);
+  box-shadow: var(--v-shadow-lg);
+}
+
+.vai-creator-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--v-lavender);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--v-primary-btn);
+}
+
+.vai-creator-title {
+  font-family: var(--v-font-serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  margin: 0 0 8px;
+}
+
+.vai-creator-desc {
+  font-size: 0.86rem;
+  color: var(--v-text-muted);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.vai-creator-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  border-radius: 999px;
+  color: var(--v-primary-btn);
+}
+
+/* Custom Designer Studio Layout */
+.vai-studio-designer-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 36px;
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-lg);
+  padding: 32px;
+  box-shadow: var(--v-shadow-md);
+  margin-bottom: 48px;
+}
+
+/* Designer Form Controls Column */
+.vai-designer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.vai-designer-section-title {
+  font-family: var(--v-font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  margin: 0 0 4px;
+}
+
+.vai-designer-section-sub {
+  font-size: 0.85rem;
+  color: var(--v-text-muted);
+  margin: 0 0 16px;
+}
+
+.vai-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vai-field-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vai-field-help {
+  font-size: 0.78rem;
+  font-weight: normal;
+  color: var(--v-text-muted);
+}
+
+.vai-select, .vai-input, .vai-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-sm);
+  font-family: var(--v-font-sans);
+  font-size: 0.92rem;
+  color: var(--v-text-heading);
+  background: var(--v-bg-soft);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.vai-select:focus, .vai-input:focus, .vai-textarea:focus {
+  outline: none;
+  border-color: var(--v-primary-btn);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(104, 117, 197, 0.15);
+}
+
+.vai-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.vai-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Accessible Color Swatches */
+.vai-swatches-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.vai-swatch-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--v-border);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.vai-swatch-btn:hover {
+  transform: scale(1.15);
+}
+
+.vai-swatch-btn.active {
+  box-shadow: 0 0 0 2px var(--v-primary-btn);
+  transform: scale(1.15);
+}
+
+/* Children Privacy Notice Box */
+.vai-privacy-box {
+  background: #FDF9F2;
+  border: 1px solid #F3E2C4;
+  border-radius: var(--v-radius-md);
+  padding: 16px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 8px;
+}
+
+.vai-privacy-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.vai-privacy-copy {
+  font-size: 0.82rem;
+  color: #7A571B;
+  line-height: 1.5;
+}
+
+.vai-privacy-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #553A0E;
+  cursor: pointer;
+}
+
+/* Live Preliminary Preview Column (Section 9) */
+.vai-designer-preview-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.vai-prelim-preview-card {
+  background: var(--v-bg-soft);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vai-prelim-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6B7280;
+  background: #FFFFFF;
+  border: 1px solid var(--v-border);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.vai-svg-canvas-wrap {
+  width: 100%;
+  max-width: 320px;
+  height: 380px;
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.vai-svg-canvas-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+
+.vai-pricing-box {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  padding: 16px 20px;
+  text-align: left;
+}
+
+.vai-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+  color: var(--v-text-body);
+}
+
+.vai-price-row.total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--v-border);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--v-text-heading);
+}
+
+.vai-price-disclaimer {
+  font-size: 0.74rem;
+  color: var(--v-text-muted);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+/* =========================================================================
+   TRY-ON WORKFLOW PIPELINE (Steps 3, 4, 5, 6)
+   ========================================================================= */
+
+.vai-workflow-shell {
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-lg);
+  padding: 36px;
+  box-shadow: var(--v-shadow-md);
+  margin-bottom: 48px;
+}
+
+.vai-steps-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.vai-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.vai-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--v-bg-soft);
+  border: 2px solid var(--v-border);
+  color: var(--v-text-muted);
+  font-weight: 700;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.vai-step-item.active .vai-step-circle {
+  background: var(--v-primary-btn);
+  border-color: var(--v-primary-btn);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(104, 117, 197, 0.2);
+}
+
+.vai-step-item.done .vai-step-circle {
+  background: var(--v-lavender);
+  border-color: var(--v-primary-btn);
+  color: var(--v-primary-btn);
+}
+
+.vai-step-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--v-text-muted);
+}
+
+.vai-step-item.active .vai-step-label {
+  color: var(--v-text-heading);
+  font-weight: 700;
+}
+
+/* Step 3: Photo Upload Zone */
+.vai-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.vai-dropzone {
+  border: 2px dashed var(--v-lavender);
+  background: var(--v-bg-soft);
+  border-radius: var(--v-radius-md);
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.vai-dropzone:hover, .vai-dropzone.dragover {
+  border-color: var(--v-primary-btn);
+  background: #f1f2fa;
+}
+
+.vai-drop-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--v-primary-btn);
+  margin-bottom: 16px;
+  box-shadow: var(--v-shadow-sm);
+}
+
+.vai-upload-preview-card {
+  background: var(--v-bg-soft);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.vai-preview-photo-frame {
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 3/4;
+  border-radius: var(--v-radius-sm);
+  background: #ffffff;
+  border: 1px solid var(--v-border);
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--v-shadow-sm);
+  position: relative;
+}
+
+.vai-preview-photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vai-preview-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Review Outfit Strip (Step 4) */
+.vai-review-card {
+  background: var(--v-bg-soft);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.vai-review-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.vai-review-thumb {
+  width: 80px;
+  height: 106px;
+  object-fit: cover;
+  border-radius: var(--v-radius-sm);
+  border: 1px solid var(--v-border);
+  background: #ffffff;
+}
+
+.vai-review-title {
+  font-family: var(--v-font-serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  margin: 0 0 6px;
+}
+
+.vai-review-specs {
+  display: flex;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: var(--v-text-muted);
+  flex-wrap: wrap;
+}
+
+.vai-review-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--v-primary-btn);
+  text-align: right;
+}
+
+/* Primary Action Buttons */
+.vai-btn-primary {
+  padding: 14px 32px;
+  background: var(--v-primary-btn);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--v-radius-sm);
+  font-family: var(--v-font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(104, 117, 197, 0.3);
+}
+
+.vai-btn-primary:hover {
+  background: var(--v-primary-hover);
+  box-shadow: 0 6px 20px rgba(104, 117, 197, 0.4);
+  transform: translateY(-1px);
+}
+
+.vai-btn-primary:disabled {
+  background: #C7C9D9;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.vai-btn-secondary {
+  padding: 12px 24px;
+  background: #ffffff;
+  color: var(--v-text-heading);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-sm);
+  font-family: var(--v-font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vai-btn-secondary:hover {
+  border-color: var(--v-accent-sec);
+  background: var(--v-bg-soft);
+}
+
+/* Loading State (Step 5) */
+.vai-loading-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.vai-spinner {
+  width: 56px;
+  height: 56px;
+  border: 4px solid var(--v-lavender);
+  border-top-color: var(--v-primary-btn);
+  border-radius: 50%;
+  animation: vaiSpin 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes vaiSpin {
+  to { transform: rotate(360deg); }
+}
+
+.vai-loading-title {
+  font-family: var(--v-font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  margin: 0 0 8px;
+}
+
+.vai-loading-text {
+  font-size: 0.95rem;
+  color: var(--v-primary-btn);
+  margin: 0 0 24px;
+}
+
+.vai-progress-bar-wrap {
+  max-width: 420px;
+  height: 8px;
+  background: var(--v-border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.vai-progress-bar-fill {
+  height: 100%;
+  width: 15%;
+  background: var(--v-primary-btn);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* Comparison Viewports (Step 6) */
+.vai-comparison-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.vai-comp-tab-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--v-border);
+  background: var(--v-bg-soft);
+  color: var(--v-text-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vai-comp-tab-btn.active {
+  background: var(--v-primary-btn);
+  color: #ffffff;
+  border-color: var(--v-primary-btn);
+}
+
+/* Draggable Before / After Slider */
+.vai-slider-container {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  aspect-ratio: 3/4;
+  margin: 0 auto 24px;
+  border-radius: var(--v-radius-md);
+  overflow: hidden;
+  box-shadow: var(--v-shadow-lg);
+  user-select: none;
+  background: var(--v-bg-soft);
+}
+
+.vai-slider-after-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vai-slider-before-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.vai-slider-before-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.vai-slider-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  bottom: 0;
+  width: 3px;
+  background: #ffffff;
+  cursor: ew-resize;
+  z-index: 4;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+.vai-slider-handle-thumb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--v-primary-btn);
+  color: var(--v-primary-btn);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.vai-slider-tag {
+  position: absolute;
+  bottom: 14px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 5;
+  background: rgba(31, 41, 55, 0.85);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+}
+
+.vai-slider-tag.before { left: 14px; }
+.vai-slider-tag.after { right: 14px; }
+
+/* Side-by-Side Dual View */
+.vai-dual-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 720px;
+  margin: 0 auto 24px;
+}
+
+.vai-dual-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.vai-dual-frame {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: var(--v-radius-md);
+  border: 1px solid var(--v-border);
+  overflow: hidden;
+  box-shadow: var(--v-shadow-md);
+  position: relative;
+  background: var(--v-bg-soft);
+}
+
+.vai-dual-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vai-dual-label {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--v-text-muted);
+}
+
+/* Result Actions Strip */
+.vai-result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.vai-disclaimer-card {
+  max-width: 680px;
+  margin: 24px auto 0;
+  padding: 12px 18px;
+  background: var(--v-bg-soft);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-sm);
+  font-size: 0.78rem;
+  color: var(--v-text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Setup Guide Modal (Section 2 & 8) */
+.vai-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(31, 41, 55, 0.6);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.vai-modal-card {
+  background: #ffffff;
+  border-radius: var(--v-radius-lg);
+  max-width: 640px;
+  width: 100%;
+  box-shadow: var(--v-shadow-lg);
+  border: 1px solid var(--v-border);
+  overflow: hidden;
+  animation: vaiModalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vaiModalPop {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.vai-modal-header {
+  padding: 24px 28px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--v-border);
+}
+
+.vai-modal-title {
+  font-family: var(--v-font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--v-text-heading);
+  margin: 0 0 4px;
+}
+
+.vai-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--v-text-muted);
+  line-height: 1;
+}
+
+.vai-modal-body {
+  padding: 24px 28px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.vai-code-block {
+  background: #1F2937;
+  color: #E5E7EB;
+  padding: 14px 18px;
+  border-radius: var(--v-radius-sm);
+  font-family: monospace;
+  font-size: 0.85rem;
+  margin: 12px 0;
+  overflow-x: auto;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 992px) {
+  .vai-creator-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .vai-studio-designer-layout {
+    grid-template-columns: 1fr;
+  }
+  .vai-upload-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .vai-title {
+    font-size: 2rem;
+  }
+  .vai-mode-nav {
+    flex-direction: column;
+  }
+  .vai-mode-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .vai-grid-2, .vai-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .vai-review-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .vai-review-info {
+    flex-direction: column;
+  }
+  .vai-review-price {
+    text-align: center;
+  }
+}
